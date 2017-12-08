@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<operation xmlns="http://schema.webpdf.de/1.0/operation">
+    <signature>
+        <add location="testLocation" appendSignature="true" certificationLevel="none" contact="testContact"
+             fieldName="testName" keyName="testKey" keyPassword="testPwd" reason="testReason">
+            <appearance page="1" name="testName" identifier="testIdentifier"/>
+        </add>
+    </signature>
+</operation>

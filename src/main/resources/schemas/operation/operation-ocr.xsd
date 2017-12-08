@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="OcrType">
+        <xs:all>
+            <xs:element name="page" type="tns:OcrPageType" minOccurs="0" maxOccurs="1" />
+        </xs:all>
+        <xs:attribute name="language" default="eng" type="tns:OcrLanguageType" />
+        <xs:attribute name="outputFormat" default="pdf">
+            <xs:simpleType>
+                <xs:restriction base="tns:OcrOutputType" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="checkResolution" default="true" type="xs:boolean" />
+        <xs:attribute name="imageDpi" default="200">
+            <xs:simpleType>
+                <xs:restriction base="tns:DpiType" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="forceEachPage" default="false" type="xs:boolean" />
+    </xs:complexType>
+    <xs:simpleType name="OcrLanguageType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="eng" />
+            <xs:enumeration value="deu" />
+            <xs:enumeration value="fra" />
+            <xs:enumeration value="ita" />
+            <xs:enumeration value="spa" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OcrOutputType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="text" />
+            <xs:enumeration value="hocr" />
+            <xs:enumeration value="pdf" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="OcrPageType">
+        <xs:attribute name="width" default="210">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="height" default="297">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="metrics" default="mm">
+            <xs:simpleType>
+                <xs:restriction base="tns:MetricsType">
+                    <xs:enumeration value="mm" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+</xs:schema>

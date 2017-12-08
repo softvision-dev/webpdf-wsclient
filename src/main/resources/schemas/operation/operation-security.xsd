@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="SecurityType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:choice>
+                    <xs:element name="decrypt" type="tns:DecryptType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="encrypt" type="tns:EncryptType" minOccurs="0" maxOccurs="1" />
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="EncryptType">
+        <xs:choice>
+            <xs:element name="password" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:attribute name="encryptionKey" default="RC4_128" type="tns:PdfEncryptionKeyType" />
+                    <xs:attribute name="permission" default="" type="xs:string" />
+                    <xs:attribute name="open" default="" type="xs:string" />
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+        <xs:attributeGroup ref="tns:securityFlags" />
+    </xs:complexType>
+    <xs:simpleType name="PdfEncryptionKeyType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RC4_40" />
+            <xs:enumeration value="RC4_128" />
+            <xs:enumeration value="AES_128" />
+            <xs:enumeration value="AES_256" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:attributeGroup name="securityFlags">
+        <xs:attribute name="canAssemble" default="false" type="xs:boolean" />
+        <xs:attribute name="canExtractContent" default="false" type="xs:boolean" />
+        <xs:attribute name="canExtractForAccessibility" default="false" type="xs:boolean" />
+        <xs:attribute name="canFillInForm" default="false" type="xs:boolean" />
+        <xs:attribute name="canModify" default="false" type="xs:boolean" />
+        <xs:attribute name="canModifyAnnotations" default="false" type="xs:boolean" />
+        <xs:attribute name="canPrint" default="false" type="xs:boolean" />
+        <xs:attribute name="canPrintHighRes" default="false" type="xs:boolean" />
+    </xs:attributeGroup>
+    <xs:complexType name="DecryptType" />
+</xs:schema>

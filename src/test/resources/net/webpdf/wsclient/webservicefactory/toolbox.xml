@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<operation xmlns="http://schema.webpdf.de/1.0/operation">
+    <delete pages="1"/>
+    <rotate pages="*" degrees="90" pageGroup="even" pageOrientation="any"/>
+    <watermark pages="2" angle="180">
+        <text text="testText"/>
+    </watermark>
+</operation>

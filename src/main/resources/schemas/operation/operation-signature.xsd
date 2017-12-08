@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="SignatureType">
+        <xs:choice>
+            <xs:element id="signatureAddId" name="add">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="appearance" minOccurs="0" maxOccurs="1">
+                            <xs:complexType>
+                                <xs:all>
+                                    <xs:element name="position" type="tns:SignaturePositionType" minOccurs="0" maxOccurs="1" />
+                                    <xs:element name="image" type="tns:SignatureImageType" minOccurs="0" maxOccurs="1" />
+                                    <xs:element name="identifierElements" type="tns:SignatureIdentifierType" minOccurs="0" maxOccurs="1" />
+                                </xs:all>
+                                <xs:attribute name="name" default="" type="xs:string" />
+                                <xs:attribute name="identifier" default="" type="xs:string" />
+                                <xs:attribute name="page" default="1">
+                                    <xs:simpleType>
+                                        <xs:restriction base="xs:int">
+                                            <xs:minInclusive value="1" />
+                                        </xs:restriction>
+                                    </xs:simpleType>
+                                </xs:attribute>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:all>
+                    <xs:attributeGroup ref="tns:SignatureInfoGroup" />
+                    <xs:attribute name="certificationLevel" default="noChanges" type="tns:CertificationLevelType" />
+                    <xs:attribute name="fieldName" default="Signature1" type="xs:string" />
+                    <xs:attribute name="keyName" default="" type="xs:string" />
+                    <xs:attribute name="keyPassword" default="" type="xs:string" />
+                    <xs:attribute name="appendSignature" default="false" type="xs:boolean" />
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="BaseSignatureType" />
+    <xs:attributeGroup name="SignatureInfoGroup">
+        <xs:attribute name="location" default="" type="xs:string" />
+        <xs:attribute name="contact" default="" type="xs:string" />
+        <xs:attribute name="reason" default="" type="xs:string" />
+    </xs:attributeGroup>
+    <xs:simpleType name="CertificationLevelType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="noChanges" />
+            <xs:enumeration value="formFillingAndSignatures" />
+            <xs:enumeration value="formFillingAndSignaturesAndAnnotations" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="SignaturePositionType">
+        <xs:attribute name="width" default="50">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="height" default="10">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attributeGroup ref="tns:PointGroup" />
+    </xs:complexType>
+    <xs:complexType name="SignatureImageType">
+        <xs:all>
+            <xs:element name="data" type="tns:SignatureFileDataType" minOccurs="1" maxOccurs="1" />
+        </xs:all>
+        <xs:attribute name="opacity" default="50">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="100" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="position" default="center">
+            <xs:simpleType>
+                <xs:restriction base="tns:SignatureImagePositionType">
+                    <xs:enumeration value="center" />
+                    <xs:enumeration value="left" />
+                    <xs:enumeration value="right" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="SignatureIdentifierType">
+        <xs:attribute name="showSignedBy" default="true" type="xs:boolean" />
+        <xs:attribute name="showName" default="true" type="xs:boolean" />
+        <xs:attribute name="showCommonName" default="true" type="xs:boolean" />
+        <xs:attribute name="showOrganisationUnit" default="true" type="xs:boolean" />
+        <xs:attribute name="showOrganisationName" default="true" type="xs:boolean" />
+        <xs:attribute name="showLocal" default="true" type="xs:boolean" />
+        <xs:attribute name="showState" default="true" type="xs:boolean" />
+        <xs:attribute name="showCountry" default="true" type="xs:boolean" />
+        <xs:attribute name="showMail" default="true" type="xs:boolean" />
+        <xs:attribute name="showDate" default="true" type="xs:boolean" />
+    </xs:complexType>
+    <xs:simpleType name="SignatureImagePositionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="center" />
+            <xs:enumeration value="left" />
+            <xs:enumeration value="right" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="SignatureFileDataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

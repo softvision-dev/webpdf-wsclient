@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<operation xmlns="http://schema.webpdf.de/1.0/operation">
+    <pdfa>
+        <analyze level="1a"/>
+    </pdfa>
+</operation>

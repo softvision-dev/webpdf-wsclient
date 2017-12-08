@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="AnnotationType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:choice>
+                    <xs:element id="annotationAddId" name="add">
+                        <xs:complexType id="annotationChoiceId">
+                            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                                <xs:element name="text" type="tns:TextAnnotationType" />
+                                <xs:element name="markup" type="tns:MarkupAnnotationType" />
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:attributeGroup name="FlagsAnnotationGroup">
+        <xs:attribute name="locked" default="true" type="xs:boolean" />
+        <xs:attribute name="printable" default="false" type="xs:boolean" />
+        <xs:attribute name="rotatable" default="true" type="xs:boolean" />
+        <xs:attribute name="viewable" default="true" type="xs:boolean" />
+        <xs:attribute name="writable" default="true" type="xs:boolean" />
+        <xs:attribute name="zoomable" default="true" type="xs:boolean" />
+        <xs:attribute name="invisible" default="false" type="xs:boolean" />
+        <xs:attribute name="hidden" default="false" type="xs:boolean" />
+    </xs:attributeGroup>
+    <xs:simpleType name="TextAnnotationIconsType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="comment" />
+            <xs:enumeration value="key" />
+            <xs:enumeration value="note" />
+            <xs:enumeration value="help" />
+            <xs:enumeration value="newParagraph" />
+            <xs:enumeration value="paragraph" />
+            <xs:enumeration value="insert" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="MarkupsAnnotationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="highlight" />
+            <xs:enumeration value="underline" />
+            <xs:enumeration value="strikeOut" />
+            <xs:enumeration value="squiggly" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="BaseAnnotationType">
+        <xs:attribute name="creator" default="" type="xs:string" use="optional" />
+        <xs:attribute name="name" default="" type="xs:string" use="optional" />
+        <xs:attribute name="subject" default="" type="xs:string" use="optional" />
+        <xs:attribute name="contents" default="" type="xs:string" use="optional" />
+        <xs:attribute name="intents" default="" type="xs:string" use="optional" />
+        <xs:attribute name="page" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attributeGroup ref="tns:FlagsAnnotationGroup" />
+        <xs:attribute name="color" default="#4800FF" type="tns:RgbColorType" />
+        <xs:attribute name="opacity" default="100" type="tns:OpacityType" />
+    </xs:complexType>
+    <xs:complexType name="TextAnnotationType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseAnnotationType">
+                <xs:all>
+                    <xs:element name="position" type="tns:RectangleType" minOccurs="0" maxOccurs="1" />
+                </xs:all>
+                <xs:attribute name="icon" default="note" type="tns:TextAnnotationIconsType" />
+                <xs:attribute name="initialOpen" default="true" type="xs:boolean" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="MarkupAnnotationType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseAnnotationType">
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="pathElement" type="tns:RectangleType" />
+                </xs:choice>
+                <xs:attribute name="markupType" default="highlight" type="tns:MarkupsAnnotationType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

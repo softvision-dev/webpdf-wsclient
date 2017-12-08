@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="ImageType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:choice>
+                    <xs:element name="png" type="tns:PngType" />
+                    <xs:element name="tiff" type="tns:TiffType" />
+                    <xs:element name="jpeg" type="tns:JpegType" />
+                    <xs:element name="gif" type="tns:GifType" />
+                    <xs:element name="bmp" type="tns:BmpType" />
+                </xs:choice>
+                <xs:attribute name="pages" default="1" type="xs:string" />
+                <xs:attribute name="fileNameTemplate" default="page[%d]" type="xs:string" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ImageBaseType">
+        <xs:attribute name="dpi" default="72">
+            <xs:simpleType>
+                <xs:restriction base="tns:DpiType" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="width" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="height" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="metrics" default="mm" type="tns:MetricsType" />
+    </xs:complexType>
+    <xs:complexType name="TiffType">
+        <xs:complexContent>
+            <xs:extension base="tns:ImageBaseType">
+                <xs:attribute name="multipage" default="false" type="xs:boolean" />
+                <xs:attribute name="compression" default="none" type="tns:TiffCompressionType" />
+                <xs:attribute name="jpegQuality" default="80">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0" />
+                            <xs:maxInclusive value="100" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="TiffCompressionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="rle" />
+            <xs:enumeration value="deflate" />
+            <xs:enumeration value="group3" />
+            <xs:enumeration value="group4" />
+            <xs:enumeration value="jpeg" />
+            <xs:enumeration value="lzw" />
+            <xs:enumeration value="packbits" />
+            <xs:enumeration value="zlib" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="PngType">
+        <xs:complexContent>
+            <xs:extension base="tns:ImageBaseType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="JpegType">
+        <xs:complexContent>
+            <xs:extension base="tns:ImageBaseType">
+                <xs:attribute name="jpegQuality" default="80">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0" />
+                            <xs:maxInclusive value="100" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="GifType">
+        <xs:complexContent>
+            <xs:extension base="tns:ImageBaseType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="BmpType">
+        <xs:complexContent>
+            <xs:extension base="tns:ImageBaseType" />
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

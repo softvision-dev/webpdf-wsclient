@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="AttachmentType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:choice>
+                    <xs:element id="attachmentAddId" name="add">
+                        <xs:complexType>
+                            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                                <xs:element name="file" type="tns:FileAttachmentType" />
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element id="attachmentRemoveId" name="remove">
+                        <xs:complexType>
+                            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                                <xs:element name="selection" type="tns:SelectionAttachmentType" />
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element id="attachmentExtractId" name="extract">
+                        <xs:complexType>
+                            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                                <xs:element name="selection" type="tns:SelectionAttachmentType" />
+                            </xs:choice>
+                            <xs:attribute name="folderNameTemplate" default="page[%d]" type="xs:string" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="ContextType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="page" />
+            <xs:enumeration value="document" />
+            <xs:enumeration value="all" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="SelectionAttachmentType">
+        <xs:attribute name="pages" default="" type="xs:string" use="optional" />
+        <xs:attribute name="fileMask" type="xs:string" use="optional" />
+        <xs:attribute name="context" default="all" type="tns:ContextType" />
+    </xs:complexType>
+    <xs:complexType name="FileAttachmentType">
+        <xs:all>
+            <xs:element name="data" type="tns:AttachmentFileDataType" minOccurs="1" maxOccurs="1" />
+            <xs:element name="annotation" type="tns:FileAnnotationType" minOccurs="0" maxOccurs="1" />
+        </xs:all>
+        <xs:attribute name="fileName" type="xs:string" use="required" />
+    </xs:complexType>
+    <xs:complexType name="FileAnnotationType">
+        <xs:all>
+            <xs:element name="point" type="tns:PointType" />
+        </xs:all>
+        <xs:attributeGroup ref="tns:fileAnnotationGroup" />
+        <xs:attribute name="opacity" default="100" type="tns:OpacityType" />
+        <xs:attribute name="color" default="#4800FF" type="tns:RgbColorType" />
+    </xs:complexType>
+    <xs:attributeGroup name="fileAnnotationGroup">
+        <xs:attribute name="page" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="lockedPosition" default="true" type="xs:boolean" />
+        <xs:attribute name="popupText" default="" type="xs:string" />
+        <xs:attribute name="icon" default="paperclip" type="tns:IconsType" />
+    </xs:attributeGroup>
+    <xs:simpleType name="IconsType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="graph" />
+            <xs:enumeration value="paperclip" />
+            <xs:enumeration value="pushPin" />
+            <xs:enumeration value="tag" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="AttachmentFileDataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

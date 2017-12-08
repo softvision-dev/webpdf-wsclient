@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:include schemaLocation="operation-pdfa.xsd" />
+    <xs:include schemaLocation="operation-signature.xsd" />
+    <xs:include schemaLocation="operation-converter.xsd" />
+    <xs:include schemaLocation="operation-barcode.xsd" />
+    <xs:include schemaLocation="operation-ocr.xsd" />
+    <xs:include schemaLocation="operation-urlconverter.xsd" />
+    <xs:include schemaLocation="operation-attachment.xsd" />
+    <xs:include schemaLocation="operation-annotation.xsd" />
+    <xs:include schemaLocation="operation-split.xsd" />
+    <xs:include schemaLocation="operation-merge.xsd" />
+    <xs:include schemaLocation="operation-security.xsd" />
+    <xs:include schemaLocation="operation-image.xsd" />
+    <xs:include schemaLocation="operation-description.xsd" />
+    <xs:include schemaLocation="operation-rotate.xsd" />
+    <xs:include schemaLocation="operation-options.xsd" />
+    <xs:include schemaLocation="operation-forms.xsd" />
+    <xs:include schemaLocation="operation-watermark.xsd" />
+    <xs:include schemaLocation="operation-extraction.xsd" />
+    <xs:include schemaLocation="operation-xmp.xsd" />
+    <xs:include schemaLocation="operation-print.xsd" />
+    <xs:include schemaLocation="operation-delete.xsd" />
+    <xs:element id="operationId" name="operation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="billing" type="BillingType" minOccurs="0" maxOccurs="1" />
+                <xs:element name="password" type="PdfPasswordType" minOccurs="0" maxOccurs="1" />
+                <xs:choice>
+                    <xs:element name="barcode" type="BarcodeType" />
+                    <xs:element name="converter" type="ConverterType" />
+                    <xs:element name="ocr" type="OcrType" />
+                    <xs:element name="pdfa" type="PdfaType" />
+                    <xs:element name="signature" type="SignatureType" />
+                    <xs:choice id="toolboxId" maxOccurs="unbounded">
+                        <xs:element name="annotation" type="AnnotationType" />
+                        <xs:element name="attachment" type="AttachmentType" />
+                        <xs:element name="delete" type="DeleteType" />
+                        <xs:element name="description" type="DescriptionType" />
+                        <xs:element name="extraction" type="ExtractionType" />
+                        <xs:element name="forms" type="FormsType" />
+                        <xs:element name="image" type="ImageType" />
+                        <xs:element name="merge" type="MergeType" />
+                        <xs:element name="options" type="OptionsType" />
+                        <xs:element name="print" type="PrintType" />
+                        <xs:element name="rotate" type="RotateType" />
+                        <xs:element name="security" type="SecurityType" />
+                        <xs:element name="split" type="SplitType" />
+                        <xs:element name="watermark" type="WatermarkType" />
+                        <xs:element name="xmp" type="XmpType" />
+                    </xs:choice>
+                    <xs:element name="urlconverter" type="UrlConverterType" />
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:include schemaLocation="operation-pdfa.xsd" />
+    <xs:include schemaLocation="operation-signature.xsd" />
+    <xs:complexType name="ConverterType">
+        <xs:all>
+            <xs:element name="page" type="tns:PageType" minOccurs="0" />
+            <xs:element name="pdfa" type="tns:PdfaType" minOccurs="0" />
+            <xs:element name="signature" type="tns:SignatureType" minOccurs="0" />
+            <xs:element name="html" type="tns:ConverterHtmlType" minOccurs="0" />
+            <xs:element name="mail" type="tns:ConverterMailType" minOccurs="0" />
+            <xs:element name="officeBridge" type="tns:OfficeBridgeType" minOccurs="0" />
+            <xs:element name="sharePointBridge" type="tns:SharePointBridgeType" minOccurs="0" />
+            <xs:element name="report" type="tns:ConverterReportType" minOccurs="0" />
+            <xs:element name="template" type="tns:ConverterTemplateType" minOccurs="0" />
+        </xs:all>
+        <xs:attribute name="pages" default="" type="xs:string" />
+        <xs:attribute name="compression" default="true" type="xs:boolean" />
+        <xs:attribute name="jpegQuality" default="90">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="100" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="reduceResolution" default="false" type="xs:boolean" />
+        <xs:attribute name="dpi" default="300">
+            <xs:simpleType>
+                <xs:restriction base="tns:DpiType" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="embedFonts" default="false" type="xs:boolean" />
+        <xs:attribute name="accessPassword" default="" type="xs:string" />
+        <xs:attribute name="fileExtension" default="" type="xs:string" />
+        <xs:attribute name="maxRecursion" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="SharePointBridgeType" />
+    <xs:complexType name="OfficeBridgeType" />
+    <xs:complexType name="ConverterMailType">
+        <xs:attribute name="downloadImages" default="false" type="xs:boolean" />
+        <xs:attribute name="adjustFonts" default="false" type="xs:boolean" />
+        <xs:attribute name="attachmentMode" default="embed" type="tns:AttachmentModeType" />
+        <xs:attribute name="ignoreMissingBodyChunk" default="false" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType name="ConverterHtmlType">
+        <xs:attribute name="downloadImages" default="false" type="xs:boolean" />
+        <xs:attribute name="adjustFonts" default="false" type="xs:boolean" />
+        <xs:attribute name="baseURL" default="" type="xs:anyURI" />
+    </xs:complexType>
+    <xs:complexType name="ConverterReportType">
+        <xs:attribute name="contentProblems" default="false" type="xs:boolean" />
+        <xs:attribute name="fontAliasUsage" default="false" type="xs:boolean" />
+        <xs:attribute name="fontIsMissing" default="false" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType name="ConverterTemplateType">
+        <xs:complexContent>
+            <xs:extension base="tns:TemplateType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="AttachmentModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="embed" />
+            <xs:enumeration value="remove" />
+            <xs:enumeration value="convert" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

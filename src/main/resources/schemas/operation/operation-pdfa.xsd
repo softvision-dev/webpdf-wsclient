@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="PdfaType">
+        <xs:annotation>
+            <xs:documentation />
+        </xs:annotation>
+        <xs:choice>
+            <xs:element id="pdfaConvertId" name="convert">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="zugferd" type="tns:ZugferdType" minOccurs="0" maxOccurs="1" />
+                    </xs:all>
+                    <xs:attribute name="level" default="3b" type="tns:PdfaLevelType" />
+                    <xs:attribute name="imageQuality" default="75">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:int">
+                                <xs:minInclusive value="0" />
+                                <xs:maxInclusive value="100" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="errorReport" default="none" type="tns:PdfaErrorReportType" />
+                    <xs:attribute name="successReport" default="none" type="tns:PdfaSuccessReportType" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element id="pdfaAnalyzeId" name="analyze">
+                <xs:complexType>
+                    <xs:attribute name="level" default="3b" type="tns:PdfaLevelType" />
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:simpleType name="PdfaLevelType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="1a" />
+            <xs:enumeration value="1b" />
+            <xs:enumeration value="2a" />
+            <xs:enumeration value="2b" />
+            <xs:enumeration value="2u" />
+            <xs:enumeration value="3a" />
+            <xs:enumeration value="3b" />
+            <xs:enumeration value="3u" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PdfaErrorReportType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="file" />
+            <xs:enumeration value="message" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PdfaSuccessReportType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="zip" />
+            <xs:enumeration value="linked" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="ZugferdType">
+        <xs:all>
+            <xs:element name="xmlFile" type="tns:ZugferdFileDataType" />
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ZugferdFileDataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

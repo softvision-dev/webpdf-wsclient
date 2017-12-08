@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="UrlConverterType">
+        <xs:all>
+            <xs:element name="basicAuth" type="tns:HttpBasicAuthType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="page" type="tns:PageType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="proxy" type="tns:HttpProxyType" minOccurs="0" maxOccurs="1" />
+        </xs:all>
+        <xs:attribute name="url" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="HttpBasicAuthType">
+        <xs:attribute name="userName" default="" type="xs:string" />
+        <xs:attribute name="password" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="HttpProxyType">
+        <xs:attribute name="userName" default="" type="xs:string" />
+        <xs:attribute name="password" default="" type="xs:string" />
+        <xs:attribute name="address" default="" type="xs:string" />
+        <xs:attribute name="port" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+</xs:schema>

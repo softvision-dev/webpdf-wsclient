@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:complexType name="BillingType">
+        <xs:attribute name="customerCode" default="" type="xs:string" />
+        <xs:attribute name="userName" default="" type="xs:string" />
+        <xs:attribute name="applicationName" default="external" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="PdfPasswordType">
+        <xs:attribute name="permission" default="" type="xs:string" />
+        <xs:attribute name="open" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="MarginType">
+        <xs:attribute name="left" default="20" type="xs:int" />
+        <xs:attribute name="right" default="20" type="xs:int" />
+        <xs:attribute name="top" default="20" type="xs:int" />
+        <xs:attribute name="bottom" default="20" type="xs:int" />
+    </xs:complexType>
+    <xs:complexType name="PageType">
+        <xs:complexContent>
+            <xs:extension base="tns:MarginType">
+                <xs:attribute name="width" default="210" type="xs:int" />
+                <xs:attribute name="height" default="297" type="xs:int" />
+                <xs:attribute name="metrics" default="mm">
+                    <xs:simpleType>
+                        <xs:restriction base="tns:MetricsType">
+                            <xs:enumeration value="mm" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:attributeGroup name="PointGroup">
+        <xs:attribute name="x" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="y" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="metrics" default="mm" type="tns:MetricsType" use="optional" />
+        <xs:attribute name="coordinates" default="user" type="tns:CoordinatesType" use="optional" />
+    </xs:attributeGroup>
+    <xs:attributeGroup name="RectangleGroup">
+        <xs:attribute name="width" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="height" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attributeGroup ref="tns:PointGroup" />
+    </xs:attributeGroup>
+    <xs:simpleType name="MetricsType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="px" />
+            <xs:enumeration value="mm" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="CoordinatesType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="pdf" />
+            <xs:enumeration value="user" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="PointType">
+        <xs:attributeGroup ref="tns:PointGroup" />
+    </xs:complexType>
+    <xs:complexType name="RectangleType">
+        <xs:attributeGroup ref="tns:RectangleGroup" />
+    </xs:complexType>
+    <xs:complexType name="TemplateType">
+        <xs:attribute name="language" type="tns:LanguageType" use="optional" />
+    </xs:complexType>
+    <xs:simpleType name="LanguageType">
+        <xs:restriction base="xs:token">
+            <xs:pattern value="[a-z]{2}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="RgbColorType">
+        <xs:restriction base="xs:token">
+            <xs:pattern value="#[0-9a-fA-F]{6}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="BaseToolboxType" />
+    <xs:simpleType name="DpiType">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0" />
+            <xs:maxInclusive value="9600" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OpacityType">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0" />
+            <xs:maxInclusive value="100" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:attributeGroup name="FileDataGroup">
+        <xs:attribute name="source" default="value">
+            <xs:simpleType>
+                <xs:restriction base="tns:FileDataSourceType" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="uri" default="" type="xs:anyURI" />
+    </xs:attributeGroup>
+    <xs:simpleType name="FileDataSourceType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="value" />
+            <xs:enumeration value="uri" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

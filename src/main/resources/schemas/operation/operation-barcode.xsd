@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="BarcodeType">
+        <xs:choice>
+            <xs:element id="barcodeAddId" name="add">
+                <xs:complexType id="barcodeChoiceId">
+                    <xs:choice minOccurs="1" maxOccurs="unbounded">
+                        <xs:element name="aztec" type="tns:AztecBarcodeType" />
+                        <xs:element name="codabar" type="tns:CodabarBarcodeType" />
+                        <xs:element name="code128" type="tns:Code128BarcodeType" />
+                        <xs:element name="code39" type="tns:Code39BarcodeType" />
+                        <xs:element name="datamatrix" type="tns:DataMatrixBarcodeType" />
+                        <xs:element name="ean13" type="tns:Ean13BarcodeType" />
+                        <xs:element name="ean8" type="tns:Ean8BarcodeType" />
+                        <xs:element name="itf" type="tns:ItfBarcodeType" />
+                        <xs:element name="pdf417" type="tns:Pdf417BarcodeType" />
+                        <xs:element name="qrcode" type="tns:QrBarcodeType" />
+                        <xs:element name="upca" type="tns:UpcaBarcodeType" />
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+            <xs:element id="barcodeDetectId" name="detect">
+                <xs:complexType>
+                    <xs:choice minOccurs="1" maxOccurs="unbounded">
+                        <xs:element name="selection" type="tns:BarcodeSelectionType" />
+                    </xs:choice>
+                    <xs:attribute name="outputFormat" default="json" type="tns:BarcodeDetectOutputFormatType" use="optional" />
+                    <xs:attribute name="inputFormat" default="pdf" type="tns:BarcodeDetectInputFormatType" use="optional" />
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="BaseBarcodeType">
+        <xs:all>
+            <xs:element name="position" type="tns:RectangleType" minOccurs="0" maxOccurs="1" />
+        </xs:all>
+        <xs:attribute name="charset" default="utf-8" type="xs:string" use="optional" />
+        <xs:attribute name="value" type="xs:string" use="required" />
+        <xs:attribute name="rotation" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                    <xs:maxExclusive value="360" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="margin" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="pages" default="">
+            <xs:simpleType>
+                <xs:restriction base="xs:string" />
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="BarcodeSelectionType">
+        <xs:all>
+            <xs:element name="scanArea" type="tns:RectangleType" />
+        </xs:all>
+        <xs:attribute name="pages" default="" type="xs:string" use="optional" />
+        <xs:attribute name="resolution" default="200" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="pureBarcode" default="false" type="xs:boolean" use="optional" />
+        <xs:attribute name="gs1" default="false" type="xs:boolean" use="optional" />
+        <xs:attribute name="tryHarder" default="true" type="xs:boolean" use="optional" />
+        <xs:attribute name="allowedLengths" default="" type="xs:string" use="optional" />
+        <xs:attribute name="barcode39CheckDigit" default="false" type="xs:boolean" use="optional" />
+        <xs:attribute name="codabarStartEndDigits" default="false" type="xs:boolean" use="optional" />
+        <xs:attribute name="upcEanExtensions" default="" type="xs:string" use="optional" />
+        <xs:attribute name="charset" default="utf-8" type="xs:string" use="optional" />
+        <xs:attribute name="formats" type="xs:string" use="required" />
+    </xs:complexType>
+    <xs:simpleType name="BarcodeDetectOutputFormatType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="xml" />
+            <xs:enumeration value="json" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="DataMatrixShapeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="default" />
+            <xs:enumeration value="rectangle" />
+            <xs:enumeration value="square" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Pdf417CompactionModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="text" />
+            <xs:enumeration value="numeric" />
+            <xs:enumeration value="byte" />
+            <xs:enumeration value="auto" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="QrCodeErrorCorrectionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="l" />
+            <xs:enumeration value="m" />
+            <xs:enumeration value="q" />
+            <xs:enumeration value="h" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="QrBarcodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseBarcodeType">
+                <xs:attribute name="errorCorrection" default="l" type="tns:QrCodeErrorCorrectionType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Pdf417BarcodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseBarcodeType">
+                <xs:attribute name="errorCorrection" default="2" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                            <xs:maxInclusive value="8" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="compact" default="false" type="xs:boolean" use="optional" />
+                <xs:attribute name="compactionMode" default="auto" type="tns:Pdf417CompactionModeType" use="optional" />
+                <xs:attribute name="dataCodewordsMin" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="dataCodewordsMax" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="symbolsPerCodewordMin" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="symbolsPerCodewordMax" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="shape" default="default" type="tns:DataMatrixShapeType" use="optional" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="DataMatrixBarcodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseBarcodeType">
+                <xs:attribute name="errorCorrection" default="2" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                            <xs:maxInclusive value="8" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="shape" default="default" type="tns:DataMatrixShapeType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="AztecBarcodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseBarcodeType">
+                <xs:attribute name="errorCorrection" default="7" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                            <xs:maxInclusive value="100" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="layers" default="0" use="optional">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="-4" />
+                            <xs:maxInclusive value="32" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CodabarBarcodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseBarcodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Code128BarcodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseBarcodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Code39BarcodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseBarcodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Ean13BarcodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseBarcodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Ean8BarcodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseBarcodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ItfBarcodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseBarcodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="UpcaBarcodeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseBarcodeType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="BarcodeDetectInputFormatType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="pdf" />
+            <xs:enumeration value="img" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

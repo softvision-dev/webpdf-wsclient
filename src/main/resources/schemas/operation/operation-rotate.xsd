@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="RotateType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:attribute name="pages" default="1" type="xs:string" />
+                <xs:attribute name="degrees" default="90">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0" />
+                            <xs:maxInclusive value="360" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="pageOrientation" default="any" type="tns:PageOrientationType" />
+                <xs:attribute name="pageGroup" default="all" type="tns:PageGroupType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="PageOrientationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="any" />
+            <xs:enumeration value="portrait" />
+            <xs:enumeration value="landscape" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PageGroupType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="all" />
+            <xs:enumeration value="even" />
+            <xs:enumeration value="odd" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

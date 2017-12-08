@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<operation xmlns="http://schema.webpdf.de/1.0/operation">
+    <barcode>
+        <add>
+            <qrcode value="webPDFTest" pages="1" rotation="90" charset="utf-8"
+                    errorCorrection="m" margin="1"/>
+        </add>
+    </barcode>
+</operation>

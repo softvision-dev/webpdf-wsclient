@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="DescriptionType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:attribute name="title" default="" type="xs:string" />
+                <xs:attribute name="author" default="" type="xs:string" />
+                <xs:attribute name="creator" default="" type="xs:string" />
+                <xs:attribute name="keywords" default="" type="xs:string" />
+                <xs:attribute name="producer" default="" type="xs:string" />
+                <xs:attribute name="subject" default="" type="xs:string" />
+                <xs:attribute name="allowEmptyValues" default="false" type="xs:boolean" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

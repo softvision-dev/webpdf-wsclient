@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="MergeType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:all>
+                    <xs:element name="data" type="tns:MergeFileDataType" minOccurs="1" maxOccurs="1" />
+                </xs:all>
+                <xs:attribute name="mode" default="atTheEnd" type="tns:MergeModeType" />
+                <xs:attribute name="page" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="sourceIsZip" default="false" type="xs:boolean" />
+                <xs:attribute name="outlineName" default="" type="xs:string" />
+                <xs:attribute name="resetMetadata" default="false" type="xs:boolean" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="MergeModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="atTheEnd" />
+            <xs:enumeration value="atTheBeginning" />
+            <xs:enumeration value="afterPage" />
+            <xs:enumeration value="beforePage" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="MergeFileDataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attribute name="format" default="pdf">
+                    <xs:simpleType>
+                        <xs:restriction base="tns:FileDataFormatType">
+                            <xs:enumeration value="id" />
+                            <xs:enumeration value="pdf" />
+                            <xs:enumeration value="zip" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="outlineName" default="" type="xs:string" />
+                <xs:attributeGroup ref="tns:FileDataGroup" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:simpleType name="FileDataFormatType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="pdf" />
+            <xs:enumeration value="zip" />
+            <xs:enumeration value="id" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

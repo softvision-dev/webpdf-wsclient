@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<operation xmlns="http://schema.webpdf.de/1.0/operation">
+    <converter embedFonts="true" pages="1-5">
+        <pdfa>
+            <convert level="3b" errorReport="message"/>
+        </pdfa>
+    </converter>
+</operation>

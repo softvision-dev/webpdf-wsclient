@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="WatermarkType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:choice>
+                    <xs:element name="text" type="tns:WatermarkTextType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="image" type="tns:WatermarkImageType" minOccurs="0" maxOccurs="1" />
+                </xs:choice>
+                <xs:attribute name="pages" default="" type="xs:string" />
+                <xs:attribute name="angle" default="45">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0" />
+                            <xs:maxInclusive value="360" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="WatermarkFontType">
+        <xs:attribute name="name" default="" type="xs:string" />
+        <xs:attribute name="outline" default="false" type="xs:boolean" />
+        <xs:attribute name="bold" default="false" type="xs:boolean" />
+        <xs:attribute name="italic" default="false" type="xs:boolean" />
+        <xs:attribute name="size" default="24">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                    <xs:maxInclusive value="1296" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="opacity" default="100" type="tns:OpacityType" />
+        <xs:attribute name="color" default="#A0A0A0" type="tns:RgbColorType" />
+    </xs:complexType>
+    <xs:simpleType name="WatermarkPositionModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="custom" />
+            <xs:enumeration value="top_left" />
+            <xs:enumeration value="top_center" />
+            <xs:enumeration value="top_right" />
+            <xs:enumeration value="center_left" />
+            <xs:enumeration value="center_center" />
+            <xs:enumeration value="center_right" />
+            <xs:enumeration value="bottom_left" />
+            <xs:enumeration value="bottom_center" />
+            <xs:enumeration value="bottom_right" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="WatermarkPositionType">
+        <xs:attribute name="x" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="y" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="width" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="height" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="position" default="center_center" type="tns:WatermarkPositionModeType" />
+        <xs:attribute name="aspectRatio" default="true" type="xs:boolean" />
+        <xs:attribute name="metrics" default="mm" type="tns:MetricsType" />
+    </xs:complexType>
+    <xs:complexType name="WatermarkTextType">
+        <xs:all>
+            <xs:element name="font" type="tns:WatermarkFontType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="position" type="tns:WatermarkPositionType" minOccurs="0" maxOccurs="1" />
+        </xs:all>
+        <xs:attribute name="text" default="Confidential" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="WatermarkImageType">
+        <xs:all>
+            <xs:element name="data" type="tns:WatermarkFileDataType" minOccurs="1" maxOccurs="1" />
+            <xs:element name="position" type="tns:WatermarkPositionType" minOccurs="0" maxOccurs="1" />
+        </xs:all>
+        <xs:attribute name="scale" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="opacity" default="25" type="tns:OpacityType" />
+    </xs:complexType>
+    <xs:complexType name="WatermarkFileDataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

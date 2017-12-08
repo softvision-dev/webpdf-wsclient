@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jaxb:bindings version="2.0"
+               xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+               xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               xmlns:simplify="http://jaxb2-commons.dev.java.net/basic/simplify"
+>
+
+    <!--
+        Annox: https://github.com/highsource/jaxb2-annotate-plugin
+        Important: Annotation classes must be in XJC's classpath!
+    -->
+
+    <jaxb:bindings>
+        <jaxb:globalBindings generateIsSetMethod="true" choiceContentProperty="false"/>
+
+    </jaxb:bindings>
+
+
+    <jaxb:bindings schemaLocation="operation.xsd" node="/xs:schema">
+        <!-- Rename the operation element -->
+        <jaxb:bindings node="//xs:element[@id='operationId']">
+            <jaxb:class name="OperationData"/>
+            <jaxb:property name="OperationData"/>
+        </jaxb:bindings>
+
+        <!-- Change for list of toolbox operations -->
+        <jaxb:bindings node="//xs:choice[@id='toolboxId']">
+            <jaxb:property name="toolbox"/>
+        </jaxb:bindings>
+    </jaxb:bindings>
+
+    <!--BarcodeOperation-->
+    <jaxb:bindings schemaLocation="operation-barcode.xsd" node="/xs:schema">
+        <jaxb:bindings node="//xs:complexType[@id='barcodeChoiceId']">
+            <simplify:property name="aztecOrCodabarOrCode128">
+                <simplify:as-element-property/>
+            </simplify:property>
+        </jaxb:bindings>
+    </jaxb:bindings>
+
+    <!--AnnotationType-->
+    <jaxb:bindings schemaLocation="operation-annotation.xsd" node="/xs:schema">
+        <jaxb:bindings
+                node="//xs:complexType[@name='AnnotationType']//xs:choice//xs:element[@name='add']//xs:complexType">
+            <simplify:property name="textOrMarkup">
+                <simplify:as-element-property/>
+            </simplify:property>
+        </jaxb:bindings>
+    </jaxb:bindings>
+
+</jaxb:bindings>

@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="ExtractionType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:choice>
+                    <xs:element name="text" type="tns:ExtractionTextType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="links" type="tns:ExtractionLinksType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="words" type="tns:ExtractionWordsType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="info" type="tns:ExtractionInfoType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="paragraphs" type="tns:ExtractionParagraphsType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="images" type="tns:ExtractionImagesType" minOccurs="0" maxOccurs="1" />
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="BaseExtractionType">
+        <xs:attribute name="fileFormat" default="xml">
+            <xs:simpleType>
+                <xs:restriction base="tns:ExtractionFileFormatType">
+                    <xs:enumeration value="json" />
+                    <xs:enumeration value="text" />
+                    <xs:enumeration value="xml" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="pages" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="ExtractionTextType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseExtractionType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ExtractionLinksType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseExtractionType">
+                <xs:all>
+                    <xs:element name="text" minOccurs="0" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:attribute name="fromText" default="false" type="xs:boolean" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ExtractionInfoType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseExtractionType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ExtractionWordsType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseExtractionType">
+                <xs:attribute name="removePunctuation" default="false" type="xs:boolean" />
+                <xs:attribute name="delimitAfterPunctuation" default="true" type="xs:boolean" />
+                <xs:attribute name="extendedSequenceCharacters" default="false" type="xs:boolean" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="ExtractionFileFormatType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="text" />
+            <xs:enumeration value="xml" />
+            <xs:enumeration value="json" />
+            <xs:enumeration value="zip" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="ExtractionParagraphsType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseExtractionType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ExtractionImagesType">
+        <xs:complexContent>
+            <xs:extension base="tns:ResourceExtractionType">
+                <xs:attribute name="fileNameTemplate" default="file[%d]" type="xs:string" />
+                <xs:attribute name="folderNameTemplate" default="page[%d]" type="xs:string" />
+                <xs:attribute name="fallbackFormat" default="png">
+                    <xs:simpleType>
+                        <xs:restriction base="tns:ExtractionImageFormat">
+                            <xs:enumeration value="jpeg" />
+                            <xs:enumeration value="png" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ResourceExtractionType">
+        <xs:attribute name="fileFormat" default="zip">
+            <xs:simpleType>
+                <xs:restriction base="tns:ExtractionFileFormatType">
+                    <xs:enumeration value="zip" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="pages" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:simpleType name="ExtractionImageFormat">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="png" />
+            <xs:enumeration value="jpeg" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

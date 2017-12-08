@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="SplitType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:attribute name="mode" default="last" type="tns:SplitModeType">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="DE">Definiert den Modus für die Split-Operation</xs:documentation>
+                        <xs:documentation xml:lang="EN">Defines the split mode</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="pages" default="1" type="xs:string" />
+                <xs:attribute name="startPage" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="fileNameTemplate" default="page[%d]" type="xs:string" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="SplitModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="last" />
+            <xs:enumeration value="first" />
+            <xs:enumeration value="list" />
+            <xs:enumeration value="single" />
+            <xs:enumeration value="each" />
+            <xs:enumeration value="group" />
+            <xs:enumeration value="burst" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

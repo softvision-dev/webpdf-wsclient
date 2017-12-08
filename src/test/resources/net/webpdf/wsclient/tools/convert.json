@@ -1,0 +1,12 @@
+{
+  "converter": {
+    "embedFonts": "true",
+    "pages": "1-5",
+    "pdfa": {
+      "convert": {
+        "level": "3b",
+        "errorReport": "MESSAGE"
+      }
+    }
+  }
+}

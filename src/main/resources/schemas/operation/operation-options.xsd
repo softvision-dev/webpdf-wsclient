@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="OptionsType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:attribute name="pageLayout" default="singlePage" type="tns:PageLayoutType" />
+                <xs:attribute name="initialView" default="none" type="tns:InitialViewType" />
+                <xs:attribute name="magnification" default="fitWidth" type="tns:MagnificationType" />
+                <xs:attribute name="magnificationZoom" default="100">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0" />
+                            <xs:maxInclusive value="6400" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="initialPage" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="PageLayoutType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="singlePage" />
+            <xs:enumeration value="singlePageContinous" />
+            <xs:enumeration value="twoPages" />
+            <xs:enumeration value="twoPagesContinous" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="InitialViewType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="outlines" />
+            <xs:enumeration value="thumbnails" />
+            <xs:enumeration value="fullscreen" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="MagnificationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="fitWidth" />
+            <xs:enumeration value="fitVisible" />
+            <xs:enumeration value="fitHeight" />
+            <xs:enumeration value="fitPage" />
+            <xs:enumeration value="fitActual" />
+            <xs:enumeration value="zoom" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
