@@ -12,11 +12,9 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +26,11 @@ public class DocumentManager {
     private final Map<String, RestDocument> documentMap = new HashMap<>();
     private final RestSession session;
 
+    /**
+     * Initializes a document manager for the given {@link RestSession}.
+     *
+     * @param session The {@link RestSession} a document manager shall be created for.
+     */
     public DocumentManager(RestSession session) {
         this.session = session;
     }
@@ -47,14 +50,21 @@ public class DocumentManager {
         }
 
         HttpRestRequest.createRequest(this.session)
-                .setAcceptHeader("application/octet-stream")
-                .buildRequest(HttpMethod.GET, "documents/" + document.getSourceDocumentId(), null)
-                .executeRequest(outputStream);
+            .setAcceptHeader("application/octet-stream")
+            .buildRequest(HttpMethod.GET, "documents/" + document.getSourceDocumentId(), null)
+            .executeRequest(outputStream);
 
         return true;
     }
 
-    public RestDocument uploadDocument(File file) throws IOException, URISyntaxException, JAXBException {
+    /**
+     * Uploads the given file to the webPDF server and returns the {@link RestDocument} reference to the uploaded files.
+     *
+     * @param file The file, that shall be uploaded for further processing.
+     * @return A {@link RestDocument} referencing the uploaded document.
+     * @throws IOException an {@link IOException}
+     */
+    public RestDocument uploadDocument(File file) throws IOException {
         if (file == null) {
             throw new ResultException(Result.build(Error.INVALID_PARAMETER));
         }
@@ -64,10 +74,18 @@ public class DocumentManager {
         HttpEntity entity = builder.build();
 
         return getDocument(HttpRestRequest.createRequest(session)
-                .buildRequest(HttpMethod.POST, "documents/", entity)
-                .executeRequest(DocumentFileBean.class));
+                               .buildRequest(HttpMethod.POST, "documents/", entity)
+                               .executeRequest(DocumentFileBean.class));
     }
 
+    /**
+     * Uploads the given {@link DocumentFileBean} to the webPDF server and returns the {@link RestDocument} reference
+     * to the uploaded resource.
+     *
+     * @param documentFileBean The {@link DocumentFileBean}, that shall be uploaded for further processing.
+     * @return A {@link RestDocument} referencing the uploaded resource.
+     * @throws ResultException a {@link ResultException}
+     */
     public RestDocument getDocument(DocumentFileBean documentFileBean) throws ResultException {
         if (documentFileBean == null || documentFileBean.getDocumentId() == null) {
             throw new ResultException(Result.build(Error.INVALID_DOCUMENT));

@@ -21,6 +21,7 @@ public final class WebServiceFactory {
     /**
      * Create a web service instance
      *
+     * @param <T>            {@link WebService} the webservice type
      * @param session        {@link Session}  context for the Web service
      * @param webServiceType the {@link WebServiceType} entry(CONVERTER, TOOLBOX, ...)
      * @return a specific {@link WebService} child instance
@@ -43,6 +44,7 @@ public final class WebServiceFactory {
      * {@link StreamSource}. The {@link StreamSource} is a XML or JSON content defined by {@link DataFormat} in the
      * {@link Session} object.
      *
+     * @param <T>          {@link WebService} the webservice type
      * @param session      {@link Session} context for the web service
      * @param streamSource {@link StreamSource} to create the {@link OperationData} and to detect the {@link WebServiceType}
      * @return a specific {@link WebService} child instance
@@ -56,7 +58,7 @@ public final class WebServiceFactory {
 
         // get the data format
         DataFormat dataFormat = session.getDataFormat();
-        if(dataFormat == null){
+        if (dataFormat == null) {
             throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
         }
 

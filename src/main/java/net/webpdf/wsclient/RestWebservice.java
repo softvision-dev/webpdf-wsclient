@@ -18,16 +18,28 @@ import java.io.UnsupportedEncodingException;
 
 abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebService<RestDocument, T_OPERATION_TYPE, RestDocument> {
 
+    /**
+     * Creates a webservice interface of the given {@link WebServiceType} for the given {@link Session}.
+     *
+     * @param webServiceType The {@link WebServiceType} interface, that shall be created.
+     * @param session        The {@link Session} the webservice interface shall be created for.
+     */
     RestWebservice(Session session, WebServiceType webServiceType) {
         super(webServiceType, session);
     }
 
+    /**
+     * Execute webservice operation and returns result
+     *
+     * @return the result
+     * @throws ResultException an {@link ResultException}
+     */
     @Override
     public RestDocument process() throws ResultException {
 
         String urlPath = this.webServiceType.equals(WebServiceType.URLCONVERTER)
-                ? webServiceType.getRestEndpoint()
-                : webServiceType.getRestEndpoint().replace(WebServiceType.ID_PLACEHOLDER, this.document.getSourceDocumentId());
+                             ? webServiceType.getRestEndpoint()
+                             : webServiceType.getRestEndpoint().replace(WebServiceType.ID_PLACEHOLDER, this.document.getSourceDocumentId());
 
         return ((RestSession) this.session).getDocumentManager().getDocument(
             HttpRestRequest.createRequest((RestSession) this.session)
@@ -45,9 +57,9 @@ abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebService<RestD
     private HttpEntity getWebServiceOptions() throws ResultException {
         try {
             StringEntity stringEntity = new StringEntity(
-                    this.session.getDataFormat() == DataFormat.XML
-                            ? SerializeHelper.toXML(this.operation, this.operation.getClass())
-                            : SerializeHelper.toJSON(this.operation)
+                this.session.getDataFormat() == DataFormat.XML
+                    ? SerializeHelper.toXML(this.operation, this.operation.getClass())
+                    : SerializeHelper.toJSON(this.operation)
             );
 
             stringEntity.setContentType(this.session.getDataFormat().getMimeType());

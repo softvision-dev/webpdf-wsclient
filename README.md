@@ -1,17 +1,13 @@
-#webPDF wsclient
-This repository contains a simpliefied client library project for the webPDF server. The wsclient library is a
+# webPDF wsclient
+This repository contains a simplified client library project for the webPDF server. The wsclient library is a
 optimized alternative compared to use REST APIs with self created content or generated stubs for SOAP. It supports
 REST and SOAP in one with object structure based parameterizing for all webservice calls.
 
 ![webPDF Logo](images/logo.png)
 
-[webPDF](https://www.webpdf.de) is a commercial multi-platform server solution for creating and processing 
-PDF documents. All applications which use wsclient require a running webPDF installation. A demo version as Windows installation 
-or Linux package or as a virtual machine can be downloaded from the 
-[product page](https://www.webpdf.de/en/download-web-pdf.html).
+[webPDF](https://www.webpdf.de/) is a commercial multi-platform server solution for creating and processing PDF documents. To use the webPDF Ant tasks, a running webPDF installation is required. A demo version as Windows installation, Linux package or as a virtual machine can be downloaded from the [product page](https://www.webpdf.de/en/download-web-pdf.html).
 
-> **Note**: This project is for webPDF version 7 or newer.
-
+> **Note**: Unless otherwise marked, the following is based on webPDF version 7 or newer.
 
 ## Instructions
  

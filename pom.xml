@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.webpdf.wsclient</groupId>
     <artifactId>webpdf-wsclient</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>webPDF - Web service client library</name>
     <description>webPDF client library for using the SOAP and REST web services</description>
@@ -14,6 +14,28 @@
         <name>SoftVision Development GmbH, Fulda, Germany</name>
         <url>https://www.softvision.de</url>
     </organization>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Bernd Engelhardt</name>
+            <email>bernd.engelhardt@softvision.de</email>
+            <organization>SoftVision Development</organization>
+            <organizationUrl>https://www.softvision.de/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Christian Appl</name>
+            <email>christian.appl@softvision.de</email>
+            <organization>SoftVision Development</organization>
+            <organizationUrl>https://www.softvision.de/</organizationUrl>
+        </developer>
+    </developers>
 
     <properties>
         <java.version>1.7</java.version>
@@ -34,6 +56,9 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.20.1</version>
                         <configuration>
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>${basedir}/src/main/resources</additionalClasspathElement>
+                            </additionalClasspathElements>
                             <excludes>
                                 <exclude>**/*IntegrationTest.java</exclude>
                             </excludes>
@@ -51,6 +76,9 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.20.1</version>
                         <configuration>
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>${basedir}/src/main/resources</additionalClasspathElement>
+                            </additionalClasspathElements>
                             <systemPropertyVariables>
                                 <protocol>http</protocol>
                                 <username>admin</username>
@@ -79,46 +107,38 @@
         <url>https://github.com/softvision-dev/webpdf-wsclient/issues</url>
     </issueManagement>
 
-    <licenses>
-        <license>
-            <name>Apache 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.3</version>
+            <version>4.5.4</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
-            <version>4.5.3</version>
+            <version>4.5.4</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.5</version>
+            <version>2.6</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.6</version>
+            <version>3.7</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.1</version>
+            <version>2.8.2</version>
             <scope>compile</scope>
         </dependency>
 
@@ -132,7 +152,7 @@
         <dependency>
             <groupId>pl.pragmatists</groupId>
             <artifactId>JUnitParams</artifactId>
-            <version>1.0.6</version>
+            <version>1.1.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -171,7 +191,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.4</version>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <phase>verify</phase>
@@ -180,6 +200,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -205,7 +228,7 @@
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.13.2</version>
+                <version>0.13.3</version>
                 <configuration>
                     <plugins>
                         <plugin>
@@ -262,7 +285,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.0.2</version>
                 <executions>
                     <execution>
                         <phase>package</phase>

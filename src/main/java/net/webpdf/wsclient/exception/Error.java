@@ -31,11 +31,23 @@ public enum Error {
     private final int code;
     private final String message;
 
+    /**
+     * Instantiates an Enum object representing the given error code and message.
+     *
+     * @param code    The error code represented by the created enum instance
+     * @param message The error message describing the error represented by the enum instance.
+     */
     Error(int code, String message) {
         this.code = code;
         this.message = message;
     }
 
+    /**
+     * Returns the Enum object representing the given errorCode.
+     *
+     * @param errorCode The errorCode an enum representation shall be found for.
+     * @return The Enum object representing the given errorCode.
+     */
     public static Error getName(int errorCode) {
         for (Error error : Error.values()) {
             if (error.getCode() == errorCode) {
@@ -45,13 +57,22 @@ public enum Error {
         return Error.UNKNOWN_EXCEPTION;
     }
 
+    /**
+     * Returns the error message describing the error represented by the enum instance.
+     *
+     * @return The error message describing the error represented by the enum instance.
+     */
     protected String getMessage() {
         return this.message == null ? "" : this.message;
     }
 
+    /**
+     * Returns the error code represented by the created enum instance
+     *
+     * @return The error code represented by the created enum instance
+     */
     public int getCode() {
         return this.code;
     }
-
 }
 

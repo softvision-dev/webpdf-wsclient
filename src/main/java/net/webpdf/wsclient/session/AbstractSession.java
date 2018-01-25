@@ -34,7 +34,7 @@ abstract class AbstractSession implements Session {
      *
      * @param url                base url for webPDF server
      * @param webServiceProtocol protocol for Web service operation
-     * @throws URISyntaxException a {@link URISyntaxException}
+     * @throws ResultException a {@link ResultException}
      */
     AbstractSession(URL url, WebServiceProtocol webServiceProtocol) throws ResultException {
         this.webServiceProtocol = webServiceProtocol;
@@ -42,6 +42,11 @@ abstract class AbstractSession implements Session {
         buildBaseURL(url);
     }
 
+    /**
+     * Returns the {@link WebServiceProtocol} this session is using.
+     *
+     * @return The {@link WebServiceProtocol} this session is using.
+     */
     public WebServiceProtocol getWebServiceProtocol() {
         return this.webServiceProtocol;
     }
@@ -96,20 +101,37 @@ abstract class AbstractSession implements Session {
         }
     }
 
+    /**
+     * Returns an {@link URI} pointing to the webservice interface of the session.
+     *
+     * @param subPath The location of the webservice interface on the webPDF server.
+     * @return an {@link URI} pointing to the webservice interface of the session.
+     * @throws ResultException a {@link ResultException}
+     */
     public URI getURI(String subPath) throws ResultException {
         try {
             return new URIBuilder(this.baseUrl)
-                    .setPath(this.baseUrl.getPath() + this.basePath + subPath)
-                    .build();
+                       .setPath(this.baseUrl.getPath() + this.basePath + subPath)
+                       .build();
         } catch (URISyntaxException ex) {
             throw new ResultException(Result.build(Error.INVALID_URL, ex));
         }
     }
 
+    /**
+     * Returns the {@link Credentials} authorizing this session.
+     *
+     * @return The {@link Credentials} authorizing this session.
+     */
     public Credentials getCredentials() {
         return credentials;
     }
 
+    /**
+     * Sets the {@link Credentials} authorizing this session.
+     *
+     * @param credentials The {@link Credentials} authorizing this session.
+     */
     public void setCredentials(Credentials credentials) {
         // set new credentials
         if (credentials != null) {
@@ -118,8 +140,12 @@ abstract class AbstractSession implements Session {
         }
     }
 
+    /**
+     * Returns the {@link DataFormat} accepted by this session.
+     *
+     * @return The {@link DataFormat} accepted by this session.
+     */
     public DataFormat getDataFormat() {
         return dataFormat;
     }
-
 }

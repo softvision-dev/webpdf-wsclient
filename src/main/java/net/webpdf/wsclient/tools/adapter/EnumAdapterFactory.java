@@ -60,7 +60,7 @@ public class EnumAdapterFactory implements TypeAdapterFactory {
             }
         }
 
-        public T read(JsonReader in) throws IOException {
+        public T read(JsonReader in) {
             // we don't read any JSON value
             return null;
         }

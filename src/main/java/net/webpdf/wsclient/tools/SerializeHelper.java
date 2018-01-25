@@ -42,6 +42,15 @@ public class SerializeHelper {
         }
     }
 
+    /**
+     * Deserialize the object to the given Type T from the xml {@link HttpEntity}.
+     *
+     * @param <T>        The type T of the target object.
+     * @param httpEntity the xml {@link HttpEntity}
+     * @param type       the type T of the target object.
+     * @return An object of type T representing the xml {@link HttpEntity}.
+     * @throws ResultException a {@link ResultException}
+     */
     public static <T> T fromXML(HttpEntity httpEntity, Class<T> type) throws ResultException {
         try {
             if (httpEntity == null) {
@@ -58,6 +67,15 @@ public class SerializeHelper {
         }
     }
 
+    /**
+     * Deserialize the object to the given Type T from the xml {@link StreamSource}.
+     *
+     * @param <T>          The type T of the target object.
+     * @param streamSource the xml {@link StreamSource}
+     * @param type         the type T of the target object.
+     * @return An object of type T representing the xml {@link StreamSource}.
+     * @throws ResultException a {@link ResultException}
+     */
     public static <T> T fromXML(StreamSource streamSource, Class<T> type) throws ResultException {
         if (streamSource == null || type == null) {
             throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
@@ -87,6 +105,15 @@ public class SerializeHelper {
         }
     }
 
+    /**
+     * Deserialize the object to the given Type T from the json {@link HttpEntity}.
+     *
+     * @param <T>        The type T of the target object.
+     * @param httpEntity the json {@link HttpEntity}
+     * @param type       the type T of the target object.
+     * @return An object of type T representing the json {@link HttpEntity}.
+     * @throws ResultException a {@link ResultException}
+     */
     public static <T> T fromJSON(HttpEntity httpEntity, Class<T> type) throws ResultException {
         try {
             if (httpEntity == null) {
@@ -102,6 +129,15 @@ public class SerializeHelper {
         }
     }
 
+    /**
+     * Deserialize the object to the given Type T from the json {@link StreamSource}.
+     *
+     * @param <T>          The type T of the target object.
+     * @param streamSource the json {@link StreamSource}
+     * @param type         the type T of the target object.
+     * @return An object of type T representing the json {@link StreamSource}.
+     * @throws ResultException a {@link ResultException}
+     */
     public static <T> T fromJSON(StreamSource streamSource, Class<T> type) throws ResultException {
         if (streamSource == null || type == null) {
             throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
@@ -109,8 +145,8 @@ public class SerializeHelper {
         try {
             GsonBuilder gsonBuilder = new GsonBuilder();
             Gson gson = gsonBuilder
-                    .registerTypeAdapter(BaseToolboxType.class, new BaseToolboxTypeAdapter())
-                    .create();
+                            .registerTypeAdapter(BaseToolboxType.class, new BaseToolboxTypeAdapter())
+                            .create();
 
             return gson.fromJson(streamSource.getReader(), type);
         } catch (JsonParseException ex) {
@@ -129,9 +165,9 @@ public class SerializeHelper {
     public static String toJSON(Object object) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         Gson gson = gsonBuilder
-                .registerTypeAdapterFactory(new EnumAdapterFactory())
-                .registerTypeAdapter(BaseToolboxType.class, new BaseToolboxTypeAdapter())
-                .create();
+                        .registerTypeAdapterFactory(new EnumAdapterFactory())
+                        .registerTypeAdapter(BaseToolboxType.class, new BaseToolboxTypeAdapter())
+                        .create();
         return gson.toJson(object);
     }
 
@@ -141,6 +177,7 @@ public class SerializeHelper {
      * @param object the object
      * @param type   the object type class
      * @return the xml {@link String}
+     * @throws ResultException an {@link ResultException}
      */
     public static String toXML(Object object, Class type) throws ResultException {
         if (object == null || type == null) {

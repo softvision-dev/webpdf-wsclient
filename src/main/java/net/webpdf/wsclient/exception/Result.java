@@ -33,6 +33,13 @@ public final class Result {
         return new Result(error, 0, null);
     }
 
+    /**
+     * Builds a new instance of an operation result
+     *
+     * @param error    wrapped error code
+     * @param exitCode wrapped exit code
+     * @return new result instance
+     */
     public static Result build(Error error, int exitCode) {
         return new Result(error, exitCode, null);
     }

@@ -35,10 +35,21 @@ public class HttpRestRequest {
         this.dataFormat = session.getDataFormat();
     }
 
+    /**
+     * Creates a Rest request handling the messages of the given {@link RestSession}
+     * @param session the {@link RestSession} this Rest request is handling.
+     * @return A Rest request handling the messages of the given {@link RestSession}
+     */
     public static HttpRestRequest createRequest(RestSession session) {
         return new HttpRestRequest(session);
     }
 
+    /**
+     * Initializes the MIME type accepted by this REST request and returns a reference to this request.
+     *
+     * @param mimeType The MIME type accepted by this REST request.
+     * @return A reference to this REST request.
+     */
     public HttpRestRequest setAcceptHeader(String mimeType) {
         this.acceptHeader = mimeType;
         return this;
@@ -144,9 +155,14 @@ public class HttpRestRequest {
             statusLine.getStatusCode() + " " + statusLine.getReasonPhrase() + "\n" + responseOutput));
     }
 
-
+    /**
+     * Executes the HTTP request
+     *
+     * @param outputStream Target stream for the response
+     * @throws ResultException a {@link ResultException}
+     */
     public void executeRequest(OutputStream outputStream) throws ResultException {
-        if(outputStream == null){
+        if (outputStream == null) {
             throw new ResultException(Result.build(Error.INVALID_PARAMETER));
         }
         try (CloseableHttpResponse closeableHttpResponse = this.httpClient.execute(httpUriRequest)) {

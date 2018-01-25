@@ -22,21 +22,39 @@ import java.util.Collections;
 import java.util.Map;
 
 abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
-        extends AbstractWebService<SoapDocument, T_OPERATION_TYPE, SoapDocument> {
+    extends AbstractWebService<SoapDocument, T_OPERATION_TYPE, SoapDocument> {
 
     private final MTOMFeature feature = new MTOMFeature();
     private final QName qname;
     private final URI webserviceURL;
     T_WEBPDF_PORT port = null;
 
+    /**
+     * Creates a SOAP webservice interface of the given {@link WebServiceType} for the given {@link Session}.
+     *
+     * @param webServiceType The {@link WebServiceType} interface, that shall be created.
+     * @param session        The {@link Session} the webservice interface shall be created for.
+     */
     SoapWebService(Session session, WebServiceType webServiceType) throws ResultException {
         super(webServiceType, session);
         this.qname = new QName(webServiceType.getSoapNamespaceURI(), webServiceType.getSoapLocalPart());
         this.webserviceURL = this.session.getURI(webServiceType.getSoapEndpoint());
     }
 
+    /**
+     * Executes webservice operation and returns {@link DataHandler} of the result document.
+     *
+     * @return A {@link DataHandler} of the result document.
+     * @throws WebserviceException a {@link WebserviceException}
+     */
     abstract DataHandler processService() throws WebserviceException;
 
+    /**
+     * Executes webservice operation and returns result
+     *
+     * @return the result
+     * @throws ResultException a {@link ResultException}
+     */
     @Override
     public SoapDocument process() throws ResultException {
 
@@ -63,19 +81,30 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
         }
     }
 
+    /**
+     * Returns the {@link QName} of the current SOAP webservice.
+     *
+     * @return the {@link QName} of the current SOAP webservice.
+     */
     QName getQName() {
         return this.qname;
     }
 
+    /**
+     * Returns the {@link URL} of the wsdl document.
+     *
+     * @return the {@link URL} of the wsdl document.
+     * @throws ResultException a {@link ResultException}
+     */
     URL getWsdlDocumentLocation() throws ResultException {
 
         boolean useLocalWsdl = (!(this.session instanceof SoapSession)) || ((SoapSession) session).isUseLocalWsdl();
 
         try {
             URL url = useLocalWsdl
-                    ? ConverterWebService.class.getClassLoader().getResource(
-                    "wsdl/" + this.webServiceType.getSoapEndpoint() + ".wsdl")
-                    : this.webserviceURL.toURL();
+                          ? ConverterWebService.class.getClassLoader().getResource(
+                "wsdl/" + this.webServiceType.getSoapEndpoint() + ".wsdl")
+                          : this.webserviceURL.toURL();
 
             if (url == null) {
                 throw new ResultException(Result.build(Error.WSDL_INVALID_FILE));
@@ -88,6 +117,11 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
         }
     }
 
+    /**
+     * Returns the configuration of the {@link MTOMFeature} for the current webservice call.
+     *
+     * @return The configuration of the {@link MTOMFeature} for the current webservice call.
+     */
     MTOMFeature getFeature() {
         return feature;
     }
@@ -103,9 +137,9 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
         if (session.getCredentials() != null) {
 
             String authHeader = "Basic " + DatatypeConverter.printBase64Binary((
-                    session.getCredentials().getUserPrincipal().toString() + ":"
-                            + session.getCredentials().getPassword())
-                    .getBytes());
+                session.getCredentials().getUserPrincipal().toString() + ":"
+                    + session.getCredentials().getPassword())
+                                                                                   .getBytes());
 
             headers.put("Authorization", Collections.singletonList(authHeader));
 
