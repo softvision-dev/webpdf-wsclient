@@ -4,7 +4,7 @@ The library implements the required stubs and session management in ready-to-use
 
 ![webPDF Logo](images/logo.png)
 
-[webPDF](https://www.webpdf.de/) is a commercial multi-platform server solution for creating and processing PDF documents. To use the webPDF Ant tasks, a running webPDF installation is required. A demo version as Windows installation, Linux package or as a virtual machine can be downloaded from the [product page](https://www.webpdf.de/en/download-web-pdf.html).
+[webPDF](https://www.webpdf.de/) is a commercial multi-platform server solution for creating and processing PDF documents. To use the webPDF wsclient library for webservice calls, a running webPDF installation is required. A demo version as Windows installation, Linux package or as a virtual machine can be downloaded from the [product page](https://www.webpdf.de/en/download-web-pdf.html).
 
 > **Note**: Unless otherwise marked, the following is based on webPDF version 7 or newer.
 
