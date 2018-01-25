@@ -1,7 +1,6 @@
 # webPDF wsclient
-This repository contains a simplified client library project for the webPDF server. The wsclient library is a
-optimized alternative compared to use REST APIs with self created content or generated stubs for SOAP. It supports
-REST and SOAP in one with object structure based parameterizing for all webservice calls.
+This repository contains a simplified and optimized client library for the webPDF server, and serves as an alternative to more complex REST or SOAP APIs.
+The library implements the required stubs and session management in ready-to-use interface classes and provides a common object based parameterization for webservice calls in both protocols.
 
 ![webPDF Logo](images/logo.png)
 
@@ -15,7 +14,7 @@ REST and SOAP in one with object structure based parameterizing for all webservi
   
 
 ## Usage
-Here are 2 simple samples how you could use wsclient.
+Two simple usage samples for wsclient:
 
 ##### Usage with REST
  ```java
