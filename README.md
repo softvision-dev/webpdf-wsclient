@@ -17,7 +17,7 @@ REST and SOAP in one with object structure based parameterizing for all webservi
 ## Usage
 Here are 2 simple samples how you could use wsclient.
 
-#####Usage with REST
+##### Usage with REST
  ```java
  import net.webpdf.wsclient.webservice.*;
  import net.webpdf.wsclient.webservice.schemas.operation.*;
@@ -54,7 +54,7 @@ Here are 2 simple samples how you could use wsclient.
           
  ```
  
-#####Usage with SOAP
+##### Usage with SOAP
  ```java
  import net.webpdf.wsclient.webservice.*;
  import net.webpdf.wsclient.webservice.documents.SoapDocument;
@@ -89,9 +89,7 @@ Here are 2 simple samples how you could use wsclient.
          } catch (IOException | URISyntaxException | JAXBException ex) {...
   
  ``` 
-
-More samples are in the [test directory](test) packages [samples](test/net/webpdf/wsclient/samples) and [testapp](test/net/webpdf/wsclient/testapp)
-
+ 
 ## License
 Please, see the [license](LICENSE) file for more information.
 
