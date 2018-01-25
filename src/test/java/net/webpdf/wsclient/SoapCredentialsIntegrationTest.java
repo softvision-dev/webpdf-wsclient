@@ -26,8 +26,8 @@ public class SoapCredentialsIntegrationTest {
     private final TestResources testResources = new TestResources(SoapCredentialsIntegrationTest.class);
 
     private void executeConverter(Session session) throws Exception {
-        File file = new File("./files/lorem-ipsum.docx");
-        File fileOut = new File("./result/converter_soap.pdf");
+        File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+        File fileOut = testResources.getResource("integration/result/converter_soap.pdf");
         FileUtils.deleteQuietly(fileOut);
 
         try (FileInputStream fileInputStream = new FileInputStream(file);
@@ -93,8 +93,8 @@ public class SoapCredentialsIntegrationTest {
              StringReader stringReader = new StringReader(xml)) {
             ConverterWebService webService = WebServiceFactory.createInstance(session, new StreamSource(stringReader));
 
-            File file = new File("./files/lorem-ipsum.docx");
-            File fileOut = new File("./result/converter_soap.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+            File fileOut = testResources.getResource("integration/result/converter_soap.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));

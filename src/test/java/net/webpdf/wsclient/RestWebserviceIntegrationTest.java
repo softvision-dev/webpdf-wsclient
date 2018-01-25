@@ -42,8 +42,8 @@ public class RestWebserviceIntegrationTest {
 
             ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
-            File file = new File("./files/lorem-ipsum.docx");
-            File fileOut = new File("./result/converter_rest.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+            File fileOut = testResources.getResource("integration/result/converter_rest.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
@@ -73,8 +73,8 @@ public class RestWebserviceIntegrationTest {
 
             ToolboxRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
 
-            File file = new File("./files/lorem-ipsum.pdf");
-            File fileOut = new File("./result/toolbox_rest.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+            File fileOut = testResources.getResource("integration/result/toolbox_rest.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
@@ -89,7 +89,7 @@ public class RestWebserviceIntegrationTest {
             mergeType.getData().setFormat(FileDataFormatType.PDF);
 
             try {
-                mergeType.getData().setValue(Files.readAllBytes(Paths.get("./files/merge.pdf")));
+                mergeType.getData().setValue(Files.readAllBytes(testResources.getResource("integration/files/merge.pdf").toPath()));
             } catch (IOException ex) {
                 System.out.println("Unable to add merge file data to params: " + ex.getMessage());
             }
@@ -125,8 +125,8 @@ public class RestWebserviceIntegrationTest {
 
             SignatureRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.SIGNATURE);
 
-            File file = new File("./files/lorem-ipsum.pdf");
-            File fileOut = new File("./result/signature_rest.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+            File fileOut = testResources.getResource("integration/result/signature_rest.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
@@ -156,7 +156,7 @@ public class RestWebserviceIntegrationTest {
             signatureImageType.setPosition(SignatureImagePositionType.LEFT);
 
             SignatureFileDataType signatureFileDataType = new SignatureFileDataType();
-            signatureFileDataType.setValue(Files.readAllBytes(Paths.get("./files/logo.png")));
+            signatureFileDataType.setValue(Files.readAllBytes(testResources.getResource("integration/files/logo.png").toPath()));
             signatureImageType.setData(signatureFileDataType);
             webService.getOperation().getAdd().getAppearance().setImage(signatureImageType);
 
@@ -177,8 +177,8 @@ public class RestWebserviceIntegrationTest {
 
             PdfaRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.PDFA);
 
-            File file = new File("./files/lorem-ipsum.pdf");
-            File fileOut = new File("./result/pdfa_rest.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+            File fileOut = testResources.getResource("integration/result/pdfa_rest.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
@@ -196,7 +196,7 @@ public class RestWebserviceIntegrationTest {
     }
 
     @Test
-    public void testOcr() throws IOException, URISyntaxException, JAXBException {
+    public void testOcr() throws Exception {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
             testResources.getArguments().buildServerUrl())) {
 
@@ -204,8 +204,8 @@ public class RestWebserviceIntegrationTest {
 
             OcrRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.OCR);
 
-            File file = new File("./files/ocr.png");
-            File fileOut = new File("./result/ocr_rest.pdf");
+            File file = testResources.getResource("integration/files/ocr.png");
+            File fileOut = testResources.getResource("integration/result/ocr_rest.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
@@ -228,7 +228,7 @@ public class RestWebserviceIntegrationTest {
     }
 
     @Test
-    public void testBarcode() throws IOException, URISyntaxException, JAXBException {
+    public void testBarcode() throws Exception {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
             testResources.getArguments().buildServerUrl())) {
 
@@ -236,8 +236,8 @@ public class RestWebserviceIntegrationTest {
 
             BarcodeRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.BARCODE);
 
-            File file = new File("./files/lorem-ipsum.pdf");
-            File fileOut = new File("./result/barcode_rest.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+            File fileOut = testResources.getResource("integration/result/barcode_rest.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
@@ -286,7 +286,7 @@ public class RestWebserviceIntegrationTest {
     }
 
     @Test
-    public void testUrlConverter() throws IOException, JAXBException, URISyntaxException {
+    public void testUrlConverter() throws Exception {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
             testResources.getArguments().buildServerUrl())) {
 
@@ -296,7 +296,7 @@ public class RestWebserviceIntegrationTest {
 
             webService.setDocument(new RestDocument(/*null,*/ null));
 
-            File fileOut = new File("./result/urlconverter_rest.pdf");
+            File fileOut = testResources.getResource("integration/result/urlconverter_rest.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.getOperation().setUrl("https://www.webpdf.de");
@@ -320,7 +320,7 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testToolboxStream() throws Exception {
         File configFile = testResources.getResource("toolbox.json");
-        File file = new File("./files/lorem-ipsum.pdf");
+        File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
         String json = FileUtils.readFileToString(configFile, Charset.defaultCharset());
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
             testResources.getArguments().buildServerUrl());
@@ -330,7 +330,7 @@ public class RestWebserviceIntegrationTest {
             session.login();
             ToolboxRestWebService webService = WebServiceFactory.createInstance(session, streamSource);
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
-            File fileOut = new File("./result/toolbox_stream_rest.pdf");
+            File fileOut = testResources.getResource("integration/result/toolbox_stream_rest.pdf");
             FileUtils.deleteQuietly(fileOut);
             RestDocument restDocument = webService.process();
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -349,8 +349,8 @@ public class RestWebserviceIntegrationTest {
 
             ToolboxRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
 
-            File file = new File("./files/lorem-ipsum.pdf");
-            File fileOut = new File("./result/toolbox_image_rest.jpeg");
+            File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+            File fileOut = testResources.getResource("integration/result/toolbox_image_rest.jpeg");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));

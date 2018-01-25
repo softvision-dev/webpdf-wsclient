@@ -24,8 +24,8 @@ public class RestCredentialsIntegrationTest {
     private void executeConverter(RestSession session) throws Exception {
         ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
-        File file = new File("./files/lorem-ipsum.docx");
-        File fileOut = new File("./result/converter_rest.pdf");
+        File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+        File fileOut = testResources.getResource("integration/result/converter_rest.pdf");
         FileUtils.deleteQuietly(fileOut);
 
         webService.setDocument(session.getDocumentManager().uploadDocument(file));
@@ -88,8 +88,8 @@ public class RestCredentialsIntegrationTest {
 
             ConverterRestWebService webService = WebServiceFactory.createInstance(session, new StreamSource(stringReader));
 
-            File file = new File("./files/lorem-ipsum.docx");
-            File fileOut = new File("./result/converter_rest.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+            File fileOut = testResources.getResource("integration/result/converter_rest.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));

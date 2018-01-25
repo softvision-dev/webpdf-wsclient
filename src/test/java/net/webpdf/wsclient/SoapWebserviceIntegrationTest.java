@@ -25,8 +25,8 @@ public class SoapWebserviceIntegrationTest {
             testResources.getArguments().buildServerUrl())) {
             ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
-            File file = new File("./files/lorem-ipsum.docx");
-            File fileOut = new File("./result/converter_soap.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+            File fileOut = testResources.getResource("integration/result/converter_soap.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));
@@ -52,8 +52,8 @@ public class SoapWebserviceIntegrationTest {
             testResources.getArguments().buildServerUrl())) {
             ToolboxWebService webService = WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
 
-            File file = new File("./files/lorem-ipsum.pdf");
-            File fileOut = new File("./result/toolbox_soap.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+            File fileOut = testResources.getResource("integration/result/toolbox_soap.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));
@@ -68,7 +68,7 @@ public class SoapWebserviceIntegrationTest {
             mergeType.getData().setFormat(FileDataFormatType.PDF);
 
             try {
-                mergeType.getData().setValue(Files.readAllBytes(Paths.get("./files/merge.pdf")));
+                mergeType.getData().setValue(Files.readAllBytes(testResources.getResource("integration/files/merge.pdf").toPath()));
             } catch (IOException ex) {
                 System.out.println("Unable to add merge file data to params: " + ex.getMessage());
             }
@@ -95,8 +95,8 @@ public class SoapWebserviceIntegrationTest {
             testResources.getArguments().buildServerUrl())) {
             SignatureWebService webService = WebServiceFactory.createInstance(session, WebServiceType.SIGNATURE);
 
-            File file = new File("./files/lorem-ipsum.pdf");
-            File fileOut = new File("./result/signature_soap.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+            File fileOut = testResources.getResource("integration/result/signature_soap.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));
@@ -125,7 +125,7 @@ public class SoapWebserviceIntegrationTest {
             SignatureImageType signatureImageType = new SignatureImageType();
             signatureImageType.setPosition(SignatureImagePositionType.LEFT);
             SignatureFileDataType signatureFileDataType = new SignatureFileDataType();
-            signatureFileDataType.setValue(Files.readAllBytes(Paths.get("./files/logo.png")));
+            signatureFileDataType.setValue(Files.readAllBytes(testResources.getResource("integration/files/logo.png").toPath()));
             signatureImageType.setData(signatureFileDataType);
             webService.getOperation().getAdd().getAppearance().setImage(signatureImageType);
 
@@ -140,8 +140,8 @@ public class SoapWebserviceIntegrationTest {
             testResources.getArguments().buildServerUrl())) {
             PdfaWebService webService = WebServiceFactory.createInstance(session, WebServiceType.PDFA);
 
-            File file = new File("./files/lorem-ipsum.pdf");
-            File fileOut = new File("./result/pdfa_soap.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+            File fileOut = testResources.getResource("integration/result/pdfa_soap.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));
@@ -166,8 +166,8 @@ public class SoapWebserviceIntegrationTest {
             testResources.getArguments().buildServerUrl())) {
             OcrWebService webService = WebServiceFactory.createInstance(session, WebServiceType.OCR);
 
-            File file = new File("./files/ocr.png");
-            File fileOut = new File("./result/ocr_soap.pdf");
+            File file = testResources.getResource("integration/files/ocr.png");
+            File fileOut = testResources.getResource("integration/result/ocr_soap.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));
@@ -193,8 +193,8 @@ public class SoapWebserviceIntegrationTest {
             testResources.getArguments().buildServerUrl())) {
             BarcodeWebService webService = WebServiceFactory.createInstance(session, WebServiceType.BARCODE);
 
-            File file = new File("./files/lorem-ipsum.pdf");
-            File fileOut = new File("./result/barcode_soap.pdf");
+            File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+            File fileOut = testResources.getResource("integration/result/barcode_soap.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));
@@ -245,7 +245,7 @@ public class SoapWebserviceIntegrationTest {
             testResources.getArguments().buildServerUrl())) {
             UrlConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.URLCONVERTER);
 
-            File fileOut = new File("./result/urlconverter_soap.pdf");
+            File fileOut = testResources.getResource("integration/result/urlconverter_soap.pdf");
             FileUtils.deleteQuietly(fileOut);
 
             webService.setDocument(new SoapDocument(null, fileOut));
