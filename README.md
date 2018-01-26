@@ -12,6 +12,12 @@ The library implements the required stubs and session management in ready-to-use
  
  [Maven](https://maven.apache.org/): mvn clean install
   
+### Tests
+Building this project with Maven, will also cause the execution of some basic unit tests, which will check the proper functionality of all classes contained in this library.
+To test the client-server communication with the webPDF server itself, you will have to activate the maven "integration" profile, which will cause the execution of extended integration tests during the "test" phase.
+The integration tests require a running instance of the webPDF server with an activated SSL "connector" (https). 
+For a proper execution of the integration test, the insecure http "connector" must be activated as well.
+You can find help on configuring SSL on your webPDF server here: [SSL Configuration](https://www.webpdf.de/fileadmin/user_upload/softvision.de/files/products/webpdf/help/enu/server_security_ssl.htm)
 
 ## Usage
 Two simple usage samples for wsclient:
