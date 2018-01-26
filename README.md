@@ -8,19 +8,31 @@ The library implements the required stubs and session management in ready-to-use
 
 > **Note**: Unless otherwise marked, the following is based on webPDF version 7 or newer.
 
-## Instructions
+## Installation
+You can clone this repository with 'Git' to your local system. Another way to use this library without using 'Git' is to download the zip file containing the current version (using the following link or by clicking the "Download ZIP" button on the repo page).
+
+[Download the library as ZIP](https://github.com/softvision-dev/webpdf-wsclient/archive/master.zip)
+
+This library is build with the IntelliJ IDEA IDE. You can directly open and run the project from inside the IDE. For other IDEs you have to adapt the project accordingly.
+
+### Building the project
+This project uses Maven as it's Build-Management-Tool. To produce all necessary artifacts, you can simply run:
  
  [Maven](https://maven.apache.org/): mvn clean install
   
-### Tests
-Building this project with Maven, will also cause the execution of some basic unit tests, which will check the proper functionality of all classes contained in this library.
+### Testing the project
+The Maven Build lifecycle, will also cause the execution of some basic unit tests, which will check the proper functionality of all classes contained in this library.
 To test the client-server communication with the webPDF server itself, you will have to activate the maven "integration" profile, which will cause the execution of extended integration tests during the "test" phase.
 The integration tests require a running instance of the webPDF server with an activated SSL "connector" (https). 
-For a proper execution of the integration test, the insecure http "connector" must be activated as well.
-You can find help on configuring SSL on your webPDF server here: [SSL Configuration](https://www.webpdf.de/fileadmin/user_upload/softvision.de/files/products/webpdf/help/enu/server_security_ssl.htm)
+For a proper execution of the integration tests, the insecure http "connector" must be activated as well.
+You can find help concerning the SSL configuration here: [SSL Configuration](https://www.webpdf.de/fileadmin/user_upload/softvision.de/files/products/webpdf/help/enu/server_security_ssl.htm)
 
 ## Usage
-Two simple usage samples for wsclient:
+The webPDF server provides a broad palette of webservices - too many to describe the interface for each of them here.
+But you can find a description of all [webservices](https://www.webpdf.de/fileadmin/user_upload/softvision.de/files/products/webpdf/help/enu/webservice_general.htm) in our user manual.
+You might find our [parameter documentation](https://www.webpdf.de/fileadmin/user_upload/softvision.de/files/products/webpdf/help/enu/webservice_parameter.htm) helpful as well. 
+
+Further we want to provide two simple usage examples for the wsclient library:
 
 ##### Usage with REST
  ```java
