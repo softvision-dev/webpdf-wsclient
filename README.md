@@ -34,7 +34,7 @@ You might find our [parameter documentation](https://www.webpdf.de/fileadmin/use
 
 Further we want to provide two simple usage examples for the wsclient library:
 
-##### Usage with REST
+### Usage with REST
  ```java
  try(Session session= SessionFactory.createInstance(WebServiceProtocol.REST,new URL("http://localhost:8080/webPDF/"))){
     ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
@@ -58,7 +58,7 @@ Further we want to provide two simple usage examples for the wsclient library:
           
  ```
  
-##### Usage with SOAP
+### Usage with SOAP
  ```java
  try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, new URL("http://localhost:8080/webPDF/"))) {
     ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
@@ -80,7 +80,7 @@ Further we want to provide two simple usage examples for the wsclient library:
  } catch (IOException | URISyntaxException | JAXBException ex) {...
   
  ``` 
-##### SSL/TLS Configuration
+### SSL/TLS Configuration
 The SessionFactory offers a method to create a secure HTTPS Session via the "TLSContext" class. TLS is the official successor of SSL and the webPDF wsclient library does only support the protocol versions:
 - TLSv1, TLSv1.1, TLSv1.2 
  
@@ -96,90 +96,50 @@ The SessionFactory offers a method to create a secure HTTPS Session via the "TLS
  }
  ``` 
  
-##### Error codes
+### Error codes
 The webPDF [error codes](https://www.webpdf.de/fileadmin/user_upload/softvision.de/files/products/webpdf/help/enu/error_codes.htm) shall be wrapped in the server's responses and are representing errors on the server side. The webPDF wsclient implements it's own error codes and exceptions to indicate errors on the client side.
 
 Following is a list of the various possible error codes.
 
-**UNKNOWN_EXCEPTION = -1**
+**UNKNOWN_EXCEPTION -1:** Unknown problem. Please contact Support.
 
-Unknown problem. Please contact Support.
+**UNKNOWN_WEBSERVICE_PROTOCOL -2:** The Selected webservice protocol is not known. 
 
-**UNKNOWN_WEBSERVICE_PROTOCOL = -2**
+**UNKNOWN_WEBSERVICE_TYPE -3:** The selected webservice type is not known.
 
-The Selected webservice protocol is not known. 
+**INVALID_WEBSERVICE_URL -4:** The given URL does not point to a webPDF webservice.
 
-**UNKNOWN_WEBSERVICE_TYPE = -3**
+**INVALID_FILE_SOURCE -5:** The referenced file source is invalid.
 
-The selected webservice type is not known.
+**INVALID_OPERATION_DATA -6:** The given operation parameters are invalid.
 
-**INVALID_WEBSERVICE_URL = -4**
+**INVALID_DOCUMENT -7:** Resolving the document reference failed.
 
-The given URL does not point to a webPDF webservice.
+**NO_OPERATION_DATA -8:** No operation data have been given.
 
-**INVALID_FILE_SOURCE = -5**
+**NO_DOCUMENT -9:** No document reference has been given.
 
-The referenced file source is invalid.
+**INVALID_URL -30:** The given server URL is invalid.
 
-**INVALID_OPERATION_DATA = -6**
+**HTTP_IO_ERROR -31:** The HTTP request to the webPDF server failed.
 
-The given operation parameters are invalid.
+**HTTPS_IO_ERROR -32:** The HTTPS request to the webPDF server failed.
 
-**INVALID_DOCUMENT = -7**
+**HTTP_EMPTY_ENTITY -33:** The server's response is invalid.
 
-Resolving the document reference failed.
+**HTTP_CUSTOM_ERROR -34:** The server's response could not be read.
 
-**NO_OPERATION_DATA = -8**
+**UNKNOWN_HTTP_METHOD -35:** The server does not offer access via the selected HTTP method.
 
-No operation data have been given.
+**SESSION_CREATE -36:** The session creation failed.
 
-**NO_DOCUMENT = -9**
+**TO_XML -37:** The given data container could not be translated to XML.
 
-No document reference has been given.
+**WSDL_INVALID_FILE -50:** The given file does not contain a valid WSDL structure.
 
-**INVALID_URL = -30**
+**WSDL_INVALID_URL -51:** The given URL does not contain a valid WSDL structure.
 
-The given server URL is invalid.
-
-**HTTP_IO_ERROR = -31**
-
-The HTTP request to the webPDF server failed.
-
-**HTTPS_IO_ERROR = -32**
-
-The HTTPS request to the webPDF server failed.
-
-**HTTP_EMPTY_ENTITY = -33**
-
-The server's response is invalid.
-
-**HTTP_CUSTOM_ERROR = -34**
-
-The server's response could not be read.
-
-**UNKNOWN_HTTP_METHOD = -35**
-
-The server does not offer access via the selected HTTP method.
-
-**SESSION_CREATE = -36**
-
-The session creation failed.
-
-**TO_XML = -37**
-
-The given data container could not be translated to XML.
-
-**WSDL_INVALID_FILE = -50**
-
-The given file does not contain a valid WSDL structure.
-
-**WSDL_INVALID_URL = -51**
-
-The given URL does not contain a valid WSDL structure.
-
-**SOAP_EXECUTION = -52**
-
-The execution of the SOAP request failed.
+**SOAP_EXECUTION -52:** The execution of the SOAP request failed.
 
 ## License
 Please, see the [license](LICENSE) file for more information.
