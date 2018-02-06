@@ -1,6 +1,5 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.BarcodeType;
 import net.webpdf.wsclient.session.Session;
 
