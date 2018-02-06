@@ -6,25 +6,29 @@ public enum Error {
      * General error codes
      */
     NONE(0, "No error"),
+
     UNKNOWN_EXCEPTION(-1, "Unknown exception"),
-    UNKNOWN_WEBSERVICE(-1, "Webservice type in factory not available"),
-    UNKNOWN_WEBSERVICE_TYPE(-1, "Web service type not available"),
-    INVALID_WEBSERVICE_URL(-1, "Invalid URL for web service"),
-    INVALID_PARAMETER(-1, "Invalid parameter"),
-    INVALID_OPERATION_DATA(-1, "Invalid XML operation data"),
-    HTTP_IO_ERROR(-1, "HTTP IO error"),
-    HTTP_EMPTY_ENTITY(-1, "HTTP entity is empty"),
-    HTTP_CUSTOM_ERROR(-1, "HTTP custom error"),
-    INVALID_URL(-1, "Invalid URL"),
-    WSDL_INVALID_FILE(-1, "Unable to access WSDL file"),
-    WSDL_INVALID_URL(-1, "Invalid WSDL URL"),
-    NO_DOCUMENT(-1, "No document defined"),
-    INVALID_DOCUMENT(-1, "The found document is invalid"),
-    NO_OPERATION_DATA(-1, "No operation data available"),
-    SOAP_EXECUTION(-1, "SOAP web service execution error"),
-    SESSION_CREATE(-1, "Unknown session type"),
-    TO_XML(-1, "Unable to convert to XML"),
-    UNKNOWN_HTTP_METHOD(-1, "Unknown HTTP method");
+    UNKNOWN_WEBSERVICE_PROTOCOL(-2, "Webservice type in factory not available"),
+    UNKNOWN_WEBSERVICE_TYPE(-3, "Web service type not available"),
+    INVALID_WEBSERVICE_URL(-4, "Invalid URL for web service"),
+    INVALID_FILE_SOURCE(-5, "Invalid file source parameter"),
+    INVALID_OPERATION_DATA(-6, "Invalid XML operation data"),
+    INVALID_DOCUMENT(-7, "The found document is invalid"),
+    NO_OPERATION_DATA(-8, "No operation data available"),
+    NO_DOCUMENT(-9, "No document defined"),
+
+    INVALID_URL(-30, "Invalid URL"),
+    HTTP_IO_ERROR(-31, "HTTP IO error"),
+    HTTPS_IO_ERROR(-32, "HTTPS IO error"),
+    HTTP_EMPTY_ENTITY(-33, "HTTP entity is empty"),
+    HTTP_CUSTOM_ERROR(-34, "HTTP custom error"),
+    UNKNOWN_HTTP_METHOD(-35, "Unknown HTTP method"),
+    SESSION_CREATE(-36, "Unknown session type"),
+    TO_XML(-37, "Unable to convert to XML"),
+
+    WSDL_INVALID_FILE(-50, "Unable to access WSDL file"),
+    WSDL_INVALID_URL(-51, "Invalid WSDL URL"),
+    SOAP_EXECUTION(-52, "SOAP web service execution error");
 
     public static final Error OK = Error.NONE;
 
