@@ -46,7 +46,7 @@ public class DocumentManager {
     public boolean downloadDocument(RestDocument document, OutputStream outputStream) throws ResultException {
 
         if (document == null || outputStream == null) {
-            throw new ResultException(Result.build(Error.INVALID_PARAMETER));
+            throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
         }
 
         HttpRestRequest.createRequest(this.session)
@@ -66,7 +66,7 @@ public class DocumentManager {
      */
     public RestDocument uploadDocument(File file) throws IOException {
         if (file == null) {
-            throw new ResultException(Result.build(Error.INVALID_PARAMETER));
+            throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
         }
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);

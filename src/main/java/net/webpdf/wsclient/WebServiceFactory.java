@@ -35,7 +35,7 @@ public final class WebServiceFactory {
             case REST:
                 return WebServiceFactory.createRestInstance(session, webServiceType, new OperationData());
             default:
-                throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE));
+                throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE_PROTOCOL));
         }
     }
 
@@ -94,7 +94,7 @@ public final class WebServiceFactory {
             case REST:
                 return WebServiceFactory.createRestInstance(session, webServiceType, operationData);
             default:
-                throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE));
+                throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE_PROTOCOL));
         }
     }
 

@@ -2,6 +2,7 @@ package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.https.TLSContext;
 
 import java.net.URL;
 
@@ -9,8 +10,15 @@ public class SoapSession extends AbstractSession {
 
     private boolean useLocalWsdl = true;
 
-    SoapSession(URL url) throws ResultException {
-        super(url, WebServiceProtocol.SOAP);
+    /**
+     * Creates new {@link SoapSession} instance
+     *
+     * @param url        base url for webPDF server
+     * @param tlsContext Container configuring a https session.
+     * @throws ResultException a {@link ResultException}
+     */
+    SoapSession(URL url, TLSContext tlsContext) throws ResultException {
+        super(url, WebServiceProtocol.SOAP, tlsContext);
         this.dataFormat = DataFormat.XML;
     }
 

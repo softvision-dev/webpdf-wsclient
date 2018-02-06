@@ -5,6 +5,7 @@ import net.webpdf.wsclient.documents.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.https.TLSContext;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -28,18 +29,30 @@ abstract class AbstractSession implements Session {
     private WebServiceProtocol webServiceProtocol;
     private AuthScope authScope;
     private Credentials credentials;
+    private TLSContext tlsContext;
 
     /**
      * Creates new {@link AbstractSession} instance
      *
      * @param url                base url for webPDF server
      * @param webServiceProtocol protocol for Web service operation
+     * @param tlsContext         Container configuring a https session.
      * @throws ResultException a {@link ResultException}
      */
-    AbstractSession(URL url, WebServiceProtocol webServiceProtocol) throws ResultException {
+    AbstractSession(URL url, WebServiceProtocol webServiceProtocol, TLSContext tlsContext) throws ResultException {
         this.webServiceProtocol = webServiceProtocol;
+        this.tlsContext = tlsContext;
         this.basePath = webServiceProtocol.equals(WebServiceProtocol.SOAP) ? "soap/" : "rest/";
         buildBaseURL(url);
+    }
+
+    /**
+     * Returns the currently set TLS context.
+     * @return The currently set TLS context.
+     */
+    @Override
+    public TLSContext getTlsContext() {
+        return tlsContext;
     }
 
     /**

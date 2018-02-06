@@ -36,77 +36,151 @@ Further we want to provide two simple usage examples for the wsclient library:
 
 ##### Usage with REST
  ```java
- import net.webpdf.wsclient.webservice.*;
- import net.webpdf.wsclient.webservice.schemas.operation.*;
- import net.webpdf.wsclient.webservice.session.*;
+ try(Session session= SessionFactory.createInstance(WebServiceProtocol.REST,new URL("http://localhost:8080/webPDF/"))){
+    ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
  
- import javax.xml.bind.JAXBException;
- import java.io.File;
- import java.io.IOException;
- import java.net.URISyntaxException;
- import java.net.URL;
- ...
-  try(Session session= SessionFactory.createInstance(WebServiceProtocol.REST,new URL("http://localhost:8080/webPDF/"))){
+    File file = new File("./files/lorem-ipsum.docx");
+    File fileOut = new File("./result/converter_rest.pdf");
  
-             ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+    webService.setDocument(session.getDocumentManager().uploadDocument(file));
  
-             File file = new File("./files/lorem-ipsum.docx");
-             File fileOut = new File("./result/converter_rest.pdf");
+    webService.getDocument().setTargetFile(fileOut);
+    webService.getOperation().setPages("1-4");
+    webService.getOperation().setEmbedFonts(true);
  
-             webService.setDocument(session.getDocumentManager().uploadDocument(file));
+    webService.getOperation().setPdfa(new PdfaType());
+    webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
+    webService.getOperation().getPdfa().getConvert().setLevel("3b");
+    webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
  
-             webService.getDocument().setTargetFile(fileOut);
-             webService.getOperation().setPages("1-4");
-             webService.getOperation().setEmbedFonts(true);
- 
-             webService.getOperation().setPdfa(new PdfaType());
-             webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-             webService.getOperation().getPdfa().getConvert().setLevel("3b");
-             webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
- 
-             session.getDocumentManager().downloadDocument(webService.process());
- 
- 
-         }catch (IOException|URISyntaxException|JAXBException ex){...
+    session.getDocumentManager().downloadDocument(webService.process());
+ }catch (IOException|URISyntaxException|JAXBException ex){...
           
  ```
  
 ##### Usage with SOAP
  ```java
- import net.webpdf.wsclient.webservice.*;
- import net.webpdf.wsclient.webservice.documents.SoapDocument;
- import net.webpdf.wsclient.webservice.schemas.operation.*;
- import net.webpdf.wsclient.webservice.session.*;
+ try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, new URL("http://localhost:8080/webPDF/"))) {
+    ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+        
+    File file = new File("./files/lorem-ipsum.docx");
+    File fileOut = new File("./result/converter_soap.pdf");
+     
+    webService.setDocument(new SoapDocument(file.toURI(), fileOut));             
  
+    webService.getOperation().setPages("1-4");
+    webService.getOperation().setEmbedFonts(true);
  
- import javax.xml.bind.JAXBException;
- import java.io.File;
- import java.io.IOException;
- import java.net.URISyntaxException;
- import java.net.URL;
- ...
-  try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, new URL("http://localhost:8080/webPDF/"))) {
+    webService.getOperation().setPdfa(new PdfaType());
+    webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
+    webService.getOperation().getPdfa().getConvert().setLevel("3b");
+    webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
  
-             ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
-             
-             File file = new File("./files/lorem-ipsum.docx");
-             File fileOut = new File("./result/converter_soap.pdf");
-             webService.setDocument(new SoapDocument(file.toURI(), fileOut));             
- 
-             webService.getOperation().setPages("1-4");
-             webService.getOperation().setEmbedFonts(true);
- 
-             webService.getOperation().setPdfa(new PdfaType());
-             webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-             webService.getOperation().getPdfa().getConvert().setLevel("3b");
-             webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
- 
-             session.getDocumentManager().downloadDocument(webService.process());
- 
-         } catch (IOException | URISyntaxException | JAXBException ex) {...
+    session.getDocumentManager().downloadDocument(webService.process());
+ } catch (IOException | URISyntaxException | JAXBException ex) {...
   
  ``` 
+##### SSL/TLS Configuration
+The SessionFactory offers a method to create a secure HTTPS Session via the "TLSContext" class. TLS is the official successor of SSL and the webPDF wsclient library does only support the protocol versions:
+- TLSv1, TLSv1.1, TLSv1.2 
  
+ ```java
+ TLSContext context = TLSContext.createDefault()
+    .setAllowSelfSigned(true)
+    .setProtocol(TLSProtocol.TLSV1_2)
+    .setTrustStore(testResources.getResource("keystore.jks"), "keystorePassword");
+ try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
+    new URL("https://localhost:8443/webPDF"), context)) {
+        session.login();
+        executeConverter(session);
+ }
+ ``` 
+ 
+##### Error codes
+The webPDF [error codes](https://www.webpdf.de/fileadmin/user_upload/softvision.de/files/products/webpdf/help/enu/error_codes.htm) shall be wrapped in the server's responses and are representing errors on the server side. The webPDF wsclient implements it's own error codes and exceptions to indicate errors on the client side.
+
+Following is a list of the various possible error codes.
+
+**UNKNOWN_EXCEPTION = -1**
+
+Unknown problem. Please contact Support.
+
+**UNKNOWN_WEBSERVICE_PROTOCOL = -2**
+
+The Selected webservice protocol is not known. 
+
+**UNKNOWN_WEBSERVICE_TYPE = -3**
+
+The selected webservice type is not known.
+
+**INVALID_WEBSERVICE_URL = -4**
+
+The given URL does not point to a webPDF webservice.
+
+**INVALID_FILE_SOURCE = -5**
+
+The referenced file source is invalid.
+
+**INVALID_OPERATION_DATA = -6**
+
+The given operation parameters are invalid.
+
+**INVALID_DOCUMENT = -7**
+
+Resolving the document reference failed.
+
+**NO_OPERATION_DATA = -8**
+
+No operation data have been given.
+
+**NO_DOCUMENT = -9**
+
+No document reference has been given.
+
+**INVALID_URL = -30**
+
+The given server URL is invalid.
+
+**HTTP_IO_ERROR = -31**
+
+The HTTP request to the webPDF server failed.
+
+**HTTPS_IO_ERROR = -32**
+
+The HTTPS request to the webPDF server failed.
+
+**HTTP_EMPTY_ENTITY = -33**
+
+The server's response is invalid.
+
+**HTTP_CUSTOM_ERROR = -34**
+
+The server's response could not be read.
+
+**UNKNOWN_HTTP_METHOD = -35**
+
+The server does not offer access via the selected HTTP method.
+
+**SESSION_CREATE = -36**
+
+The session creation failed.
+
+**TO_XML = -37**
+
+The given data container could not be translated to XML.
+
+**WSDL_INVALID_FILE = -50**
+
+The given file does not contain a valid WSDL structure.
+
+**WSDL_INVALID_URL = -51**
+
+The given URL does not contain a valid WSDL structure.
+
+**SOAP_EXECUTION = -52**
+
+The execution of the SOAP request failed.
+
 ## License
 Please, see the [license](LICENSE) file for more information.
 

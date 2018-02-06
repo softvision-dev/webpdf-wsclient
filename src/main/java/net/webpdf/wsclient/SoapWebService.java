@@ -1,14 +1,18 @@
 package net.webpdf.wsclient;
 
+import com.sun.xml.internal.ws.developer.JAXWSProperties;
 import net.webpdf.wsclient.documents.SoapDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.https.TLSContext;
 import net.webpdf.wsclient.schema.stubs.WebserviceException;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SoapSession;
 
 import javax.activation.DataHandler;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -28,6 +32,7 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
     private final QName qname;
     private final URI webserviceURL;
     T_WEBPDF_PORT port = null;
+    private final TLSContext tlsContext;
 
     /**
      * Creates a SOAP webservice interface of the given {@link WebServiceType} for the given {@link Session}.
@@ -38,6 +43,7 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
     SoapWebService(Session session, WebServiceType webServiceType) throws ResultException {
         super(webServiceType, session);
         this.qname = new QName(webServiceType.getSoapNamespaceURI(), webServiceType.getSoapLocalPart());
+        this.tlsContext = this.session.getTlsContext();
         this.webserviceURL = this.session.getURI(webServiceType.getSoapEndpoint());
     }
 
@@ -129,7 +135,7 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
     /**
      * Apply the options for the Web service call
      */
-    private void applyOptions() {
+    private void applyOptions() throws ResultException {
 
         BindingProvider bindingProvider = ((BindingProvider) port);
 
@@ -153,6 +159,9 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
 
         // set target URL
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.webserviceURL.toString());
+        if(tlsContext != null) {
+            bindingProvider.getRequestContext().put(JAXWSProperties.SSL_SOCKET_FACTORY, tlsContext.getSslContext().getSocketFactory());
+        }
     }
 
 }

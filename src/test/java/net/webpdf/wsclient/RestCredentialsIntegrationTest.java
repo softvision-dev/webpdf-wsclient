@@ -1,6 +1,8 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.documents.RestDocument;
+import net.webpdf.wsclient.https.TLSContext;
+import net.webpdf.wsclient.https.TLSProtocol;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.RestSession;
@@ -15,6 +17,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.StringReader;
+import java.net.URL;
 import java.nio.charset.Charset;
 
 public class RestCredentialsIntegrationTest {
@@ -62,15 +65,6 @@ public class RestCredentialsIntegrationTest {
             UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials("admin", "admin");
             session.setCredentials(userCredentials);
 
-            session.login();
-            executeConverter(session);
-        }
-    }
-
-    @Test
-    public void testRestWithSSL() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testResources.getArguments().buildServerUrl())) {
             session.login();
             executeConverter(session);
         }

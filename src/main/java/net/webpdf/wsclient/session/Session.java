@@ -2,12 +2,19 @@ package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.https.TLSContext;
 import org.apache.http.auth.Credentials;
 
 import java.io.IOException;
 import java.net.URI;
 
 public interface Session extends AutoCloseable {
+
+    /**
+     * Returns the currently set TLS context.
+     * @return The currently set TLS context.
+     */
+    TLSContext getTlsContext();
 
     /**
      * Terminates the current session.

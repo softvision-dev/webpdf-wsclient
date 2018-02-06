@@ -163,7 +163,7 @@ public class HttpRestRequest {
      */
     public void executeRequest(OutputStream outputStream) throws ResultException {
         if (outputStream == null) {
-            throw new ResultException(Result.build(Error.INVALID_PARAMETER));
+            throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
         }
         try (CloseableHttpResponse closeableHttpResponse = this.httpClient.execute(httpUriRequest)) {
             closeableHttpResponse.getEntity().writeTo(outputStream);

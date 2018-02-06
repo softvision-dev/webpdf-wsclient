@@ -5,13 +5,13 @@ import net.webpdf.wsclient.documents.DocumentManager;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.http.HttpMethod;
 import net.webpdf.wsclient.http.HttpRestRequest;
+import net.webpdf.wsclient.https.TLSContext;
 import net.webpdf.wsclient.schema.beans.Token;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -21,21 +21,25 @@ public class RestSession extends AbstractSession {
     private Token token = new Token();
     private CloseableHttpClient httpClient;
     private DocumentManager documentManager = new DocumentManager(this);
-    private boolean allowSelfSigned = true;
-    private File trustStore = null;
-    private String trustStorePassword = null;
 
-    RestSession(URL url) throws ResultException {
-        super(url, WebServiceProtocol.REST);
+    /**
+     * Creates new {@link RestSession} instance
+     *
+     * @param url        base url for webPDF server
+     * @param tlsContext Container configuring a https session.
+     * @throws ResultException a {@link ResultException}
+     */
+    RestSession(URL url, TLSContext tlsContext) throws ResultException {
+        super(url, WebServiceProtocol.REST, tlsContext);
         this.dataFormat = DataFormat.JSON;
 
-        RequestConfig clientConfig = RequestConfig.custom()
-                                         .setAuthenticationEnabled(true)
-                                         .build();
-
+        RequestConfig clientConfig = RequestConfig.custom().setAuthenticationEnabled(true).build();
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
                                                   .setDefaultRequestConfig(clientConfig)
                                                   .setDefaultCredentialsProvider(this.credentialsProvider);
+        if (getTlsContext() != null && getTlsContext().getSslContext() != null) {
+            httpClientBuilder.setSSLContext(getTlsContext().getSslContext());
+        }
         httpClient = httpClientBuilder.build();
     }
 

@@ -1,24 +1,25 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.documents.SoapDocument;
+import net.webpdf.wsclient.https.TLSContext;
+import net.webpdf.wsclient.https.TLSProtocol;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.SoapSession;
-import net.webpdf.wsclient.ssl.SelfSignedCertSSLSocketFactory;
 import net.webpdf.wsclient.testsuite.TestResources;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.StringReader;
+import java.net.URL;
 import java.nio.charset.Charset;
 
 public class SoapCredentialsIntegrationTest {
@@ -68,17 +69,6 @@ public class SoapCredentialsIntegrationTest {
             UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials("admin", "admin");
             session.setCredentials(userCredentials);
 
-            executeConverter(session);
-        }
-    }
-
-    @Test
-    public void testWithSSL() throws Exception {
-
-        HttpsURLConnection.setDefaultSSLSocketFactory(SelfSignedCertSSLSocketFactory.getDefault());
-
-        try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testResources.getArguments(false, true).setProtocol("https").buildServerUrl())) {
             executeConverter(session);
         }
     }
