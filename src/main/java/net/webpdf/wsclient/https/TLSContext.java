@@ -24,7 +24,7 @@ public class TLSContext {
     private TLSProtocol protocol = TLSProtocol.TLSV1_2;
 
     /**
-     * Prepared the TLS Context for a HTTPS connection.
+     * Prepares the TLS Context for a HTTPS connection.
      *
      * @throws ResultException a {@link ResultException}
      */
