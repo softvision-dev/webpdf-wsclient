@@ -5,7 +5,6 @@ import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
-import sun.security.ssl.SSLContextImpl;
 
 import javax.net.ssl.SSLContext;
 import java.io.File;
@@ -25,13 +24,16 @@ public class TLSContext {
 
     /**
      * Prepares the TLS Context for a HTTPS connection.
-     *
-     * @throws ResultException a {@link ResultException}
      */
     private TLSContext() {
     }
 
-    public static TLSContext createDefault(){
+    /**
+     * Static factory method, to create a fresh instance of this class with default values.
+     *
+     * @return A fresh instance of this class.
+     */
+    public static TLSContext createDefault() {
         return new TLSContext();
     }
 
