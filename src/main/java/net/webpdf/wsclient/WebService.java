@@ -5,8 +5,6 @@ import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.BillingType;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 
-import java.io.IOException;
-
 /**
  * @param <T_DOC>            Document which contains source and target resource
  * @param <T_OPERATION_TYPE> Webservice specific operation type

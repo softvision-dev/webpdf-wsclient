@@ -1,6 +1,5 @@
 package net.webpdf.wsclient;
 
-import com.sun.xml.internal.ws.developer.JAXWSProperties;
 import net.webpdf.wsclient.documents.SoapDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
@@ -11,8 +10,6 @@ import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SoapSession;
 
 import javax.activation.DataHandler;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -28,6 +25,7 @@ import java.util.Map;
 abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
     extends AbstractWebService<SoapDocument, T_OPERATION_TYPE, SoapDocument> {
 
+    private static final String SSL_SOCKET_FACTORY = "com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory";
     private final MTOMFeature feature = new MTOMFeature();
     private final QName qname;
     private final URI webserviceURL;
@@ -160,7 +158,7 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
         // set target URL
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.webserviceURL.toString());
         if(tlsContext != null) {
-            bindingProvider.getRequestContext().put(JAXWSProperties.SSL_SOCKET_FACTORY, tlsContext.getSslContext().getSocketFactory());
+            bindingProvider.getRequestContext().put(SSL_SOCKET_FACTORY, tlsContext.getSslContext().getSocketFactory());
         }
     }
 

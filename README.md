@@ -29,7 +29,7 @@ Further we want to provide two simple usage examples for the wsclient library:
 
 ### Usage with SOAP
 ```java
-// Prepare the session by selecting the webPDF SOAP interface (remember to close sessions after you are done)
+// Prepare the session by selecting the webPDF SOAP interface
 try (Session session = SessionFactory.createInstance(
      WebServiceProtocol.SOAP,
      new URL("http://localhost:8080/webPDF/")
@@ -53,23 +53,25 @@ try (Session session = SessionFactory.createInstance(
    webService.getOperation().setPdfa(new PdfaType());
    webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
    webService.getOperation().getPdfa().getConvert().setLevel("3b");
-   webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+   webService.getOperation().getPdfa().getConvert().setErrorReport(
+       PdfaErrorReportType.MESSAGE
+   );
    
    // Execute the webservice call and download the result to the target file
    webService.process();
 } catch (ResultException e){
-    // When encountering a ResultException you can retrieve the error code like this:
-    String resultMessage = e.getResult().getMessage(); 
-    int errorCode = e.getResult().getCode());
-    ...
- } catch (IOException e) {
-    ...
- }
+   // When encountering a ResultException you can retrieve the error code like this:
+   String resultMessage = e.getResult().getMessage(); 
+   int errorCode = e.getResult().getCode());
+   ...
+} catch (IOException e) {
+   ...
+}
 ``` 
 
 ### Usage with REST
 ```java
-// Prepare the session by selecting the webPDF REST interface (remember to close sessions after you are done)
+// Prepare the session by selecting the webPDF REST interface
 try ( RestSession session= SessionFactory.createInstance(
      WebServiceProtocol.REST,
      new URL("http://localhost:8080/webPDF/")
@@ -80,7 +82,7 @@ try ( RestSession session= SessionFactory.createInstance(
    
    // Connect to the server
    session.login();
-   // Upload the source file to the Server and receive a reference to the uploaded document
+   // Upload the source file to the Server and receive a reference to the document
    RestDocument sourceDocument = session.getDocumentManager().uploadDocument(source);
    
    // Prepare a webservice call for a webPDF webservice (CONVERTER in this example)
@@ -98,7 +100,9 @@ try ( RestSession session= SessionFactory.createInstance(
    webService.getOperation().setPdfa(new PdfaType());
    webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
    webService.getOperation().getPdfa().getConvert().setLevel("3b");
-   webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+   webService.getOperation().getPdfa().getConvert().setErrorReport(
+       PdfaErrorReportType.MESSAGE
+   );
    
    // Execute the webservice call and receive a reference to the result document
    RestDocument resultDocument = webService.process();
