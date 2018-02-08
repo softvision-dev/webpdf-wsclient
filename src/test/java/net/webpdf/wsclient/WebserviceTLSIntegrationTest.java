@@ -1,6 +1,5 @@
 package net.webpdf.wsclient;
 
-import com.sun.xml.internal.ws.client.ClientTransportException;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import net.webpdf.wsclient.documents.RestDocument;
@@ -16,13 +15,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.xml.ws.WebServiceException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
 
 @RunWith(JUnitParamsRunner.class)
 public class WebserviceTLSIntegrationTest {
-    private final TestResources testResources = new TestResources(RestWebserviceIntegrationTest.class);
+    private final TestResources testResources = new TestResources(WebserviceTLSIntegrationTest.class);
 
     private void testSoapSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
         TLSContext tlsContext = TLSContext.createDefault();
@@ -55,7 +55,7 @@ public class WebserviceTLSIntegrationTest {
         testSoapSSL(new URL("https://localhost:8443/webPDF"), null, true);
     }
 
-    @Test(expected = ClientTransportException.class)
+    @Test(expected = WebServiceException.class)
     public void testSoapSSLWrongKeystore() throws Exception {
         testSoapSSL(new URL("https://localhost:8443/webPDF"), testResources.getDemoKeystoreFile(), false);
     }
@@ -65,7 +65,7 @@ public class WebserviceTLSIntegrationTest {
         testSoapSSL(new URL("https://portal.webpdf.de/webPDF"), null, false);
     }
 
-    @Test(expected = ClientTransportException.class)
+    @Test(expected = WebServiceException.class)
     public void testSoapSSLProtocolFailure() throws Exception {
         testSoapSSL(new URL("http://portal.webpdf.de/webPDF"), testResources.getDemoKeystoreFile(), false);
     }
