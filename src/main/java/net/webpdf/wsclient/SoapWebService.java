@@ -158,6 +158,9 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
         // set target URL
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.webserviceURL.toString());
         if(tlsContext != null) {
+            if(tlsContext.getSslContext() == null){
+                throw new ResultException(Result.build(Error.HTTPS_IO_ERROR));
+            }
             bindingProvider.getRequestContext().put(SSL_SOCKET_FACTORY, tlsContext.getSslContext().getSocketFactory());
         }
     }

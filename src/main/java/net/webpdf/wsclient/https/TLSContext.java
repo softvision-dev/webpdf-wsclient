@@ -5,6 +5,7 @@ import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLContexts;
 
 import javax.net.ssl.SSLContext;
 import java.io.File;
@@ -58,6 +59,8 @@ public class TLSContext {
                                       .loadTrustMaterial(new TrustSelfSignedStrategy())
                                       .setProtocol(protocol != null ? protocol.getName() : null)
                                       .build();
+            } else {
+                this.sslContext = SSLContexts.createDefault();
             }
 
         } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
