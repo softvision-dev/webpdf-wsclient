@@ -3,8 +3,8 @@ package net.webpdf.wsclient.schema.beans;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
-@XmlRootElement
+@SuppressWarnings({"unused"})
+@XmlRootElement(name = "documentFile")
 public class DocumentFileBean {
     private String documentId;
     private String parentDocumentId;
@@ -15,13 +15,7 @@ public class DocumentFileBean {
     private int fileTypeId;
     private String fileTypeGroups;
     private String fileLastModified;
-    private long numberOfPages;
-    private boolean hasPermissionPassword;
-    private boolean hasOpenPassword;
     private boolean isFileLocked;
-    private boolean hasSignature;
-    private String pdfaLevel;
-    private String formType;
 
     public String getDocumentId() {
         return documentId;
@@ -71,60 +65,12 @@ public class DocumentFileBean {
         this.fileExtension = documentExtension;
     }
 
-    public long getNumberOfPages() {
-        return numberOfPages;
-    }
-
-    public void setNumberOfPages(long numberOfPages) {
-        this.numberOfPages = numberOfPages;
-    }
-
-    public boolean isHasPermissionPassword() {
-        return hasPermissionPassword;
-    }
-
-    public void setHasPermissionPassword(boolean hasPermissionPassword) {
-        this.hasPermissionPassword = hasPermissionPassword;
-    }
-
-    public boolean isHasOpenPassword() {
-        return hasOpenPassword;
-    }
-
-    public void setHasOpenPassword(boolean hasOpenPassword) {
-        this.hasOpenPassword = hasOpenPassword;
-    }
-
     public boolean isIsFileLocked() {
         return this.isFileLocked;
     }
 
     public void setIsFileLocked(boolean isFileLocked) {
         this.isFileLocked = isFileLocked;
-    }
-
-    public boolean isHasSignature() {
-        return hasSignature;
-    }
-
-    public void setHasSignature(boolean hasSignature) {
-        this.hasSignature = hasSignature;
-    }
-
-    public String getPdfaLevel() {
-        return pdfaLevel;
-    }
-
-    public void setPdfaLevel(String pdfaLevel) {
-        this.pdfaLevel = pdfaLevel;
-    }
-
-    public String getFormType() {
-        return formType;
-    }
-
-    public void setFormType(String formType) {
-        this.formType = formType;
     }
 
     public int getFileTypeId() {
