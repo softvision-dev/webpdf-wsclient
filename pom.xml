@@ -3,13 +3,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.webpdf.wsclient</groupId>
+    <groupId>net.webpdf</groupId>
     <artifactId>webpdf-wsclient</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>webPDF - Web service client library</name>
     <description>webPDF client library for using the SOAP and REST web services</description>
     <url>https://www.webpdf.de</url>
+    <inceptionYear>2017</inceptionYear>
     <organization>
         <name>SoftVision Development GmbH, Fulda, Germany</name>
         <url>https://www.softvision.de</url>
@@ -24,16 +25,26 @@
 
     <developers>
         <developer>
+            <id>be</id>
             <name>Bernd Engelhardt</name>
             <email>bernd.engelhardt@softvision.de</email>
             <organization>SoftVision Development</organization>
             <organizationUrl>https://www.softvision.de/</organizationUrl>
+            <roles>
+                <role>Lead Developer</role>
+            </roles>
+            <timezone>Europe/Berlin</timezone>
         </developer>
         <developer>
+            <id>cap</id>
             <name>Christian Appl</name>
             <email>christian.appl@softvision.de</email>
             <organization>SoftVision Development</organization>
             <organizationUrl>https://www.softvision.de/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>Europe/Berlin</timezone>
         </developer>
     </developers>
 
@@ -67,6 +78,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>integration</id>
             <build>
@@ -93,8 +105,9 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
-            <id>staging</id>
+            <id>sonatype-oss-release</id>
             <build>
                 <plugins>
                     <plugin>
@@ -104,10 +117,16 @@
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
-                                <phase>none</phase>
+                                <phase>verify</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -117,7 +136,7 @@
                         <version>1.6.8</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>ossrh</serverId>
+                            <serverId>oss-sonatype-repo</serverId>
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
                         </configuration>
@@ -190,6 +209,19 @@
 
     </dependencies>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Sonatype Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <defaultGoal>package</defaultGoal>
         <directory>build</directory>
@@ -199,22 +231,22 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
 
-            <plugin>
+                       <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.1</version>
                 <executions>
                     <execution>
-                        <phase>verify</phase>
+                        <id>attach-sources</id>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>jar-no-fork</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -223,17 +255,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
-                        <phase>verify</phase>
+                        <id>attach-java-docs</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <failOnError>false</failOnError>
+                    <failOnError>true</failOnError>
                 </configuration>
             </plugin>
 
@@ -296,7 +328,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>3.1.1</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
@@ -315,7 +347,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
