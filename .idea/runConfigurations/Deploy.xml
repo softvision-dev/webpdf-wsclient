@@ -14,10 +14,11 @@
               <option value="deploy" />
             </list>
           </option>
+          <option name="pomFileName" />
           <option name="profilesMap">
             <map>
               <entry key="development" value="true" />
-              <entry key="staging" value="true" />
+              <entry key="sonatype-oss-release" value="true" />
             </map>
           </option>
           <option name="resolveToWorkspace" value="false" />
@@ -25,6 +26,6 @@
         </MavenRunnerParameters>
       </option>
     </MavenSettings>
-    <method />
+    <method v="2" />
   </configuration>
 </component>

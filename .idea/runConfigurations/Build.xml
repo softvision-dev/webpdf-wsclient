@@ -10,9 +10,11 @@
           </option>
           <option name="goals">
             <list>
+              <option value="clean" />
               <option value="install" />
             </list>
           </option>
+          <option name="pomFileName" />
           <option name="profilesMap">
             <map />
           </option>
@@ -21,6 +23,6 @@
         </MavenRunnerParameters>
       </option>
     </MavenSettings>
-    <method />
+    <method v="2" />
   </configuration>
 </component>

@@ -9,7 +9,15 @@ The library implements the required stubs and session management in ready-to-use
 > **Note**: Unless otherwise marked, the following is based on webPDF version 7 or newer.
 
 ## Download
-Please visit the wiki [download page](https://github.com/softvision-dev/webpdf-wsclient/wiki/Download) for more information.
+You can use this library, by adding this dependency to your project:
+```
+<!-- https://mvnrepository.com/artifact/net.webpdf/webpdf-wsclient -->
+<dependency>
+    <groupId>net.webpdf</groupId>
+    <artifactId>webpdf-wsclient</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
 ## Usage
 You will find some [usage examples](https://github.com/softvision-dev/webpdf-wsclient/wiki/Usage) in the wiki.
@@ -18,7 +26,7 @@ You will find some [usage examples](https://github.com/softvision-dev/webpdf-wsc
 Have a look at our [wiki](https://github.com/softvision-dev/webpdf-wsclient/wiki) for examples and details.
 
 ## Development and support
-If you have any questions on how to use webPDF or this client library, or have ideas for future development, please get in touch via our [product homepage](https://www.webpdf.de).
+If you have any questions on how to use webPDF, or this library, or have ideas for future development, please get in touch via our [product homepage](https://www.webpdf.de).
 
 If you find any issues, please file a [bug](https://github.com/softvision-dev/webpdf-wsclient/issues) after checking for duplicates or create a [pull request](https://github.com/softvision-dev/webpdf-wsclient/pulls).
 
