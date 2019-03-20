@@ -7,44 +7,39 @@ import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.ImageHelper;
 import net.webpdf.wsclient.testsuite.TestResources;
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import javax.imageio.ImageIO;
-import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 
 public class RestWebserviceIntegrationTest {
 
     private final TestResources testResources = new TestResources(RestWebserviceIntegrationTest.class);
-
-    @After
-    public void tearDown() throws Exception {
-    }
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void testConverter() throws Exception {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-            testResources.getArguments().buildServerUrl())) {
+                testResources.getArguments().buildServerUrl())) {
 
             session.login();
 
             ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-            File fileOut = testResources.getResource("integration/result/converter_rest.pdf");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
@@ -67,15 +62,14 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testToolbox() throws Exception {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-            testResources.getArguments().buildServerUrl())) {
+                testResources.getArguments().buildServerUrl())) {
 
             session.login();
 
             ToolboxRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-            File fileOut = testResources.getResource("integration/result/toolbox_rest.pdf");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
@@ -119,15 +113,14 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testSignature() throws Exception {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-            testResources.getArguments().buildServerUrl())) {
+                testResources.getArguments().buildServerUrl())) {
 
             session.login();
 
             SignatureRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.SIGNATURE);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-            File fileOut = testResources.getResource("integration/result/signature_rest.pdf");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
@@ -171,15 +164,14 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testPdfa() throws Exception {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-            testResources.getArguments().buildServerUrl())) {
+                testResources.getArguments().buildServerUrl())) {
 
             session.login();
 
             PdfaRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.PDFA);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-            File fileOut = testResources.getResource("integration/result/pdfa_rest.pdf");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
             webService.getOperation().setConvert(new PdfaType.Convert());
@@ -198,15 +190,14 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testOcr() throws Exception {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-            testResources.getArguments().buildServerUrl())) {
+                testResources.getArguments().buildServerUrl())) {
 
             session.login();
 
             OcrRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.OCR);
 
             File file = testResources.getResource("integration/files/ocr.png");
-            File fileOut = testResources.getResource("integration/result/ocr_rest.pdf");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
             webService.getOperation().setLanguage(OcrLanguageType.ENG);
@@ -230,15 +221,14 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testBarcode() throws Exception {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-            testResources.getArguments().buildServerUrl())) {
+                testResources.getArguments().buildServerUrl())) {
 
             session.login();
 
             BarcodeRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.BARCODE);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-            File fileOut = testResources.getResource("integration/result/barcode_rest.pdf");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
@@ -288,7 +278,7 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testUrlConverter() throws Exception {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-            testResources.getArguments().buildServerUrl())) {
+                testResources.getArguments().buildServerUrl())) {
 
             session.login();
 
@@ -296,8 +286,7 @@ public class RestWebserviceIntegrationTest {
 
             webService.setDocument(new RestDocument(/*null,*/ null));
 
-            File fileOut = testResources.getResource("integration/result/urlconverter_rest.pdf");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
 
             webService.getOperation().setUrl("https://www.webpdf.de");
 
@@ -323,15 +312,15 @@ public class RestWebserviceIntegrationTest {
         File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
         String json = FileUtils.readFileToString(configFile, Charset.defaultCharset());
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-            testResources.getArguments().buildServerUrl());
+                testResources.getArguments().buildServerUrl());
              StringReader stringReader = new StringReader(json)
         ) {
             StreamSource streamSource = new StreamSource(stringReader);
             session.login();
             ToolboxRestWebService webService = WebServiceFactory.createInstance(session, streamSource);
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
-            File fileOut = testResources.getResource("integration/result/toolbox_stream_rest.pdf");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
+
             RestDocument restDocument = webService.process();
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                 session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
@@ -341,17 +330,16 @@ public class RestWebserviceIntegrationTest {
     }
 
     @Test
-    public void testToolboxSiwtchToOutputFile() throws Exception {
+    public void testToolboxSwitchToOutputFile() throws Exception {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-            testResources.getArguments().buildServerUrl())) {
+                testResources.getArguments().buildServerUrl())) {
 
             session.login();
 
             ToolboxRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-            File fileOut = testResources.getResource("integration/result/toolbox_image_rest.jpeg");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
@@ -371,12 +359,12 @@ public class RestWebserviceIntegrationTest {
             Assert.assertTrue(fileOut.exists());
 
             assertEquals("Difference should have been zero.",
-                0.0d,
-                ImageHelper.compare(
-                    ImageIO.read(testResources.getResource("toolbox_image_rest.jpeg")),
-                    ImageIO.read(fileOut)
-                ),
-                0.0d);
+                    0.0d,
+                    ImageHelper.compare(
+                            ImageIO.read(testResources.getResource("toolbox_image_rest.jpeg")),
+                            ImageIO.read(fileOut)
+                    ),
+                    0.0d);
         }
     }
 }

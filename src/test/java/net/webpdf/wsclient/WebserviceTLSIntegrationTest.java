@@ -10,9 +10,10 @@ import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.TestResources;
-import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 
 import javax.xml.ws.WebServiceException;
@@ -23,6 +24,9 @@ import java.net.URL;
 @RunWith(JUnitParamsRunner.class)
 public class WebserviceTLSIntegrationTest {
     private final TestResources testResources = new TestResources(WebserviceTLSIntegrationTest.class);
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
 
     private void testSoapSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
         TLSContext tlsContext = TLSContext.createDefault();
@@ -35,13 +39,16 @@ public class WebserviceTLSIntegrationTest {
             ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-            File fileOut = testResources.getResource("integration/result/converter_soap.pdf");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
 
-            webService.setDocument(new SoapDocument(file.toURI(), fileOut));
+            try (SoapDocument soapDocument = new SoapDocument(file.toURI(), fileOut)) {
+                webService.setDocument(soapDocument);
 
-            webService.process();
-            Assert.assertTrue(fileOut.exists());
+                try (SoapDocument soapDocument2 = webService.process()) {
+                    Assert.assertNotNull(soapDocument2);
+                    Assert.assertTrue(fileOut.exists());
+                }
+            }
         }
     }
 
@@ -61,7 +68,7 @@ public class WebserviceTLSIntegrationTest {
     }
 
     @Test
-    public void testSoapSSLCacertsFallback() throws Exception {
+    public void testSoapSSLCACertsFallback() throws Exception {
         testSoapSSL(new URL("https://portal.webpdf.de/webPDF"), null, false);
     }
 
@@ -84,8 +91,7 @@ public class WebserviceTLSIntegrationTest {
             ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-            File fileOut = testResources.getResource("integration/result/converter_rest.pdf");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
@@ -99,21 +105,21 @@ public class WebserviceTLSIntegrationTest {
 
     @Test
     @Parameters({
-        "https://portal.webpdf.de/webPDF|0|true|false",
-        "http://portal.webpdf.de/webPDF|-31|true|false",
-        "https://portal.webpdf.de/webPDF|0|false|false",
-        "https://portal.webpdf.de/webPDF|0|false|true",
-        "https://localhost:8443/webPDF|0|false|true",
-        "https://localhost:8443/webPDF|-31|true|false",
-        "https://localhost:8443/webPDF|0|true|true",
+            "https://portal.webpdf.de/webPDF|0|true|false",
+            "http://portal.webpdf.de/webPDF|-31|true|false",
+            "https://portal.webpdf.de/webPDF|0|false|false",
+            "https://portal.webpdf.de/webPDF|0|false|true",
+            "https://localhost:8443/webPDF|0|false|true",
+            "https://localhost:8443/webPDF|-31|true|false",
+            "https://localhost:8443/webPDF|0|true|true",
     })
     public void testRestSSL(String url, int expectedErrorCode, boolean setKeystoreFile, boolean selfSigned) throws Exception {
         try {
             File keystoreFile = setKeystoreFile ? testResources.getDemoKeystoreFile() : null;
             testRestSSL(new URL(url), keystoreFile, selfSigned);
-            Assert.assertTrue(String.format("Found %d but %d has been expected.", 0, expectedErrorCode), expectedErrorCode == 0);
+            Assert.assertEquals(String.format("Found %d but %d has been expected.", 0, expectedErrorCode), 0, expectedErrorCode);
         } catch (ResultException ex) {
-            Assert.assertTrue(String.format("Found %d but %d has been expected.", ex.getResult().getCode(), expectedErrorCode), expectedErrorCode == ex.getResult().getCode());
+            Assert.assertEquals(String.format("Found %d but %d has been expected.", ex.getResult().getCode(), expectedErrorCode), expectedErrorCode, ex.getResult().getCode());
         }
     }
 }

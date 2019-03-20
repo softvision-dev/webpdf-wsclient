@@ -1,8 +1,6 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.documents.RestDocument;
-import net.webpdf.wsclient.https.TLSContext;
-import net.webpdf.wsclient.https.TLSProtocol;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.RestSession;
@@ -11,25 +9,27 @@ import net.webpdf.wsclient.testsuite.TestResources;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.StringReader;
-import java.net.URL;
 import java.nio.charset.Charset;
 
 public class RestCredentialsIntegrationTest {
 
     private final TestResources testResources = new TestResources(RestCredentialsIntegrationTest.class);
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     private void executeConverter(RestSession session) throws Exception {
         ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
         File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-        File fileOut = testResources.getResource("integration/result/converter_rest.pdf");
-        FileUtils.deleteQuietly(fileOut);
+        File fileOut = temporaryFolder.newFile();
 
         webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
@@ -83,8 +83,7 @@ public class RestCredentialsIntegrationTest {
             ConverterRestWebService webService = WebServiceFactory.createInstance(session, new StreamSource(stringReader));
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-            File fileOut = testResources.getResource("integration/result/converter_rest.pdf");
-            FileUtils.deleteQuietly(fileOut);
+            File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
 

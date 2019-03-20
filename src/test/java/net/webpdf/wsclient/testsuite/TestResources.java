@@ -15,14 +15,8 @@ public class TestResources {
         this.resourcePath = testClass.getPackage().getName().replaceAll("\\.", "/");
     }
 
-    public File getResource(String fileName) throws Exception {
+    public File getResource(String fileName) {
         URL resUrl = this.getClass().getClassLoader().getResource(resourcePath + "/" + fileName);
-        assert resUrl != null;
-        return new File(resUrl.getFile());
-    }
-
-    public File getResourceByPath(String fullPath) throws Exception {
-        URL resUrl = this.getClass().getClassLoader().getResource(fullPath);
         assert resUrl != null;
         return new File(resUrl.getFile());
     }
@@ -45,7 +39,7 @@ public class TestResources {
         for (Certificate cert : certs) {
             ks.setCertificateEntry("webPDF", cert);
         }
-        File keystoreFile = getResource("integration/result/ks.jks");
+        File keystoreFile = getResource("integration/files/ks.jks");
         try (OutputStream fos = new FileOutputStream(keystoreFile)) {
             ks.store(fos, "".toCharArray());
         }
