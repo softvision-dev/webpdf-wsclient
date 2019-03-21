@@ -22,6 +22,7 @@
                     </xs:attribute>
                     <xs:attribute name="errorReport" default="none" type="tns:PdfaErrorReportType" />
                     <xs:attribute name="successReport" default="none" type="tns:PdfaSuccessReportType" />
+                    <xs:attribute name="autoTagging" default="false" type="xs:boolean" />
                 </xs:complexType>
             </xs:element>
             <xs:element id="pdfaAnalyzeId" name="analyze">

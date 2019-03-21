@@ -18,6 +18,7 @@
                         <xs:element name="qrcode" type="tns:QrBarcodeType" />
                         <xs:element name="upca" type="tns:UpcaBarcodeType" />
                     </xs:choice>
+                    <xs:attribute name="outputFormat" default="pdf" type="tns:BarcodeCreateOutputFormatType" />
                 </xs:complexType>
             </xs:element>
             <xs:element id="barcodeDetectId" name="detect">
@@ -237,6 +238,14 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="pdf" />
             <xs:enumeration value="img" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="BarcodeCreateOutputFormatType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="pdf" />
+            <xs:enumeration value="bmp" />
+            <xs:enumeration value="jpg" />
+            <xs:enumeration value="png" />
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

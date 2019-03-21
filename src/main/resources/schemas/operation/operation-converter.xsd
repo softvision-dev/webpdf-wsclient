@@ -70,6 +70,7 @@
             <xs:enumeration value="embed" />
             <xs:enumeration value="remove" />
             <xs:enumeration value="convert" />
+            <xs:enumeration value="convertMerge" />
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
