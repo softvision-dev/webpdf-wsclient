@@ -11,10 +11,11 @@ import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.tools.SerializeHelper;
+import org.apache.commons.codec.Charsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.UnsupportedCharsetException;
 
 abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebService<RestDocument, T_OPERATION_TYPE, RestDocument> {
 
@@ -38,13 +39,13 @@ abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebService<RestD
     public RestDocument process() throws ResultException {
 
         String urlPath = this.webServiceType.equals(WebServiceType.URLCONVERTER)
-                             ? webServiceType.getRestEndpoint()
-                             : webServiceType.getRestEndpoint().replace(WebServiceType.ID_PLACEHOLDER, this.document.getSourceDocumentId());
+                ? webServiceType.getRestEndpoint()
+                : webServiceType.getRestEndpoint().replace(WebServiceType.ID_PLACEHOLDER, this.document.getSourceDocumentId());
 
         return ((RestSession) this.session).getDocumentManager().getDocument(
-            HttpRestRequest.createRequest((RestSession) this.session)
-                .buildRequest(HttpMethod.POST, urlPath, getWebServiceOptions())
-                .executeRequest(DocumentFileBean.class)
+                HttpRestRequest.createRequest((RestSession) this.session)
+                        .buildRequest(HttpMethod.POST, urlPath, getWebServiceOptions())
+                        .executeRequest(DocumentFileBean.class)
         );
     }
 
@@ -57,15 +58,15 @@ abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebService<RestD
     private HttpEntity getWebServiceOptions() throws ResultException {
         try {
             StringEntity stringEntity = new StringEntity(
-                this.session.getDataFormat() == DataFormat.XML
-                    ? SerializeHelper.toXML(this.operation, this.operation.getClass())
-                    : SerializeHelper.toJSON(this.operation)
-            );
+                    this.session.getDataFormat() == DataFormat.XML
+                            ? SerializeHelper.toXML(this.operation, this.operation.getClass())
+                            : SerializeHelper.toJSON(this.operation),
+                    Charsets.UTF_8);
 
             stringEntity.setContentType(this.session.getDataFormat().getMimeType());
             return stringEntity;
 
-        } catch (UnsupportedEncodingException ex) {
+        } catch (UnsupportedCharsetException ex) {
             throw new ResultException(Result.build(Error.TO_XML, ex));
         }
     }

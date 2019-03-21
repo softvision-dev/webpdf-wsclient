@@ -48,7 +48,6 @@ public class SoapWebserviceIntegrationTest {
         }
     }
 
-
     @Test
     public void testToolbox() throws Exception {
         try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
@@ -84,6 +83,14 @@ public class SoapWebserviceIntegrationTest {
             DeleteType deleteType = new DeleteType();
             deleteType.setPages("5-8");
             webService.getOperation().add(deleteType);
+
+            SecurityType securityType = new SecurityType();
+            EncryptType encryptType = new EncryptType();
+            EncryptType.Password password = new EncryptType.Password();
+            password.setOpen("büro");
+            encryptType.setPassword(password);
+            securityType.setEncrypt(encryptType);
+            webService.getOperation().add(securityType);
 
             try (SoapDocument soapDocument = webService.process()) {
                 Assert.assertNotNull(soapDocument);

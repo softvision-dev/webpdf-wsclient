@@ -17,7 +17,6 @@ import javax.imageio.ImageIO;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -83,26 +82,26 @@ public class RestWebserviceIntegrationTest {
             // set merge file data
             mergeType.setData(new MergeFileDataType());
             mergeType.getData().setFormat(FileDataFormatType.PDF);
-
-            try {
-                mergeType.getData().setValue(Files.readAllBytes(testResources.getResource("integration/files/merge.pdf").toPath()));
-            } catch (IOException ex) {
-                System.out.println("Unable to add merge file data to params: " + ex.getMessage());
-            }
-
+            mergeType.getData().setValue(Files.readAllBytes(testResources.getResource("integration/files/merge.pdf").toPath()));
             webService.getOperation().add(mergeType);
 
             // add rotate operation to the toolbox operation list
             RotateType rotateType = new RotateType();
             rotateType.setPages("1-5");
             rotateType.setDegrees(90);
-
             webService.getOperation().add(rotateType);
 
             DeleteType deleteType = new DeleteType();
             deleteType.setPages("5-8");
-
             webService.getOperation().add(deleteType);
+
+            SecurityType securityType = new SecurityType();
+            EncryptType encryptType = new EncryptType();
+            EncryptType.Password password = new EncryptType.Password();
+            password.setOpen("büro");
+            encryptType.setPassword(password);
+            securityType.setEncrypt(encryptType);
+            webService.getOperation().add(securityType);
 
             RestDocument restDocument = webService.process();
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
