@@ -6,6 +6,7 @@ import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.ImageHelper;
 import net.webpdf.wsclient.testsuite.TestResources;
+import net.webpdf.wsclient.testsuite.TestServer;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -27,12 +28,14 @@ public class RestWebserviceIntegrationTest {
 
     private final TestResources testResources = new TestResources(RestWebserviceIntegrationTest.class);
     @Rule
+    public TestServer testServer = new TestServer();
+    @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void testConverter() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testResources.getArguments().buildServerUrl())) {
+
+        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
 
             session.login();
 
@@ -61,8 +64,7 @@ public class RestWebserviceIntegrationTest {
 
     @Test
     public void testToolbox() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testResources.getArguments().buildServerUrl())) {
+        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
 
             session.login();
 
@@ -112,8 +114,7 @@ public class RestWebserviceIntegrationTest {
 
     @Test
     public void testSignature() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testResources.getArguments().buildServerUrl())) {
+        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
 
             session.login();
 
@@ -163,8 +164,7 @@ public class RestWebserviceIntegrationTest {
 
     @Test
     public void testPdfa() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testResources.getArguments().buildServerUrl())) {
+        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
 
             session.login();
 
@@ -189,8 +189,7 @@ public class RestWebserviceIntegrationTest {
 
     @Test
     public void testOcr() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testResources.getArguments().buildServerUrl())) {
+        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
 
             session.login();
 
@@ -220,8 +219,7 @@ public class RestWebserviceIntegrationTest {
 
     @Test
     public void testBarcode() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testResources.getArguments().buildServerUrl())) {
+        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
 
             session.login();
 
@@ -277,14 +275,13 @@ public class RestWebserviceIntegrationTest {
 
     @Test
     public void testUrlConverter() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testResources.getArguments().buildServerUrl())) {
+        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
 
             session.login();
 
             UrlConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.URLCONVERTER);
 
-            webService.setDocument(new RestDocument(/*null,*/ null));
+            webService.setDocument(new RestDocument(null));
 
             File fileOut = temporaryFolder.newFile();
 
@@ -311,10 +308,8 @@ public class RestWebserviceIntegrationTest {
         File configFile = testResources.getResource("toolbox.json");
         File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
         String json = FileUtils.readFileToString(configFile, Charset.defaultCharset());
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testResources.getArguments().buildServerUrl());
-             StringReader stringReader = new StringReader(json)
-        ) {
+        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL));
+             StringReader stringReader = new StringReader(json)) {
             StreamSource streamSource = new StreamSource(stringReader);
             session.login();
             ToolboxRestWebService webService = WebServiceFactory.createInstance(session, streamSource);
@@ -331,8 +326,7 @@ public class RestWebserviceIntegrationTest {
 
     @Test
     public void testToolboxSwitchToOutputFile() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testResources.getArguments().buildServerUrl())) {
+        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
 
             session.login();
 

@@ -5,6 +5,7 @@ import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.TestResources;
+import net.webpdf.wsclient.testsuite.TestServer;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,13 +19,14 @@ public class SoapWebserviceIntegrationTest {
 
     private final TestResources testResources = new TestResources(SoapWebserviceIntegrationTest.class);
     @Rule
+    public TestServer testServer = new TestServer();
+    @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @SuppressWarnings("Duplicates")
     @Test
     public void testConverter() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testResources.getArguments().buildServerUrl())) {
+        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
             ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
@@ -49,8 +51,7 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testToolbox() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testResources.getArguments().buildServerUrl())) {
+        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
             ToolboxWebService webService = WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
@@ -93,8 +94,7 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testSignature() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testResources.getArguments().buildServerUrl())) {
+        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
             SignatureWebService webService = WebServiceFactory.createInstance(session, WebServiceType.SIGNATURE);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
@@ -139,8 +139,7 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testPdfa() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testResources.getArguments().buildServerUrl())) {
+        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
             PdfaWebService webService = WebServiceFactory.createInstance(session, WebServiceType.PDFA);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
@@ -166,8 +165,7 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testOcr() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testResources.getArguments().buildServerUrl())) {
+        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
             OcrWebService webService = WebServiceFactory.createInstance(session, WebServiceType.OCR);
 
             File file = testResources.getResource("integration/files/ocr.png");
@@ -194,8 +192,7 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testBarcode() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testResources.getArguments().buildServerUrl())) {
+        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
             BarcodeWebService webService = WebServiceFactory.createInstance(session, WebServiceType.BARCODE);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
@@ -247,8 +244,7 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testUrlConverter() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testResources.getArguments().buildServerUrl())) {
+        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
             UrlConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.URLCONVERTER);
 
             File fileOut = temporaryFolder.newFile();

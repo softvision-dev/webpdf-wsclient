@@ -7,6 +7,7 @@ import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.SoapSession;
 import net.webpdf.wsclient.testsuite.TestResources;
+import net.webpdf.wsclient.testsuite.TestServer;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.junit.Assert;
@@ -24,6 +25,8 @@ import java.nio.charset.Charset;
 public class SoapCredentialsIntegrationTest {
 
     private final TestResources testResources = new TestResources(SoapCredentialsIntegrationTest.class);
+    @Rule
+    public TestServer testServer = new TestServer();
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -57,7 +60,7 @@ public class SoapCredentialsIntegrationTest {
     @Test
     public void testWithUserCredentialsInURL() throws Exception {
         try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testResources.getArguments(true, false).buildServerUrl())) {
+                testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true))) {
             executeConverter(session);
         }
     }
@@ -65,9 +68,10 @@ public class SoapCredentialsIntegrationTest {
     @Test
     public void testWithUserCredentials() throws Exception {
         try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testResources.getArguments().buildServerUrl())) {
+                testServer.getServer(TestServer.ServerType.LOCAL))) {
 
-            UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials("admin", "admin");
+            UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
+                    testServer.getLocalUser(), testServer.getLocalPassword());
             session.setCredentials(userCredentials);
 
             executeConverter(session);
@@ -79,8 +83,7 @@ public class SoapCredentialsIntegrationTest {
         File resFile = testResources.getResource("convert.xml");
         String xml = FileUtils.readFileToString(resFile, Charset.defaultCharset());
 
-        try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testResources.getArguments().buildServerUrl());
+        try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL));
              StringReader stringReader = new StringReader(xml)) {
             ConverterWebService webService = WebServiceFactory.createInstance(session, new StreamSource(stringReader));
 

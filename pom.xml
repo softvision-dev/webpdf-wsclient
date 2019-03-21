@@ -52,6 +52,10 @@
         <java.version>1.7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <server.local.url>http://localhost</server.local.url>
+        <server.local.user>admin</server.local.user>
+        <server.local.password>admin</server.local.password>
+        <server.public.url>https://portal.webpdf.de</server.public.url>
     </properties>
 
     <profiles>
@@ -70,6 +74,12 @@
                             <additionalClasspathElements>
                                 <additionalClasspathElement>${basedir}/src/main/resources</additionalClasspathElement>
                             </additionalClasspathElements>
+                            <systemPropertyVariables>
+                                <server.local.url>${server.local.url}</server.local.url>
+                                <server.local.user>${server.local.user}</server.local.user>
+                                <server.local.password>${server.local.password}</server.local.password>
+                                <server.public.url>${server.public.url}</server.public.url>
+                            </systemPropertyVariables>
                             <excludes>
                                 <exclude>**/*IntegrationTest.java</exclude>
                             </excludes>
@@ -92,13 +102,10 @@
                                 <additionalClasspathElement>${basedir}/src/main/resources</additionalClasspathElement>
                             </additionalClasspathElements>
                             <systemPropertyVariables>
-                                <protocol>http</protocol>
-                                <username>admin</username>
-                                <password>admin</password>
-                                <serverip>localhost</serverip>
-                                <port>8080</port>
-                                <sslport>8443</sslport>
-                                <path>webPDF/</path>
+                                <server.local.url>${server.local.url}</server.local.url>
+                                <server.local.user>${server.local.user}</server.local.user>
+                                <server.local.password>${server.local.password}</server.local.password>
+                                <server.public.url>${server.public.url}</server.public.url>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -284,7 +291,8 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Implementation-Build>${project.version} (${maven.build.timestamp}, r${buildNumber})</Implementation-Build>
+                            <Implementation-Build>${project.version} (${maven.build.timestamp}, r${buildNumber})
+                            </Implementation-Build>
                         </manifestEntries>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>

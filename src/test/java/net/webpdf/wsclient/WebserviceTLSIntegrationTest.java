@@ -10,6 +10,7 @@ import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.TestResources;
+import net.webpdf.wsclient.testsuite.TestServer;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,9 +25,11 @@ import java.net.URL;
 @RunWith(JUnitParamsRunner.class)
 public class WebserviceTLSIntegrationTest {
     private final TestResources testResources = new TestResources(WebserviceTLSIntegrationTest.class);
+    private final File keystoreFile = testResources.getResource("integration/files/ks.jks");
+    @Rule
+    public TestServer testServer = new TestServer();
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
 
     private void testSoapSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
         TLSContext tlsContext = TLSContext.createDefault();
@@ -54,27 +57,35 @@ public class WebserviceTLSIntegrationTest {
 
     @Test
     public void testSoapSSL() throws Exception {
-        testSoapSSL(new URL("https://portal.webpdf.de/webPDF"), testResources.getDemoKeystoreFile(), false);
+        testSoapSSL(testServer.getServer(TestServer.ServerType.PUBLIC,
+                TestServer.ServerProtocol.HTTPS, false),
+                testServer.getDemoKeystoreFile(keystoreFile), false);
     }
 
     @Test
     public void testSoapSSLSelfSigned() throws Exception {
-        testSoapSSL(new URL("https://localhost:8443/webPDF"), null, true);
+        testSoapSSL(testServer.getServer(TestServer.ServerType.LOCAL,
+                TestServer.ServerProtocol.HTTPS, false), null, true);
     }
 
     @Test(expected = WebServiceException.class)
     public void testSoapSSLWrongKeystore() throws Exception {
-        testSoapSSL(new URL("https://localhost:8443/webPDF"), testResources.getDemoKeystoreFile(), false);
+        testSoapSSL(testServer.getServer(TestServer.ServerType.LOCAL,
+                TestServer.ServerProtocol.HTTPS, false),
+                testServer.getDemoKeystoreFile(keystoreFile), false);
     }
 
     @Test
     public void testSoapSSLCACertsFallback() throws Exception {
-        testSoapSSL(new URL("https://portal.webpdf.de/webPDF"), null, false);
+        testSoapSSL(testServer.getServer(
+                TestServer.ServerType.PUBLIC, TestServer.ServerProtocol.HTTPS, false),
+                null, false);
     }
 
     @Test(expected = WebServiceException.class)
     public void testSoapSSLProtocolFailure() throws Exception {
-        testSoapSSL(new URL("http://portal.webpdf.de/webPDF"), testResources.getDemoKeystoreFile(), false);
+        testSoapSSL(testServer.getServer(TestServer.ServerType.PUBLIC, TestServer.ServerProtocol.HTTP, false),
+                testServer.getDemoKeystoreFile(keystoreFile), false);
     }
 
     private void testRestSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
@@ -105,18 +116,23 @@ public class WebserviceTLSIntegrationTest {
 
     @Test
     @Parameters({
-            "https://portal.webpdf.de/webPDF|0|true|false",
-            "http://portal.webpdf.de/webPDF|-31|true|false",
-            "https://portal.webpdf.de/webPDF|0|false|false",
-            "https://portal.webpdf.de/webPDF|0|false|true",
-            "https://localhost:8443/webPDF|0|false|true",
-            "https://localhost:8443/webPDF|-31|true|false",
-            "https://localhost:8443/webPDF|0|true|true",
+            "PUBLIC|HTTPS|0|true|false",
+            "PUBLIC|HTTP|-31|true|false",
+            "PUBLIC|HTTPS|0|false|false",
+            "PUBLIC|HTTPS|0|false|true",
+            "LOCAL|HTTPS|0|false|true",
+            "LOCAL|HTTPS|-31|true|false",
+            "LOCAL|HTTPS|0|true|true"
     })
-    public void testRestSSL(String url, int expectedErrorCode, boolean setKeystoreFile, boolean selfSigned) throws Exception {
+    public void testRestSSL(String type, String protocol, int expectedErrorCode, boolean setKeystoreFile, boolean selfSigned) throws Exception {
+
+        TestServer.ServerType serverType = TestServer.ServerType.valueOf(type);
+        TestServer.ServerProtocol serverProtocol = TestServer.ServerProtocol.valueOf(protocol);
+
         try {
-            File keystoreFile = setKeystoreFile ? testResources.getDemoKeystoreFile() : null;
-            testRestSSL(new URL(url), keystoreFile, selfSigned);
+            URL url = testServer.getServer(serverType, serverProtocol, false);
+            File keystoreFile = setKeystoreFile ? testServer.getDemoKeystoreFile(this.keystoreFile) : null;
+            testRestSSL(url, keystoreFile, selfSigned);
             Assert.assertEquals(String.format("Found %d but %d has been expected.", 0, expectedErrorCode), 0, expectedErrorCode);
         } catch (ResultException ex) {
             Assert.assertEquals(String.format("Found %d but %d has been expected.", ex.getResult().getCode(), expectedErrorCode), expectedErrorCode, ex.getResult().getCode());
