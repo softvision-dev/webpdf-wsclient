@@ -8,10 +8,10 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for FaultInfo complex type.
- * 
- * <p>The following schemas fragment specifies the expected content contained within this class.
- * 
+ * <p>Java-Klasse für FaultInfo complex type.
+ *
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ *
  * <pre>
  * &lt;complexType name="FaultInfo">
  *   &lt;complexContent>
@@ -25,11 +25,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "FaultInfo", namespace = "http://schema.webpdf.de/1.0/soap/urlconverter", propOrder = {
+@XmlType(name = "FaultInfo", propOrder = {
     "errorCode",
     "errorMessage",
     "stackTrace"
@@ -44,64 +42,54 @@ public class FaultInfo {
     protected String stackTrace;
 
     /**
-     * Gets the value of the errorCode property.
-     * 
+     * Ruft den Wert der errorCode-Eigenschaft ab.
      */
     public int getErrorCode() {
         return errorCode;
     }
 
     /**
-     * Sets the value of the errorCode property.
-     * 
+     * Legt den Wert der errorCode-Eigenschaft fest.
      */
     public void setErrorCode(int value) {
         this.errorCode = value;
     }
 
     /**
-     * Gets the value of the errorMessage property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * Ruft den Wert der errorMessage-Eigenschaft ab.
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getErrorMessage() {
         return errorMessage;
     }
 
     /**
-     * Sets the value of the errorMessage property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * Legt den Wert der errorMessage-Eigenschaft fest.
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setErrorMessage(String value) {
         this.errorMessage = value;
     }
 
     /**
-     * Gets the value of the stackTrace property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * Ruft den Wert der stackTrace-Eigenschaft ab.
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getStackTrace() {
         return stackTrace;
     }
 
     /**
-     * Sets the value of the stackTrace property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * Legt den Wert der stackTrace-Eigenschaft fest.
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setStackTrace(String value) {
         this.stackTrace = value;
