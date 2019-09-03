@@ -3,20 +3,21 @@ package net.webpdf.wsclient.https;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import net.webpdf.wsclient.http.AlwaysTrustManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import java.io.File;
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.cert.CertificateException;
 
 public class TLSContext {
 
+    private static final TrustManager[] TRUST_ALL = new TrustManager[]{new AlwaysTrustManager()};
     private SSLContext sslContext;
     private boolean allowSelfSigned = false;
     private File trustStore = null;
@@ -45,20 +46,21 @@ public class TLSContext {
      */
     private void initSSLContext() throws ResultException {
         try {
-            if (this.trustStore != null) {
-                this.sslContext = new SSLContextBuilder()
-                                      .loadTrustMaterial(
-                                          trustStore,
-                                          trustStorePassword != null ?
-                                              trustStorePassword.toCharArray() : null,
-                                          allowSelfSigned ? new TrustSelfSignedStrategy() : null)
-                                      .setProtocol(protocol != null ? protocol.getName() : null)
-                                      .build();
-            } else if (allowSelfSigned) {
-                this.sslContext = new SSLContextBuilder()
-                                      .loadTrustMaterial(new TrustSelfSignedStrategy())
-                                      .setProtocol(protocol != null ? protocol.getName() : null)
-                                      .build();
+            if (this.trustStore != null || allowSelfSigned) {
+                this.sslContext = trustStore != null ?
+                                      new SSLContextBuilder()
+                                          .setProtocol(protocol != null ? protocol.getName() : null)
+                                          .loadTrustMaterial(
+                                              trustStore, trustStorePassword != null ?
+                                                              trustStorePassword.toCharArray() : null, null
+                                          )
+                                          .build() :
+                                      new SSLContextBuilder()
+                                          .setProtocol(protocol != null ? protocol.getName() : null)
+                                          .build();
+                if (allowSelfSigned) {
+                    sslContext.init(new KeyManager[0], TRUST_ALL, new SecureRandom());
+                }
             } else {
                 this.sslContext = SSLContexts.createDefault();
             }
@@ -72,7 +74,6 @@ public class TLSContext {
      * When set to true self signed certificates will be accepted.
      *
      * @param allowSelfSigned Self signed certificates will be accepted, when set to true.
-     * @return returns self, to enable chained calls.
      */
     public TLSContext setAllowSelfSigned(boolean allowSelfSigned) {
         this.allowSelfSigned = allowSelfSigned;
@@ -94,7 +95,6 @@ public class TLSContext {
      *
      * @param trustStore         The trust store file.
      * @param trustStorePassword The trust store password.
-     * @return returns self, to enable chained calls.
      */
     public TLSContext setTrustStore(File trustStore, String trustStorePassword) {
         this.trustStore = trustStore;

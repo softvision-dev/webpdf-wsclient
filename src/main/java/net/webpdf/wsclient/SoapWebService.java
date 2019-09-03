@@ -25,7 +25,7 @@ import java.util.Map;
 abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
     extends AbstractWebService<SoapDocument, T_OPERATION_TYPE, SoapDocument> {
 
-    private static final String SSL_SOCKET_FACTORY = "com.sun.xml.internal.ws.transport.https.client.SSLSocketFactory";
+    private static final String SSL_SOCKET_FACTORY = "com.sun.xml.ws.transport.https.client.SSLSocketFactory";
     private final MTOMFeature feature = new MTOMFeature();
     private final QName qname;
     private final URI webserviceURL;
