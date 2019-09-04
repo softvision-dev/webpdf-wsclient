@@ -1,16 +1,15 @@
 package net.webpdf.wsclient.tools;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.operation.BaseToolboxType;
-import net.webpdf.wsclient.tools.adapter.BaseToolboxTypeAdapter;
-import net.webpdf.wsclient.tools.adapter.EnumAdapterFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
@@ -25,10 +24,21 @@ public class SerializeHelper {
 
     private final static String OPERATION_SCHEMA = "/schemas/operation/operation.xsd";
 
+    /**
+     * Empty private constructor, for static calls and instantiation of and to instances of this helper class.
+     */
     private SerializeHelper() {
     }
 
-    private static String getResponseContent(HttpEntity httpEntity) throws IOException {
+    /**
+     * Returns the response content from the given http entity as a String for further processing.
+     *
+     * @param httpEntity The entity, that shall be searched for processable content.
+     * @return The response String, that could be extracted.
+     * @throws IOException Shall be thrown, when extracting the response content failed.
+     */
+    @NotNull
+    private static String getResponseContent(@NotNull HttpEntity httpEntity) throws IOException {
         try (InputStreamReader inputStreamReader = new InputStreamReader(httpEntity.getContent());
              BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 
@@ -51,7 +61,8 @@ public class SerializeHelper {
      * @return An object of type T representing the xml {@link HttpEntity}.
      * @throws ResultException a {@link ResultException}
      */
-    public static <T> T fromXML(HttpEntity httpEntity, Class<T> type) throws ResultException {
+    @NotNull
+    public static <T> T fromXML(@Nullable HttpEntity httpEntity, @Nullable Class<T> type) throws ResultException {
         try {
             if (httpEntity == null) {
                 throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
@@ -76,7 +87,8 @@ public class SerializeHelper {
      * @return An object of type T representing the xml {@link StreamSource}.
      * @throws ResultException a {@link ResultException}
      */
-    public static <T> T fromXML(StreamSource streamSource, Class<T> type) throws ResultException {
+    @NotNull
+    public static <T> T fromXML(@Nullable StreamSource streamSource, @Nullable Class<T> type) throws ResultException {
         if (streamSource == null || type == null) {
             throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
         }
@@ -114,7 +126,8 @@ public class SerializeHelper {
      * @return An object of type T representing the json {@link HttpEntity}.
      * @throws ResultException a {@link ResultException}
      */
-    public static <T> T fromJSON(HttpEntity httpEntity, Class<T> type) throws ResultException {
+    @NotNull
+    public static <T> T fromJSON(@Nullable HttpEntity httpEntity, @Nullable Class<T> type) throws ResultException {
         try {
             if (httpEntity == null) {
                 throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
@@ -138,21 +151,18 @@ public class SerializeHelper {
      * @return An object of type T representing the json {@link StreamSource}.
      * @throws ResultException a {@link ResultException}
      */
-    public static <T> T fromJSON(StreamSource streamSource, Class<T> type) throws ResultException {
+    @NotNull
+    public static <T> T fromJSON(@Nullable StreamSource streamSource, @Nullable Class<T> type) throws ResultException {
         if (streamSource == null || type == null) {
             throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
         }
-        try {
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            Gson gson = gsonBuilder
-                            .registerTypeAdapter(BaseToolboxType.class, new BaseToolboxTypeAdapter())
-                            .create();
-
-            return gson.fromJson(streamSource.getReader(), type);
-        } catch (JsonParseException ex) {
-            Result result = Result.build(Error.INVALID_OPERATION_DATA, ex);
-            result.addMessage(ex.getMessage());
-            throw new ResultException(result);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JaxbAnnotationModule());
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        try (Reader reader = streamSource.getReader()) {
+            return objectMapper.readValue(reader, type);
+        } catch (IOException ex) {
+            throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA, ex));
         }
     }
 
@@ -162,13 +172,12 @@ public class SerializeHelper {
      * @param object the object
      * @return the json {@link String}
      */
-    public static String toJSON(Object object) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson gson = gsonBuilder
-                        .registerTypeAdapterFactory(new EnumAdapterFactory())
-                        .registerTypeAdapter(BaseToolboxType.class, new BaseToolboxTypeAdapter())
-                        .create();
-        return gson.toJson(object);
+    @NotNull
+    public static String toJSON(@Nullable Object object) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JaxbAnnotationModule());
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return objectMapper.writeValueAsString(object);
     }
 
     /**
@@ -179,9 +188,10 @@ public class SerializeHelper {
      * @return the xml {@link String}
      * @throws ResultException an {@link ResultException}
      */
-    public static String toXML(Object object, Class type) throws ResultException {
+    @NotNull
+    public static String toXML(@Nullable Object object, @Nullable Class type) throws ResultException {
         if (object == null || type == null) {
-            throw new ResultException(Result.build(Error.TO_XML));
+            throw new ResultException(Result.build(Error.TO_XML_JSON));
         }
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(type);
@@ -195,7 +205,8 @@ public class SerializeHelper {
 
             return stringWriter.toString();
         } catch (JAXBException ex) {
-            throw new ResultException(Result.build(Error.TO_XML, ex));
+            throw new ResultException(Result.build(Error.TO_XML_JSON, ex));
         }
     }
+
 }

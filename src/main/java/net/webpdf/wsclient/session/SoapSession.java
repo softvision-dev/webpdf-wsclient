@@ -3,6 +3,8 @@ package net.webpdf.wsclient.session;
 import net.webpdf.wsclient.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.https.TLSContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
 
@@ -17,7 +19,7 @@ public class SoapSession extends AbstractSession {
      * @param tlsContext Container configuring a https session.
      * @throws ResultException a {@link ResultException}
      */
-    SoapSession(URL url, TLSContext tlsContext) throws ResultException {
+    SoapSession(@NotNull URL url, @Nullable TLSContext tlsContext) throws ResultException {
         super(url, WebServiceProtocol.SOAP, tlsContext);
         this.dataFormat = DataFormat.XML;
     }
@@ -47,7 +49,9 @@ public class SoapSession extends AbstractSession {
      *
      * @param useLocalWsdl True, to use a wsdl stored on the local file system, instead of the WSDL published by the server.
      */
-    public void setUseLocalWsdl(boolean useLocalWsdl) {
+    @SuppressWarnings({"SameParameterValue"})
+    void setUseLocalWsdl(boolean useLocalWsdl) {
         this.useLocalWsdl = useLocalWsdl;
     }
+
 }

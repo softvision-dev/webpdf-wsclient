@@ -39,6 +39,8 @@
                     <xs:element name="text" minOccurs="0" maxOccurs="1">
                         <xs:complexType>
                             <xs:attribute name="fromText" default="false" type="xs:boolean" />
+                            <xs:attribute name="protocol" default="" type="xs:string" />
+                            <xs:attribute name="withoutProtocol" default="true" type="xs:boolean" />
                         </xs:complexType>
                     </xs:element>
                 </xs:all>

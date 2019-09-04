@@ -3,12 +3,12 @@
     "checkResolution": "false",
     "forceEachPage": "true",
     "imageDpi": "1",
-    "language": "FRA",
+    "language": "fra",
     "outputFormat": "pdf",
     "page": {
       "width": "1",
       "height": "2",
-      "metrics": "MM"
+      "metrics": "mm"
     }
   }
 }

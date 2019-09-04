@@ -3,7 +3,7 @@
     "add": {
       "location": "testLocation",
       "appendSignature": "true",
-      "certificationLevel": "NONE",
+      "certificationLevel": "none",
       "contact": "testContact",
       "fieldName": "testName",
       "keyName": "testKey",

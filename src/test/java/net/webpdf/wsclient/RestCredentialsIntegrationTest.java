@@ -2,6 +2,7 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.documents.RestDocument;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
+import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -20,6 +21,8 @@ import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 
+import static org.junit.Assert.assertNotNull;
+
 public class RestCredentialsIntegrationTest {
 
     private final TestResources testResources = new TestResources(RestCredentialsIntegrationTest.class);
@@ -36,12 +39,13 @@ public class RestCredentialsIntegrationTest {
 
         webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
+        assertNotNull("Operation should have been initialized", webService.getOperation());
         webService.getOperation().setPages("1-5");
         webService.getOperation().setEmbedFonts(true);
 
         webService.getOperation().setPdfa(new PdfaType());
         webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-        webService.getOperation().getPdfa().getConvert().setLevel("3b");
+        webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
         webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
         RestDocument restDocument = webService.process();

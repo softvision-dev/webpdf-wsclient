@@ -1,6 +1,8 @@
 package net.webpdf.wsclient.tools;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
@@ -10,7 +12,9 @@ import java.util.List;
 
 class XMLValidationEventHandler implements ValidationEventHandler {
 
+    @NotNull
     private List<String> messages = new ArrayList<>();
+    @NotNull
     private XMLStatus xmlStatus = XMLStatus.OK;
 
     /**
@@ -18,7 +22,7 @@ class XMLValidationEventHandler implements ValidationEventHandler {
      *
      * @return True, if the {@link XMLStatus} equals OK.
      */
-    public boolean isValid() {
+    boolean isValid() {
         return this.xmlStatus.equals(XMLStatus.OK);
     }
 
@@ -29,8 +33,7 @@ class XMLValidationEventHandler implements ValidationEventHandler {
      * @return True, if the {@link XMLStatus} could be updated accordingly.
      */
     @Override
-    public boolean handleEvent(ValidationEvent event) {
-
+    public boolean handleEvent(@Nullable ValidationEvent event) {
         if (event == null) {
             return false;
         }
@@ -69,7 +72,8 @@ class XMLValidationEventHandler implements ValidationEventHandler {
      *
      * @return A String containing the collected messages from all {@link ValidationEvent}s.
      */
-    public String getMessages() {
+    @NotNull
+    String getMessages() {
         return StringUtils.join(messages, "\n");
     }
 
@@ -78,7 +82,9 @@ class XMLValidationEventHandler implements ValidationEventHandler {
      *
      * @return the current {@link XMLStatus}.
      */
-    public XMLStatus getXMLStatus() {
+    @NotNull
+    XMLStatus getXMLStatus() {
         return this.xmlStatus;
     }
+
 }

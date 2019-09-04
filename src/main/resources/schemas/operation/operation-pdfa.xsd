@@ -58,6 +58,16 @@
             <xs:enumeration value="linked" />
         </xs:restriction>
     </xs:simpleType>
+    <xs:simpleType name="ZugferdVersionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="v10Comfort" />
+            <xs:enumeration value="v20Minimum" />
+            <xs:enumeration value="v20BasicWL" />
+            <xs:enumeration value="v20Basic" />
+            <xs:enumeration value="v20EN16931" />
+            <xs:enumeration value="v20Extended" />
+        </xs:restriction>
+    </xs:simpleType>
     <xs:complexType name="ZugferdType">
         <xs:all>
             <xs:element name="xmlFile" type="tns:ZugferdFileDataType" />
@@ -67,6 +77,7 @@
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
                 <xs:attributeGroup ref="tns:FileDataGroup" />
+                <xs:attribute name="version" default="v10Comfort" type="tns:ZugferdVersionType" />
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>

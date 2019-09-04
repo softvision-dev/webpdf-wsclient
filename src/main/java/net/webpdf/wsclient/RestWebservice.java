@@ -14,7 +14,10 @@ import net.webpdf.wsclient.tools.SerializeHelper;
 import org.apache.commons.codec.Charsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.nio.charset.UnsupportedCharsetException;
 
 abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebService<RestDocument, T_OPERATION_TYPE, RestDocument> {
@@ -25,7 +28,7 @@ abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebService<RestD
      * @param webServiceType The {@link WebServiceType} interface, that shall be created.
      * @param session        The {@link Session} the webservice interface shall be created for.
      */
-    RestWebservice(Session session, WebServiceType webServiceType) {
+    RestWebservice(@NotNull Session session, @NotNull WebServiceType webServiceType) {
         super(webServiceType, session);
     }
 
@@ -36,16 +39,22 @@ abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebService<RestD
      * @throws ResultException an {@link ResultException}
      */
     @Override
+    @Nullable
     public RestDocument process() throws ResultException {
-
+        if (this.document == null) {
+            return null;
+        }
         String urlPath = this.webServiceType.equals(WebServiceType.URLCONVERTER)
-                ? webServiceType.getRestEndpoint()
-                : webServiceType.getRestEndpoint().replace(WebServiceType.ID_PLACEHOLDER, this.document.getSourceDocumentId());
+                             ? webServiceType.getRestEndpoint()
+                             : webServiceType.getRestEndpoint().replace(
+            WebServiceType.ID_PLACEHOLDER,
+            this.document.getSourceDocumentId() != null ? this.document.getSourceDocumentId() : ""
+        );
 
         return ((RestSession) this.session).getDocumentManager().getDocument(
-                HttpRestRequest.createRequest((RestSession) this.session)
-                        .buildRequest(HttpMethod.POST, urlPath, getWebServiceOptions())
-                        .executeRequest(DocumentFileBean.class)
+            HttpRestRequest.createRequest((RestSession) this.session)
+                .buildRequest(HttpMethod.POST, urlPath, getWebServiceOptions())
+                .executeRequest(DocumentFileBean.class)
         );
     }
 
@@ -55,19 +64,22 @@ abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebService<RestD
      * @return {@link HttpEntity} with webservice parameters
      * @throws ResultException an {@link ResultException}
      */
+    @NotNull
     private HttpEntity getWebServiceOptions() throws ResultException {
         try {
             StringEntity stringEntity = new StringEntity(
-                    this.session.getDataFormat() == DataFormat.XML
-                            ? SerializeHelper.toXML(this.operation, this.operation.getClass())
-                            : SerializeHelper.toJSON(this.operation),
-                    Charsets.UTF_8);
+                this.session.getDataFormat() == DataFormat.XML
+                    ? SerializeHelper.toXML(this.operation, this.operation.getClass())
+                    : SerializeHelper.toJSON(this.operation),
+                Charsets.UTF_8);
 
-            stringEntity.setContentType(this.session.getDataFormat().getMimeType());
+            if (this.session.getDataFormat() != null) {
+                stringEntity.setContentType(this.session.getDataFormat().getMimeType());
+            }
             return stringEntity;
 
-        } catch (UnsupportedCharsetException ex) {
-            throw new ResultException(Result.build(Error.TO_XML, ex));
+        } catch (IOException | UnsupportedCharsetException ex) {
+            throw new ResultException(Result.build(Error.TO_XML_JSON, ex));
         }
     }
 

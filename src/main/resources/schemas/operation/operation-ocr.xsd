@@ -18,6 +18,8 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="forceEachPage" default="false" type="xs:boolean" />
+        <xs:attribute name="normalizePageRotation" default="false" type="xs:boolean" />
+        <xs:attribute name="failOnWarning" default="false" type="xs:boolean" />
     </xs:complexType>
     <xs:simpleType name="OcrLanguageType">
         <xs:restriction base="xs:string">

@@ -9,8 +9,8 @@
       "rotate": {
         "pages": "*",
         "degrees": "90",
-        "pageGroup": "EVEN",
-        "pageOrientation": "ANY"
+        "pageGroup": "even",
+        "pageOrientation": "any"
       }
     },
     {

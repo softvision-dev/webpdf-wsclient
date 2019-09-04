@@ -37,11 +37,11 @@ public class XMLValidationEventHandlerTest {
         );
     }
 
-    private class TestValidationEvent implements ValidationEvent {
+    private static class TestValidationEvent implements ValidationEvent {
 
         private final int errorLevel;
 
-        public TestValidationEvent(int errorLevel) {
+        TestValidationEvent(int errorLevel) {
             this.errorLevel = errorLevel;
         }
 

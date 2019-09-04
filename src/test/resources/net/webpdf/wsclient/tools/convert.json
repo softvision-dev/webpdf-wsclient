@@ -5,7 +5,7 @@
     "pdfa": {
       "convert": {
         "level": "3b",
-        "errorReport": "MESSAGE"
+        "errorReport": "message"
       }
     }
   }

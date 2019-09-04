@@ -4,5 +4,5 @@ enum XMLStatus {
     OK,
     WARNING,
     ERROR,
-    FATAL;
+    FATAL
 }

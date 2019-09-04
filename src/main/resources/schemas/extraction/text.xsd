@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns="http://schema.webpdf.de/1.0/extraction/text" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/extraction/text" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:complexType name="TextType">
+        <xs:complexContent>
+            <xs:extension base="ContentType"/>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="LinkType">
+        <xs:complexContent>
+            <xs:extension base="ContentType">
+                <xs:attribute name="type" type="LinkContentType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ParagraphType">
+        <xs:complexContent>
+            <xs:extension base="ContentType"/>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="WordType">
+        <xs:complexContent>
+            <xs:extension base="WordContentType"/>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ContentType">
+        <xs:choice>
+            <xs:element name="plain" type="xs:string" default=""/>
+        </xs:choice>
+        <xs:attribute name="page" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="WordContentType">
+        <xs:complexContent>
+            <xs:extension base="ContentType">
+                <xs:sequence>
+                    <xs:element name="rectangle" type="RectangleType" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="RectangleType">
+        <xs:attribute name="coordinates" type="CoordinatesType"/>
+        <xs:attribute name="x" type="xs:float" use="required"/>
+        <xs:attribute name="y" type="xs:float" use="required"/>
+        <xs:attribute name="width" type="xs:float" use="required"/>
+        <xs:attribute name="height" type="xs:float" use="required"/>
+    </xs:complexType>
+    <xs:simpleType name="CoordinatesType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="pdf"/>
+            <xs:enumeration value="user"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="MetricsType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="px"/>
+            <xs:enumeration value="mm"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="texts">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="text" type="TextType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="link" type="LinkType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="paragraph" type="ParagraphType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="word" type="WordType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="LinkContentType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="action"/>
+            <xs:enumeration value="text"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

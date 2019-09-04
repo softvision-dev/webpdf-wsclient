@@ -7,6 +7,8 @@ import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.tools.SerializeHelper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -27,7 +29,8 @@ public final class WebServiceFactory {
      * @return a specific {@link WebService} child instance
      * @throws ResultException a {@link ResultException}
      */
-    public static <T extends WebService> T createInstance(Session session, WebServiceType webServiceType)
+    @NotNull
+    public static <T extends WebService> T createInstance(@NotNull Session session, @NotNull WebServiceType webServiceType)
         throws ResultException {
         switch (session.getWebServiceProtocol()) {
             case SOAP:
@@ -50,7 +53,8 @@ public final class WebServiceFactory {
      * @return a specific {@link WebService} child instance
      * @throws ResultException a {@link ResultException}
      */
-    public static <T extends WebService> T createInstance(Session session, StreamSource streamSource)
+    @NotNull
+    public static <T extends WebService> T createInstance(@Nullable Session session, @Nullable StreamSource streamSource)
         throws ResultException {
         if (session == null) {
             throw new ResultException(Result.build(Error.SESSION_CREATE));
@@ -108,7 +112,7 @@ public final class WebServiceFactory {
      * @throws ResultException a {@link ResultException}
      */
     @SuppressWarnings("unchecked")
-    private static <T extends WebService> T createSoapInstance(Session session, WebServiceType webServiceType, OperationData operationData)
+    private static <T extends WebService> T createSoapInstance(@NotNull Session session, @NotNull WebServiceType webServiceType, @Nullable OperationData operationData)
         throws ResultException {
 
         if (operationData == null) {
@@ -159,7 +163,7 @@ public final class WebServiceFactory {
      * @throws ResultException a {@link ResultException}
      */
     @SuppressWarnings("unchecked")
-    private static <T extends WebService> T createRestInstance(Session session, WebServiceType webServiceType, OperationData operationData)
+    private static <T extends WebService> T createRestInstance(@NotNull Session session, @NotNull WebServiceType webServiceType, @Nullable OperationData operationData)
         throws ResultException {
 
         if (operationData == null) {
@@ -199,4 +203,5 @@ public final class WebServiceFactory {
                 throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE_TYPE));
         }
     }
+
 }

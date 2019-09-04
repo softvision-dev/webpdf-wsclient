@@ -8,6 +8,8 @@ import net.webpdf.wsclient.https.TLSContext;
 import net.webpdf.wsclient.schema.stubs.WebserviceException;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SoapSession;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.activation.DataHandler;
 import javax.xml.bind.DatatypeConverter;
@@ -26,10 +28,15 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
     extends AbstractWebService<SoapDocument, T_OPERATION_TYPE, SoapDocument> {
 
     private static final String SSL_SOCKET_FACTORY = "com.sun.xml.ws.transport.https.client.SSLSocketFactory";
+    @NotNull
     private final MTOMFeature feature = new MTOMFeature();
+    @NotNull
     private final QName qname;
+    @NotNull
     private final URI webserviceURL;
-    T_WEBPDF_PORT port = null;
+    @NotNull
+    T_WEBPDF_PORT port;
+    @Nullable
     private final TLSContext tlsContext;
 
     /**
@@ -38,11 +45,12 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
      * @param webServiceType The {@link WebServiceType} interface, that shall be created.
      * @param session        The {@link Session} the webservice interface shall be created for.
      */
-    SoapWebService(Session session, WebServiceType webServiceType) throws ResultException {
+    SoapWebService(@NotNull Session session, @NotNull WebServiceType webServiceType) throws ResultException {
         super(webServiceType, session);
         this.qname = new QName(webServiceType.getSoapNamespaceURI(), webServiceType.getSoapLocalPart());
         this.tlsContext = this.session.getTlsContext();
         this.webserviceURL = this.session.getURI(webServiceType.getSoapEndpoint());
+        this.port = provideWSPort();
     }
 
     /**
@@ -51,6 +59,7 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
      * @return A {@link DataHandler} of the result document.
      * @throws WebserviceException a {@link WebserviceException}
      */
+    @Nullable
     abstract DataHandler processService() throws WebserviceException;
 
     /**
@@ -60,12 +69,11 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
      * @throws ResultException a {@link ResultException}
      */
     @Override
+    @NotNull
     public SoapDocument process() throws ResultException {
 
         if (this.document == null) {
             throw new ResultException(Result.build(Error.NO_DOCUMENT));
-        } else if (this.operation == null) {
-            throw new ResultException(Result.build(Error.NO_OPERATION_DATA));
         }
 
         DataHandler resultDataHandler;
@@ -90,6 +98,7 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
      *
      * @return the {@link QName} of the current SOAP webservice.
      */
+    @NotNull
     QName getQName() {
         return this.qname;
     }
@@ -100,6 +109,7 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
      * @return the {@link URL} of the wsdl document.
      * @throws ResultException a {@link ResultException}
      */
+    @NotNull
     URL getWsdlDocumentLocation() throws ResultException {
 
         boolean useLocalWsdl = (!(this.session instanceof SoapSession)) || ((SoapSession) session).isUseLocalWsdl();
@@ -126,6 +136,7 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
      *
      * @return The configuration of the {@link MTOMFeature} for the current webservice call.
      */
+    @NotNull
     MTOMFeature getFeature() {
         return feature;
     }
@@ -147,7 +158,7 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
 
             headers.put("Authorization", Collections.singletonList(authHeader));
 
-            if (!headers.isEmpty() && (this.port != null)) {
+            if (!headers.isEmpty()) {
                 Map<String, Object> requestContext = bindingProvider.getRequestContext();
                 requestContext.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
                 requestContext.put(BindingProvider.USERNAME_PROPERTY, session.getCredentials().getUserPrincipal().getName());
@@ -157,12 +168,18 @@ abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_TYPE>
 
         // set target URL
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.webserviceURL.toString());
-        if(tlsContext != null) {
-            if(tlsContext.getSslContext() == null){
-                throw new ResultException(Result.build(Error.HTTPS_IO_ERROR));
-            }
+
+        if (tlsContext != null) {
             bindingProvider.getRequestContext().put(SSL_SOCKET_FACTORY, tlsContext.getSslContext().getSocketFactory());
         }
     }
+
+    /**
+     * Create a matching webservice port for future executions of this SOAP webservice.
+     *
+     * @return The webservice port, that shall be used for executions.
+     */
+    @NotNull
+    protected abstract T_WEBPDF_PORT provideWSPort() throws ResultException;
 
 }

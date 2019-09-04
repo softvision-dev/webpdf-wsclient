@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class RestWebserviceIntegrationTest {
 
@@ -45,12 +46,13 @@ public class RestWebserviceIntegrationTest {
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setPages("1-5");
             webService.getOperation().setEmbedFonts(true);
 
             webService.getOperation().setPdfa(new PdfaType());
             webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-            webService.getOperation().getPdfa().getConvert().setLevel("3b");
+            webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
             webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
             RestDocument restDocument = webService.process();
@@ -124,6 +126,7 @@ public class RestWebserviceIntegrationTest {
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setAdd(new SignatureType.Add());
             webService.getOperation().getAdd().setAppearance(new SignatureType.Add.Appearance());
             webService.getOperation().getAdd().getAppearance().setPage(1);
@@ -173,8 +176,9 @@ public class RestWebserviceIntegrationTest {
             File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setConvert(new PdfaType.Convert());
-            webService.getOperation().getConvert().setLevel("3b");
+            webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
             webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
             webService.getOperation().getConvert().setImageQuality(90);
 
@@ -198,6 +202,7 @@ public class RestWebserviceIntegrationTest {
             File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setLanguage(OcrLanguageType.ENG);
             webService.getOperation().setOutputFormat(OcrOutputType.PDF);
             webService.getOperation().setCheckResolution(false);
@@ -229,6 +234,7 @@ public class RestWebserviceIntegrationTest {
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setAdd(new BarcodeType.Add());
 
             // build a desired barcode type
@@ -284,6 +290,7 @@ public class RestWebserviceIntegrationTest {
 
             File fileOut = temporaryFolder.newFile();
 
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setUrl("https://www.webpdf.de");
 
             webService.getOperation().setPage(new PageType());

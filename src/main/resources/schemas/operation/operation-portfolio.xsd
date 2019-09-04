@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="PortfolioType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:choice>
+                    <xs:element name="add" type="tns:PortfolioAddType" />
+                    <xs:element name="remove" type="tns:PortfolioRemoveType" />
+                    <xs:element name="extract" type="tns:PortfolioExtractType" />
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="PortfolioFileType">
+        <xs:all minOccurs="1" maxOccurs="1">
+            <xs:element name="data" type="tns:PortfolioFileDataType" />
+        </xs:all>
+        <xs:attribute name="path" default="" type="xs:string" />
+        <xs:attribute name="fileName" default="" type="xs:string" />
+        <xs:attribute name="mimeType" default="" type="xs:string" />
+        <xs:attribute name="creator" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="PortfolioFolderType">
+        <xs:attribute name="path" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="PortfolioRemoveType">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="selection" type="tns:PortfolioSelectionType" />
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="PortfolioExtractType">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="selection" type="tns:PortfolioSelectionType" />
+        </xs:choice>
+        <xs:attribute name="singleFileAsZip" default="true" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType id="portfolioAddChoiceId" name="PortfolioAddType">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="file" type="tns:PortfolioFileType" />
+            <xs:element name="folder" type="tns:PortfolioFolderType" />
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="PortfolioFileDataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="PortfolioSelectionType">
+        <xs:attribute name="path" default="" type="xs:string" />
+        <xs:attribute name="fileName" default="" type="xs:string" />
+    </xs:complexType>
+</xs:schema>

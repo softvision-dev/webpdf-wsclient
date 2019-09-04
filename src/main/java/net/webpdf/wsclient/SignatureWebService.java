@@ -1,10 +1,13 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.schema.operation.SignatureType;
 import net.webpdf.wsclient.schema.stubs.Signature;
 import net.webpdf.wsclient.schema.stubs.WebserviceException;
 import net.webpdf.wsclient.session.Session;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -17,15 +20,8 @@ public class SignatureWebService extends SoapWebService<Signature, SignatureType
      *
      * @param session The session a SOAP SignatureWebservice shall be created for.
      */
-    SignatureWebService(Session session) throws ResultException {
+    SignatureWebService(@NotNull Session session) throws ResultException {
         super(session, WebServiceType.SIGNATURE);
-        this.operation.setSignature(new SignatureType());
-
-        Service service = Service.create(getWsdlDocumentLocation(), getQName());
-        this.port = service.getPort(
-            new QName(WebServiceType.SIGNATURE.getSoapNamespaceURI(),
-                WebServiceType.SIGNATURE.getSoapLocalPartPort()),
-            Signature.class, this.getFeature());
     }
 
     /**
@@ -35,10 +31,29 @@ public class SignatureWebService extends SoapWebService<Signature, SignatureType
      * @throws WebserviceException a {@link WebserviceException}
      */
     @Override
+    @Nullable
+    @SuppressWarnings("Duplicates")
     DataHandler processService() throws WebserviceException {
+        if (this.document == null) {
+            return null;
+        }
         return this.port.execute(this.operation,
             this.document.getSourceDataHandler(),
-            this.document.isFileSource() ? null : this.document.getSource().toString());
+            this.document.isFileSource() || this.document.getSource() == null ? null : this.document.getSource().toString());
+    }
+
+    /**
+     * Create a matching webservice port for future executions of this SOAP webservice.
+     *
+     * @return The webservice port, that shall be used for executions.
+     */
+    @Override
+    @NotNull
+    protected Signature provideWSPort() throws ResultException {
+        return Service.create(getWsdlDocumentLocation(), getQName()).getPort(
+            new QName(WebServiceType.SIGNATURE.getSoapNamespaceURI(),
+                WebServiceType.SIGNATURE.getSoapLocalPartPort()),
+            Signature.class, this.getFeature());
     }
 
     /**
@@ -47,6 +62,7 @@ public class SignatureWebService extends SoapWebService<Signature, SignatureType
      * @return operation type element
      */
     @Override
+    @NotNull
     public SignatureType getOperation() {
         return this.operation.getSignature();
     }
@@ -57,9 +73,21 @@ public class SignatureWebService extends SoapWebService<Signature, SignatureType
      * @param operationData the web service operation data
      */
     @Override
-    public void setOperation(SignatureType operationData) {
+    public void setOperation(@Nullable SignatureType operationData) {
         if (operationData != null) {
             operation.setSignature(operationData);
         }
     }
+
+    /**
+     * Initialize all substructures, that must be set for this webservice to accept parameters for this
+     * webservice type.
+     *
+     * @param operation The operationData that, shall be initialized for webservice execution.
+     */
+    @Override
+    protected void initOperation(@NotNull OperationData operation) {
+        this.operation.setSignature(new SignatureType());
+    }
+
 }

@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import static org.junit.Assert.assertNotNull;
+
 public class SoapWebserviceIntegrationTest {
 
     private final TestResources testResources = new TestResources(SoapWebserviceIntegrationTest.class);
@@ -33,12 +35,13 @@ public class SoapWebserviceIntegrationTest {
             File fileOut = temporaryFolder.newFile();
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setPages("1-5");
             webService.getOperation().setEmbedFonts(true);
 
             webService.getOperation().setPdfa(new PdfaType());
             webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-            webService.getOperation().getPdfa().getConvert().setLevel("3b");
+            webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
             webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
             try (SoapDocument soapDocument = webService.process()) {
@@ -109,6 +112,7 @@ public class SoapWebserviceIntegrationTest {
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));
 
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setAdd(new SignatureType.Add());
             webService.getOperation().getAdd().setAppearance(new SignatureType.Add.Appearance());
             webService.getOperation().getAdd().getAppearance().setPage(1);
@@ -154,8 +158,9 @@ public class SoapWebserviceIntegrationTest {
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));
 
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setConvert(new PdfaType.Convert());
-            webService.getOperation().getConvert().setLevel("3b");
+            webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
             webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
             webService.getOperation().getConvert().setImageQuality(90);
 
@@ -180,6 +185,7 @@ public class SoapWebserviceIntegrationTest {
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));
 
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setLanguage(OcrLanguageType.ENG);
             webService.getOperation().setOutputFormat(OcrOutputType.PDF);
             webService.getOperation().setCheckResolution(false);
@@ -207,6 +213,7 @@ public class SoapWebserviceIntegrationTest {
 
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));
 
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setAdd(new BarcodeType.Add());
 
             // build a desired barcode type
@@ -258,6 +265,7 @@ public class SoapWebserviceIntegrationTest {
 
             webService.setDocument(new SoapDocument(null, fileOut));
 
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setUrl("https://www.webpdf.de");
             webService.getOperation().setPage(new PageType());
             webService.getOperation().getPage().setWidth(150);

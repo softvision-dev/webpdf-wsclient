@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<!--Created with Liquid Studio 2018 (https://www.liquid-technologies.com)-->
 <xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="AttachmentType">
@@ -26,6 +25,7 @@
                                 <xs:element name="selection" type="tns:SelectionAttachmentType" />
                             </xs:choice>
                             <xs:attribute name="folderNameTemplate" default="page[%d]" type="xs:string" />
+                            <xs:attribute name="singleFileAsZip" default="true" type="xs:boolean" />
                         </xs:complexType>
                     </xs:element>
                 </xs:choice>
@@ -50,6 +50,8 @@
             <xs:element name="annotation" type="tns:FileAnnotationType" minOccurs="0" maxOccurs="1" />
         </xs:all>
         <xs:attribute name="fileName" type="xs:string" use="required" />
+        <xs:attribute name="mimeType" default="" type="xs:string" />
+        <xs:attribute name="creator" default="" type="xs:string" />
     </xs:complexType>
     <xs:complexType name="FileAnnotationType">
         <xs:all>

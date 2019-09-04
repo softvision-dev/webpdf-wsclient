@@ -11,15 +11,21 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URL;
 
 public class RestSession extends AbstractSession {
+
     private static final String LOGOUT_PATH = "authentication/user/logout/";
     private static final String LOGIN_PATH = "authentication/user/login/";
+    @Nullable
     private Token token = new Token();
+    @NotNull
     private CloseableHttpClient httpClient;
+    @NotNull
     private DocumentManager documentManager = new DocumentManager(this);
 
     /**
@@ -29,7 +35,7 @@ public class RestSession extends AbstractSession {
      * @param tlsContext Container configuring a https session.
      * @throws ResultException a {@link ResultException}
      */
-    RestSession(URL url, TLSContext tlsContext) throws ResultException {
+    RestSession(@NotNull URL url, @Nullable TLSContext tlsContext) throws ResultException {
         super(url, WebServiceProtocol.REST, tlsContext);
         this.dataFormat = DataFormat.JSON;
 
@@ -37,7 +43,7 @@ public class RestSession extends AbstractSession {
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
                                                   .setDefaultRequestConfig(clientConfig)
                                                   .setDefaultCredentialsProvider(this.credentialsProvider);
-        if (getTlsContext() != null && getTlsContext().getSslContext() != null) {
+        if (getTlsContext() != null) {
             httpClientBuilder.setSSLContext(getTlsContext().getSslContext());
         }
         httpClient = httpClientBuilder.build();
@@ -48,6 +54,7 @@ public class RestSession extends AbstractSession {
      *
      * @return The session {@link Token} of this session.
      */
+    @Nullable
     public Token getToken() {
         return this.token;
     }
@@ -57,6 +64,7 @@ public class RestSession extends AbstractSession {
      *
      * @return The {@link CloseableHttpClient} connected to the server via this session.
      */
+    @NotNull
     public CloseableHttpClient getHttpClient() {
         return this.httpClient;
     }
@@ -66,6 +74,7 @@ public class RestSession extends AbstractSession {
      *
      * @return The {@link DocumentManager} managing source and target document for this session.
      */
+    @NotNull
     public DocumentManager getDocumentManager() {
         return documentManager;
     }
@@ -75,7 +84,7 @@ public class RestSession extends AbstractSession {
      *
      * @param dataFormat The {@link DataFormat} accepted by this session.
      */
-    public void setDataFormat(DataFormat dataFormat) {
+    public void setDataFormat(@Nullable DataFormat dataFormat) {
         this.dataFormat = dataFormat;
     }
 
@@ -93,9 +102,7 @@ public class RestSession extends AbstractSession {
         } catch (ResultException ex) {
             throw new IOException("Unable to logout from server", ex);
         } finally {
-            if (this.httpClient != null) {
-                this.httpClient.close();
-            }
+            this.httpClient.close();
         }
     }
 
@@ -124,4 +131,5 @@ public class RestSession extends AbstractSession {
 
         this.token = null;
     }
+
 }

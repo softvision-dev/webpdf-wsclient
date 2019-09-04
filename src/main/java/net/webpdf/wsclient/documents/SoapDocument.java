@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.documents;
 
-import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.Nullable;
 
 import javax.activation.DataHandler;
 import java.io.*;
@@ -8,8 +8,10 @@ import java.net.URI;
 
 public class SoapDocument extends AbstractDocument implements AutoCloseable {
 
+    @Nullable
     private InputStream inputStream;
     private boolean closeInput = false;
+    @Nullable
     private OutputStream outputStream;
     private boolean closeOutput = false;
 
@@ -20,7 +22,7 @@ public class SoapDocument extends AbstractDocument implements AutoCloseable {
      * @param inputStream  The {@link InputStream} the SOAP document is originating from.
      * @param outputStream The target {@link OutputStream} the request answer shall be written to.
      */
-    public SoapDocument(InputStream inputStream, OutputStream outputStream) {
+    public SoapDocument(@Nullable InputStream inputStream, @Nullable OutputStream outputStream) {
         super(null);
         this.inputStream = inputStream;
         this.outputStream = outputStream;
@@ -33,10 +35,10 @@ public class SoapDocument extends AbstractDocument implements AutoCloseable {
      * @param source     The {@link URI} the SOAP document is originating from.
      * @param targetFile The target {@link File} the request answer shall be written to.
      */
-    public SoapDocument(URI source, File targetFile) {
+    public SoapDocument(@Nullable URI source, @Nullable File targetFile) {
         super(source);
         try {
-            if (isFileSource()) {
+            if (source != null && isFileSource()) {
                 this.inputStream = new FileInputStream(new File(source));
                 this.closeInput = true;
             }
@@ -51,6 +53,7 @@ public class SoapDocument extends AbstractDocument implements AutoCloseable {
      *
      * @return A {@link DataHandler} for the document's source.
      */
+    @Nullable
     public DataHandler getSourceDataHandler() {
         return this.inputStream != null
                    ? new DataHandler(new InputStreamDataSource(this.inputStream))
@@ -63,7 +66,7 @@ public class SoapDocument extends AbstractDocument implements AutoCloseable {
      * @param resultDataHandler The {@link DataHandler} the SOAP response document shall be written to.
      * @throws IOException a {@link IOException}
      */
-    public void save(DataHandler resultDataHandler) throws IOException {
+    public void save(@Nullable DataHandler resultDataHandler) throws IOException {
 
         if (this.outputStream == null) {
             throw new IOException("No output stream available");
@@ -85,7 +88,12 @@ public class SoapDocument extends AbstractDocument implements AutoCloseable {
      */
     @Override
     public void close() {
-        if (this.closeInput) IOUtils.closeQuietly(this.inputStream);
-        if (this.closeOutput) IOUtils.closeQuietly(this.outputStream);
+        try {
+            if (this.closeInput && this.inputStream != null) this.inputStream.close();
+            if (this.closeOutput && this.outputStream != null) this.outputStream.close();
+        } catch (IOException e) {
+            //IGNORE
+        }
     }
+
 }
