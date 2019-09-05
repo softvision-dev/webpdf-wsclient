@@ -11,6 +11,7 @@
     - URL converter webservice
 
 #1.0.1 (15.08.2019)
+- Fixed bug: Missing UTF-8 encoding in REST parameter structure.
 - Fixed bug: Proper handling of webPDF 7 error codes and error messages in Webservice Exceptions (FaultInfo).
 
 #2.0.0 (04.09.2019)
