@@ -11,7 +11,6 @@ import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
-import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -52,7 +51,6 @@ public class WebserviceTLSIntegrationTest {
                 try (SoapDocument soapDocument2 = webService.process()) {
                     assertNotNull(soapDocument2);
                     assertTrue(fileOut.exists());
-                    FileUtils.copyFile(fileOut, new File("D:\\experiments", "out.pdf"));
                 }
             }
         }
