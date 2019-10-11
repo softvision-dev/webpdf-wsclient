@@ -1,9 +1,13 @@
 package net.webpdf.wsclient.session;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum DataFormat {
+
     XML("application/xml"),
     JSON("application/json");
 
+    @NotNull
     private final String mimeType;
 
     /**
@@ -11,7 +15,7 @@ public enum DataFormat {
      *
      * @param mimeType The MIME-type represented by the enum instance.
      */
-    DataFormat(String mimeType) {
+    DataFormat(@NotNull String mimeType) {
         this.mimeType = mimeType;
     }
 
@@ -20,8 +24,10 @@ public enum DataFormat {
      *
      * @return The MIME-type represented by this enum instance.
      */
+    @NotNull
     public String getMimeType() {
         return mimeType;
     }
+
 }
 

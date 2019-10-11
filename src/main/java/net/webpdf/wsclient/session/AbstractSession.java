@@ -12,6 +12,8 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,13 +24,21 @@ import java.net.URL;
  */
 abstract class AbstractSession implements Session {
 
+    @NotNull
     CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+    @Nullable
     DataFormat dataFormat = DataFormat.JSON;
+    @NotNull
     private String basePath;
-    private URI baseUrl;
+    @NotNull
     private WebServiceProtocol webServiceProtocol;
+    @NotNull
+    private URI baseUrl;
+    @Nullable
     private AuthScope authScope;
+    @Nullable
     private Credentials credentials;
+    @Nullable
     private TLSContext tlsContext;
 
     /**
@@ -39,55 +49,10 @@ abstract class AbstractSession implements Session {
      * @param tlsContext         Container configuring a https session.
      * @throws ResultException a {@link ResultException}
      */
-    AbstractSession(URL url, WebServiceProtocol webServiceProtocol, TLSContext tlsContext) throws ResultException {
+    AbstractSession(@NotNull URL url, @NotNull WebServiceProtocol webServiceProtocol, @Nullable TLSContext tlsContext) throws ResultException {
         this.webServiceProtocol = webServiceProtocol;
         this.tlsContext = tlsContext;
         this.basePath = webServiceProtocol.equals(WebServiceProtocol.SOAP) ? "soap/" : "rest/";
-        buildBaseURL(url);
-    }
-
-    /**
-     * Returns the currently set TLS context.
-     * @return The currently set TLS context.
-     */
-    @Override
-    public TLSContext getTlsContext() {
-        return tlsContext;
-    }
-
-    /**
-     * Returns the {@link WebServiceProtocol} this session is using.
-     *
-     * @return The {@link WebServiceProtocol} this session is using.
-     */
-    public WebServiceProtocol getWebServiceProtocol() {
-        return this.webServiceProtocol;
-    }
-
-    private void extractUserInfo(String userInfo) {
-
-        String name = "";
-        String password = "";
-
-        if (userInfo != null) {
-            String[] credentials = userInfo.split(":");
-
-            if (credentials.length >= 1) {
-                name = credentials[0];
-            }
-
-            if (credentials.length >= 2) {
-                password = credentials[1];
-            }
-        }
-
-        this.credentials = new UsernamePasswordCredentials(name, password);
-    }
-
-    private void buildBaseURL(URL url) throws ResultException {
-        if (url == null) {
-            throw new ResultException(Result.build(Error.INVALID_URL));
-        }
         String toUrl = url.toString();
         if (!toUrl.endsWith("/")) {
             toUrl = toUrl + "/";
@@ -115,13 +80,60 @@ abstract class AbstractSession implements Session {
     }
 
     /**
+     * Returns the currently set TLS context.
+     *
+     * @return The currently set TLS context.
+     */
+    @Override
+    @Nullable
+    public TLSContext getTlsContext() {
+        return tlsContext;
+    }
+
+    /**
+     * Returns the {@link WebServiceProtocol} this session is using.
+     *
+     * @return The {@link WebServiceProtocol} this session is using.
+     */
+    @NotNull
+    public WebServiceProtocol getWebServiceProtocol() {
+        return this.webServiceProtocol;
+    }
+
+    /**
+     * Extract and deduce the user credentials from a given user info String.
+     *
+     * @param userInfo The user info String containing the user name and password, separated by ":".
+     */
+    private void extractUserInfo(@Nullable String userInfo) {
+
+        String name = "";
+        String password = "";
+
+        if (userInfo != null) {
+            String[] credentials = userInfo.split(":");
+
+            if (credentials.length >= 1) {
+                name = credentials[0];
+            }
+
+            if (credentials.length >= 2) {
+                password = credentials[1];
+            }
+        }
+
+        this.credentials = new UsernamePasswordCredentials(name, password);
+    }
+
+    /**
      * Returns an {@link URI} pointing to the webservice interface of the session.
      *
      * @param subPath The location of the webservice interface on the webPDF server.
      * @return an {@link URI} pointing to the webservice interface of the session.
      * @throws ResultException a {@link ResultException}
      */
-    public URI getURI(String subPath) throws ResultException {
+    @NotNull
+    public URI getURI(@NotNull String subPath) throws ResultException {
         try {
             return new URIBuilder(this.baseUrl)
                        .setPath(this.baseUrl.getPath() + this.basePath + subPath)
@@ -136,6 +148,7 @@ abstract class AbstractSession implements Session {
      *
      * @return The {@link Credentials} authorizing this session.
      */
+    @Nullable
     public Credentials getCredentials() {
         return credentials;
     }
@@ -145,7 +158,7 @@ abstract class AbstractSession implements Session {
      *
      * @param credentials The {@link Credentials} authorizing this session.
      */
-    public void setCredentials(Credentials credentials) {
+    public void setCredentials(@Nullable Credentials credentials) {
         // set new credentials
         if (credentials != null) {
             this.credentials = credentials;
@@ -158,7 +171,9 @@ abstract class AbstractSession implements Session {
      *
      * @return The {@link DataFormat} accepted by this session.
      */
+    @Nullable
     public DataFormat getDataFormat() {
         return dataFormat;
     }
+
 }

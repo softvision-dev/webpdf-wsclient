@@ -2,9 +2,12 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.ConverterType;
+import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.schema.stubs.Converter;
 import net.webpdf.wsclient.schema.stubs.WebserviceException;
 import net.webpdf.wsclient.session.Session;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -17,15 +20,8 @@ public class ConverterWebService extends SoapWebService<Converter, ConverterType
      *
      * @param session The session a SOAP ConverterWebservice shall be created for.
      */
-    ConverterWebService(Session session) throws ResultException {
+    ConverterWebService(@NotNull Session session) throws ResultException {
         super(session, WebServiceType.CONVERTER);
-        this.operation.setConverter(new ConverterType());
-
-        Service service = Service.create(getWsdlDocumentLocation(), getQName());
-        this.port = service.getPort(
-            new QName(WebServiceType.CONVERTER.getSoapNamespaceURI(),
-                WebServiceType.CONVERTER.getSoapLocalPartPort()),
-            Converter.class, this.getFeature());
     }
 
     /**
@@ -35,9 +31,26 @@ public class ConverterWebService extends SoapWebService<Converter, ConverterType
      * @throws WebserviceException a {@link WebserviceException}
      */
     @Override
+    @Nullable
     DataHandler processService() throws WebserviceException {
-        DataHandler dataHandler = this.document.getSourceDataHandler();
-        return this.port.execute(this.operation, dataHandler, "");
+        if (this.document == null) {
+            return null;
+        }
+        return this.port.execute(this.operation, this.document.getSourceDataHandler(), this.document.isFileSource() || this.document.getSource() == null ? null : this.document.getSource().toString());
+    }
+
+    /**
+     * Create a matching webservice port for future executions of this SOAP webservice.
+     *
+     * @return The webservice port, that shall be used for executions.
+     */
+    @Override
+    @NotNull
+    protected Converter provideWSPort() throws ResultException {
+        return Service.create(getWsdlDocumentLocation(), getQName()).getPort(
+            new QName(WebServiceType.CONVERTER.getSoapNamespaceURI(),
+                WebServiceType.CONVERTER.getSoapLocalPartPort()),
+            Converter.class, this.getFeature());
     }
 
     /**
@@ -46,6 +59,7 @@ public class ConverterWebService extends SoapWebService<Converter, ConverterType
      * @return operation type element
      */
     @Override
+    @NotNull
     public ConverterType getOperation() {
         return operation.getConverter();
     }
@@ -56,9 +70,21 @@ public class ConverterWebService extends SoapWebService<Converter, ConverterType
      * @param operationData the web service operation data
      */
     @Override
-    public void setOperation(ConverterType operationData) {
+    public void setOperation(@Nullable ConverterType operationData) {
         if (operationData != null) {
             operation.setConverter(operationData);
         }
     }
+
+    /**
+     * Initialize all substructures, that must be set for this webservice to accept parameters for this
+     * webservice type.
+     *
+     * @param operation The operationData that, shall be initialized for webservice execution.
+     */
+    @Override
+    protected void initOperation(@NotNull OperationData operation) {
+        this.operation.setConverter(new ConverterType());
+    }
+
 }

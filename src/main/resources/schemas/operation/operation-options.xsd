@@ -4,6 +4,89 @@
     <xs:complexType name="OptionsType">
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
+                <xs:all>
+                    <xs:element name="pageTransitions" minOccurs="0" maxOccurs="1">
+                        <xs:complexType id="transitionsChoiceId">
+                            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                                <xs:element name="add">
+                                    <xs:complexType>
+                                        <xs:choice minOccurs="1" maxOccurs="1">
+                                            <xs:element name="pageTransition" type="tns:TransitionType" />
+                                        </xs:choice>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:element name="remove">
+                                    <xs:complexType>
+                                        <xs:choice minOccurs="1" maxOccurs="1">
+                                            <xs:element name="transitionSelection" type="tns:SelectionTransitionType" />
+                                        </xs:choice>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="background" minOccurs="0" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:choice minOccurs="1" maxOccurs="1">
+                                <xs:element name="add">
+                                    <xs:complexType>
+                                        <xs:choice minOccurs="1" maxOccurs="1">
+                                            <xs:element name="colorBackground" type="tns:ColorBackgroundType" />
+                                            <xs:element name="imageBackground" type="tns:ImageBackgroundType" />
+                                        </xs:choice>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:element name="remove">
+                                    <xs:complexType>
+                                        <xs:choice minOccurs="1" maxOccurs="1">
+                                            <xs:element name="backgroundSelection" type="tns:SelectionBackgroundType" />
+                                        </xs:choice>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="headerFooter" minOccurs="0" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:choice minOccurs="1" maxOccurs="1">
+                                <xs:element name="add">
+                                    <xs:complexType>
+                                        <xs:choice minOccurs="1" maxOccurs="1">
+                                            <xs:element name="headerFooterContent" type="tns:HeaderFooterType" />
+                                        </xs:choice>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:element name="remove">
+                                    <xs:complexType>
+                                        <xs:choice minOccurs="1" maxOccurs="1">
+                                            <xs:element name="headerFooterSelection" type="tns:SelectionHeaderFooterType" />
+                                        </xs:choice>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="boxes" minOccurs="0" maxOccurs="1">
+                        <xs:complexType id="boxesChoiceId">
+                            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                                <xs:element name="resize">
+                                    <xs:complexType>
+                                        <xs:choice minOccurs="1" maxOccurs="1">
+                                            <xs:element name="boxesResize" type="tns:BoxesResizeType" />
+                                        </xs:choice>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:element name="remove">
+                                    <xs:complexType>
+                                        <xs:choice minOccurs="1" maxOccurs="1">
+                                            <xs:element name="boxesRemove" type="tns:SelectionBoxType" />
+                                        </xs:choice>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:all>
                 <xs:attribute name="pageLayout" default="singlePage" type="tns:PageLayoutType" />
                 <xs:attribute name="initialView" default="none" type="tns:InitialViewType" />
                 <xs:attribute name="magnification" default="fitWidth" type="tns:MagnificationType" />
@@ -52,4 +135,306 @@
             <xs:enumeration value="zoom" />
         </xs:restriction>
     </xs:simpleType>
+    <xs:simpleType name="TransitionStyleType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="blinds" />
+            <xs:enumeration value="box" />
+            <xs:enumeration value="cover" />
+            <xs:enumeration value="dissolve" />
+            <xs:enumeration value="fade" />
+            <xs:enumeration value="fly" />
+            <xs:enumeration value="glitter" />
+            <xs:enumeration value="push" />
+            <xs:enumeration value="split" />
+            <xs:enumeration value="uncover" />
+            <xs:enumeration value="wipe" />
+            <xs:enumeration value="none" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TransitionDirection">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="leftToRight" />
+            <xs:enumeration value="bottomToTop" />
+            <xs:enumeration value="rightToLeft" />
+            <xs:enumeration value="topToBottom" />
+            <xs:enumeration value="topLeftToBottomRight" />
+            <xs:enumeration value="none" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="TransitionType">
+        <xs:attribute name="duration" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="style" default="none" type="tns:TransitionStyleType" />
+        <xs:attribute name="direction" default="none" type="tns:TransitionDirection" />
+        <xs:attribute name="pages" default="" type="xs:string" />
+        <xs:attribute name="autoScrollTime" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="autoScroll" default="false" type="xs:boolean" />
+        <xs:attribute name="flyScale" default="1" type="xs:float" />
+        <xs:attribute name="flyAreaOpaque" default="false" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType name="SelectionTransitionType">
+        <xs:attribute name="pages" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="BaseBackgroundType" />
+    <xs:simpleType name="BackgroundPositionModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="custom" />
+            <xs:enumeration value="top_left" />
+            <xs:enumeration value="top_center" />
+            <xs:enumeration value="top_right" />
+            <xs:enumeration value="center_left" />
+            <xs:enumeration value="center_center" />
+            <xs:enumeration value="center_right" />
+            <xs:enumeration value="bottom_left" />
+            <xs:enumeration value="bottom_center" />
+            <xs:enumeration value="bottom_right" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="SelectionBackgroundType" />
+    <xs:complexType name="BackgroundBaseType" />
+    <xs:complexType name="ColorBackgroundType">
+        <xs:complexContent>
+            <xs:extension base="tns:BackgroundBaseType">
+                <xs:all>
+                    <xs:element name="settings" type="tns:BackgroundBaseSettingsType" minOccurs="0" maxOccurs="1" />
+                </xs:all>
+                <xs:attribute name="color" default="#FFFFFF" type="tns:RgbColorType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ImageBackgroundType">
+        <xs:complexContent>
+            <xs:extension base="tns:BackgroundBaseType">
+                <xs:all>
+                    <xs:element name="settings" type="tns:BackgroundBaseSettingsType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="image" type="tns:BackgroundFileDataType" minOccurs="1" maxOccurs="1" />
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="BackgroundFileDataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="BackgroundBaseSettingsType">
+        <xs:all>
+            <xs:element name="position" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:attribute name="x" default="0" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:float">
+                                <xs:minInclusive value="0" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="y" default="0" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:float">
+                                <xs:minInclusive value="0" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="metrics" default="mm" type="tns:MetricsType" use="optional" />
+                    <xs:attribute name="position" default="center_center" type="tns:BackgroundPositionModeType" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="visibility" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:attribute name="onPrint" default="true" type="xs:boolean" />
+                    <xs:attribute name="onScreen" default="true" type="xs:boolean" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="pages" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:choice minOccurs="1" maxOccurs="1">
+                        <xs:element name="pageInterval" type="tns:PageIntervalType" minOccurs="0" maxOccurs="1" />
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+        <xs:attributeGroup ref="tns:BaseBackgroundGroup" />
+    </xs:complexType>
+    <xs:complexType name="PageIntervalType">
+        <xs:attribute name="odd" default="true" type="xs:boolean" />
+        <xs:attribute name="even" default="true" type="xs:boolean" />
+        <xs:attribute name="pages" default="*" type="xs:string" />
+    </xs:complexType>
+    <xs:attributeGroup name="BaseBackgroundGroup">
+        <xs:attribute name="relativeToPage" default="true" type="xs:boolean" />
+        <xs:attribute name="replaceExisting" default="false" type="xs:boolean" />
+        <xs:attribute name="scale" default="100">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="rotation" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:integer">
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="360" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="opacity" default="100">
+            <xs:simpleType>
+                <xs:restriction base="xs:integer">
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="100" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:attributeGroup>
+    <xs:complexType name="SelectionHeaderFooterType" />
+    <xs:complexType name="HeaderFooterType">
+        <xs:all>
+            <xs:element name="pages" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:choice minOccurs="1" maxOccurs="1">
+                        <xs:element name="pageInterval" type="tns:PageIntervalType" minOccurs="0" maxOccurs="1" />
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="margin" type="tns:OptionsMarginType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="font" type="tns:OptionsFontType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="header" type="tns:HeaderFooterPositionsType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="footer" type="tns:HeaderFooterPositionsType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="date" type="tns:HeaderFooterDate" minOccurs="0" maxOccurs="1" />
+        </xs:all>
+        <xs:attribute name="firstPageNumber" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="replaceExisting" default="false" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType name="HeaderFooterPositionsType">
+        <xs:attribute name="left" default="" type="xs:string" />
+        <xs:attribute name="center" default="" type="xs:string" />
+        <xs:attribute name="right" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="BoxesResizeType">
+        <xs:all>
+            <xs:element name="dimensions" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:attribute name="x" default="0" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:float">
+                                <xs:minInclusive value="0" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="y" default="0" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:float">
+                                <xs:minInclusive value="0" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="width" default="0" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:float">
+                                <xs:minInclusive value="0" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="height" default="0" use="optional">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:float">
+                                <xs:minInclusive value="0" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="metrics" default="mm" type="tns:MetricsType" use="optional" />
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="pages" type="xs:string" />
+        <xs:attribute name="box" default="media_box" type="tns:PageBoxType" />
+    </xs:complexType>
+    <xs:simpleType name="PageBoxType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="media_box" />
+            <xs:enumeration value="crop_box" />
+            <xs:enumeration value="bleed_box" />
+            <xs:enumeration value="trim_box" />
+            <xs:enumeration value="art_box" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="SelectionBoxType">
+        <xs:attribute name="pages" default="*" type="xs:string" />
+        <xs:attribute name="box" default="crop_box" type="tns:PageBoxType" />
+    </xs:complexType>
+    <xs:complexType name="OptionsMarginType">
+        <xs:attribute name="left" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="right" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="top" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="bottom" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="metrics" default="mm" type="tns:MetricsType" use="optional" />
+    </xs:complexType>
+    <xs:complexType name="OptionsFontType">
+        <xs:attribute name="name" default="" type="xs:string" />
+        <xs:attribute name="size" default="10">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                    <xs:maxInclusive value="1296" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="underline" default="false" type="xs:boolean" />
+        <xs:attribute name="color" default="#000000" type="tns:RgbColorType" />
+    </xs:complexType>
+    <xs:complexType name="HeaderFooterDate">
+        <xs:attribute name="day">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:maxInclusive value="31" />
+                    <xs:minInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="month">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                    <xs:maxInclusive value="12" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="year" type="xs:int" />
+    </xs:complexType>
 </xs:schema>

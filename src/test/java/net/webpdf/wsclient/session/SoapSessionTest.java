@@ -21,6 +21,7 @@ public class SoapSessionTest {
             assertTrue("SOAPSession should use local wsdl by default.", soapSession.isUseLocalWsdl());
             soapSession.setUseLocalWsdl(false);
             assertFalse("SOAPSession should not be using local wsdl after modification.", soapSession.isUseLocalWsdl());
+            assertNotNull("DataFormat should have been initialized.", soapSession.getDataFormat());
             assertEquals("DataFormat should have been XML.", DataFormat.XML, soapSession.getDataFormat());
             assertEquals("MimeType should have been xml.", DataFormat.XML.getMimeType(), soapSession.getDataFormat().getMimeType());
             assertEquals("WebserviceProtocol should have been SOAP.", WebServiceProtocol.SOAP, soapSession.getWebServiceProtocol());
@@ -41,6 +42,7 @@ public class SoapSessionTest {
             assertTrue("SOAPSession should use local wsdl by default.", soapSession.isUseLocalWsdl());
             soapSession.setUseLocalWsdl(false);
             assertFalse("SOAPSession should not be using local wsdl after modification.", soapSession.isUseLocalWsdl());
+            assertNotNull("DataFormat should have been initialized", soapSession.getDataFormat());
             assertEquals("DataFormat should have been XML.", DataFormat.XML, soapSession.getDataFormat());
             assertEquals("MimeType should have been xml.", DataFormat.XML.getMimeType(), soapSession.getDataFormat().getMimeType());
             assertEquals("WebserviceProtocol should have been SOAP.", WebServiceProtocol.SOAP, soapSession.getWebServiceProtocol());

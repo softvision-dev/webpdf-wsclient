@@ -1,7 +1,10 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.schema.operation.SignatureType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SignatureRestWebService extends RestWebservice<SignatureType> {
 
@@ -10,9 +13,8 @@ public class SignatureRestWebService extends RestWebservice<SignatureType> {
      *
      * @param session The session a SignatureRestWebservice shall be created for.
      */
-    public SignatureRestWebService(Session session) {
+    SignatureRestWebService(@NotNull Session session) {
         super(session, WebServiceType.SIGNATURE);
-        this.operation.setSignature(new SignatureType());
     }
 
     /**
@@ -21,6 +23,7 @@ public class SignatureRestWebService extends RestWebservice<SignatureType> {
      * @return operation type element
      */
     @Override
+    @NotNull
     public SignatureType getOperation() {
         return this.operation.getSignature();
     }
@@ -31,9 +34,21 @@ public class SignatureRestWebService extends RestWebservice<SignatureType> {
      * @param operationData the web service operation data
      */
     @Override
-    public void setOperation(SignatureType operationData) {
+    public void setOperation(@Nullable SignatureType operationData) {
         if (operationData != null) {
             operation.setSignature(operationData);
         }
     }
+
+    /**
+     * Initialize all substructures, that must be set for this webservice to accept parameters for this
+     * webservice type.
+     *
+     * @param operation The operationData that, shall be initialized for webservice execution.
+     */
+    @Override
+    protected void initOperation(@NotNull OperationData operation) {
+        this.operation.setSignature(new SignatureType());
+    }
+
 }

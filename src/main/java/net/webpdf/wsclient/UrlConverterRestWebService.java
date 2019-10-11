@@ -1,7 +1,10 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.schema.operation.UrlConverterType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class UrlConverterRestWebService extends RestWebservice<UrlConverterType> {
 
@@ -10,9 +13,8 @@ public class UrlConverterRestWebService extends RestWebservice<UrlConverterType>
      *
      * @param session The session a UrlConverterRestWebservice shall be created for.
      */
-    public UrlConverterRestWebService(Session session) {
+    UrlConverterRestWebService(@NotNull Session session) {
         super(session, WebServiceType.URLCONVERTER);
-        this.operation.setUrlconverter(new UrlConverterType());
     }
 
     /**
@@ -21,6 +23,7 @@ public class UrlConverterRestWebService extends RestWebservice<UrlConverterType>
      * @return operation type element
      */
     @Override
+    @NotNull
     public UrlConverterType getOperation() {
         return this.operation.getUrlconverter();
     }
@@ -31,9 +34,21 @@ public class UrlConverterRestWebService extends RestWebservice<UrlConverterType>
      * @param operationData the web service operation data
      */
     @Override
-    public void setOperation(UrlConverterType operationData) {
+    public void setOperation(@Nullable UrlConverterType operationData) {
         if (operationData != null) {
             operation.setUrlconverter(operationData);
         }
     }
+
+    /**
+     * Initialize all substructures, that must be set for this webservice to accept parameters for this
+     * webservice type.
+     *
+     * @param operation The operationData that, shall be initialized for webservice execution.
+     */
+    @Override
+    protected void initOperation(@NotNull OperationData operation) {
+        this.operation.setUrlconverter(new UrlConverterType());
+    }
+
 }

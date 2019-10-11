@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns="http://schema.webpdf.de/1.0/extraction/info" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/extraction/info" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="document">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="information" type="InformationType" />
+                <xs:element name="security" type="SecurityType" />
+                <xs:element name="attachments" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="attachment" type="AttachmentType" minOccurs="0" maxOccurs="unbounded" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="pages" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="page" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:complexContent>
+                                        <xs:extension base="PageType">
+                                            <xs:sequence>
+                                                <xs:element name="boxes" type="BoxesType" minOccurs="1" maxOccurs="1" />
+                                            </xs:sequence>
+                                        </xs:extension>
+                                    </xs:complexContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="form" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="field" type="FieldType" minOccurs="0" maxOccurs="unbounded" />
+                        </xs:sequence>
+                        <xs:attribute name="objectKey" default="" type="xs:string" />
+                        <xs:attribute name="formType" default="none" type="FormsFormatType" />
+                        <xs:attribute name="defaultAppearance" default="" type="xs:string" />
+                        <xs:attribute name="needAppearances" default="false" type="xs:boolean" />
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="annotations" minOccurs="0">
+                    <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="annotation" type="AnnotationType" />
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="signatures" minOccurs="0">
+                    <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="signature" type="SignatureType" />
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="backgrounds" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="background" type="BackgroundContentType" />
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="headersFooters" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="headerFooter" type="HeaderFooterType" />
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="transitions" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="transition" type="TransitionType" />
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="images" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="image" type="ImageType" />
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="folders" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                            <xs:element name="folder" type="FolderType" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="InformationType">
+        <xs:sequence>
+            <xs:element name="description" type="DescriptionType" />
+            <xs:element name="pdfa" type="PdfaType" />
+        </xs:sequence>
+        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="version" default="" type="xs:string" />
+        <xs:attribute name="fileSize" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:long">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="pageLayout" default="singlePage" type="PageLayoutType" />
+        <xs:attribute name="encrypted" default="false" type="xs:boolean" />
+        <xs:attribute name="portfolio" default="false" type="xs:boolean" />
+        <xs:attribute name="pages">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="attachments" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="formType" default="none" type="FormsFormatType" />
+        <xs:attribute name="signatures" default="0" type="xs:int" />
+        <xs:attribute name="docMDP" default="none" type="DocMdpType" />
+    </xs:complexType>
+    <xs:complexType name="DescriptionType">
+        <xs:sequence>
+            <xs:element name="author" type="AuthorType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="keywords" type="KeywordType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="title" default="" type="xs:string" />
+        <xs:attribute name="subject" default="" type="xs:string" />
+        <xs:attribute name="creator" default="" type="xs:string" />
+        <xs:attribute name="producer" default="" type="xs:string" />
+        <xs:attribute name="application" default="" type="xs:string" />
+        <xs:attribute name="creationDate" default="" type="xs:string" />
+        <xs:attribute name="modificationDate" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="SecurityType">
+        <xs:choice>
+            <xs:element name="password" type="PasswordType" minOccurs="0" maxOccurs="1" />
+        </xs:choice>
+        <xs:attributeGroup ref="securityFlags" />
+    </xs:complexType>
+    <xs:complexType name="AttachmentType">
+        <xs:sequence>
+            <xs:element ref="document" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="number">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="page" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="name" default="" type="xs:string" />
+        <xs:attribute name="size" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:double">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="description" default="" type="xs:string" />
+        <xs:attribute name="mimeType" default="" type="xs:string" />
+        <xs:attribute name="folderId" default="0" type="xs:int" />
+    </xs:complexType>
+    <xs:complexType name="PageType">
+        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="number" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="label" default="" type="xs:string" />
+        <xs:attribute name="width" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="height" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="rotation" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:attributeGroup name="securityFlags">
+        <xs:attribute name="canAssemble" default="true" type="xs:boolean" />
+        <xs:attribute name="canExtractContent" default="true" type="xs:boolean" />
+        <xs:attribute name="canExtractForAccessibility" default="true" type="xs:boolean" />
+        <xs:attribute name="canFillInForm" default="true" type="xs:boolean" />
+        <xs:attribute name="canModify" default="true" type="xs:boolean" />
+        <xs:attribute name="canModifyAnnotations" default="true" type="xs:boolean" />
+        <xs:attribute name="canPrint" default="true" type="xs:boolean" />
+        <xs:attribute name="canPrintHighRes" default="true" type="xs:boolean" />
+    </xs:attributeGroup>
+    <xs:complexType name="PdfaType">
+        <xs:attribute name="part" default="" type="xs:string" />
+        <xs:attribute name="conformance" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:simpleType name="FormsFormatType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="acroForm" />
+            <xs:enumeration value="staticXFA" />
+            <xs:enumeration value="dynamicXFA" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="FieldType">
+        <xs:sequence>
+            <xs:element name="annotation" type="AnnotationType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="signature" type="SignatureType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="value" type="FormValueStyle" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="type" default="" type="xs:string" />
+        <xs:attribute name="subType" default="" type="xs:string" />
+        <xs:attribute name="name" default="" type="xs:string" />
+        <xs:attribute name="mappingName" default="" type="xs:string" />
+        <xs:attribute name="alternateName" default="" type="xs:string" />
+        <xs:attribute name="fullyQualifiedName" default="" type="xs:string" />
+        <xs:attribute name="noExport" default="false" type="xs:boolean" />
+        <xs:attribute name="readOnly" default="false" type="xs:boolean" />
+        <xs:attribute name="required" default="false" type="xs:boolean" />
+        <xs:attribute name="multiSelect" default="false" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType name="SignatureType">
+        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="name" default="" type="xs:string" />
+        <xs:attribute name="reason" default="" type="xs:string" />
+        <xs:attribute name="contact" default="" type="xs:string" />
+        <xs:attribute name="location" default="" type="xs:string" />
+        <xs:attribute name="date" default="" type="xs:string" />
+        <xs:attribute name="filter" default="" type="xs:string" />
+        <xs:attribute name="subFilter" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="AuthorType">
+        <xs:attribute name="name" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="KeywordType">
+        <xs:attribute name="keyword" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="PasswordType">
+        <xs:attribute name="hasOpenPassword" default="false" type="xs:boolean" />
+        <xs:attribute name="hasPermissionPassword" default="false" type="xs:boolean" />
+        <xs:attribute name="keyLength" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="keyAlgorithm" default="none" type="KeyAlgorithmType" />
+    </xs:complexType>
+    <xs:simpleType name="PageLayoutType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="singlePage" />
+            <xs:enumeration value="oneColumn" />
+            <xs:enumeration value="twoColumnLeft" />
+            <xs:enumeration value="twoColumnRight" />
+            <xs:enumeration value="twoPageLeft" />
+            <xs:enumeration value="twoPageRight" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="KeyAlgorithmType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="aes" />
+            <xs:enumeration value="rc4" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="RgbColorType">
+        <xs:restriction base="xs:token">
+            <xs:pattern value="#[0-9a-fA-F]{6}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OpacityType">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0" />
+            <xs:maxInclusive value="100" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:attributeGroup name="FlagsAnnotationGroup">
+        <xs:attribute name="locked" default="true" type="xs:boolean" />
+        <xs:attribute name="printable" default="false" type="xs:boolean" />
+        <xs:attribute name="rotatable" default="true" type="xs:boolean" />
+        <xs:attribute name="viewable" default="true" type="xs:boolean" />
+        <xs:attribute name="writable" default="true" type="xs:boolean" />
+        <xs:attribute name="zoomable" default="true" type="xs:boolean" />
+        <xs:attribute name="invisible" default="false" type="xs:boolean" />
+        <xs:attribute name="hidden" default="false" type="xs:boolean" />
+    </xs:attributeGroup>
+    <xs:complexType name="AnnotationType">
+        <xs:sequence minOccurs="0">
+            <xs:choice id="positions" minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="rectangle" type="RectangleType" />
+                <xs:element name="point" type="PointType" />
+            </xs:choice>
+            <xs:element name="markup" type="MarkupType" minOccurs="0" />
+            <xs:element name="popup" type="PopupType" minOccurs="0" />
+            <xs:element name="appearance" type="AppearanceType" minOccurs="0" />
+            <xs:element name="line" type="LineType" minOccurs="0" />
+            <xs:element name="border" type="BorderStyle" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="subType" default="" type="xs:string" />
+        <xs:attribute name="name" default="" type="xs:string" use="optional" />
+        <xs:attribute name="contents" default="" type="xs:string" use="optional" />
+        <xs:attribute name="page" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attributeGroup ref="FlagsAnnotationGroup" />
+        <xs:attribute name="color" default="#4800FF" type="RgbColorType" />
+        <xs:attribute name="rotation" default="0" type="xs:int" />
+        <xs:attribute name="iconName" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="MarkupType">
+        <xs:sequence>
+            <xs:element name="richContents" type="xs:string" minOccurs="0" default="" />
+        </xs:sequence>
+        <xs:attribute name="opacity" default="100" type="OpacityType" />
+        <xs:attribute name="creationDate" default="" type="xs:string" />
+        <xs:attribute name="subject" default="" type="xs:string" use="optional" />
+        <xs:attribute name="intents" default="" type="xs:string" use="optional" />
+        <xs:attribute name="creator" default="" type="xs:string" use="optional" />
+    </xs:complexType>
+    <xs:complexType name="PopupType">
+        <xs:sequence>
+            <xs:element name="rectangle" type="RectangleType" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="isOpen" default="false" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType name="RectangleType">
+        <xs:attribute name="width" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="height" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="x" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="y" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float" />
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="DocMdpType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="noChangesAllowed" />
+            <xs:enumeration value="formFillingSignatures" />
+            <xs:enumeration value="formFillingSignaturesAnnotations" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="PointType">
+        <xs:attribute name="x" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="y" default="0" use="optional">
+            <xs:simpleType>
+                <xs:restriction base="xs:float" />
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="AppearanceType" />
+    <xs:complexType name="PositionsType" />
+    <xs:complexType name="LineType">
+        <xs:attribute name="startStyle" default="" type="xs:string" />
+        <xs:attribute name="endStyle" default="" type="xs:string" />
+        <xs:attribute name="showCaption" default="false" type="xs:boolean" />
+        <xs:attribute name="captionHorizontalOffset" default="0" type="xs:float" />
+        <xs:attribute name="captionVerticalOffset" default="0" type="xs:float" />
+        <xs:attribute name="captionPositioning" default="" type="xs:string" />
+        <xs:attribute name="leaderLineLength" default="0" type="xs:float" />
+        <xs:attribute name="leaderLineOffsetLength" default="0" type="xs:float" />
+        <xs:attribute name="leaderLineExtensionLength" default="0" type="xs:float" />
+    </xs:complexType>
+    <xs:complexType name="BorderStyle">
+        <xs:attribute name="style" default="S" type="xs:string" />
+        <xs:attribute name="width" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="dashPattern" default="" type="xs:string" />
+        <xs:attribute name="dashPhase" default="0" type="xs:int" />
+        <xs:attribute name="effectStyle" default="" type="xs:string" />
+        <xs:attribute name="effectIntensity" default="0" type="xs:float" />
+        <xs:attribute name="interiorColor" default="#4800FF" type="RgbColorType" />
+    </xs:complexType>
+    <xs:complexType name="BackgroundContentType">
+        <xs:sequence>
+            <xs:element name="pieceInfo" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:attribute name="absoluteScaling" default="true" type="xs:boolean" />
+                    <xs:attribute name="scale" default="1">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:float">
+                                <xs:minInclusive value="0" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="rotation" default="0">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:int">
+                                <xs:minInclusive value="0" />
+                                <xs:maxInclusive value="360" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="opacity" default="1.0">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:float">
+                                <xs:minInclusive value="0" />
+                                <xs:maxInclusive value="1" />
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="color" default="#FFFFFF" type="RgbColorType" />
+                    <xs:attribute name="alignment" default="top_left" type="Alignment" />
+                    <xs:attribute name="horizOffset" default="0.0" type="xs:float" />
+                    <xs:attribute name="vertOffset" default="0.0" type="xs:float" />
+                    <xs:attribute name="unit" default="" type="xs:string" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="bounds" type="RectangleType" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="page" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="onprint" default="true">
+            <xs:simpleType>
+                <xs:restriction base="xs:boolean" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="onscreen" default="true">
+            <xs:simpleType>
+                <xs:restriction base="xs:boolean" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="isImage" default="false" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType name="ColorType">
+        <xs:attribute name="r" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="b" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="g" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="Alignment">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="top_left" />
+            <xs:enumeration value="top_center" />
+            <xs:enumeration value="top_right" />
+            <xs:enumeration value="center_left" />
+            <xs:enumeration value="center_center" />
+            <xs:enumeration value="center_right" />
+            <xs:enumeration value="bottom_left" />
+            <xs:enumeration value="bottom_center" />
+            <xs:enumeration value="bottom_right" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="BoxesType">
+        <xs:sequence>
+            <xs:element name="mediaBox" type="RectangleType" minOccurs="1" maxOccurs="1" />
+            <xs:element name="cropBox" type="RectangleType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="bleedBox" type="RectangleType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="trimBox" type="RectangleType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="artBox" type="RectangleType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="HeaderFooterType">
+        <xs:sequence>
+            <xs:element name="font" type="FontType" />
+            <xs:element name="margin" type="MarginType" />
+            <xs:element name="header" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:attribute name="left" default="" type="xs:string" />
+                    <xs:attribute name="center" default="" type="xs:string" />
+                    <xs:attribute name="right" default="" type="xs:string" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="footer" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:attribute name="left" default="" type="xs:string" />
+                    <xs:attribute name="center" default="" type="xs:string" />
+                    <xs:attribute name="right" default="" type="xs:string" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="page" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="color" type="RgbColorType" />
+    </xs:complexType>
+    <xs:complexType name="FontType">
+        <xs:attribute name="underline" default="false" type="xs:boolean" />
+        <xs:attribute name="size" default="10" type="xs:float" />
+        <xs:attribute name="name" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="MarginType">
+        <xs:attribute name="left" default="0" type="xs:float" />
+        <xs:attribute name="right" default="0" type="xs:float" />
+        <xs:attribute name="top" default="0" type="xs:float" />
+        <xs:attribute name="bottom" default="0" type="xs:float" />
+    </xs:complexType>
+    <xs:simpleType name="TransitionStyleType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="blinds" />
+            <xs:enumeration value="box" />
+            <xs:enumeration value="cover" />
+            <xs:enumeration value="dissolve" />
+            <xs:enumeration value="fade" />
+            <xs:enumeration value="fly" />
+            <xs:enumeration value="glitter" />
+            <xs:enumeration value="push" />
+            <xs:enumeration value="split" />
+            <xs:enumeration value="uncover" />
+            <xs:enumeration value="wipe" />
+            <xs:enumeration value="none" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TransitionDirection">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="leftToRight" />
+            <xs:enumeration value="bottomToTop" />
+            <xs:enumeration value="rightToLeft" />
+            <xs:enumeration value="topToBottom" />
+            <xs:enumeration value="topLeftToBottomRight" />
+            <xs:enumeration value="none" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="TransitionType">
+        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="page" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="autoScroll" default="false" type="xs:boolean" />
+        <xs:attribute name="flyScale" default="1" type="xs:float" />
+        <xs:attribute name="flyAreaOpaque" default="false" type="xs:boolean" />
+        <xs:attribute name="duration" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="style" type="TransitionStyleType" />
+        <xs:attribute name="direction" type="TransitionDirection" />
+    </xs:complexType>
+    <xs:complexType name="ImageType">
+        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="width" default="0" type="xs:int" />
+        <xs:attribute name="height" default="0" type="xs:int" />
+        <xs:attribute name="suffix" default="" type="xs:string" />
+        <xs:attribute name="page" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="bitsPerComponent" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="FormValueStyle">
+        <xs:attribute name="export" default="" type="xs:string" />
+        <xs:attribute name="display" default="" type="xs:string" />
+        <xs:attribute name="isDefault" default="false" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType name="FolderType">
+        <xs:attribute name="id" default="0" type="xs:int" />
+        <xs:attribute name="name" default="" type="xs:string" />
+        <xs:attribute name="path" default="" type="xs:string" />
+        <xs:attribute name="creationDate" default="" type="xs:string" />
+        <xs:attribute name="modificationDate" default="" type="xs:string" />
+    </xs:complexType>
+</xs:schema>

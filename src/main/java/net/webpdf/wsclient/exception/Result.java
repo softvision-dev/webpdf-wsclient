@@ -1,6 +1,8 @@
 package net.webpdf.wsclient.exception;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +12,22 @@ import java.util.List;
  */
 public final class Result {
 
-    public static final Result SUCCESS = new Result(Error.NONE, 0, null);
+    @NotNull
     private Error error;
+    @Nullable
     private Exception exception;
+    @NotNull
     private List<String> messages = new ArrayList<>();
-    private boolean joinMessages = true;
     private int exitCode;
 
-    private Result(Error error, int exitCode, Exception exception) {
+    /**
+     * Creates a webservice execution result, for further processing of failures during webservice calls.
+     *
+     * @param error     The error, that has occurred.
+     * @param exitCode  The exitcode of the Result.
+     * @param exception The exception, that caused the failure.
+     */
+    private Result(@NotNull Error error, int exitCode, @Nullable Exception exception) {
         this.error = error;
         this.exitCode = exitCode;
         this.exception = exception;
@@ -29,7 +39,7 @@ public final class Result {
      * @param error wrapped error code
      * @return new result instance
      */
-    public static Result build(Error error) {
+    public static Result build(@NotNull Error error) {
         return new Result(error, 0, null);
     }
 
@@ -40,7 +50,7 @@ public final class Result {
      * @param exitCode wrapped exit code
      * @return new result instance
      */
-    public static Result build(Error error, int exitCode) {
+    public static Result build(@NotNull Error error, int exitCode) {
         return new Result(error, exitCode, null);
     }
 
@@ -51,7 +61,7 @@ public final class Result {
      * @param exception wrapped exception
      * @return new result instance
      */
-    public static Result build(Error error, Exception exception) {
+    public static Result build(@NotNull Error error, @Nullable Exception exception) {
         return new Result(error, 0, exception);
     }
 
@@ -69,7 +79,7 @@ public final class Result {
      *
      * @return true = successful operation result
      */
-    public boolean isSuccess() {
+    boolean isSuccess() {
         return Error.NONE.equals(this.error);
     }
 
@@ -79,8 +89,8 @@ public final class Result {
      * @param error error code to compare with
      * @return true = the error equals with the given error
      */
-    public boolean equalsError(Error error) {
-        return this.error != null && this.error.equals(error);
+    boolean equalsError(@Nullable Error error) {
+        return this.error.equals(error);
     }
 
     /**
@@ -88,6 +98,7 @@ public final class Result {
      *
      * @return error
      */
+    @NotNull
     public Error getError() {
         return this.error;
     }
@@ -106,13 +117,14 @@ public final class Result {
      *
      * @return error message
      */
+    @NotNull
     public String getMessage() {
 
         String errorMessage = this.error.getMessage();
         String detailMessage = StringUtils.join(this.messages, "\n");
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(detailMessage.isEmpty() || this.joinMessages ? errorMessage : "");
+        stringBuilder.append(errorMessage);
         stringBuilder.append(!detailMessage.isEmpty() && stringBuilder.length() > 0 ? "\n" : "");
         stringBuilder.append(detailMessage);
         if (this.exitCode != 0) {
@@ -127,6 +139,7 @@ public final class Result {
      *
      * @return exception
      */
+    @Nullable
     public Exception getException() {
         return this.exception;
     }
@@ -137,10 +150,12 @@ public final class Result {
      * @param message additional message
      * @return the result object
      */
-    public Result addMessage(String message) {
+    @NotNull
+    public Result addMessage(@Nullable String message) {
         if (message != null && !message.isEmpty()) {
             this.messages.add(StringUtils.capitalize(message));
         }
         return this;
     }
+
 }

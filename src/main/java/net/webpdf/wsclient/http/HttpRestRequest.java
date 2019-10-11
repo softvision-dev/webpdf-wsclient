@@ -13,34 +13,48 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class HttpRestRequest {
 
+    @NotNull
     private final CloseableHttpClient httpClient;
+    @NotNull
     private final RestSession session;
+    @Nullable
     private final DataFormat dataFormat;
-    private HttpUriRequest httpUriRequest;
+    @Nullable
     private String acceptHeader;
+    @Nullable
+    private HttpUriRequest httpUriRequest;
 
-    private HttpRestRequest(RestSession session) {
+    /**
+     * Creates a Rest request handling the messages of the given {@link RestSession}
+     *
+     * @param session the {@link RestSession} this Rest request is handling.
+     */
+    private HttpRestRequest(@NotNull RestSession session) {
         this.session = session;
         this.httpClient = session.getHttpClient();
-        this.acceptHeader = session.getDataFormat().getMimeType();
+        this.acceptHeader = session.getDataFormat() != null ? session.getDataFormat().getMimeType() : null;
         this.dataFormat = session.getDataFormat();
     }
 
     /**
      * Creates a Rest request handling the messages of the given {@link RestSession}
+     *
      * @param session the {@link RestSession} this Rest request is handling.
      * @return A Rest request handling the messages of the given {@link RestSession}
      */
-    public static HttpRestRequest createRequest(RestSession session) {
+    @NotNull
+    public static HttpRestRequest createRequest(@NotNull RestSession session) {
         return new HttpRestRequest(session);
     }
 
@@ -50,7 +64,8 @@ public class HttpRestRequest {
      * @param mimeType The MIME type accepted by this REST request.
      * @return A reference to this REST request.
      */
-    public HttpRestRequest setAcceptHeader(String mimeType) {
+    @NotNull
+    public HttpRestRequest setAcceptHeader(@NotNull String mimeType) {
         this.acceptHeader = mimeType;
         return this;
     }
@@ -64,7 +79,8 @@ public class HttpRestRequest {
      * @return a new HTTP request
      * @throws ResultException if the HTTP method is unknown
      */
-    public HttpRestRequest buildRequest(HttpMethod httpMethod, String path, HttpEntity httpEntity)
+    @NotNull
+    public HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable String path, @Nullable HttpEntity httpEntity)
         throws ResultException {
         if (httpMethod == null) {
             throw new ResultException(Result.build(Error.UNKNOWN_HTTP_METHOD));
@@ -72,7 +88,7 @@ public class HttpRestRequest {
 
         RequestBuilder requestBuilder;
 
-        URI uri = this.session.getURI(path);
+        URI uri = this.session.getURI(path != null ? path : "");
 
         switch (httpMethod) {
             case GET:
@@ -88,13 +104,13 @@ public class HttpRestRequest {
         if (this.session.getCredentials() != null) {
             String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(
                 (this.session.getCredentials().getUserPrincipal().getName()
-                     + ":" + this.session.getCredentials().getPassword()).getBytes(Charset.forName("ISO-8859-1")));
+                     + ":" + this.session.getCredentials().getPassword()).getBytes(StandardCharsets.ISO_8859_1));
             requestBuilder.addHeader(HttpHeaders.AUTHORIZATION, basicAuth);
         }
 
         requestBuilder.addHeader(HttpHeaders.ACCEPT, this.acceptHeader);
 
-        if (!this.session.getToken().getToken().isEmpty()) {
+        if (this.session.getToken() != null && !this.session.getToken().getToken().isEmpty()) {
             requestBuilder.addHeader("Token", this.session.getToken().getToken());
         }
 
@@ -113,7 +129,7 @@ public class HttpRestRequest {
      * @param httpResponse HTTP response
      * @throws ResultException unable to convert the error object
      */
-    private void checkResponse(HttpResponse httpResponse) throws ResultException {
+    private void checkResponse(@NotNull HttpResponse httpResponse) throws ResultException {
 
         // any error?
         StatusLine statusLine = httpResponse.getStatusLine();
@@ -134,14 +150,14 @@ public class HttpRestRequest {
         if (header != null && (header.getValue().equals(DataFormat.XML.getMimeType())
                                    || header.getValue().equals(DataFormat.JSON.getMimeType()))) {
 
-            ExceptionBean exceptionBean = this.dataFormat.equals(DataFormat.XML)
+            ExceptionBean exceptionBean = DataFormat.XML.equals(this.dataFormat)
                                               ? SerializeHelper.fromXML(httpEntity, ExceptionBean.class)
                                               : SerializeHelper.fromJSON(httpEntity, ExceptionBean.class);
 
             responseOutput = "Server error: " + exceptionBean.getErrorMessage()
                                  + " (" + exceptionBean.getErrorCode() + ")\n"
-                                 + (!exceptionBean.getStackTrace().isEmpty() ? "Server stack trace: "
-                                                                                   + exceptionBean.getStackTrace() + "\n" : "");
+                                 + (exceptionBean.getStackTrace() != null && !exceptionBean.getStackTrace().isEmpty() ?
+                                        "Server stack trace: " + exceptionBean.getStackTrace() + "\n" : "");
         } else {
             try {
                 responseOutput = EntityUtils.toString(httpEntity);
@@ -161,7 +177,7 @@ public class HttpRestRequest {
      * @param outputStream Target stream for the response
      * @throws ResultException a {@link ResultException}
      */
-    public void executeRequest(OutputStream outputStream) throws ResultException {
+    public void executeRequest(@Nullable OutputStream outputStream) throws ResultException {
         if (outputStream == null) {
             throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
         }
@@ -180,7 +196,8 @@ public class HttpRestRequest {
      * @return response object
      * @throws ResultException if HTTP entity should be save as file
      */
-    public <T> T executeRequest(Class<T> type) throws ResultException {
+    @Nullable
+    public <T> T executeRequest(@Nullable Class<T> type) throws ResultException {
 
         try (CloseableHttpResponse closeableHttpResponse = this.httpClient.execute(httpUriRequest)) {
 
@@ -192,11 +209,12 @@ public class HttpRestRequest {
                 return null;
             }
 
-            return this.dataFormat.equals(DataFormat.XML)
+            return DataFormat.XML.equals(this.dataFormat)
                        ? SerializeHelper.fromXML(httpEntity, type)
                        : SerializeHelper.fromJSON(httpEntity, type);
         } catch (IOException ex) {
             throw new ResultException(Result.build(Error.HTTP_IO_ERROR, ex));
         }
     }
+
 }

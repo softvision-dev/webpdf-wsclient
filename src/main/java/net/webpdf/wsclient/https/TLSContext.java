@@ -3,25 +3,34 @@ package net.webpdf.wsclient.https;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import net.webpdf.wsclient.http.AlwaysTrustManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import java.io.File;
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.cert.CertificateException;
 
+@SuppressWarnings({"unused"})
 public class TLSContext {
 
+    private static final TrustManager[] TRUST_ALL = new TrustManager[]{new AlwaysTrustManager()};
+
+    @Nullable
     private SSLContext sslContext;
     private boolean allowSelfSigned = false;
+    @Nullable
     private File trustStore = null;
+    @Nullable
     private String trustStorePassword = null;
-    private TLSProtocol protocol = TLSProtocol.TLSV1_2;
+    @NotNull
+    private TLSProtocol tlsProtocol = TLSProtocol.TLSV1_2;
 
     /**
      * Prepares the TLS Context for a HTTPS connection.
@@ -34,6 +43,7 @@ public class TLSContext {
      *
      * @return A fresh instance of this class.
      */
+    @NotNull
     public static TLSContext createDefault() {
         return new TLSContext();
     }
@@ -45,20 +55,21 @@ public class TLSContext {
      */
     private void initSSLContext() throws ResultException {
         try {
-            if (this.trustStore != null) {
-                this.sslContext = new SSLContextBuilder()
-                                      .loadTrustMaterial(
-                                          trustStore,
-                                          trustStorePassword != null ?
-                                              trustStorePassword.toCharArray() : null,
-                                          allowSelfSigned ? new TrustSelfSignedStrategy() : null)
-                                      .setProtocol(protocol != null ? protocol.getName() : null)
-                                      .build();
-            } else if (allowSelfSigned) {
-                this.sslContext = new SSLContextBuilder()
-                                      .loadTrustMaterial(new TrustSelfSignedStrategy())
-                                      .setProtocol(protocol != null ? protocol.getName() : null)
-                                      .build();
+            if (this.trustStore != null || allowSelfSigned) {
+                this.sslContext = trustStore != null ?
+                                      new SSLContextBuilder()
+                                          .setProtocol(tlsProtocol.getName())
+                                          .loadTrustMaterial(
+                                              trustStore, trustStorePassword != null ?
+                                                              trustStorePassword.toCharArray() : null, null
+                                          )
+                                          .build() :
+                                      new SSLContextBuilder()
+                                          .setProtocol(tlsProtocol.getName())
+                                          .build();
+                if (allowSelfSigned) {
+                    sslContext.init(new KeyManager[0], TRUST_ALL, new SecureRandom());
+                }
             } else {
                 this.sslContext = SSLContexts.createDefault();
             }
@@ -72,83 +83,20 @@ public class TLSContext {
      * When set to true self signed certificates will be accepted.
      *
      * @param allowSelfSigned Self signed certificates will be accepted, when set to true.
-     * @return returns self, to enable chained calls.
      */
-    public TLSContext setAllowSelfSigned(boolean allowSelfSigned) {
+    public void setAllowSelfSigned(boolean allowSelfSigned) {
         this.allowSelfSigned = allowSelfSigned;
-        return this;
     }
-
-    /**
-     * Shall valid self signed certificates accepted?
-     *
-     * @return True, if self signed certificates may be accepted.
-     */
-    public boolean isAllowSelfSigned() {
-        return allowSelfSigned;
-    }
-
 
     /**
      * Sets the trust store file and the trust store password.
      *
      * @param trustStore         The trust store file.
      * @param trustStorePassword The trust store password.
-     * @return returns self, to enable chained calls.
      */
-    public TLSContext setTrustStore(File trustStore, String trustStorePassword) {
+    public void setTrustStore(@Nullable File trustStore, @Nullable String trustStorePassword) {
         this.trustStore = trustStore;
         this.trustStorePassword = trustStorePassword;
-        return this;
-    }
-
-    /**
-     * Sets the trust store file.
-     *
-     * @param trustStore The trust store file.
-     * @return returns self, to enable chained calls.
-     */
-    public TLSContext setTrustStore(File trustStore) {
-        this.trustStore = trustStore;
-        return this;
-    }
-
-    /**
-     * Returns the trust store file.
-     *
-     * @return The trust store file.
-     */
-    public File getTrustStore() {
-        return trustStore;
-    }
-
-    /**
-     * Returns the password for the trust store.
-     *
-     * @return The trust store password.
-     */
-    public String getTrustStorePassword() {
-        return trustStorePassword;
-    }
-
-    /**
-     * Sets the TLS version, that shall be used.
-     *
-     * @param protocol The TLS version, that shall be used.
-     * @return returns self, to enable chained calls.
-     */
-    public TLSContext setProtocol(TLSProtocol protocol) {
-        this.protocol = protocol;
-        return this;
-    }
-
-    /**
-     * Returns the TLS version, that shall be used.
-     *
-     * @return The TLS version, that shall be used.
-     */
-    public TLSProtocol getProtocol() {
-        return protocol;
     }
 
     /**
@@ -156,10 +104,21 @@ public class TLSContext {
      *
      * @return The resulting SSL context.
      */
+    @NotNull
     public SSLContext getSslContext() throws ResultException {
         if (sslContext == null) {
             initSSLContext();
         }
         return sslContext;
     }
+
+    /**
+     * Set the TLS protocol, that shall be used.
+     *
+     * @param tlsProtocol The TLS protocol version, that shall be used.
+     */
+    public void setTLSProtocol(@NotNull TLSProtocol tlsProtocol) {
+        this.tlsProtocol = tlsProtocol;
+    }
+
 }

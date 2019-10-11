@@ -83,9 +83,6 @@
     <xs:complexType name="RectangleType">
         <xs:attributeGroup ref="tns:RectangleGroup" />
     </xs:complexType>
-    <xs:complexType name="TemplateType">
-        <xs:attribute name="language" type="tns:LanguageType" use="optional" />
-    </xs:complexType>
     <xs:simpleType name="LanguageType">
         <xs:restriction base="xs:token">
             <xs:pattern value="[a-z]{2}" />

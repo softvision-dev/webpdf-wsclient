@@ -12,9 +12,9 @@
     "pdfa": {
       "convert": {
         "level": "1a",
-        "errorReport": "MESSAGE",
+        "errorReport": "message",
         "imageQuality": "1",
-        "successReport": "ZIP"
+        "successReport": "zip"
       }
     }
   }

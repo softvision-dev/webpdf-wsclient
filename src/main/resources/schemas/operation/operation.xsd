@@ -22,6 +22,10 @@
     <xs:include schemaLocation="operation-xmp.xsd" />
     <xs:include schemaLocation="operation-print.xsd" />
     <xs:include schemaLocation="operation-delete.xsd" />
+    <xs:include schemaLocation="operation-move.xsd" />
+    <xs:include schemaLocation="operation-outline.xsd" />
+    <xs:include schemaLocation="operation-redact.xsd" />
+    <xs:include schemaLocation="operation-portfolio.xsd" />
     <xs:element id="operationId" name="operation">
         <xs:complexType>
             <xs:sequence>
@@ -49,6 +53,10 @@
                         <xs:element name="split" type="SplitType" />
                         <xs:element name="watermark" type="WatermarkType" />
                         <xs:element name="xmp" type="XmpType" />
+                        <xs:element name="move" type="MoveType" />
+                        <xs:element name="outline" type="OutlineType" />
+                        <xs:element name="redact" type="RedactType" />
+                        <xs:element name="portfolio" type="PortfolioType" />
                     </xs:choice>
                     <xs:element name="urlconverter" type="UrlConverterType" />
                 </xs:choice>

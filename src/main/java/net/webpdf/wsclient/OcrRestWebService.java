@@ -1,7 +1,10 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.schema.operation.OcrType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class OcrRestWebService extends RestWebservice<OcrType> {
 
@@ -10,9 +13,8 @@ public class OcrRestWebService extends RestWebservice<OcrType> {
      *
      * @param sessionToken The session a OcrRestWebservice shall be created for.
      */
-    public OcrRestWebService(Session sessionToken) {
+    OcrRestWebService(@NotNull Session sessionToken) {
         super(sessionToken, WebServiceType.OCR);
-        this.operation.setOcr(new OcrType());
     }
 
     /**
@@ -21,6 +23,7 @@ public class OcrRestWebService extends RestWebservice<OcrType> {
      * @return operation type element
      */
     @Override
+    @NotNull
     public OcrType getOperation() {
         return this.operation.getOcr();
     }
@@ -31,9 +34,21 @@ public class OcrRestWebService extends RestWebservice<OcrType> {
      * @param operationData the web service operation data
      */
     @Override
-    public void setOperation(OcrType operationData) {
+    public void setOperation(@Nullable OcrType operationData) {
         if (operationData != null) {
             operation.setOcr(operationData);
         }
     }
+
+    /**
+     * Initialize all substructures, that must be set for this webservice to accept parameters for this
+     * webservice type.
+     *
+     * @param operation The operationData that, shall be initialized for webservice execution.
+     */
+    @Override
+    protected void initOperation(@NotNull OperationData operation) {
+        this.operation.setOcr(new OcrType());
+    }
+
 }

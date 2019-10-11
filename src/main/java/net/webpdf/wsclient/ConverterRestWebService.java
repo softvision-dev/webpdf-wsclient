@@ -1,7 +1,10 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.schema.operation.ConverterType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ConverterRestWebService extends RestWebservice<ConverterType> {
 
@@ -10,9 +13,8 @@ public class ConverterRestWebService extends RestWebservice<ConverterType> {
      *
      * @param session The session a ConverterRestWebservice shall be created for.
      */
-    public ConverterRestWebService(Session session) {
+    ConverterRestWebService(@NotNull Session session) {
         super(session, WebServiceType.CONVERTER);
-        this.operation.setConverter(new ConverterType());
     }
 
     /**
@@ -21,6 +23,7 @@ public class ConverterRestWebService extends RestWebservice<ConverterType> {
      * @return operation type element
      */
     @Override
+    @NotNull
     public ConverterType getOperation() {
         return this.operation.getConverter();
     }
@@ -31,9 +34,21 @@ public class ConverterRestWebService extends RestWebservice<ConverterType> {
      * @param operationData the web service operation data
      */
     @Override
-    public void setOperation(ConverterType operationData) {
+    public void setOperation(@Nullable ConverterType operationData) {
         if (operationData != null) {
             operation.setConverter(operationData);
         }
     }
+
+    /**
+     * Initialize all substructures, that must be set for this webservice to accept parameters for this
+     * webservice type.
+     *
+     * @param operation The operationData that, shall be initialized for webservice execution.
+     */
+    @Override
+    protected void initOperation(@NotNull OperationData operation) {
+        operation.setConverter(new ConverterType());
+    }
+
 }

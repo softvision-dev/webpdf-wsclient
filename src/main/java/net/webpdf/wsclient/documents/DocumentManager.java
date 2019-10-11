@@ -11,6 +11,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +25,9 @@ import java.util.Map;
  */
 public class DocumentManager {
 
+    @NotNull
     private final Map<String, RestDocument> documentMap = new HashMap<>();
+    @NotNull
     private final RestSession session;
 
     /**
@@ -31,7 +35,7 @@ public class DocumentManager {
      *
      * @param session The {@link RestSession} a document manager shall be created for.
      */
-    public DocumentManager(RestSession session) {
+    public DocumentManager(@NotNull RestSession session) {
         this.session = session;
     }
 
@@ -40,21 +44,16 @@ public class DocumentManager {
      *
      * @param document     {@link SoapDocument} or {@link RestDocument} instance
      * @param outputStream {@link OutputStream} for downloaded content
-     * @return if the saving of the result was successfully
      * @throws ResultException a {@link ResultException}
      */
-    public boolean downloadDocument(RestDocument document, OutputStream outputStream) throws ResultException {
-
+    public void downloadDocument(@Nullable RestDocument document, @Nullable OutputStream outputStream) throws ResultException {
         if (document == null || outputStream == null) {
             throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
         }
-
         HttpRestRequest.createRequest(this.session)
             .setAcceptHeader("application/octet-stream")
             .buildRequest(HttpMethod.GET, "documents/" + document.getSourceDocumentId(), null)
             .executeRequest(outputStream);
-
-        return true;
     }
 
     /**
@@ -64,7 +63,8 @@ public class DocumentManager {
      * @return A {@link RestDocument} referencing the uploaded document.
      * @throws IOException an {@link IOException}
      */
-    public RestDocument uploadDocument(File file) throws IOException {
+    @NotNull
+    public RestDocument uploadDocument(@Nullable File file) throws IOException {
         if (file == null) {
             throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
         }
@@ -86,7 +86,8 @@ public class DocumentManager {
      * @return A {@link RestDocument} referencing the uploaded resource.
      * @throws ResultException a {@link ResultException}
      */
-    public RestDocument getDocument(DocumentFileBean documentFileBean) throws ResultException {
+    @NotNull
+    public RestDocument getDocument(@Nullable DocumentFileBean documentFileBean) throws ResultException {
         if (documentFileBean == null || documentFileBean.getDocumentId() == null) {
             throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
         }
@@ -100,4 +101,5 @@ public class DocumentManager {
         documentMap.put(documentFileBean.getDocumentId(), new RestDocument(documentFileBean.getDocumentId()));
         return restDocument;
     }
+
 }

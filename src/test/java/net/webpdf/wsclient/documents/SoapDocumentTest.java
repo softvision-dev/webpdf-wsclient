@@ -9,6 +9,7 @@ import org.junit.rules.TemporaryFolder;
 
 import javax.activation.DataHandler;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
 
@@ -46,8 +47,7 @@ public class SoapDocumentTest {
     @Test(expected = IOException.class)
     public void testSoapDocumentNullTarget() throws Exception {
         File sourceFile = testResources.getResource("test.pdf");
-        File targetFile = null;
-        try (SoapDocument soapDocument = new SoapDocument(sourceFile.toURI(), targetFile)) {
+        try (SoapDocument soapDocument = new SoapDocument(sourceFile.toURI(), null)) {
             assertNotNull("Source data handler should have been provided.", soapDocument.getSourceDataHandler());
             soapDocument.save(soapDocument.getSourceDataHandler());
         }
@@ -114,7 +114,7 @@ public class SoapDocumentTest {
             assertNotNull("Source data handler should have been provided.", soapDocument.getSourceDataHandler());
             assertEquals("Content type should have been octet stream.", "application/octet-stream", soapDocument.getSourceDataHandler().getDataSource().getContentType());
             assertEquals("Data source name should have been empty.", "", soapDocument.getSourceDataHandler().getDataSource().getName());
-            assertEquals("Inputstream of data source and original input should be identical.", IOUtils.toString(inputStream, "utf-8"), IOUtils.toString(soapDocument.getSourceDataHandler().getDataSource().getInputStream(), "utf-8"));
+            assertEquals("Inputstream of data source and original input should be identical.", IOUtils.toString(inputStream, StandardCharsets.UTF_8), IOUtils.toString(soapDocument.getSourceDataHandler().getDataSource().getInputStream(), StandardCharsets.UTF_8));
         }
     }
 

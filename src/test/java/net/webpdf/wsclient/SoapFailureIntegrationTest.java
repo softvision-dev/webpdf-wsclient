@@ -53,6 +53,7 @@ public class SoapFailureIntegrationTest {
             SignatureType.Add.Appearance appearance = new SignatureType.Add.Appearance();
             appearance.setPage(2000);
             add.setAppearance(appearance);
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setAdd(add);
             FileUtils.deleteQuietly(fileOut);
             webService.setDocument(new SoapDocument(file.toURI(), fileOut));

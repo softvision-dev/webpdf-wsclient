@@ -3,7 +3,7 @@
     "add": {
       "qrcode": [
         {
-          "errorCorrection": "M",
+          "errorCorrection": "m",
           "value": "webPDFTest",
           "pages": "1",
           "rotation": "90",

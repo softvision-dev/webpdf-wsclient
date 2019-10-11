@@ -1,9 +1,12 @@
 package net.webpdf.wsclient.documents;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.net.URI;
 
 abstract class AbstractDocument implements Document {
 
+    @Nullable
     private URI source;
     private boolean fileSource;
 
@@ -12,7 +15,7 @@ abstract class AbstractDocument implements Document {
      *
      * @param source The source the document shall be loaded from.
      */
-    AbstractDocument(URI source) {
+    AbstractDocument(@Nullable URI source) {
         this.source = source;
         this.fileSource = source != null && source.getScheme().startsWith("file");
     }
@@ -23,6 +26,7 @@ abstract class AbstractDocument implements Document {
      * @return The {@link URI} of the document source.
      */
     @Override
+    @Nullable
     public URI getSource() {
         return this.source;
     }

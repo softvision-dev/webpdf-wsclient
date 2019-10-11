@@ -4,6 +4,8 @@ import net.webpdf.wsclient.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.https.TLSContext;
 import org.apache.http.auth.Credentials;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
@@ -12,8 +14,10 @@ public interface Session extends AutoCloseable {
 
     /**
      * Returns the currently set TLS context.
+     *
      * @return The currently set TLS context.
      */
+    @Nullable
     TLSContext getTlsContext();
 
     /**
@@ -29,6 +33,7 @@ public interface Session extends AutoCloseable {
      *
      * @return The {@link WebServiceProtocol} of this session.
      */
+    @NotNull
     WebServiceProtocol getWebServiceProtocol();
 
     /**
@@ -38,6 +43,7 @@ public interface Session extends AutoCloseable {
      * @return an {@link URI} pointing to the webservice interface of the session.
      * @throws ResultException a {@link ResultException}
      */
+    @NotNull
     URI getURI(String subPath) throws ResultException;
 
     /**
@@ -45,6 +51,7 @@ public interface Session extends AutoCloseable {
      *
      * @return The {@link DataFormat} accepted by this session.
      */
+    @Nullable
     DataFormat getDataFormat();
 
     /**
@@ -52,6 +59,7 @@ public interface Session extends AutoCloseable {
      *
      * @return The {@link Credentials} authorizing this session.
      */
+    @Nullable
     Credentials getCredentials();
 
     /**
@@ -59,6 +67,6 @@ public interface Session extends AutoCloseable {
      *
      * @param userCredentials The {@link Credentials} authorizing this session.
      */
-    void setCredentials(Credentials userCredentials);
+    void setCredentials(@Nullable Credentials userCredentials);
 
 }

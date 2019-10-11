@@ -49,6 +49,7 @@ public class HttpRestRequestIntegrationTest {
             assertNotNull("HttpEntity should have been build.", entity);
             httpRestRequest.buildRequest(HttpMethod.POST, "documents/", entity);
             DocumentFileBean response = httpRestRequest.executeRequest(DocumentFileBean.class);
+            assertNotNull("Uploaded file should not be null", response);
             assertEquals("Uploaded filename is incorrect.", "test", response.getFileName());
             assertEquals("Uploaded MimeType is incorrect.", "application/pdf", response.getMimeType());
 
@@ -79,6 +80,7 @@ public class HttpRestRequestIntegrationTest {
             assertNotNull("HttpEntity should have been build.", entity);
             httpRestRequest.buildRequest(HttpMethod.POST, "documents/", entity);
             DocumentFileBean response = httpRestRequest.executeRequest(DocumentFileBean.class);
+            assertNotNull("Uploaded file should not be null", response);
             assertEquals("Uploaded filename is incorrect.", "test", response.getFileName());
             assertEquals("Uploaded MimeType is incorrect.", "application/pdf", response.getMimeType());
 

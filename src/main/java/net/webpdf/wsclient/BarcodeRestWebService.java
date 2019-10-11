@@ -1,7 +1,10 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.schema.operation.BarcodeType;
+import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.session.Session;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class BarcodeRestWebService extends RestWebservice<BarcodeType> {
 
@@ -10,9 +13,8 @@ public class BarcodeRestWebService extends RestWebservice<BarcodeType> {
      *
      * @param session The session a BarcodeRestWebservice shall be created for.
      */
-    public BarcodeRestWebService(Session session) {
+    BarcodeRestWebService(@NotNull Session session) {
         super(session, WebServiceType.BARCODE);
-        this.operation.setBarcode(new BarcodeType());
     }
 
     /**
@@ -21,6 +23,7 @@ public class BarcodeRestWebService extends RestWebservice<BarcodeType> {
      * @return operation type element
      */
     @Override
+    @NotNull
     public BarcodeType getOperation() {
         return this.operation.getBarcode();
     }
@@ -31,9 +34,21 @@ public class BarcodeRestWebService extends RestWebservice<BarcodeType> {
      * @param operationData the web service operation data
      */
     @Override
-    public void setOperation(BarcodeType operationData) {
+    public void setOperation(@Nullable BarcodeType operationData) {
         if (operationData != null) {
             operation.setBarcode(operationData);
         }
     }
+
+    /**
+     * Initialize all substructures, that must be set for this webservice to accept parameters for this
+     * webservice type.
+     *
+     * @param operation The operationData that, shall be initialized for webservice execution.
+     */
+    @Override
+    protected void initOperation(@NotNull OperationData operation) {
+        this.operation.setBarcode(new BarcodeType());
+    }
+
 }

@@ -1,5 +1,8 @@
 package net.webpdf.wsclient;
 
+import org.jetbrains.annotations.NotNull;
+
+@SuppressWarnings({"unused"})
 public enum WebServiceType {
 
     CONVERTER(
@@ -60,12 +63,19 @@ public enum WebServiceType {
         "barcode/{documentId}");
 
     public final static String ID_PLACEHOLDER = "{documentId}";
+    @NotNull
     private final String soapNamespaceURI;
+    @NotNull
     private final String soapLocalPart;
+    @NotNull
     private final String soapLocalPartPort;
+    @NotNull
     private final String soapEndpoint;
+    @NotNull
     private final Class<? extends SoapWebService> soapWsClass;
+    @NotNull
     private final Class<? extends RestWebservice> restWsClass;
+    @NotNull
     private final String restEndpoint;
 
     /**
@@ -79,13 +89,13 @@ public enum WebServiceType {
      * @param restWsClass       The class, that represents the REST webservice.
      * @param restEndpoint      The endpoint of the REST webservice.
      */
-    WebServiceType(Class<? extends SoapWebService> soapWsClass,
-                   String soapNamespaceURI,
-                   String soapLocalPart,
-                   String soapLocalPartPort,
-                   String soapEndpoint,
-                   Class<? extends RestWebservice> restWsClass,
-                   String restEndpoint) {
+    WebServiceType(@NotNull Class<? extends SoapWebService> soapWsClass,
+                   @NotNull String soapNamespaceURI,
+                   @NotNull String soapLocalPart,
+                   @NotNull String soapLocalPartPort,
+                   @NotNull String soapEndpoint,
+                   @NotNull Class<? extends RestWebservice> restWsClass,
+                   @NotNull String restEndpoint) {
         this.soapNamespaceURI = soapNamespaceURI;
         this.soapLocalPart = soapLocalPart;
         this.soapLocalPartPort = soapLocalPartPort;
@@ -100,6 +110,7 @@ public enum WebServiceType {
      *
      * @return the namespace URI of the SOAP webservice.
      */
+    @NotNull
     public String getSoapNamespaceURI() {
         return this.soapNamespaceURI;
     }
@@ -109,6 +120,7 @@ public enum WebServiceType {
      *
      * @return the local part of the SOAP webservice.
      */
+    @NotNull
     public String getSoapLocalPart() {
         return this.soapLocalPart;
     }
@@ -118,6 +130,7 @@ public enum WebServiceType {
      *
      * @return the endpoint of the SOAP webservice.
      */
+    @NotNull
     public String getSoapEndpoint() {
         return this.soapEndpoint;
     }
@@ -127,6 +140,7 @@ public enum WebServiceType {
      *
      * @return the class, that represents the SOAP webservice.
      */
+    @NotNull
     public Class<?> getSoapWsClass() {
         return soapWsClass;
     }
@@ -136,6 +150,7 @@ public enum WebServiceType {
      *
      * @return the port of the SOAP webservice.
      */
+    @NotNull
     public String getSoapLocalPartPort() {
         return soapLocalPartPort;
     }
@@ -145,6 +160,7 @@ public enum WebServiceType {
      *
      * @return the class, that represents the REST webservice.
      */
+    @NotNull
     public Class<? extends RestWebservice> getRestWsClass() {
         return restWsClass;
     }
@@ -154,8 +170,9 @@ public enum WebServiceType {
      *
      * @return the endpoint of the REST webservice.
      */
+    @NotNull
     public String getRestEndpoint() {
         return restEndpoint;
     }
-
+    
 }

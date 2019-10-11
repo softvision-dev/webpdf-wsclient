@@ -5,11 +5,16 @@ import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.https.TLSContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
 
 public final class SessionFactory {
 
+    /**
+     * Prepares a session skeleton not yet containing a WebService Protocol or an Server URL.
+     **/
     private SessionFactory() {
     }
 
@@ -22,8 +27,8 @@ public final class SessionFactory {
      * @return The {@link Session} organizing the communication with the server at the given {@link URL}.
      * @throws ResultException a {@link ResultException}
      */
-    @SuppressWarnings("unchecked")
-    public static <T extends Session> T createInstance(WebServiceProtocol webServiceProtocol, URL url)
+    @NotNull
+    public static <T extends Session> T createInstance(@NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url)
         throws ResultException {
         return createInstance(webServiceProtocol, url, null);
     }
@@ -39,8 +44,9 @@ public final class SessionFactory {
      * @throws ResultException a {@link ResultException}
      */
     @SuppressWarnings("unchecked")
-    public static <T extends Session> T createInstance(WebServiceProtocol webServiceProtocol, URL url,
-                                                       TLSContext tlsContext)
+    @NotNull
+    public static <T extends Session> T createInstance(@NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url,
+                                                       @Nullable TLSContext tlsContext)
         throws ResultException {
         switch (webServiceProtocol) {
             case SOAP:

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.webpdf</groupId>
     <artifactId>webpdf-wsclient</artifactId>
-    <version>1.0.1</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
     <name>webPDF - Web service client library</name>
     <description>webPDF client library for using the SOAP and REST web services</description>
@@ -49,7 +49,7 @@
     </developers>
 
     <properties>
-        <java.version>1.7</java.version>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <server.local.url>http://localhost</server.local.url>
@@ -180,6 +180,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>17.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.7</version>
@@ -203,10 +208,14 @@
             <version>3.8.1</version>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.8.5</version>
-            <scope>compile</scope>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.9.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jaxb-annotations</artifactId>
+            <version>2.9.9</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -219,6 +228,11 @@
             <artifactId>JUnitParams</artifactId>
             <version>1.1.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>2.3.2</version>
         </dependency>
     </dependencies>
 
@@ -262,6 +276,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <doclint>none</doclint>
                     <failOnError>true</failOnError>
                 </configuration>
             </plugin>
@@ -328,33 +343,66 @@
                 <artifactId>maven-jaxb2-plugin</artifactId>
                 <version>0.14.0</version>
                 <configuration>
+                    <verbose>false</verbose>
                     <plugins>
                         <plugin>
                             <groupId>org.jvnet.jaxb2_commons</groupId>
                             <artifactId>jaxb2-basics</artifactId>
                             <version>1.11.1</version>
                         </plugin>
+                        <plugin>
+                            <groupId>org.jvnet.jaxb2_commons</groupId>
+                            <artifactId>jaxb2-basics-annotate</artifactId>
+                            <version>1.1.0</version>
+                        </plugin>
                     </plugins>
-                    <schemaIncludes>
-                        <include>schemas/operation/operation.xsd</include>
-                    </schemaIncludes>
-                    <bindingIncludes>
-                        <include>schemas/operation/operation.xjb</include>
-                    </bindingIncludes>
                     <extension>true</extension>
                     <args>
+                        <arg>-Xannotate</arg>
                         <arg>-Xsimplify</arg>
+                        <arg>-Xinheritance</arg>
                     </args>
-                    <generatePackage>net.webpdf.wsclient.schema.operation</generatePackage>
                     <noFileHeader>true</noFileHeader>
                     <locale>en</locale>
                 </configuration>
                 <executions>
                     <execution>
+                        <id>operation-schema</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
+                        <configuration>
+                            <generateDirectory>${project.build.directory}/generated-sources/xjc-operation</generateDirectory>
+                            <schemaDirectory>src/main/resources/schemas/operation</schemaDirectory>
+                            <schemaIncludes>
+                                <include>operation.xsd</include>
+                            </schemaIncludes>
+                            <bindingDirectory>src/main/resources/schemas/operation</bindingDirectory>
+                            <bindingIncludes>
+                                <include>operation.xjb</include>
+                            </bindingIncludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>extraction-schema</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <generateDirectory>${project.build.directory}/generated-sources/xjc-extraction</generateDirectory>
+                            <schemaDirectory>src/main/resources/schemas/extraction</schemaDirectory>
+                            <schemaIncludes>
+                                <include>barcode.xsd</include>
+                                <include>text.xsd</include>
+                                <include>info.xsd</include>
+                            </schemaIncludes>
+                            <bindingDirectory>src/main/resources/schemas/extraction</bindingDirectory>
+                            <bindingIncludes>
+                                <include>extraction.xjb</include>
+                            </bindingIncludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

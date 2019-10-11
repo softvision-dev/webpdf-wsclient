@@ -2,6 +2,7 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.documents.SoapDocument;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
+import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -21,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+
+import static org.junit.Assert.assertNotNull;
 
 public class SoapCredentialsIntegrationTest {
 
@@ -42,12 +45,13 @@ public class SoapCredentialsIntegrationTest {
 
             webService.setDocument(soapDocument);
 
+            assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setPages("1-5");
             webService.getOperation().setEmbedFonts(true);
 
             webService.getOperation().setPdfa(new PdfaType());
             webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-            webService.getOperation().getPdfa().getConvert().setLevel("3b");
+            webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
             webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
             try (SoapDocument resultDocument = webService.process()) {

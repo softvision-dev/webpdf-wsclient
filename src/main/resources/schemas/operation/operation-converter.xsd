@@ -14,6 +14,7 @@
             <xs:element name="sharePointBridge" type="tns:SharePointBridgeType" minOccurs="0" />
             <xs:element name="report" type="tns:ConverterReportType" minOccurs="0" />
             <xs:element name="template" type="tns:ConverterTemplateType" minOccurs="0" />
+            <xs:element name="text" type="tns:ConverterTextType" minOccurs="0" />
         </xs:all>
         <xs:attribute name="pages" default="" type="xs:string" />
         <xs:attribute name="compression" default="true" type="xs:boolean" />
@@ -49,11 +50,17 @@
         <xs:attribute name="adjustFonts" default="false" type="xs:boolean" />
         <xs:attribute name="attachmentMode" default="embed" type="tns:AttachmentModeType" />
         <xs:attribute name="ignoreMissingBodyChunk" default="false" type="xs:boolean" />
+        <xs:attribute name="useBackground" default="true" type="xs:boolean" />
     </xs:complexType>
     <xs:complexType name="ConverterHtmlType">
+        <xs:all>
+            <xs:element name="templateData" type="tns:TemplateDataType" minOccurs="0" maxOccurs="1" />
+        </xs:all>
         <xs:attribute name="downloadImages" default="false" type="xs:boolean" />
         <xs:attribute name="adjustFonts" default="false" type="xs:boolean" />
         <xs:attribute name="baseURL" default="" type="xs:anyURI" />
+        <xs:attribute name="useAsTemplate" default="false" type="xs:boolean" />
+        <xs:attribute name="useBackground" default="true" type="xs:boolean" />
     </xs:complexType>
     <xs:complexType name="ConverterReportType">
         <xs:attribute name="contentProblems" default="false" type="xs:boolean" />
@@ -65,12 +72,75 @@
             <xs:extension base="tns:TemplateType" />
         </xs:complexContent>
     </xs:complexType>
+    <xs:complexType name="SyntaxHighlightType">
+        <xs:attribute name="fontSize" default="10px" type="xs:string" />
+        <xs:attribute name="fontOrigin" default="system" type="tns:FontOriginModeType" />
+        <xs:attribute name="fontFamily" default="" type="xs:string" />
+        <xs:attribute name="wordBreak" default="auto" type="tns:TextWrapModeType" />
+        <xs:attribute name="lineNumbers" default="true" type="xs:boolean" />
+        <xs:attribute name="lineHeight" default="12px" type="xs:string" />
+        <xs:attribute name="language" default="" type="xs:string" />
+        <xs:attribute name="available" default="" type="xs:string" />
+        <xs:attribute name="relevance" default="90" type="xs:int" />
+    </xs:complexType>
+    <xs:complexType name="TextHighlightType">
+        <xs:attribute name="fontSize" default="10px" type="xs:string" />
+        <xs:attribute name="fontOrigin" default="system" type="tns:FontOriginModeType" />
+        <xs:attribute name="fontFamily" default="" type="xs:string" />
+        <xs:attribute name="wordBreak" default="auto" type="tns:TextWrapModeType" />
+        <xs:attribute name="lineNumbers" default="false" type="xs:boolean" />
+        <xs:attribute name="lineHeight" default="12px" type="xs:string" />
+        <xs:attribute name="color" default="#000000" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="ConverterTextType">
+        <xs:all>
+            <xs:element name="syntaxHighlight" type="tns:SyntaxHighlightType" minOccurs="0" />
+            <xs:element name="textHighlight" type="tns:TextHighlightType" minOccurs="0" />
+        </xs:all>
+        <xs:attribute name="useSyntaxDetection" default="false" type="xs:boolean" />
+    </xs:complexType>
+    <xs:complexType name="TemplateType">
+        <xs:all>
+            <xs:element name="file" type="tns:TemplateFileType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="data" type="tns:TemplateDataType" minOccurs="0" maxOccurs="1" />
+        </xs:all>
+        <xs:attribute name="language" type="tns:LanguageType" use="optional" />
+    </xs:complexType>
+    <xs:complexType name="TemplateDataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="TemplateFileType">
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup" />
+                <xs:attribute name="name" default="" type="xs:string" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
     <xs:simpleType name="AttachmentModeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="embed" />
             <xs:enumeration value="remove" />
             <xs:enumeration value="convert" />
             <xs:enumeration value="convertMerge" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TextWrapModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="auto" />
+            <xs:enumeration value="none" />
+            <xs:enumeration value="word" />
+            <xs:enumeration value="all" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="FontOriginModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="system" />
+            <xs:enumeration value="folder" />
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="OutlineType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:choice minOccurs="1" maxOccurs="1">
+                    <xs:element name="add">
+                        <xs:complexType>
+                            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                                <xs:element name="item" type="tns:ItemType" />
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="remove">
+                        <xs:complexType>
+                            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                                <xs:element name="item" type="tns:ItemReferenceType" />
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="clear" type="tns:ClearType" />
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ItemType">
+        <xs:complexContent>
+            <xs:extension base="tns:ItemReferenceType">
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="goTo" type="tns:GoToDestinationActionType" />
+                    <xs:element name="launchApplication" type="tns:LaunchApplicationActionType" />
+                    <xs:element name="resolveURI" type="tns:URIActionType" />
+                    <xs:element name="playSound" type="tns:SoundActionType" />
+                    <xs:element name="hideAnnotation" type="tns:HideActionType" />
+                    <xs:element name="executeNamed" type="tns:NamedActionType" />
+                    <xs:element name="submitForm" type="tns:SubmitFormActionType" />
+                    <xs:element name="resetForm" type="tns:ResetFormActionType" />
+                    <xs:element name="importSchema" type="tns:ImportDataActionType" />
+                    <xs:element name="executeJavaScript" type="tns:JavaScriptActionType" />
+                    <xs:element name="setLayerState" type="tns:SetOCGStateActionType" />
+                    <xs:element name="setTransition" type="tns:TransitionActionType" />
+                    <xs:element name="goTo3DView" type="tns:GoTo3DViewActionType" />
+                    <xs:element name="goToThread" type="tns:ThreadActionType" />
+                </xs:choice>
+                <xs:attribute name="isOpen" default="false" type="xs:boolean" />
+                <xs:attribute name="italic" default="false" type="xs:boolean" />
+                <xs:attribute name="bold" default="false" type="xs:boolean" />
+                <xs:attribute name="color" default="#000000" type="tns:RgbColorType" />
+                <xs:attribute name="pathPosition" default="inplace" type="tns:AddPositionType" />
+                <xs:attribute name="itemName" type="xs:string" default=""/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ItemReferenceType">
+        <xs:attribute name="path" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="ClearType" />
+    <xs:complexType name="DestinationEventType" />
+    <xs:complexType name="ActionEventType" />
+    <xs:complexType name="ZoomDestinationType">
+        <xs:complexContent>
+            <xs:extension base="tns:DestinationEventType">
+                <xs:attribute name="page" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="leftOffset" default="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="topOffset" default="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="zoom" default="100">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0" />
+                            <xs:maxInclusive value="6400" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="metrics" default="px" type="tns:MetricsType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="FitPageDestinationType">
+        <xs:complexContent>
+            <xs:extension base="tns:DestinationEventType">
+                <xs:attribute name="page" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="FitWidthDestinationType">
+        <xs:complexContent>
+            <xs:extension base="tns:DestinationEventType">
+                <xs:attribute name="page" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="topOffset" default="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="metrics" default="px" type="tns:MetricsType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="FitHeightDestinationType">
+        <xs:complexContent>
+            <xs:extension base="tns:DestinationEventType">
+                <xs:attribute name="page" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="leftOffset" default="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="metrics" default="px" type="tns:MetricsType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="FitRectangleDestinationType">
+        <xs:complexContent>
+            <xs:extension base="tns:DestinationEventType">
+                <xs:attribute name="page" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="leftOffset" default="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="bottomOffset" default="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="rightOffset" default="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="topOffset" default="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="metrics" default="px" type="tns:MetricsType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="FitBoundingBoxDestinationType">
+        <xs:complexContent>
+            <xs:extension base="tns:DestinationEventType">
+                <xs:attribute name="page" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="FitBoundingBoxWidthDestinationType">
+        <xs:complexContent>
+            <xs:extension base="tns:DestinationEventType">
+                <xs:attribute name="page" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="topOffset" default="0">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="metrics" default="px" type="tns:MetricsType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="NamedDestinationType">
+        <xs:complexContent>
+            <xs:extension base="tns:DestinationEventType">
+                <xs:attribute name="name" default="" type="xs:string" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="GoToDestinationActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:choice minOccurs="1" maxOccurs="1">
+                    <xs:element name="zoomPage" type="tns:ZoomDestinationType" />
+                    <xs:element name="fitPage" type="tns:FitPageDestinationType" />
+                    <xs:element name="fitWidth" type="tns:FitWidthDestinationType" />
+                    <xs:element name="fitHeight" type="tns:FitHeightDestinationType" />
+                    <xs:element name="fitRectangle" type="tns:FitRectangleDestinationType" />
+                    <xs:element name="fitBoundingBox" type="tns:FitBoundingBoxDestinationType" />
+                    <xs:element name="fitBoundingBoxWidth" type="tns:FitBoundingBoxWidthDestinationType" />
+                    <xs:element name="goToNamed" type="tns:NamedDestinationType" />
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="LaunchApplicationActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:all>
+                    <xs:element name="applicationPath" type="tns:FileSpecificationType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="launchParameters" type="tns:LaunchParameterType" minOccurs="0" maxOccurs="1" />
+                </xs:all>
+                <xs:attribute name="newWindow" default="userPreferences" type="tns:OpenModeType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ThreadActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:attribute name="beadIndex">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="page" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="threadTitle" type="xs:string" />
+                <xs:attribute name="threadIndex">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="URIActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:attribute name="uri" default="" type="xs:string" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="SoundActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:all>
+                    <xs:element name="sound" type="xs:base64Binary" minOccurs="1" maxOccurs="1" />
+                </xs:all>
+                <xs:attribute name="volume" default="100">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="-100" />
+                            <xs:maxInclusive value="100" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="synchronous" default="false" type="xs:boolean" />
+                <xs:attribute name="repeat" default="false" type="xs:boolean" />
+                <xs:attribute name="mix" default="false" type="xs:boolean" />
+                <xs:attribute name="samplingRate" default="8000">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:float">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="soundChannels" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="sampleSize" default="8">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="encoding" default="Raw" type="tns:AudioEncodingType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="HideActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:choice>
+                    <xs:element name="annotation" type="tns:AnnotationSelectionType" minOccurs="1" maxOccurs="unbounded" />
+                </xs:choice>
+                <xs:attribute name="hide" default="true" type="xs:boolean" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="NamedActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:attribute name="namedOperation" default="" type="xs:string" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="SetOCGStateActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:choice minOccurs="1" maxOccurs="unbounded">
+                    <xs:element name="layerState">
+                        <xs:complexType>
+                            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                                <xs:element name="referencedLayer" type="tns:OCGSelectionType" />
+                            </xs:choice>
+                            <xs:attribute name="state" default="ON" type="tns:OCGStateType" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+                <xs:attribute name="preserveRadioButtonRelation" default="true" type="xs:boolean" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="TransitionActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:attribute name="scaling" default="100">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="effectDimensionHorizontal" default="true" type="xs:boolean" />
+                <xs:attribute name="motionInward" default="true" type="xs:boolean" />
+                <xs:attribute name="flyAreaOpaque" default="false" type="xs:boolean" />
+                <xs:attribute name="flyScale" default="100">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0" />
+                            <xs:maxInclusive value="6400" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="direction" default="leftToRight" type="tns:OutlineTransitionDirectionType" />
+                <xs:attribute name="style" default="none" type="tns:OutlineTransitionStyleType" />
+                <xs:attribute name="duration" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:float">
+                            <xs:minInclusive value="0" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="JavaScriptActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:attribute name="jsAction" default="" type="xs:string" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="GoTo3DViewActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:all>
+                    <xs:element name="annotation" type="tns:AnnotationSelectionType" minOccurs="1" maxOccurs="1" />
+                </xs:all>
+                <xs:attribute name="index">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="0" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="name" type="xs:string" />
+                <xs:attribute name="relative" type="tns:RelativeThreeDViewOperationType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="SubmitFormActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:choice minOccurs="1" maxOccurs="unbounded">
+                    <xs:element name="field" type="tns:FormFieldSelectionType" />
+                </xs:choice>
+                <xs:attribute name="url" default="" type="xs:string" />
+                <xs:attribute name="exclude" default="false" type="xs:boolean" />
+                <xs:attribute name="includeNoValueFields" default="false" type="xs:boolean" />
+                <xs:attribute name="exportFormat" default="false" type="xs:boolean" />
+                <xs:attribute name="getMethod" default="false" type="xs:boolean" />
+                <xs:attribute name="submitCoordinates" default="false" type="xs:boolean" />
+                <xs:attribute name="xfdf" default="false" type="xs:boolean" />
+                <xs:attribute name="includeAppendSaves" default="false" type="xs:boolean" />
+                <xs:attribute name="includeAnnotations" default="false" type="xs:boolean" />
+                <xs:attribute name="submitPDF" default="false" type="xs:boolean" />
+                <xs:attribute name="canonicalFormat" default="false" type="xs:boolean" />
+                <xs:attribute name="excludeNonUserAnnotations" default="false" type="xs:boolean" />
+                <xs:attribute name="excludeFDFSourceOrTargetFile" default="false" type="xs:boolean" />
+                <xs:attribute name="embedForm" default="false" type="xs:boolean" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ResetFormActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:choice minOccurs="1" maxOccurs="unbounded">
+                    <xs:element name="field" type="tns:FormFieldSelectionType" />
+                </xs:choice>
+                <xs:attribute name="exclude" default="false" type="xs:boolean" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ImportDataActionType">
+        <xs:complexContent>
+            <xs:extension base="tns:ActionEventType">
+                <xs:all>
+                    <xs:element name="file" type="tns:FileSpecificationType" minOccurs="1" maxOccurs="1" />
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="FileSpecificationType">
+        <xs:attribute name="volatileFile" default="false" type="xs:boolean" />
+        <xs:attribute name="description" default="" type="xs:string" />
+        <xs:attribute name="resourceURL" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="LaunchParameterType">
+        <xs:choice minOccurs="1" maxOccurs="1">
+            <xs:element name="windows">
+                <xs:complexType>
+                    <xs:attribute name="fileName" default="" type="xs:string" />
+                    <xs:attribute name="directory" default="" type="xs:string" />
+                    <xs:attribute name="operation" default="open" type="tns:ApplicationOperationType" />
+                    <xs:attribute name="arguments" default="" type="xs:string" />
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="AnnotationSelectionType">
+        <xs:attribute name="page" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="index">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="name" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="OCGSelectionType">
+        <xs:attribute name="name" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="FormFieldSelectionType">
+        <xs:attribute name="name" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:simpleType name="AudioEncodingType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Raw" />
+            <xs:enumeration value="Signed" />
+            <xs:enumeration value="muLaw" />
+            <xs:enumeration value="ALaw" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OutlineTransitionStyleType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="blinds" />
+            <xs:enumeration value="box" />
+            <xs:enumeration value="cover" />
+            <xs:enumeration value="dissolve" />
+            <xs:enumeration value="fade" />
+            <xs:enumeration value="fly" />
+            <xs:enumeration value="glitter" />
+            <xs:enumeration value="push" />
+            <xs:enumeration value="split" />
+            <xs:enumeration value="uncover" />
+            <xs:enumeration value="wipe" />
+            <xs:enumeration value="none" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OutlineTransitionDirectionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="leftToRight" />
+            <xs:enumeration value="bottomToTop" />
+            <xs:enumeration value="rightToLeft" />
+            <xs:enumeration value="topToBottom" />
+            <xs:enumeration value="topLeftToBottomRight" />
+            <xs:enumeration value="none" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OpenModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="userPreferences" />
+            <xs:enumeration value="newWindow" />
+            <xs:enumeration value="sameWindow" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="RelativeThreeDViewOperationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="First" />
+            <xs:enumeration value="Last" />
+            <xs:enumeration value="Next" />
+            <xs:enumeration value="Previous" />
+            <xs:enumeration value="Default" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OCGStateType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ON" />
+            <xs:enumeration value="OFF" />
+            <xs:enumeration value="Toggle" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ApplicationOperationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="open" />
+            <xs:enumeration value="print" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="AddPositionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="before" />
+            <xs:enumeration value="inplace" />
+            <xs:enumeration value="after" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

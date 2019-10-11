@@ -1,16 +1,17 @@
 
 package net.webpdf.wsclient.schema.stubs;
 
+import org.jetbrains.annotations.Nullable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java-Klasse für FaultInfo complex type.
+ * <p>Java-class for the FaultInfo complex type.
  *
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
+ * <p>the following schema fragment contains the expected content, that may be contained in this class.
  *
  * <pre>
  * &lt;complexType name="FaultInfo">
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings({"unused"})
 @XmlType(name = "FaultInfo", propOrder = {
     "errorCode",
     "errorMessage",
@@ -35,63 +37,67 @@ import javax.xml.bind.annotation.XmlType;
 public class FaultInfo {
 
     @XmlElement(namespace = "")
-    protected int errorCode;
+    private int errorCode;
     @XmlElement(namespace = "")
-    protected String errorMessage;
+    @Nullable
+    private String errorMessage;
     @XmlElement(namespace = "")
-    protected String stackTrace;
+    @Nullable
+    private String stackTrace;
 
     /**
-     * Ruft den Wert der errorCode-Eigenschaft ab.
+     * Return the errorCode.
      */
     public int getErrorCode() {
         return errorCode;
     }
 
     /**
-     * Legt den Wert der errorCode-Eigenschaft fest.
+     * Set the errorCode.
      */
     public void setErrorCode(int value) {
         this.errorCode = value;
     }
 
     /**
-     * Ruft den Wert der errorMessage-Eigenschaft ab.
+     * Return the errorMessage.
      *
      * @return possible object is
      * {@link String }
      */
+    @Nullable
     public String getErrorMessage() {
         return errorMessage;
     }
 
     /**
-     * Legt den Wert der errorMessage-Eigenschaft fest.
+     * Set the errorMessage.
      *
      * @param value allowed object is
      *              {@link String }
      */
-    public void setErrorMessage(String value) {
+    public void setErrorMessage(@Nullable String value) {
         this.errorMessage = value;
     }
 
     /**
-     * Ruft den Wert der stackTrace-Eigenschaft ab.
+     * Return the stacktrace.
      *
      * @return possible object is
      * {@link String }
      */
+    @Nullable
     public String getStackTrace() {
         return stackTrace;
     }
 
     /**
-     * Legt den Wert der stackTrace-Eigenschaft fest.
+     * Set the stacktrace.
      *
      * @param value allowed object is
      *              {@link String }
      */
-    public void setStackTrace(String value) {
+    public void setStackTrace(@Nullable String value) {
         this.stackTrace = value;
     }
 

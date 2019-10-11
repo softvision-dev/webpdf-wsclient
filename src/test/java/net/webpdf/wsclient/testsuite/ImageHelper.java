@@ -5,8 +5,6 @@ import java.io.IOException;
 
 public class ImageHelper {
 
-    private static final int DPI = 200;
-
     /**
      * This will compare the pixel-wise RGB values of the given image and the stored image.
      */

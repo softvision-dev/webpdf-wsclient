@@ -1,6 +1,9 @@
 
 package net.webpdf.wsclient.schema.stubs;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import javax.xml.ws.WebFault;
 
 
@@ -10,36 +13,44 @@ import javax.xml.ws.WebFault;
  * Generated source version: 2.2
  */
 @WebFault(name = "WebserviceException")
-public class WebserviceException
-    extends Exception {
+public class WebserviceException extends Exception {
 
     /**
      * Java type that goes as soapenv:Fault detail element.
      */
+    @NotNull
     private FaultInfo faultInfo;
 
     /**
-     * @param faultInfo
-     * @param message
+     * Collects information concerning a webPDF ResultException, that has been encountered, while calling a webPDF WS.
+     *
+     * @param faultInfo The fault info containing further information concerning the error.
+     * @param message   The message, describing the occurred error.
      */
-    public WebserviceException(String message, FaultInfo faultInfo) {
+    public WebserviceException(@Nullable String message, @NotNull FaultInfo faultInfo) {
         super(message);
         this.faultInfo = faultInfo;
     }
 
     /**
-     * @param faultInfo
-     * @param cause
-     * @param message
+     * Collects information concerning a webPDF ResultException, that has been encountered, while calling a webPDF WS.
+     *
+     * @param faultInfo The fault info containing further information concerning the error.
+     * @param cause     The cause of the error.
+     * @param message   The message, describing the occurred error.
      */
-    public WebserviceException(String message, FaultInfo faultInfo, Throwable cause) {
+    public WebserviceException(@Nullable String message, @NotNull FaultInfo faultInfo, @Nullable Throwable cause) {
         super(message, cause);
         this.faultInfo = faultInfo;
     }
 
     /**
+     * Returns the fault info object of this exception, containing more detailed information about the ResultException,
+     * that occurred on the server side.
+     *
      * @return returns fault bean: net.webpdf.wsclient.schema.stubs.toolbox.FaultInfo
      */
+    @NotNull
     public FaultInfo getFaultInfo() {
         return faultInfo;
     }

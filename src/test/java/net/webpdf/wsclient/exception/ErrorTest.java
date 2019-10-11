@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 public class ErrorTest {
     @Test
-    public void testError() throws Exception {
+    public void testError() {
         Error error = Error.getName(Error.NONE.getCode());
         assertEquals("Errorcode should have been NONE", Error.NONE.getCode(), error.getCode());
         assertEquals("Errormessage should be according to NONE", Error.NONE.getMessage(), error.getMessage());

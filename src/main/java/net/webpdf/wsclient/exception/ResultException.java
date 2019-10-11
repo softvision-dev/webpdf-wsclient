@@ -1,5 +1,7 @@
 package net.webpdf.wsclient.exception;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 
 /**
@@ -7,20 +9,17 @@ import java.io.IOException;
  */
 public class ResultException extends IOException {
 
-    private Result result = Result.build(Error.UNKNOWN_EXCEPTION);
+    @NotNull
+    private Result result;
 
     /**
      * Creates a new exception
      *
      * @param result result to be covered by the exception
      */
-    public ResultException(Result result) {
-        super(result != null ? result.getMessage() : "",
-                result != null ? result.getException() : null);
-
-        if (result != null) {
-            this.result = result;
-        }
+    public ResultException(@NotNull Result result) {
+        super(result.getMessage(), result.getException());
+        this.result = result;
     }
 
     /**
@@ -28,6 +27,7 @@ public class ResultException extends IOException {
      *
      * @return result object
      */
+    @NotNull
     public Result getResult() {
         return this.result;
     }

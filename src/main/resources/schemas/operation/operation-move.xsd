@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="MoveType">
+        <xs:complexContent>
+            <xs:extension xmlns:q1="http://schema.webpdf.de/1.0/operation" base="q1:BaseToolboxType">
+                <xs:attribute name="mode" default="afterPage" type="q1:MoveModeType" />
+                <xs:attribute name="targetPosition" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="pages" default="1" type="xs:string" />
+                <xs:attribute name="order" default="preserve" type="q1:OrderType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="MoveModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="beforePage" />
+            <xs:enumeration value="afterPage" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OrderType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="preserve" />
+            <xs:enumeration value="reverse" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns="http://schema.webpdf.de/1.0/extraction/barcode" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/extraction/barcode" version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="barcodes">
+        <xs:complexType>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:element name="barcode" type="BarcodeType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="BarcodeType">
+        <xs:complexContent>
+            <xs:extension base="PositionedContentElementType">
+                <xs:attribute name="type" type="BarcodeEncodingsType" use="required"/>
+                <xs:attributeGroup ref="optionalBarcodeAttributes"/>
+                <xs:attribute name="page" default="1">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:int">
+                            <xs:minInclusive value="1"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:attributeGroup name="optionalBarcodeAttributes">
+        <xs:attribute name="errorCorrectionLevel" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="segmentIndex" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="isLastSegment" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="optionalData" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="fileId" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="structuredAppendParity" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="structuredAppendSequence" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="pdf417ExtraMetadata" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="upcEanExtension" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="suggestedPrice" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="issueNumber" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="orientation" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="other" default="" type="xs:string" use="optional"/>
+        <xs:attribute name="possibleCountry" default="" type="xs:string" use="optional"/>
+    </xs:attributeGroup>
+    <xs:simpleType name="BarcodeEncodingsType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="aztec"/>
+            <xs:enumeration value="codabar"/>
+            <xs:enumeration value="code128"/>
+            <xs:enumeration value="code39"/>
+            <xs:enumeration value="code93"/>
+            <xs:enumeration value="datamatrix"/>
+            <xs:enumeration value="ean13"/>
+            <xs:enumeration value="ean8"/>
+            <xs:enumeration value="itf"/>
+            <xs:enumeration value="maxicode"/>
+            <xs:enumeration value="pdf417"/>
+            <xs:enumeration value="qrcode"/>
+            <xs:enumeration value="rssexpanded"/>
+            <xs:enumeration value="upca"/>
+            <xs:enumeration value="upce"/>
+            <xs:enumeration value="upceanextension"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="CoordinatesType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="pdf"/>
+            <xs:enumeration value="user"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="RectangleType">
+        <xs:attribute name="coordinates" type="CoordinatesType" use="required"/>
+        <xs:attribute name="x" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="y" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="width" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="height" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="PositionedContentElementType">
+        <xs:sequence>
+            <xs:element name="rectangle" type="RectangleType" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:element name="plain" type="xs:string" default=""/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
