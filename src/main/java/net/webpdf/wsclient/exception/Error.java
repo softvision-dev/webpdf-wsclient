@@ -30,7 +30,8 @@ public enum Error {
 
     WSDL_INVALID_FILE(-50, "Unable to access WSDL file"),
     WSDL_INVALID_URL(-51, "Invalid WSDL URL"),
-    SOAP_EXECUTION(-52, "SOAP web service execution error");
+    SOAP_EXECUTION(-52, "SOAP web service execution error"),
+    REST_EXECUTION(-53, "REST web service execution error");
 
     private final int code;
     @NotNull

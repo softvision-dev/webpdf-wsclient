@@ -4,6 +4,8 @@ import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.ExceptionBean;
+import net.webpdf.wsclient.schema.stubs.FaultInfo;
+import net.webpdf.wsclient.schema.stubs.WebserviceException;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
@@ -158,6 +160,13 @@ public class HttpRestRequest {
                                  + " (" + exceptionBean.getErrorCode() + ")\n"
                                  + (exceptionBean.getStackTrace() != null && !exceptionBean.getStackTrace().isEmpty() ?
                                         "Server stack trace: " + exceptionBean.getStackTrace() + "\n" : "");
+            if (exceptionBean.getErrorCode() != 0) {
+                FaultInfo faultInfo = new FaultInfo();
+                faultInfo.setErrorMessage(exceptionBean.getErrorMessage());
+                faultInfo.setErrorCode(exceptionBean.getErrorCode());
+                faultInfo.setStackTrace(exceptionBean.getStackTrace());
+                throw new ResultException(Result.build(Error.REST_EXECUTION, new WebserviceException(responseOutput, faultInfo)));
+            }
         } else {
             try {
                 responseOutput = EntityUtils.toString(httpEntity);
@@ -212,6 +221,8 @@ public class HttpRestRequest {
             return DataFormat.XML.equals(this.dataFormat)
                        ? SerializeHelper.fromXML(httpEntity, type)
                        : SerializeHelper.fromJSON(httpEntity, type);
+        } catch (ResultException ex) {
+            throw ex;
         } catch (IOException ex) {
             throw new ResultException(Result.build(Error.HTTP_IO_ERROR, ex));
         }
