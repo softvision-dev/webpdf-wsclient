@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.charset.UnsupportedCharsetException;
 
-abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebService<RestDocument, T_OPERATION_TYPE, RestDocument> {
+public abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebService<RestDocument, T_OPERATION_TYPE, RestDocument> {
 
     /**
      * Creates a webservice interface of the given {@link WebServiceType} for the given {@link Session}.

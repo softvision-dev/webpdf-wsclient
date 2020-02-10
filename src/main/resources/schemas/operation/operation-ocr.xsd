@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
+    <xs:include schemaLocation="operation-pdfa.xsd" />
     <xs:complexType name="OcrType">
         <xs:all>
             <xs:element name="page" type="tns:OcrPageType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="pdfa" type="tns:PdfaType" minOccurs="0" />
         </xs:all>
         <xs:attribute name="language" default="eng" type="tns:OcrLanguageType" />
         <xs:attribute name="outputFormat" default="pdf">
@@ -20,6 +22,14 @@
         <xs:attribute name="forceEachPage" default="false" type="xs:boolean" />
         <xs:attribute name="normalizePageRotation" default="false" type="xs:boolean" />
         <xs:attribute name="failOnWarning" default="false" type="xs:boolean" />
+        <xs:attribute name="jpegQuality" default="75">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="100" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="OcrLanguageType">
         <xs:restriction base="xs:string">
