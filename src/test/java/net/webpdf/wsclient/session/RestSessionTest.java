@@ -13,7 +13,7 @@ public class RestSessionTest {
     private static final String SOME_CREDENTIALS_URL = "http://username:password@someInvalidURL.de";
 
     @Test
-    public void testCreateSoapSession() throws Exception {
+    public void testCreateRestSession() throws Exception {
         URL url = new URL(SOME_URL);
         try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, url)) {
             assertNotNull("RestSession should have been initialized.", restSession);
@@ -35,7 +35,7 @@ public class RestSessionTest {
     }
 
     @Test
-    public void testCreateCredentialsSoapSession() throws Exception {
+    public void testCreateCredentialsRestSession() throws Exception {
         URL url = new URL(SOME_CREDENTIALS_URL);
         try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, url)) {
             assertNotNull("RestSession should have been initialized.", restSession);

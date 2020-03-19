@@ -1,5 +1,6 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.documents.DocumentManager;
 import net.webpdf.wsclient.documents.RestDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
@@ -51,11 +52,19 @@ public abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebServic
             this.document.getSourceDocumentId() != null ? this.document.getSourceDocumentId() : ""
         );
 
-        return ((RestSession) this.session).getDocumentManager().getDocument(
-            HttpRestRequest.createRequest((RestSession) this.session)
-                .buildRequest(HttpMethod.POST, urlPath, getWebServiceOptions())
-                .executeRequest(DocumentFileBean.class)
-        );
+        DocumentManager documentManager = ((RestSession) this.session).getDocumentManager();
+
+        DocumentFileBean documentFileBean = HttpRestRequest.createRequest((RestSession) this.session)
+                                                .buildRequest(HttpMethod.POST, urlPath, getWebServiceOptions())
+                                                .executeRequest(DocumentFileBean.class);
+        RestDocument restDocument = documentManager.getDocument(documentFileBean);
+        restDocument.setDocumentFile(documentFileBean);
+
+        if (documentManager.isActiveDocumentHistory()) {
+            documentManager.updateDocumentHistory(restDocument.getDocumentFile());
+        }
+
+        return restDocument;
     }
 
     /**
@@ -82,5 +91,4 @@ public abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebServic
             throw new ResultException(Result.build(Error.TO_XML_JSON, ex));
         }
     }
-
 }

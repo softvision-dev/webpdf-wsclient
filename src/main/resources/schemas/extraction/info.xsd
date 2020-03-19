@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <xs:schema xmlns="http://schema.webpdf.de/1.0/extraction/info" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/extraction/info" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="document">
         <xs:complexType>
@@ -106,7 +106,17 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
+        <xs:attribute name="initialPage" default="1" type="xs:int" />
         <xs:attribute name="pageLayout" default="singlePage" type="PageLayoutType" />
+        <xs:attribute name="magnification" default="fitVisible" type="MagnificationType" />
+        <xs:attribute name="magnificationZoom" default="100">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="initialView" default="none" type="InitialViewType" />
         <xs:attribute name="encrypted" default="false" type="xs:boolean" />
         <xs:attribute name="portfolio" default="false" type="xs:boolean" />
         <xs:attribute name="pages">
@@ -285,6 +295,27 @@
             <xs:enumeration value="twoColumnRight" />
             <xs:enumeration value="twoPageLeft" />
             <xs:enumeration value="twoPageRight" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="MagnificationType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="fitWidth" />
+            <xs:enumeration value="fitVisible" />
+            <xs:enumeration value="fitHeight" />
+            <xs:enumeration value="fitPage" />
+            <xs:enumeration value="fitActual" />
+            <xs:enumeration value="zoom" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="InitialViewType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="outlines" />
+            <xs:enumeration value="thumbnails" />
+            <xs:enumeration value="fullscreen" />
+            <xs:enumeration value="layers" />
+            <xs:enumeration value="attachments" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="KeyAlgorithmType">

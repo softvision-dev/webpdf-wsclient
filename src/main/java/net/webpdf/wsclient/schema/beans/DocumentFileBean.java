@@ -5,13 +5,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import net.webpdf.wsclient.schema.extraction.info.DocumentType;
 import org.jetbrains.annotations.Nullable;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 @SuppressWarnings({"unused"})
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "documentFile")
-public class DocumentFileBean {
+public class DocumentFileBean implements Serializable {
 
     @Nullable
     private String documentId;
@@ -40,6 +42,7 @@ public class DocumentFileBean {
      *
      * @return The document ID of this document.
      */
+    @XmlElement
     @Nullable
     public String getDocumentId() {
         return this.documentId;
@@ -59,6 +62,7 @@ public class DocumentFileBean {
      *
      * @return The document ID of the parent document.
      */
+    @XmlElement
     @Nullable
     public String getParentDocumentId() {
         return this.parentDocumentId;
@@ -78,6 +82,7 @@ public class DocumentFileBean {
      *
      * @return The file size of this document.
      */
+    @XmlElement
     public long getFileSize() {
         return this.fileSize;
     }
@@ -96,6 +101,7 @@ public class DocumentFileBean {
      *
      * @return The MIME type of this document.
      */
+    @XmlElement
     @Nullable
     public String getMimeType() {
         return this.mimeType;
@@ -115,6 +121,7 @@ public class DocumentFileBean {
      *
      * @return the file name of this document.
      */
+    @XmlElement
     @Nullable
     public String getFileName() {
         return this.fileName;
@@ -134,6 +141,7 @@ public class DocumentFileBean {
      *
      * @return The file extension of this document.
      */
+    @XmlElement
     @Nullable
     public String getFileExtension() {
         return this.fileExtension;
@@ -153,6 +161,7 @@ public class DocumentFileBean {
      *
      * @return The file lock of this document.
      */
+    @XmlElement
     public boolean isIsFileLocked() {
         return this.isFileLocked;
     }
@@ -171,6 +180,7 @@ public class DocumentFileBean {
      *
      * @return The file type id of this document.
      */
+    @XmlElement
     public int getFileTypeId() {
         return this.fileTypeId;
     }
@@ -189,6 +199,7 @@ public class DocumentFileBean {
      *
      * @return The file type group of this document.
      */
+    @XmlElement
     @Nullable
     public String getFileTypeGroups() {
         return this.fileTypeGroups;
@@ -208,6 +219,7 @@ public class DocumentFileBean {
      *
      * @return The last known modification date of this document.
      */
+    @XmlElement
     @Nullable
     public String getFileLastModified() {
         return this.fileLastModified;
@@ -227,6 +239,7 @@ public class DocumentFileBean {
      *
      * @return The metadata of this document.
      */
+    @XmlElement
     @Nullable
     public DocumentType getMetadata() {
         return this.metadata;
@@ -246,6 +259,7 @@ public class DocumentFileBean {
      *
      * @return The error, caused by the attempted creation of this document.
      */
+    @XmlElement
     @Nullable
     public ExceptionBean getError() {
         return error;
@@ -259,5 +273,4 @@ public class DocumentFileBean {
     public void setError(@Nullable ExceptionBean error) {
         this.error = error;
     }
-
 }

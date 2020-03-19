@@ -18,6 +18,7 @@ public enum Error {
     INVALID_DOCUMENT(-7, "The found document is invalid"),
     NO_OPERATION_DATA(-8, "No operation data available"),
     NO_DOCUMENT(-9, "No document defined"),
+    INVALID_HISTORY_DATA(-10, "Invalid history parameter"),
 
     INVALID_URL(-30, "Invalid URL"),
     HTTP_IO_ERROR(-31, "HTTP IO error"),
@@ -82,6 +83,5 @@ public enum Error {
     public int getCode() {
         return this.code;
     }
-
 }
 

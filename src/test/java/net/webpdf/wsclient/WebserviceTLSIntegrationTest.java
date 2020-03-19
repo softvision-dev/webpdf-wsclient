@@ -118,7 +118,7 @@ public class WebserviceTLSIntegrationTest {
     @Test
     @Parameters({
         "PUBLIC|HTTPS|0|true|false",
-        "PUBLIC|HTTP|-31|true|false",
+        "PUBLIC|HTTP|-34|true|false",
         "PUBLIC|HTTPS|0|false|false",
         "PUBLIC|HTTPS|0|false|true",
         "LOCAL|HTTPS|0|false|true",

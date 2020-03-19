@@ -7,6 +7,7 @@ import net.webpdf.wsclient.http.HttpMethod;
 import net.webpdf.wsclient.http.HttpRestRequest;
 import net.webpdf.wsclient.https.TLSContext;
 import net.webpdf.wsclient.schema.beans.Token;
+import net.webpdf.wsclient.schema.beans.UserCredentialsBean;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -19,10 +20,13 @@ import java.net.URL;
 
 public class RestSession extends AbstractSession {
 
+    private static final String INFO_PATH = "authentication/user/info/";
     private static final String LOGOUT_PATH = "authentication/user/logout/";
     private static final String LOGIN_PATH = "authentication/user/login/";
     @Nullable
     private Token token = new Token();
+    @Nullable
+    private UserCredentialsBean userCredentials = new UserCredentialsBean();
     @NotNull
     private CloseableHttpClient httpClient;
     @NotNull
@@ -107,6 +111,17 @@ public class RestSession extends AbstractSession {
     }
 
     /**
+     * Login into the server with an existing session token
+     *
+     * @param token the token to refresh the session with
+     * @throws IOException HTTP access error
+     */
+    public void login(@Nullable Token token) throws IOException {
+        this.token = token;
+        login();
+    }
+
+    /**
      * Login into the server and get a token
      *
      * @throws IOException HTTP access error
@@ -116,6 +131,10 @@ public class RestSession extends AbstractSession {
         this.token = HttpRestRequest.createRequest(this)
                          .buildRequest(HttpMethod.GET, LOGIN_PATH, null)
                          .executeRequest(Token.class);
+
+        this.userCredentials = HttpRestRequest.createRequest(this)
+                                   .buildRequest(HttpMethod.GET, INFO_PATH, null)
+                                   .executeRequest(UserCredentialsBean.class);
     }
 
     /**
@@ -130,6 +149,16 @@ public class RestSession extends AbstractSession {
             .executeRequest(Object.class);
 
         this.token = null;
+        this.userCredentials = null;
     }
 
+    /**
+     * Returns the {@link UserCredentialsBean} for the currently logged in user
+     *
+     * @return The {@link UserCredentialsBean} for the currently logged in user
+     */
+    @Nullable
+    public UserCredentialsBean getUserCredentials() {
+        return userCredentials;
+    }
 }

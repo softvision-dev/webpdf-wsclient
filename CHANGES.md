@@ -21,6 +21,8 @@
     - JSON support of enumeration values has been improved. Enumeration values can/must now be set, using proper enumeration types instead of using simple string values.
 - Adding full support for webPDF xjb files.
 
-# 2.0.1 (10.02.2020)
+# 2.0.1 (19.03.2020)
 - Improved handling of FaultInfo for REST services.
-- Client update for new webPDF8 parameters (OCR, toolbox/merge, converter, toolbox/print)
+- Client update for new webPDF8 parameters (OCR, toolbox/merge, converter, toolbox/print, options)
+- Enhanced REST document management and access (delete/rename/history)
+- Enhanced REST user management (roles/credentials/limits)

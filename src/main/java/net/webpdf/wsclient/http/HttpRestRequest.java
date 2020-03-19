@@ -84,13 +84,30 @@ public class HttpRestRequest {
     @NotNull
     public HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable String path, @Nullable HttpEntity httpEntity)
         throws ResultException {
+        URI uri = this.session.getURI(path != null ? path : "");
+        return buildRequest(httpMethod, uri, httpEntity);
+    }
+
+    /**
+     * Build a HTTP request
+     *
+     * @param httpMethod HTTP method (GET, POST, ...)
+     * @param uri        REST resource URL
+     * @param httpEntity data to send with request (POST)
+     * @return a new HTTP request
+     * @throws ResultException if the HTTP method is unknown
+     */
+    @NotNull
+    public HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable URI uri, @Nullable HttpEntity httpEntity) throws ResultException {
         if (httpMethod == null) {
             throw new ResultException(Result.build(Error.UNKNOWN_HTTP_METHOD));
         }
 
-        RequestBuilder requestBuilder;
+        if (uri == null) {
+            uri = this.session.getURI("");
+        }
 
-        URI uri = this.session.getURI(path != null ? path : "");
+        RequestBuilder requestBuilder;
 
         switch (httpMethod) {
             case GET:
@@ -98,6 +115,12 @@ public class HttpRestRequest {
                 break;
             case POST:
                 requestBuilder = RequestBuilder.post(uri);
+                break;
+            case DELETE:
+                requestBuilder = RequestBuilder.delete(uri);
+                break;
+            case PUT:
+                requestBuilder = RequestBuilder.put(uri);
                 break;
             default:
                 throw new ResultException(Result.build(Error.UNKNOWN_HTTP_METHOD));
@@ -227,5 +250,4 @@ public class HttpRestRequest {
             throw new ResultException(Result.build(Error.HTTP_IO_ERROR, ex));
         }
     }
-
 }

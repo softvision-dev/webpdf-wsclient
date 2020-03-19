@@ -4,40 +4,24 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @XmlRootElement
-public class ExceptionBean {
+public class ExceptionBean implements Serializable {
 
-    private int errorCode;
+    private int errorCode = 0;
     @Nullable
-    private String errorMessage;
+    private String errorMessage = "no error.";
     @Nullable
     private String stackTrace = "";
-
-    /**
-     * Creates a new exception bean, wrapping ws-client and webPDF errors.
-     */
-    public ExceptionBean() {
-        this("no error.", 0);
-    }
-
-    /**
-     * Creates a new exception bean, wrapping ws-client and webPDF errors.
-     *
-     * @param errorMessage The error message, describing the issue.
-     * @param errorCode    The error code, describing the issue.
-     */
-    public ExceptionBean(@Nullable String errorMessage, int errorCode) {
-        this.errorMessage = errorMessage;
-        this.errorCode = errorCode;
-    }
 
     /**
      * Returns the wsclient error code, that is describing the issue.
      *
      * @return The wsclient error code, that is describing the issue.
      */
+    @XmlElement(name = "errorCode")
     public int getErrorCode() {
         return errorCode;
     }
@@ -47,7 +31,6 @@ public class ExceptionBean {
      *
      * @param errorCode The wsclient error code, that is describing the issue.
      */
-    @XmlElement(name = "errorCode")
     public void setErrorCode(int errorCode) {
         this.errorCode = errorCode;
     }
@@ -57,6 +40,7 @@ public class ExceptionBean {
      *
      * @return The wsclient error message, that is describing the issue.
      */
+    @XmlElement(name = "errorMessage")
     @Nullable
     public String getErrorMessage() {
         return errorMessage;
@@ -67,7 +51,6 @@ public class ExceptionBean {
      *
      * @param errorMessage The wsclient error message, that is describing the issue.
      */
-    @XmlElement(name = "errorMessage")
     public void setErrorMessage(@Nullable String errorMessage) {
         this.errorMessage = errorMessage;
     }
@@ -77,6 +60,7 @@ public class ExceptionBean {
      *
      * @return The stacktrace, that caused, this exception.
      */
+    @XmlElement(name = "stackTrace")
     @Nullable
     public String getStackTrace() {
         return stackTrace;
@@ -87,9 +71,7 @@ public class ExceptionBean {
      *
      * @param stackTrace The stacktrace, that lead to the creation of this exception.
      */
-    @XmlElement(name = "stackTrace")
     public void setStackTrace(@Nullable String stackTrace) {
         this.stackTrace = stackTrace;
     }
-
 }

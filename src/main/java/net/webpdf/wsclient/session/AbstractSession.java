@@ -6,6 +6,7 @@ import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.https.TLSContext;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Session class which contains connection and authorization objects and a {@link DocumentManager} instance
@@ -144,6 +146,26 @@ abstract class AbstractSession implements Session {
     }
 
     /**
+     * Returns an {@link URI} pointing to the webservice interface of the session.
+     *
+     * @param subPath    The location of the webservice interface on the webPDF server.
+     * @param parameters Additional Get parameters.
+     * @return an {@link URI} pointing to the webservice interface of the session.
+     * @throws ResultException a {@link ResultException}
+     */
+    @NotNull
+    public URI getURI(@NotNull String subPath, List<NameValuePair> parameters) throws ResultException {
+        try {
+            return new URIBuilder(this.baseUrl)
+                       .setPath(this.baseUrl.getPath() + this.basePath + subPath)
+                       .addParameters(parameters)
+                       .build();
+        } catch (URISyntaxException ex) {
+            throw new ResultException(Result.build(Error.INVALID_URL, ex));
+        }
+    }
+
+    /**
      * Returns the {@link Credentials} authorizing this session.
      *
      * @return The {@link Credentials} authorizing this session.
@@ -175,5 +197,4 @@ abstract class AbstractSession implements Session {
     public DataFormat getDataFormat() {
         return dataFormat;
     }
-
 }

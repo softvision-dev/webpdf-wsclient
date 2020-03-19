@@ -1,5 +1,6 @@
 package net.webpdf.wsclient;
 
+import junit.framework.TestCase;
 import net.webpdf.wsclient.documents.RestDocument;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.RestSession;
@@ -21,8 +22,9 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class RestWebserviceIntegrationTest {
 
@@ -359,12 +361,54 @@ public class RestWebserviceIntegrationTest {
             Assert.assertTrue(fileOut.exists());
 
             assertEquals("Difference should have been zero.",
-                    0.0d,
-                    ImageHelper.compare(
-                            ImageIO.read(testResources.getResource("toolbox_image_rest.jpeg")),
-                            ImageIO.read(fileOut)
-                    ),
-                    0.0d);
+                0.0d,
+                ImageHelper.compare(
+                    ImageIO.read(testResources.getResource("toolbox_image_rest.jpeg")),
+                    ImageIO.read(fileOut)
+                ),
+                0.0d);
+        }
+    }
+
+    @Test
+    public void testHandleRestSession() throws Exception {
+        // Anonymous
+        try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
+            TestCase.assertNotNull("Valid session should have been created.", restSession);
+            restSession.login();
+            TestCase.assertNotNull("Token should have been initialized.", restSession.getToken());
+            assertNotEquals("Token should have been not empty.", "", restSession.getToken().getToken());
+            assertNotNull("UserCredentials should have been initialized.", restSession.getUserCredentials());
+            assertTrue("User should be user", restSession.getUserCredentials().isUser());
+            assertFalse("User should not be authenticated", restSession.getUserCredentials().isAuthenticated());
+            assertFalse("User should not be admin", restSession.getUserCredentials().isAdmin());
+            assertEquals("Username should be empty.", "", restSession.getUserCredentials().getUserName());
+        }
+
+        // User
+        try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL, "user", "user"))) {
+            assertNotNull("Valid session should have been created.", restSession);
+            restSession.login();
+            assertNotNull("Token should have been initialized.", restSession.getToken());
+            assertNotEquals("Token should have been not empty.", "", restSession.getToken().getToken());
+            assertNotNull("UserInfo should have been initialized.", restSession.getUserCredentials());
+            assertTrue("User should be user", restSession.getUserCredentials().isUser());
+            assertTrue("User should be authenticated", restSession.getUserCredentials().isAuthenticated());
+            assertFalse("User should not be admin", restSession.getUserCredentials().isAdmin());
+            assertEquals("Username should be user.", "user", restSession.getUserCredentials().getUserName());
+        }
+
+        // Admin
+        try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL, "admin", "admin"))) {
+            assertNotNull("Valid session should have been created.", restSession);
+            restSession.login();
+            assertNotNull("Token should have been initialized.", restSession.getToken());
+            assertNotEquals("Token should have been not empty.", "", restSession.getToken().getToken());
+            assertNotNull("UserInfo should have been initialized.", restSession.getUserCredentials());
+            assertTrue("User should be user", restSession.getUserCredentials().isUser());
+            assertTrue("User should not be authenticated", restSession.getUserCredentials().isAuthenticated());
+            assertTrue("User should not be admin", restSession.getUserCredentials().isAdmin());
+            assertEquals("Username should be admin.", "admin", restSession.getUserCredentials().getUserName());
         }
     }
 }

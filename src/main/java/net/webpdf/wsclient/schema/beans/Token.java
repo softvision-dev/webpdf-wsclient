@@ -2,6 +2,7 @@ package net.webpdf.wsclient.schema.beans;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
@@ -20,6 +21,7 @@ public class Token implements Serializable {
      *
      * @return authentication token
      */
+    @XmlElement
     @NotNull
     public String getToken() {
         return token;
@@ -33,5 +35,4 @@ public class Token implements Serializable {
     public void setToken(@NotNull String token) {
         this.token = token;
     }
-
 }
