@@ -26,3 +26,4 @@
 - Client update for new webPDF8 parameters (OCR, toolbox/merge, converter, toolbox/print, options)
 - Enhanced REST document management and access (delete/rename/history)
 - Enhanced REST user management (roles/credentials/limits)
+- Adding client side proxy configuration for REST and SOAP services

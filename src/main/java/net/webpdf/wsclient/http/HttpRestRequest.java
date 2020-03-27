@@ -9,19 +9,24 @@ import net.webpdf.wsclient.schema.stubs.WebserviceException;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.xml.bind.DatatypeConverter;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class HttpRestRequest {
@@ -237,13 +242,24 @@ public class HttpRestRequest {
 
             HttpEntity httpEntity = closeableHttpResponse.getEntity();
 
-            if (type == null || httpEntity.getContent().available() <= 0) {
+            ContentType contentType = ContentType.getOrDefault(httpEntity);
+            String mimeType = contentType.getMimeType();
+            Charset charset = contentType.getCharset();
+
+            String value = charset == null ? EntityUtils.toString(httpEntity) : EntityUtils.toString(httpEntity, charset);
+            if (StringUtils.isEmpty(value)) {
                 return null;
             }
 
-            return DataFormat.XML.equals(this.dataFormat)
-                       ? SerializeHelper.fromXML(httpEntity, type)
-                       : SerializeHelper.fromJSON(httpEntity, type);
+            if (mimeType == null || this.dataFormat == null || !mimeType.equals(this.dataFormat.getMimeType())) {
+                return null;
+            }
+            try (StringReader stringReader = new StringReader(value)) {
+                StreamSource streamSource = new StreamSource(stringReader);
+                return DataFormat.XML.equals(this.dataFormat)
+                           ? SerializeHelper.fromXML(streamSource, type)
+                           : SerializeHelper.fromJSON(streamSource, type);
+            }
         } catch (ResultException ex) {
             throw ex;
         } catch (IOException ex) {

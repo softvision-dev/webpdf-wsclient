@@ -6,6 +6,7 @@ import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.https.TLSContext;
+import net.webpdf.wsclient.proxy.ProxyConfiguration;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -42,6 +43,8 @@ abstract class AbstractSession implements Session {
     private Credentials credentials;
     @Nullable
     private TLSContext tlsContext;
+    @Nullable
+    private ProxyConfiguration proxy;
 
     /**
      * Creates new {@link AbstractSession} instance
@@ -90,6 +93,28 @@ abstract class AbstractSession implements Session {
     @Nullable
     public TLSContext getTlsContext() {
         return tlsContext;
+    }
+
+    /**
+     * Returns the currently set {@link ProxyConfiguration}.
+     *
+     * @return The currently set {@link ProxyConfiguration}.
+     */
+    @Override
+    @Nullable
+    public ProxyConfiguration getProxy() {
+        return proxy;
+    }
+
+    /**
+     * Set a {@link ProxyConfiguration}.
+     *
+     * @param proxy The {@link ProxyConfiguration}, that shall be set.
+     * @throws ResultException Shall be thrown, when resolving the proxy failed.
+     */
+    @Override
+    public void setProxy(@Nullable ProxyConfiguration proxy) throws ResultException {
+        this.proxy = proxy;
     }
 
     /**
