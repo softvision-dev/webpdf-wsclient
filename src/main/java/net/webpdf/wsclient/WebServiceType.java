@@ -72,9 +72,9 @@ public enum WebServiceType {
     @NotNull
     private final String soapEndpoint;
     @NotNull
-    private final Class<? extends SoapWebService> soapWsClass;
+    private final Class<? extends SoapWebService<?,?>> soapWsClass;
     @NotNull
-    private final Class<? extends RestWebservice> restWsClass;
+    private final Class<? extends RestWebservice<?>> restWsClass;
     @NotNull
     private final String restEndpoint;
 
@@ -89,12 +89,12 @@ public enum WebServiceType {
      * @param restWsClass       The class, that represents the REST webservice.
      * @param restEndpoint      The endpoint of the REST webservice.
      */
-    WebServiceType(@NotNull Class<? extends SoapWebService> soapWsClass,
+    WebServiceType(@NotNull Class<? extends SoapWebService<?,?>> soapWsClass,
                    @NotNull String soapNamespaceURI,
                    @NotNull String soapLocalPart,
                    @NotNull String soapLocalPartPort,
                    @NotNull String soapEndpoint,
-                   @NotNull Class<? extends RestWebservice> restWsClass,
+                   @NotNull Class<? extends RestWebservice<?>> restWsClass,
                    @NotNull String restEndpoint) {
         this.soapNamespaceURI = soapNamespaceURI;
         this.soapLocalPart = soapLocalPart;
@@ -161,7 +161,7 @@ public enum WebServiceType {
      * @return the class, that represents the REST webservice.
      */
     @NotNull
-    public Class<? extends RestWebservice> getRestWsClass() {
+    public Class<? extends RestWebservice<?>> getRestWsClass() {
         return restWsClass;
     }
 

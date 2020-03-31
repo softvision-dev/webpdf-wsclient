@@ -27,3 +27,4 @@
 - Enhanced REST document management and access (delete/rename/history)
 - Enhanced REST user management (roles/credentials/limits)
 - Adding client side proxy configuration for REST and SOAP services
+- Added UTF-8 support for REST requests.

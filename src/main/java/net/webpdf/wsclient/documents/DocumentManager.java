@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.*;
 
@@ -81,6 +82,7 @@ public class DocumentManager {
         }
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.setCharset(StandardCharsets.UTF_8);
         builder.addBinaryBody("filedata", file, ContentType.DEFAULT_BINARY, file.getName());
         HttpEntity entity = builder.build();
 

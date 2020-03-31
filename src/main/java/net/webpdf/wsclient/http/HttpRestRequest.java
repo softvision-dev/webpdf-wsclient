@@ -139,6 +139,7 @@ public class HttpRestRequest {
         }
 
         requestBuilder.addHeader(HttpHeaders.ACCEPT, this.acceptHeader);
+        requestBuilder.setCharset(StandardCharsets.UTF_8);
 
         if (this.session.getToken() != null && !this.session.getToken().getToken().isEmpty()) {
             requestBuilder.addHeader("Token", this.session.getToken().getToken());
@@ -197,7 +198,7 @@ public class HttpRestRequest {
             }
         } else {
             try {
-                responseOutput = EntityUtils.toString(httpEntity);
+                responseOutput = EntityUtils.toString(httpEntity, StandardCharsets.UTF_8);
             } catch (IOException ex) {
                 throw new ResultException(Result.build(Error.HTTP_CUSTOM_ERROR, ex));
             }
@@ -244,9 +245,9 @@ public class HttpRestRequest {
 
             ContentType contentType = ContentType.getOrDefault(httpEntity);
             String mimeType = contentType.getMimeType();
-            Charset charset = contentType.getCharset();
+            Charset charset = contentType.getCharset() != null ? contentType.getCharset() : StandardCharsets.UTF_8;
 
-            String value = charset == null ? EntityUtils.toString(httpEntity) : EntityUtils.toString(httpEntity, charset);
+            String value = EntityUtils.toString(httpEntity, charset);
             if (StringUtils.isEmpty(value)) {
                 return null;
             }

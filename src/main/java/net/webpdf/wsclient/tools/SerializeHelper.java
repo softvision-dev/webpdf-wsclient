@@ -189,7 +189,7 @@ public class SerializeHelper {
      * @throws ResultException an {@link ResultException}
      */
     @NotNull
-    public static String toXML(@Nullable Object object, @Nullable Class type) throws ResultException {
+    public static String toXML(@Nullable Object object, @Nullable Class<?> type) throws ResultException {
         if (object == null || type == null) {
             throw new ResultException(Result.build(Error.TO_XML_JSON));
         }
