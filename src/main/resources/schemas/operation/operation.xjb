@@ -149,7 +149,7 @@
         </jaxb:bindings>
         <jaxb:bindings
                 node="//xs:complexType[@name='AnnotationType']//xs:choice//xs:element[@name='add']//xs:complexType">
-            <simplify:property name="textOrMarkup">
+            <simplify:property name="textOrMarkupOrRedact">
                 <simplify:as-element-property/>
             </simplify:property>
         </jaxb:bindings>

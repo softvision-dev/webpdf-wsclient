@@ -10,6 +10,7 @@
                             <xs:choice minOccurs="1" maxOccurs="unbounded">
                                 <xs:element name="text" type="tns:TextAnnotationType" />
                                 <xs:element name="markup" type="tns:MarkupAnnotationType" />
+                                <xs:element name="redact" type="tns:RedactAnnotationType" />
                             </xs:choice>
                         </xs:complexType>
                     </xs:element>
@@ -81,6 +82,16 @@
                     <xs:element name="pathElement" type="tns:RectangleType" />
                 </xs:choice>
                 <xs:attribute name="markupType" default="highlight" type="tns:MarkupsAnnotationType" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="RedactAnnotationType">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseAnnotationType">
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element name="pathElement" type="tns:RectangleType" />
+                </xs:choice>
+                <xs:attribute name="interiorColor" default="#000000" type="tns:RgbColorType" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
