@@ -13,7 +13,7 @@ import java.util.List;
 class XMLValidationEventHandler implements ValidationEventHandler {
 
     @NotNull
-    private List<String> messages = new ArrayList<>();
+    private final List<String> messages = new ArrayList<>();
     @NotNull
     private XMLStatus xmlStatus = XMLStatus.OK;
 

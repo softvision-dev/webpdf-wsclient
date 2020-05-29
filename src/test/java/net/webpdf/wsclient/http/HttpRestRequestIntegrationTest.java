@@ -1,9 +1,10 @@
 package net.webpdf.wsclient.http;
 
-import net.webpdf.wsclient.WebServiceProtocol;
+import net.webpdf.wsclient.documents.rest.RestDocument;
+import net.webpdf.wsclient.session.rest.RestSession;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.DocumentFileBean;
-import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
@@ -37,7 +38,9 @@ public class HttpRestRequestIntegrationTest {
     public void testRestRequest() throws Exception {
         File file = testResources.getResource("test.pdf");
         File outputFile = temporaryFolder.newFile();
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL));
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL)
+        );
              OutputStream fos = new FileOutputStream(outputFile)) {
             session.login();
             HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
@@ -66,9 +69,13 @@ public class HttpRestRequestIntegrationTest {
     public void testWithCredentials() throws Exception {
         File file = testResources.getResource("test.pdf");
         File outputFile = temporaryFolder.newFile();
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL));
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL)
+        );
              OutputStream fos = new FileOutputStream(outputFile)) {
-            UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(testServer.getLocalUser(), testServer.getLocalPassword());
+            UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
+                    testServer.getLocalUser(), testServer.getLocalPassword()
+            );
             session.setCredentials(userCredentials);
             session.login();
             HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
@@ -95,7 +102,9 @@ public class HttpRestRequestIntegrationTest {
 
     @Test(expected = ResultException.class)
     public void testWithInvalidCredentials() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))
+        ) {
             UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials("invalid", "invalid");
             session.setCredentials(userCredentials);
             session.login();
@@ -104,7 +113,9 @@ public class HttpRestRequestIntegrationTest {
 
     @Test(expected = ResultException.class)
     public void testNullEntity() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))
+        ) {
             session.login();
             HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
             assertNotNull("HttpRestRequest should have been build.", httpRestRequest);
@@ -117,7 +128,9 @@ public class HttpRestRequestIntegrationTest {
     @Test(expected = ResultException.class)
     public void testNullHttpMethod() throws Exception {
         File file = testResources.getResource("test.pdf");
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))
+        ) {
             session.login();
             HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
             assertNotNull("HttpRestRequest should have been build.", httpRestRequest);
@@ -133,7 +146,9 @@ public class HttpRestRequestIntegrationTest {
     @Test(expected = IOException.class)
     public void testNullHttpPath() throws Exception {
         File file = testResources.getResource("test.pdf");
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))
+        ) {
             session.login();
             HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
             assertNotNull("HttpRestRequest should have been build.", httpRestRequest);
@@ -150,7 +165,9 @@ public class HttpRestRequestIntegrationTest {
     @Test(expected = IOException.class)
     public void testNullTypRequest() throws Exception {
         File file = testResources.getResource("test.pdf");
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))
+        ) {
             session.login();
             HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
             assertNotNull("HttpRestRequest should have been build.", httpRestRequest);
@@ -166,7 +183,9 @@ public class HttpRestRequestIntegrationTest {
 
     @Test(expected = ResultException.class)
     public void testHttpPathNullOutput() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))
+        ) {
             session.login();
             HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
             assertNotNull("HttpRestRequest should have been build.", httpRestRequest);

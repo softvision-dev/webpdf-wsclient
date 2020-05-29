@@ -7,7 +7,7 @@ public class TestResources {
 
     private final String resourcePath;
 
-    public TestResources(Class testClass) {
+    public TestResources(Class<?> testClass) {
         this.resourcePath = testClass.getPackage().getName().replaceAll("\\.", "/");
     }
 

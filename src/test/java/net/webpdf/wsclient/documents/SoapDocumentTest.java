@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.documents;
 
+import net.webpdf.wsclient.documents.soap.SoapWebServiceDocument;
 import net.webpdf.wsclient.testsuite.TestResources;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -24,7 +25,7 @@ public class SoapDocumentTest {
         File sourceFile = testResources.getResource("test.pdf");
         File targetFile = temporaryFolder.newFile();
 
-        try (SoapDocument soapDocument = new SoapDocument(sourceFile.toURI(), targetFile)) {
+        try (SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(sourceFile.toURI(), targetFile)) {
             assertNotNull("Source data handler should have been provided.", soapDocument.getSourceDataHandler());
             DataHandler dataHandler = soapDocument.getSourceDataHandler();
             assertNotNull("Data handler should have been provided.", dataHandler);
@@ -38,7 +39,7 @@ public class SoapDocumentTest {
     public void testSoapDocumentNullSource() throws Exception {
         File targetFile = temporaryFolder.newFile();
 
-        try (SoapDocument soapDocument = new SoapDocument(null, targetFile)) {
+        try (SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(null, targetFile)) {
             assertNull("Source data handler should not be providable.", soapDocument.getSourceDataHandler());
             soapDocument.save(soapDocument.getSourceDataHandler());
         }
@@ -47,7 +48,7 @@ public class SoapDocumentTest {
     @Test(expected = IOException.class)
     public void testSoapDocumentNullTarget() throws Exception {
         File sourceFile = testResources.getResource("test.pdf");
-        try (SoapDocument soapDocument = new SoapDocument(sourceFile.toURI(), null)) {
+        try (SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(sourceFile.toURI(), null)) {
             assertNotNull("Source data handler should have been provided.", soapDocument.getSourceDataHandler());
             soapDocument.save(soapDocument.getSourceDataHandler());
         }
@@ -60,7 +61,7 @@ public class SoapDocumentTest {
 
         try (InputStream inputStream = new FileInputStream(sourceFile);
              OutputStream outputStream = new FileOutputStream(targetFile);
-             SoapDocument soapDocument = new SoapDocument(inputStream, outputStream)) {
+             SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(inputStream, outputStream)) {
             assertNotNull("Source data handler should have been provided.", soapDocument.getSourceDataHandler());
             DataHandler dataHandler = soapDocument.getSourceDataHandler();
             assertNotNull("Data handler should have been provided.", dataHandler);
@@ -75,7 +76,7 @@ public class SoapDocumentTest {
         File targetFile = temporaryFolder.newFile();
 
         try (OutputStream outputStream = new FileOutputStream(targetFile);
-             SoapDocument soapDocument = new SoapDocument(null, outputStream)) {
+             SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(null, outputStream)) {
             assertNull("Source data handler should not be providable.", soapDocument.getSourceDataHandler());
             soapDocument.save(soapDocument.getSourceDataHandler());
         }
@@ -85,7 +86,7 @@ public class SoapDocumentTest {
     public void testSoapDocumentNullTargetStreaming() throws Exception {
         File sourceFile = testResources.getResource("test.pdf");
         try (InputStream inputStream = new FileInputStream(sourceFile);
-             SoapDocument soapDocument = new SoapDocument(inputStream, null)) {
+             SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(inputStream, null)) {
             assertNotNull("Source data handler should have been provided.", soapDocument.getSourceDataHandler());
             soapDocument.save(soapDocument.getSourceDataHandler());
         }
@@ -98,7 +99,7 @@ public class SoapDocumentTest {
 
         try (InputStream inputStream = new FileInputStream(sourceFile);
              OutputStream outputStream = new FileOutputStream(targetFile);
-             SoapDocument soapDocument = new SoapDocument(inputStream, outputStream)) {
+             SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(inputStream, outputStream)) {
             assertNotNull("Source data handler should have been provided.", soapDocument.getSourceDataHandler());
             soapDocument.save(null);
         }
@@ -110,7 +111,7 @@ public class SoapDocumentTest {
         File targetFile = temporaryFolder.newFile();
 
         try (InputStream inputStream = new FileInputStream(sourceFile);
-             SoapDocument soapDocument = new SoapDocument(sourceFile.toURI(), targetFile)) {
+             SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(sourceFile.toURI(), targetFile)) {
             assertNotNull("Source data handler should have been provided.", soapDocument.getSourceDataHandler());
             assertEquals("Content type should have been octet stream.", "application/octet-stream", soapDocument.getSourceDataHandler().getDataSource().getContentType());
             assertEquals("Data source name should have been empty.", "", soapDocument.getSourceDataHandler().getDataSource().getName());
@@ -125,7 +126,7 @@ public class SoapDocumentTest {
 
         try (InputStream inputStream = new FileInputStream(sourceFile);
              OutputStream outputStream = new FileOutputStream(targetFile);
-             SoapDocument soapDocument = new SoapDocument(inputStream, outputStream)) {
+             SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(inputStream, outputStream)) {
             assertNotNull("Source data handler should have been provided.", soapDocument.getSourceDataHandler());
             soapDocument.getSourceDataHandler().getDataSource().getOutputStream();
         }

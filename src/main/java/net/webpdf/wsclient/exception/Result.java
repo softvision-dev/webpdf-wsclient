@@ -13,12 +13,12 @@ import java.util.List;
 public final class Result {
 
     @NotNull
-    private Error error;
+    private final Error error;
     @Nullable
-    private Exception exception;
+    private final Exception exception;
     @NotNull
-    private List<String> messages = new ArrayList<>();
-    private int exitCode;
+    private final List<String> messages = new ArrayList<>();
+    private final int exitCode;
 
     /**
      * Creates a webservice execution result, for further processing of failures during webservice calls.

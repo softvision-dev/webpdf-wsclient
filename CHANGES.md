@@ -29,3 +29,6 @@
 - Adding client side proxy configuration for REST and SOAP services
 - Added UTF-8 support for REST requests.
 - Added "redact" annotation and "blacken" function for annotation/redact toolbox operation
+
+# 3.0.0 (29.05.2020)
+- Refactoring and generalization of Session, DocumentManager, Document. (not backwards compatible with wsclient 1 and 2)

@@ -1,14 +1,19 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.documents.SoapDocument;
+import net.webpdf.wsclient.documents.soap.SoapDocument;
+import net.webpdf.wsclient.documents.soap.SoapWebServiceDocument;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.session.SoapSession;
+import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.webservice.WebServiceFactory;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.webservice.WebServiceType;
+import net.webpdf.wsclient.webservice.soap.ConverterWebService;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.junit.Assert;
@@ -33,15 +38,17 @@ public class SoapCredentialsIntegrationTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    private void executeConverter(Session session) throws Exception {
+    private void executeConverter(Session<SoapDocument> session) throws Exception {
         File file = testResources.getResource("integration/files/lorem-ipsum.docx");
         File fileOut = temporaryFolder.newFile();
 
         try (FileInputStream fileInputStream = new FileInputStream(file);
              FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-            SoapDocument soapDocument = new SoapDocument(fileInputStream, fileOutputStream);
+            SoapDocument soapDocument = new SoapWebServiceDocument(fileInputStream, fileOutputStream);
 
-            ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+            ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(
+                    session, WebServiceType.CONVERTER
+            );
 
             webService.setDocument(soapDocument);
 
@@ -63,19 +70,19 @@ public class SoapCredentialsIntegrationTest {
 
     @Test
     public void testWithUserCredentialsInURL() throws Exception {
-        try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-            testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true))) {
+        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+                testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true))) {
             executeConverter(session);
         }
     }
 
     @Test
     public void testWithUserCredentials() throws Exception {
-        try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-            testServer.getServer(TestServer.ServerType.LOCAL))) {
+        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+                testServer.getServer(TestServer.ServerType.LOCAL))) {
 
             UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
-                testServer.getLocalUser(), testServer.getLocalPassword());
+                    testServer.getLocalUser(), testServer.getLocalPassword());
             session.setCredentials(userCredentials);
 
             executeConverter(session);
@@ -87,14 +94,14 @@ public class SoapCredentialsIntegrationTest {
         File resFile = testResources.getResource("convert.xml");
         String xml = FileUtils.readFileToString(resFile, Charset.defaultCharset());
 
-        try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL));
+        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL));
              StringReader stringReader = new StringReader(xml)) {
-            ConverterWebService webService = WebServiceFactory.createInstance(session, new StreamSource(stringReader));
+            ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, new StreamSource(stringReader));
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = temporaryFolder.newFile();
 
-            webService.setDocument(new SoapDocument(file.toURI(), fileOut));
+            webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
             try (SoapDocument soapDocument = webService.process()) {
                 Assert.assertNotNull(soapDocument);

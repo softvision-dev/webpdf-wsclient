@@ -1,17 +1,21 @@
 package net.webpdf.wsclient.session;
 
-import net.webpdf.wsclient.WebServiceProtocol;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.documents.Document;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.https.TLSContext;
 import net.webpdf.wsclient.proxy.ProxyConfiguration;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.Credentials;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
-public interface Session extends AutoCloseable {
+@SuppressWarnings("unused")
+public interface Session<T_DOCUMENT extends Document> extends AutoCloseable {
 
     /**
      * Returns the currently set TLS context.
@@ -61,6 +65,17 @@ public interface Session extends AutoCloseable {
      */
     @NotNull
     URI getURI(String subPath) throws ResultException;
+
+    /**
+     * Returns an {@link URI} pointing to the webservice interface of the session.
+     *
+     * @param subPath    The location of the webservice interface on the webPDF server.
+     * @param parameters Additional Get parameters.
+     * @return an {@link URI} pointing to the webservice interface of the session.
+     * @throws ResultException a {@link ResultException}
+     */
+    @NotNull
+    URI getURI(@NotNull String subPath, List<NameValuePair> parameters) throws ResultException;
 
     /**
      * Returns the {@link DataFormat} accepted by this session.

@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.webservicefactory;
 
-import net.webpdf.wsclient.*;
+import net.webpdf.wsclient.documents.soap.SoapDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.*;
@@ -8,6 +8,8 @@ import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.webservice.*;
+import net.webpdf.wsclient.webservice.soap.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,18 +29,22 @@ public class SoapWebserviceFactoryTest {
     @Rule
     public TestServer testServer = new TestServer();
 
-    private <T extends WebService> T getWebService(WebServiceType webServiceType) throws IOException, URISyntaxException {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+    private <T_WEBSERVICE extends SoapWebService<SoapDocument, ?, ?>> T_WEBSERVICE getWebService(
+            WebServiceType webServiceType
+    ) throws IOException, URISyntaxException {
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(TestServer.ServerType.LOCAL))) {
             return WebServiceFactory.createInstance(session, webServiceType);
         }
     }
 
-    private <T extends WebService> T getTypedWebservice(Class<T> expectedType, File configFile) throws Exception {
-        T webService;
+    private <T_WEBSERVICE extends SoapWebService<SoapDocument, ?, ?>> T_WEBSERVICE getTypedWebservice(
+            Class<?> expectedType, File configFile
+    ) throws Exception {
+        T_WEBSERVICE webService;
         String xml = FileUtils.readFileToString(configFile, Charset.defaultCharset());
 
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(TestServer.ServerType.LOCAL))) {
             try (StringReader stringReader = new StringReader(xml)) {
                 StreamSource streamSource = new StreamSource(stringReader);
@@ -58,7 +64,7 @@ public class SoapWebserviceFactoryTest {
 
     @Test
     public void testFactoryBarcodeFromStream() throws Exception {
-        BarcodeWebService webService = getTypedWebservice(
+        BarcodeWebService<SoapDocument> webService = getTypedWebservice(
                 BarcodeWebService.class,
                 testResources.getResource("barcode.xml")
         );
@@ -86,7 +92,7 @@ public class SoapWebserviceFactoryTest {
 
     @Test
     public void testFactoryConverterFromStream() throws Exception {
-        ConverterWebService webService = getTypedWebservice(
+        ConverterWebService<SoapDocument> webService = getTypedWebservice(
                 ConverterWebService.class,
                 testResources.getResource("convert.xml")
         );
@@ -126,7 +132,7 @@ public class SoapWebserviceFactoryTest {
 
     @Test
     public void testFactoryOCRFromStream() throws Exception {
-        OcrWebService webService = getTypedWebservice(
+        OcrWebService<SoapDocument> webService = getTypedWebservice(
                 OcrWebService.class,
                 testResources.getResource("ocr.xml")
         );
@@ -154,7 +160,7 @@ public class SoapWebserviceFactoryTest {
 
     @Test
     public void testFactoryPDFAFromStream() throws Exception {
-        PdfaWebService webService = getTypedWebservice(
+        PdfaWebService<SoapDocument> webService = getTypedWebservice(
                 PdfaWebService.class,
                 testResources.getResource("pdfa.xml")
         );
@@ -167,7 +173,7 @@ public class SoapWebserviceFactoryTest {
 
     @Test
     public void testFactorySignatureFromStream() throws Exception {
-        SignatureWebService webService = getTypedWebservice(
+        SignatureWebService<SoapDocument> webService = getTypedWebservice(
                 SignatureWebService.class,
                 testResources.getResource("signature.xml")
         );
@@ -203,7 +209,7 @@ public class SoapWebserviceFactoryTest {
 
     @Test
     public void testFactoryToolboxFromStream() throws Exception {
-        ToolboxWebService webService = getTypedWebservice(
+        ToolboxWebService<SoapDocument> webService = getTypedWebservice(
                 ToolboxWebService.class,
                 testResources.getResource("toolbox.xml")
         );
@@ -250,7 +256,7 @@ public class SoapWebserviceFactoryTest {
 
     @Test
     public void testFactoryUrlConverterFromStream() throws Exception {
-        UrlConverterWebService webService = getTypedWebservice(
+        UrlConverterWebService<SoapDocument> webService = getTypedWebservice(
                 UrlConverterWebService.class,
                 testResources.getResource("url_convert.xml")
         );
@@ -296,38 +302,38 @@ public class SoapWebserviceFactoryTest {
 
     @Test
     public void testFactoryCreateWebserviceInstance() throws Exception {
-        ToolboxWebService toolboxWebService = getWebService(WebServiceType.TOOLBOX);
+        ToolboxWebService<SoapDocument> toolboxWebService = getWebService(WebServiceType.TOOLBOX);
         assertNotNull("The toolbox webservice should have been initialized.", toolboxWebService);
         assertNotNull("The toolbox operation should have been initialized.", toolboxWebService.getOperation());
 
-        ConverterWebService converterWebService = getWebService(WebServiceType.CONVERTER);
+        ConverterWebService<SoapDocument> converterWebService = getWebService(WebServiceType.CONVERTER);
         assertNotNull("The converter webservice should have been initialized.", converterWebService);
         assertNotNull("The converter operation should have been initialized.", converterWebService.getOperation());
 
-        SignatureWebService signatureWebService = getWebService(WebServiceType.SIGNATURE);
+        SignatureWebService<SoapDocument> signatureWebService = getWebService(WebServiceType.SIGNATURE);
         assertNotNull("The signature Web service should have been initialized.", signatureWebService);
         assertNotNull("The signature operation should have been initialized.", signatureWebService.getOperation());
 
-        BarcodeWebService barcodeWebService = getWebService(WebServiceType.BARCODE);
+        BarcodeWebService<SoapDocument> barcodeWebService = getWebService(WebServiceType.BARCODE);
         assertNotNull("The barcode webservice should have been initialized.", barcodeWebService);
         assertNotNull("The barcode operation should have been initialized.", barcodeWebService.getOperation());
 
-        PdfaWebService pdfaWebService = getWebService(WebServiceType.PDFA);
+        PdfaWebService<SoapDocument> pdfaWebService = getWebService(WebServiceType.PDFA);
         assertNotNull("The pdfa webservice should have been initialized.", pdfaWebService);
         assertNotNull("The pdfa operation should have been initialized.", pdfaWebService.getOperation());
 
-        UrlConverterWebService urlConverterWebService = getWebService(WebServiceType.URLCONVERTER);
+        UrlConverterWebService<SoapDocument> urlConverterWebService = getWebService(WebServiceType.URLCONVERTER);
         assertNotNull("The url converter webservice should have been initialized.", urlConverterWebService);
         assertNotNull("The url converter operation should have been initialized.", urlConverterWebService.getOperation());
 
-        OcrWebService ocrWebService = getWebService(WebServiceType.OCR);
+        OcrWebService<SoapDocument> ocrWebService = getWebService(WebServiceType.OCR);
         assertNotNull("The ocr webservice should have been initialized.", ocrWebService);
         assertNotNull("The ocr operation should have been initialized.", ocrWebService.getOperation());
     }
 
     @Test
     public void testNoOperationData() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(TestServer.ServerType.LOCAL))) {
             WebServiceFactory.createInstance(session, (StreamSource) null);
             fail("ResultException expected");

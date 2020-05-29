@@ -10,7 +10,7 @@ import java.io.IOException;
 public class ResultException extends IOException {
 
     @NotNull
-    private Result result;
+    private final Result result;
 
     /**
      * Creates a new exception

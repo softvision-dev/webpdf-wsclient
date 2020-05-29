@@ -2,15 +2,21 @@ package net.webpdf.wsclient;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import net.webpdf.wsclient.documents.RestDocument;
-import net.webpdf.wsclient.documents.SoapDocument;
+import net.webpdf.wsclient.documents.rest.RestDocument;
+import net.webpdf.wsclient.documents.soap.SoapDocument;
+import net.webpdf.wsclient.documents.soap.SoapWebServiceDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.https.TLSContext;
-import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.webservice.WebServiceFactory;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.webservice.WebServiceType;
+import net.webpdf.wsclient.webservice.rest.ConverterRestWebService;
+import net.webpdf.wsclient.webservice.soap.ConverterWebService;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -39,13 +45,13 @@ public class WebserviceTLSIntegrationTest {
             tlsContext.setTrustStore(keystoreFile, "");
         }
 
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, url, tlsContext)) {
-            ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, url, tlsContext)) {
+            ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = temporaryFolder.newFile();
 
-            try (SoapDocument soapDocument = new SoapDocument(file.toURI(), fileOut)) {
+            try (SoapDocument soapDocument = new SoapWebServiceDocument(file.toURI(), fileOut)) {
                 webService.setDocument(soapDocument);
 
                 try (SoapDocument soapDocument2 = webService.process()) {
@@ -96,11 +102,11 @@ public class WebserviceTLSIntegrationTest {
             tlsContext.setTrustStore(keystoreFile, "");
         }
 
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, url, tlsContext)) {
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST, url, tlsContext)) {
 
             session.login();
 
-            ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+            ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = temporaryFolder.newFile();

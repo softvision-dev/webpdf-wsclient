@@ -4,18 +4,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 
-abstract class AbstractDocument implements Document {
+public abstract class AbstractDocument implements Document {
 
     @Nullable
-    private URI source;
-    private boolean fileSource;
+    private final URI source;
+    private final boolean fileSource;
 
     /**
      * Prepares a document for webservice processing.
      *
      * @param source The source the document shall be loaded from.
      */
-    AbstractDocument(@Nullable URI source) {
+    public AbstractDocument(@Nullable URI source) {
         this.source = source;
         this.fileSource = source != null && source.getScheme().startsWith("file");
     }
@@ -36,6 +36,7 @@ abstract class AbstractDocument implements Document {
      *
      * @return True if the {@link URI} of the document source points to a file.
      */
+    @Override
     public boolean isFileSource() {
         return fileSource;
     }

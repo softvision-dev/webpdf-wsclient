@@ -1,13 +1,17 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.documents.RestDocument;
+import net.webpdf.wsclient.documents.rest.RestDocument;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
-import net.webpdf.wsclient.session.RestSession;
+import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.webservice.WebServiceFactory;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.webservice.WebServiceType;
+import net.webpdf.wsclient.webservice.rest.ConverterRestWebService;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.junit.Assert;
@@ -31,8 +35,8 @@ public class RestCredentialsIntegrationTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    private void executeConverter(RestSession session) throws Exception {
-        ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+    private void executeConverter(RestSession<RestDocument> session) throws Exception {
+        ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
         File file = testResources.getResource("integration/files/lorem-ipsum.docx");
         File fileOut = temporaryFolder.newFile();
@@ -57,7 +61,7 @@ public class RestCredentialsIntegrationTest {
 
     @Test
     public void testWithUserCredentialsInURL() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                 testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true))) {
             session.login();
             executeConverter(session);
@@ -66,7 +70,7 @@ public class RestCredentialsIntegrationTest {
 
     @Test
     public void testWithUserCredentials() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                 testServer.getServer(TestServer.ServerType.LOCAL))) {
 
             UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
@@ -83,12 +87,12 @@ public class RestCredentialsIntegrationTest {
         File resFile = testResources.getResource("convert.json");
         String json = FileUtils.readFileToString(resFile, Charset.defaultCharset());
 
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                 testServer.getServer(TestServer.ServerType.LOCAL));
              StringReader stringReader = new StringReader(json)) {
             session.login();
 
-            ConverterRestWebService webService = WebServiceFactory.createInstance(session, new StreamSource(stringReader));
+            ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session, new StreamSource(stringReader));
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = temporaryFolder.newFile();

@@ -14,4 +14,11 @@ public interface Document {
     @Nullable
     URI getSource();
 
+    /**
+     * Returns true if the {@link URI} of the document source points to a file.
+     *
+     * @return True if the {@link URI} of the document source points to a file.
+     */
+    boolean isFileSource();
+
 }

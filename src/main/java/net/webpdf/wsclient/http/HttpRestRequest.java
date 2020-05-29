@@ -7,7 +7,7 @@ import net.webpdf.wsclient.schema.beans.ExceptionBean;
 import net.webpdf.wsclient.schema.stubs.FaultInfo;
 import net.webpdf.wsclient.schema.stubs.WebserviceException;
 import net.webpdf.wsclient.session.DataFormat;
-import net.webpdf.wsclient.session.RestSession;
+import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;
@@ -34,7 +34,7 @@ public class HttpRestRequest {
     @NotNull
     private final CloseableHttpClient httpClient;
     @NotNull
-    private final RestSession session;
+    private final RestSession<?> session;
     @Nullable
     private final DataFormat dataFormat;
     @Nullable
@@ -47,7 +47,7 @@ public class HttpRestRequest {
      *
      * @param session the {@link RestSession} this Rest request is handling.
      */
-    private HttpRestRequest(@NotNull RestSession session) {
+    private HttpRestRequest(@NotNull RestSession<?> session) {
         this.session = session;
         this.httpClient = session.getHttpClient();
         this.acceptHeader = session.getDataFormat() != null ? session.getDataFormat().getMimeType() : null;
@@ -61,7 +61,7 @@ public class HttpRestRequest {
      * @return A Rest request handling the messages of the given {@link RestSession}
      */
     @NotNull
-    public static HttpRestRequest createRequest(@NotNull RestSession session) {
+    public static HttpRestRequest createRequest(@NotNull RestSession<?> session) {
         return new HttpRestRequest(session);
     }
 
@@ -88,7 +88,7 @@ public class HttpRestRequest {
      */
     @NotNull
     public HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable String path, @Nullable HttpEntity httpEntity)
-        throws ResultException {
+            throws ResultException {
         URI uri = this.session.getURI(path != null ? path : "");
         return buildRequest(httpMethod, uri, httpEntity);
     }
@@ -103,7 +103,8 @@ public class HttpRestRequest {
      * @throws ResultException if the HTTP method is unknown
      */
     @NotNull
-    public HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable URI uri, @Nullable HttpEntity httpEntity) throws ResultException {
+    public HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable URI uri, @Nullable HttpEntity httpEntity)
+            throws ResultException {
         if (httpMethod == null) {
             throw new ResultException(Result.build(Error.UNKNOWN_HTTP_METHOD));
         }
@@ -133,8 +134,8 @@ public class HttpRestRequest {
 
         if (this.session.getCredentials() != null) {
             String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(
-                (this.session.getCredentials().getUserPrincipal().getName()
-                     + ":" + this.session.getCredentials().getPassword()).getBytes(StandardCharsets.ISO_8859_1));
+                    (this.session.getCredentials().getUserPrincipal().getName()
+                            + ":" + this.session.getCredentials().getPassword()).getBytes(StandardCharsets.ISO_8859_1));
             requestBuilder.addHeader(HttpHeaders.AUTHORIZATION, basicAuth);
         }
 
@@ -179,22 +180,23 @@ public class HttpRestRequest {
         // is this a webPDF server response or a general server error?
         Header header = httpEntity.getContentType();
         if (header != null && (header.getValue().equals(DataFormat.XML.getMimeType())
-                                   || header.getValue().equals(DataFormat.JSON.getMimeType()))) {
+                || header.getValue().equals(DataFormat.JSON.getMimeType()))) {
 
             ExceptionBean exceptionBean = DataFormat.XML.equals(this.dataFormat)
-                                              ? SerializeHelper.fromXML(httpEntity, ExceptionBean.class)
-                                              : SerializeHelper.fromJSON(httpEntity, ExceptionBean.class);
+                    ? SerializeHelper.fromXML(httpEntity, ExceptionBean.class)
+                    : SerializeHelper.fromJSON(httpEntity, ExceptionBean.class);
 
             responseOutput = "Server error: " + exceptionBean.getErrorMessage()
-                                 + " (" + exceptionBean.getErrorCode() + ")\n"
-                                 + (exceptionBean.getStackTrace() != null && !exceptionBean.getStackTrace().isEmpty() ?
-                                        "Server stack trace: " + exceptionBean.getStackTrace() + "\n" : "");
+                    + " (" + exceptionBean.getErrorCode() + ")\n"
+                    + (exceptionBean.getStackTrace() != null && !exceptionBean.getStackTrace().isEmpty() ?
+                    "Server stack trace: " + exceptionBean.getStackTrace() + "\n" : "");
             if (exceptionBean.getErrorCode() != 0) {
                 FaultInfo faultInfo = new FaultInfo();
                 faultInfo.setErrorMessage(exceptionBean.getErrorMessage());
                 faultInfo.setErrorCode(exceptionBean.getErrorCode());
                 faultInfo.setStackTrace(exceptionBean.getStackTrace());
-                throw new ResultException(Result.build(Error.REST_EXECUTION, new WebserviceException(responseOutput, faultInfo)));
+                throw new ResultException(Result.build(Error.REST_EXECUTION,
+                        new WebserviceException(responseOutput, faultInfo)));
             }
         } else {
             try {
@@ -206,7 +208,7 @@ public class HttpRestRequest {
 
         // throw the extracted error message
         throw new ResultException(Result.build(Error.HTTP_CUSTOM_ERROR).addMessage(
-            statusLine.getStatusCode() + " " + statusLine.getReasonPhrase() + "\n" + responseOutput));
+                statusLine.getStatusCode() + " " + statusLine.getReasonPhrase() + "\n" + responseOutput));
     }
 
     /**
@@ -258,8 +260,8 @@ public class HttpRestRequest {
             try (StringReader stringReader = new StringReader(value)) {
                 StreamSource streamSource = new StreamSource(stringReader);
                 return DataFormat.XML.equals(this.dataFormat)
-                           ? SerializeHelper.fromXML(streamSource, type)
-                           : SerializeHelper.fromJSON(streamSource, type);
+                        ? SerializeHelper.fromXML(streamSource, type)
+                        : SerializeHelper.fromJSON(streamSource, type);
             }
         } catch (ResultException ex) {
             throw ex;

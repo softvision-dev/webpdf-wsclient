@@ -19,7 +19,7 @@ public class WebserviceException extends Exception {
      * Java type that goes as soapenv:Fault detail element.
      */
     @NotNull
-    private FaultInfo faultInfo;
+    private final FaultInfo faultInfo;
 
     /**
      * Collects information concerning a webPDF ResultException, that has been encountered, while calling a webPDF WS.

@@ -19,6 +19,7 @@ public enum Error {
     NO_OPERATION_DATA(-8, "No operation data available"),
     NO_DOCUMENT(-9, "No document defined"),
     INVALID_HISTORY_DATA(-10, "Invalid history parameter"),
+    INVALID_WEBSERVICE_SESSION(-11, "Invalid/wrong session type provided"),
 
     INVALID_URL(-30, "Invalid URL"),
     HTTP_IO_ERROR(-31, "HTTP IO error"),

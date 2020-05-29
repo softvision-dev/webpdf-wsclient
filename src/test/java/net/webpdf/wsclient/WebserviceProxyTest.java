@@ -1,18 +1,25 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.documents.RestDocument;
-import net.webpdf.wsclient.documents.SoapDocument;
+import net.webpdf.wsclient.documents.rest.RestDocument;
+import net.webpdf.wsclient.documents.rest.RestWebServiceDocument;
+import net.webpdf.wsclient.documents.soap.SoapDocument;
+import net.webpdf.wsclient.documents.soap.SoapWebServiceDocument;
 import net.webpdf.wsclient.https.TLSContext;
 import net.webpdf.wsclient.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.schema.operation.PageType;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
-import net.webpdf.wsclient.session.RestSession;
+import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.session.SoapSession;
+import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.webservice.WebServiceFactory;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.webservice.WebServiceType;
+import net.webpdf.wsclient.webservice.rest.UrlConverterRestWebService;
+import net.webpdf.wsclient.webservice.soap.ConverterWebService;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,17 +42,17 @@ public class WebserviceProxyTest {
 
     @Test
     public void testRESTProxyHTTP() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(
-            WebServiceProtocol.REST,
-            testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true)
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST,
+                testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true)
         )) {
             session.setProxy(new ProxyConfiguration("127.0.0.1", 8888));
 
             session.login();
 
-            UrlConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.URLCONVERTER);
+            UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.URLCONVERTER);
 
-            webService.setDocument(new RestDocument(null));
+            webService.setDocument(new RestWebServiceDocument(null));
 
             File fileOut = temporaryFolder.newFile();
 
@@ -70,9 +77,9 @@ public class WebserviceProxyTest {
 
     @Test
     public void testSOAPProxyHTTP() throws Exception {
-        try (SoapSession session = SessionFactory.createInstance(
-            WebServiceProtocol.SOAP,
-            testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true)
+        try (Session<SoapDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.SOAP,
+                testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true)
         )) {
             session.setProxy(new ProxyConfiguration("localhost", 8888));
 
@@ -81,9 +88,9 @@ public class WebserviceProxyTest {
 
             try (FileInputStream fileInputStream = new FileInputStream(file);
                  FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                SoapDocument soapDocument = new SoapDocument(fileInputStream, fileOutputStream);
+                SoapDocument soapDocument = new SoapWebServiceDocument(fileInputStream, fileOutputStream);
 
-                ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+                ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
                 webService.setDocument(soapDocument);
 
@@ -112,10 +119,10 @@ public class WebserviceProxyTest {
         if (keystoreFile != null) {
             tlsContext.setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
         }
-        try (SoapSession session = SessionFactory.createInstance(
-            WebServiceProtocol.SOAP,
-            testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTPS, true),
-            tlsContext
+        try (Session<SoapDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.SOAP,
+                testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTPS, true),
+                tlsContext
         )) {
             session.setProxy(new ProxyConfiguration("localhost", 8888));
 
@@ -124,9 +131,9 @@ public class WebserviceProxyTest {
 
             try (FileInputStream fileInputStream = new FileInputStream(file);
                  FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                SoapDocument soapDocument = new SoapDocument(fileInputStream, fileOutputStream);
+                SoapDocument soapDocument = new SoapWebServiceDocument(fileInputStream, fileOutputStream);
 
-                ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+                ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
                 webService.setDocument(soapDocument);
 
@@ -154,18 +161,18 @@ public class WebserviceProxyTest {
         if (keystoreFile != null) {
             tlsContext.setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
         }
-        try (RestSession session = SessionFactory.createInstance(
-            WebServiceProtocol.REST,
-            testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTPS, true),
-            tlsContext
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST,
+                testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTPS, true),
+                tlsContext
         )) {
             session.setProxy(new ProxyConfiguration("127.0.0.1", 8888));
 
             session.login();
 
-            UrlConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.URLCONVERTER);
+            UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.URLCONVERTER);
 
-            webService.setDocument(new RestDocument(null));
+            webService.setDocument(new RestWebServiceDocument(null));
 
             File fileOut = temporaryFolder.newFile();
 

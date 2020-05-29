@@ -1,6 +1,8 @@
 package net.webpdf.wsclient.session;
 
-import net.webpdf.wsclient.WebServiceProtocol;
+import net.webpdf.wsclient.documents.rest.RestDocument;
+import net.webpdf.wsclient.session.rest.RestSession;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.junit.Test;
 
@@ -15,7 +17,7 @@ public class RestSessionTest {
     @Test
     public void testCreateRestSession() throws Exception {
         URL url = new URL(SOME_URL);
-        try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, url)) {
+        try (RestSession<RestDocument> restSession = SessionFactory.createInstance(WebServiceProtocol.REST, url)) {
             assertNotNull("RestSession should have been initialized.", restSession);
             assertNotNull("Token should have been initialized.", restSession.getToken());
             assertNotNull("HttpClient should have been initialized.", restSession.getHttpClient());
@@ -37,7 +39,7 @@ public class RestSessionTest {
     @Test
     public void testCreateCredentialsRestSession() throws Exception {
         URL url = new URL(SOME_CREDENTIALS_URL);
-        try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, url)) {
+        try (RestSession<RestDocument> restSession = SessionFactory.createInstance(WebServiceProtocol.REST, url)) {
             assertNotNull("RestSession should have been initialized.", restSession);
             assertNotNull("Token should have been initialized.", restSession.getToken());
             assertNotNull("HttpClient should have been initialized.", restSession.getHttpClient());

@@ -1,6 +1,8 @@
 package net.webpdf.wsclient.session;
 
-import net.webpdf.wsclient.WebServiceProtocol;
+import net.webpdf.wsclient.documents.soap.SoapDocument;
+import net.webpdf.wsclient.session.soap.SoapSession;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.junit.Test;
 
@@ -16,7 +18,7 @@ public class SoapSessionTest {
     @Test
     public void testCreateSoapSession() throws Exception {
         URL url = new URL(SOME_URL);
-        try (SoapSession soapSession = SessionFactory.createInstance(WebServiceProtocol.SOAP, url)) {
+        try (SoapSession<SoapDocument> soapSession = SessionFactory.createInstance(WebServiceProtocol.SOAP, url)) {
             assertNotNull("SOAPSession should have been initialized.", soapSession);
             assertTrue("SOAPSession should use local wsdl by default.", soapSession.isUseLocalWsdl());
             soapSession.setUseLocalWsdl(false);
@@ -37,7 +39,7 @@ public class SoapSessionTest {
     @Test
     public void testCreateCredentialsSoapSession() throws Exception {
         URL url = new URL(SOME_CREDENTIALS_URL);
-        try (SoapSession soapSession = SessionFactory.createInstance(WebServiceProtocol.SOAP, url)) {
+        try (SoapSession<SoapDocument> soapSession = SessionFactory.createInstance(WebServiceProtocol.SOAP, url)) {
             assertNotNull("SOAPSession should have been initialized.", soapSession);
             assertTrue("SOAPSession should use local wsdl by default.", soapSession.isUseLocalWsdl());
             soapSession.setUseLocalWsdl(false);

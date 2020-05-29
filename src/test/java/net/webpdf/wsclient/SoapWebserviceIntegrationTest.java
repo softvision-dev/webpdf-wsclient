@@ -1,11 +1,16 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.documents.SoapDocument;
+import net.webpdf.wsclient.documents.soap.SoapDocument;
+import net.webpdf.wsclient.documents.soap.SoapWebServiceDocument;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.webservice.WebServiceFactory;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.webservice.WebServiceType;
+import net.webpdf.wsclient.webservice.soap.*;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,13 +33,13 @@ public class SoapWebserviceIntegrationTest {
     @SuppressWarnings("Duplicates")
     @Test
     public void testConverter() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
-            ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
+            ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = temporaryFolder.newFile();
 
-            webService.setDocument(new SoapDocument(file.toURI(), fileOut));
+            webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
             assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setPages("1-5");
             webService.getOperation().setEmbedFonts(true);
@@ -53,13 +58,13 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testToolbox() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
-            ToolboxWebService webService = WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
+            ToolboxWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             File fileOut = temporaryFolder.newFile();
 
-            webService.setDocument(new SoapDocument(file.toURI(), fileOut));
+            webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
             MergeType mergeType = new MergeType();
             mergeType.setPage(1);
@@ -104,13 +109,13 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testSignature() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
-            SignatureWebService webService = WebServiceFactory.createInstance(session, WebServiceType.SIGNATURE);
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
+            SignatureWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.SIGNATURE);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             File fileOut = temporaryFolder.newFile();
 
-            webService.setDocument(new SoapDocument(file.toURI(), fileOut));
+            webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
             assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setAdd(new SignatureType.Add());
@@ -150,13 +155,13 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testPdfa() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
-            PdfaWebService webService = WebServiceFactory.createInstance(session, WebServiceType.PDFA);
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
+            PdfaWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.PDFA);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             File fileOut = temporaryFolder.newFile();
 
-            webService.setDocument(new SoapDocument(file.toURI(), fileOut));
+            webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
             assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setConvert(new PdfaType.Convert());
@@ -177,13 +182,13 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testOcr() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
-            OcrWebService webService = WebServiceFactory.createInstance(session, WebServiceType.OCR);
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
+            OcrWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.OCR);
 
             File file = testResources.getResource("integration/files/ocr.png");
             File fileOut = temporaryFolder.newFile();
 
-            webService.setDocument(new SoapDocument(file.toURI(), fileOut));
+            webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
             assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setLanguage(OcrLanguageType.ENG);
@@ -205,13 +210,13 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testBarcode() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
-            BarcodeWebService webService = WebServiceFactory.createInstance(session, WebServiceType.BARCODE);
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
+            BarcodeWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.BARCODE);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             File fileOut = temporaryFolder.newFile();
 
-            webService.setDocument(new SoapDocument(file.toURI(), fileOut));
+            webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
             assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setAdd(new BarcodeType.Add());
@@ -258,12 +263,12 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     public void testUrlConverter() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
-            UrlConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.URLCONVERTER);
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, testServer.getServer(TestServer.ServerType.LOCAL))) {
+            UrlConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.URLCONVERTER);
 
             File fileOut = temporaryFolder.newFile();
 
-            webService.setDocument(new SoapDocument(null, fileOut));
+            webService.setDocument(new SoapWebServiceDocument(null, fileOut));
 
             assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setUrl("https://www.webpdf.de");

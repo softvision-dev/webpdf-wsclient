@@ -1,7 +1,8 @@
 package net.webpdf.wsclient.session;
 
-import net.webpdf.wsclient.WebServiceProtocol;
-import net.webpdf.wsclient.documents.DocumentManager;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.documents.Document;
+import net.webpdf.wsclient.documents.rest.documentmanager.RestWebServiceDocumentManager;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
@@ -23,26 +24,26 @@ import java.net.URL;
 import java.util.List;
 
 /**
- * Session class which contains connection and authorization objects and a {@link DocumentManager} instance
+ * Session class which contains connection and authorization objects and a {@link RestWebServiceDocumentManager} instance
  */
-abstract class AbstractSession implements Session {
+public abstract class AbstractSession<T_DOCUMENT extends Document> implements Session<T_DOCUMENT> {
 
     @NotNull
-    CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+    private final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
     @Nullable
-    DataFormat dataFormat = DataFormat.JSON;
+    private DataFormat dataFormat = DataFormat.JSON;
     @NotNull
-    private String basePath;
+    private final String basePath;
     @NotNull
-    private WebServiceProtocol webServiceProtocol;
+    private final WebServiceProtocol webServiceProtocol;
     @NotNull
-    private URI baseUrl;
+    private final URI baseUrl;
     @Nullable
-    private AuthScope authScope;
+    private final AuthScope authScope;
     @Nullable
     private Credentials credentials;
     @Nullable
-    private TLSContext tlsContext;
+    private final TLSContext tlsContext;
     @Nullable
     private ProxyConfiguration proxy;
 
@@ -54,7 +55,8 @@ abstract class AbstractSession implements Session {
      * @param tlsContext         Container configuring a https session.
      * @throws ResultException a {@link ResultException}
      */
-    AbstractSession(@NotNull URL url, @NotNull WebServiceProtocol webServiceProtocol, @Nullable TLSContext tlsContext) throws ResultException {
+    public AbstractSession(@NotNull URL url, @NotNull WebServiceProtocol webServiceProtocol, @Nullable TLSContext tlsContext)
+            throws ResultException {
         this.webServiceProtocol = webServiceProtocol;
         this.tlsContext = tlsContext;
         this.basePath = webServiceProtocol.equals(WebServiceProtocol.SOAP) ? "soap/" : "rest/";
@@ -221,5 +223,24 @@ abstract class AbstractSession implements Session {
     @Nullable
     public DataFormat getDataFormat() {
         return dataFormat;
+    }
+
+    /**
+     * Sets the {@link DataFormat} accepted by this session.
+     *
+     * @param dataFormat The {@link DataFormat} accepted by this session.
+     */
+    public void setDataFormat(@Nullable DataFormat dataFormat) {
+        this.dataFormat = dataFormat;
+    }
+
+    /**
+     * Returns the {@link CredentialsProvider} authorizing this session.
+     *
+     * @return The {@link CredentialsProvider} authorizing this session.
+     */
+    @NotNull
+    protected CredentialsProvider getCredentialsProvider() {
+        return credentialsProvider;
     }
 }
