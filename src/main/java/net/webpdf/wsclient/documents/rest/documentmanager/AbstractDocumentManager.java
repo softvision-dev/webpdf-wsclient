@@ -55,7 +55,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @param outputStream {@link OutputStream} for downloaded content
      * @throws ResultException a {@link ResultException}
      */
-    public void downloadDocument(@Nullable RestDocument document, @Nullable OutputStream outputStream)
+    public void downloadDocument(@Nullable T_REST_DOCUMENT document, @Nullable OutputStream outputStream)
             throws ResultException {
         if (document == null || outputStream == null) {
             throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
@@ -227,7 +227,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
     public void updateDocumentHistory(@Nullable DocumentFileBean documentFileBean) throws ResultException {
         String id = getContainedDocumentID(documentFileBean);
 
-        RestDocument restDocument = documentMap.get(id);
+        T_REST_DOCUMENT restDocument = documentMap.get(id);
 
         HistoryEntryBean[] history = HttpRestRequest.createRequest(session)
                 .buildRequest(HttpMethod.GET, "documents/" + id + "/history", null)
@@ -273,7 +273,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
     public List<HistoryEntryBean> getDocumentHistory(@Nullable DocumentFileBean documentFileBean) throws ResultException {
         String id = getContainedDocumentID(documentFileBean);
 
-        RestDocument restDocument = documentMap.get(id);
+        T_REST_DOCUMENT restDocument = documentMap.get(id);
         return restDocument.getHistory();
     }
 
@@ -312,7 +312,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
         }
         String documentId = getContainedDocumentID(documentFileBean);
 
-        RestDocument restDocument = documentMap.get(documentId);
+        T_REST_DOCUMENT restDocument = documentMap.get(documentId);
         int historyId = historyBean.getId();
 
         HistoryEntryBean resultHistoryBean = HttpRestRequest.createRequest(session)
@@ -336,14 +336,14 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException a {@link ResultException}
      */
     @NotNull
-    private RestDocument updateDocument(@Nullable DocumentFileBean documentFileBean) throws ResultException {
+    private T_REST_DOCUMENT updateDocument(@Nullable DocumentFileBean documentFileBean) throws ResultException {
         String documentId = getContainedDocumentID(documentFileBean);
 
         DocumentFileBean documentFile = HttpRestRequest.createRequest(session)
                 .buildRequest(HttpMethod.GET, "documents/" + documentId + "/info", null)
                 .executeRequest(DocumentFileBean.class);
 
-        RestDocument restDocument = documentMap.get(documentId);
+        T_REST_DOCUMENT restDocument = documentMap.get(documentId);
         restDocument.setDocumentFile(documentFile);
 
         return restDocument;
@@ -391,12 +391,12 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * Creates {@link HttpEntity} with webservice parameters
      *
      * @param parameter The data to build {@link HttpEntity} with
-     * @param <T>       The parameter type
+     * @param <T_PARAMETER>       The parameter type
      * @return {@link HttpEntity} with webservice parameters
      * @throws ResultException an {@link ResultException}
      */
     @NotNull
-    private <T> HttpEntity getWebServiceOptions(@Nullable T parameter) throws ResultException {
+    private <T_PARAMETER> HttpEntity getWebServiceOptions(@Nullable T_PARAMETER parameter) throws ResultException {
         try {
             if (parameter == null) {
                 throw new ResultException(Result.build(Error.NO_OPERATION_DATA));
