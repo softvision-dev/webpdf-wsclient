@@ -28,7 +28,6 @@ public final class SessionFactory {
      *
      * @param webServiceProtocol The {@link WebServiceProtocol} used to communicate with the server.
      * @param url                The {@link URL} of the server.
-     * @param <T_DOCUMENT>>      The type of {@link Document} handled by the {@link Session}.
      * @param <T_SESSION>        The type of the produced {@link Session}.
      * @return The {@link Session} organizing the communication with the server at the given {@link URL}.
      * @throws ResultException a {@link ResultException}
@@ -49,7 +48,6 @@ public final class SessionFactory {
      * @param webServiceProtocol The {@link WebServiceProtocol} used to communicate with the server.
      * @param url                The {@link URL} of the server.
      * @param tlsContext         Container configuring a https session.
-     * @param <T_DOCUMENT>>      The type of {@link Document} handled by the {@link Session}.
      * @param <T_SESSION>        The type of the produced {@link Session}.
      * @return The {@link Session} organizing the communication with the server at the given {@link URL}.
      * @throws ResultException a {@link ResultException}
