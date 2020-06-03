@@ -8,9 +8,7 @@ import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.session.*;
-import net.webpdf.wsclient.session.rest.RestWebServiceSession;
 import net.webpdf.wsclient.session.rest.RestSession;
-import net.webpdf.wsclient.session.soap.AbstractSoapSession;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
 import net.webpdf.wsclient.webservice.rest.*;
@@ -38,23 +36,23 @@ public final class WebServiceFactory {
      * @return a specific {@link WebService} child instance
      * @throws ResultException a {@link ResultException}
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     @NotNull
-    public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<T_DOCUMENT, ?, T_DOCUMENT>>
+    public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<T_DOCUMENT, ?, ?>>
     T_WEBSERVICE createInstance(@NotNull Session<T_DOCUMENT> session, @NotNull WebServiceType webServiceType)
             throws ResultException {
         switch (session.getWebServiceProtocol()) {
             case SOAP:
                 if (session instanceof SoapSession) {
                     return (T_WEBSERVICE) WebServiceFactory
-                            .createSoapInstance((SoapSession) session, webServiceType, new OperationData());
+                            .createSoapInstance((SoapSession<SoapDocument>) session, webServiceType, new OperationData());
                 } else {
                     throw new ResultException(Result.build(Error.INVALID_WEBSERVICE_SESSION));
                 }
             case REST:
                 if (session instanceof RestSession) {
                     return (T_WEBSERVICE) WebServiceFactory
-                            .createRestInstance((RestSession) session, webServiceType, new OperationData());
+                            .createRestInstance((RestSession<RestDocument>) session, webServiceType, new OperationData());
                 } else {
                     throw new ResultException(Result.build(Error.INVALID_WEBSERVICE_SESSION));
                 }
@@ -75,7 +73,7 @@ public final class WebServiceFactory {
      * @return a specific {@link WebService} child instance
      * @throws ResultException a {@link ResultException}
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     @NotNull
     public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<T_DOCUMENT, ?, ?>> T_WEBSERVICE createInstance(
             @Nullable Session<T_DOCUMENT> session, @Nullable StreamSource streamSource
@@ -118,17 +116,17 @@ public final class WebServiceFactory {
         // create the web service instance
         switch (session.getWebServiceProtocol()) {
             case SOAP:
-                if (session instanceof AbstractSoapSession) {
+                if (session instanceof SoapSession) {
                     return (T_WEBSERVICE) WebServiceFactory.createSoapInstance(
-                            (SoapSession) session, webServiceType, operationData
+                            (SoapSession<SoapDocument>) session, webServiceType, operationData
                     );
                 } else {
                     throw new ResultException(Result.build(Error.INVALID_WEBSERVICE_SESSION));
                 }
             case REST:
-                if (session instanceof RestWebServiceSession) {
+                if (session instanceof RestSession) {
                     return (T_WEBSERVICE) WebServiceFactory.createRestInstance(
-                            (RestSession) session, webServiceType, operationData
+                            (RestSession<RestDocument>) session, webServiceType, operationData
                     );
                 } else {
                     throw new ResultException(Result.build(Error.INVALID_WEBSERVICE_SESSION));
