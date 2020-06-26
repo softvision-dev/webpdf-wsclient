@@ -7,9 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
- * Stores the authentication token
+ * Wraps the authentication token value into an onject
  */
-@SuppressWarnings({"unused"})
 @XmlRootElement
 public class Token implements Serializable {
 
@@ -17,9 +16,21 @@ public class Token implements Serializable {
     private String token = "";
 
     /**
-     * Returns the authentication token
+     * Creates a {@link Token} with an existing authentication token value (from an existing session)
      *
-     * @return authentication token
+     * @param token token of the existing session
+     * @return token {@link Token}
+     */
+    public static Token create(String token) {
+        Token newToken = new Token();
+        newToken.setToken(token);
+        return newToken;
+    }
+
+    /**
+     * Returns the authentication token value
+     *
+     * @return authentication token value
      */
     @XmlElement
     @NotNull
@@ -28,9 +39,9 @@ public class Token implements Serializable {
     }
 
     /**
-     * Sets a new authentication token
+     * Sets a new authentication token value
      *
-     * @param token the new token
+     * @param token the new token value
      */
     public void setToken(@NotNull String token) {
         this.token = token;

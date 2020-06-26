@@ -10,11 +10,11 @@ import java.io.Serializable;
 @XmlRootElement
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = UserLimitsBean.class, name = "user"),
-    @JsonSubTypes.Type(value = AnonymousLimitsBean.class, name = "anonymous")
+    @JsonSubTypes.Type(value = UserLimits.class, name = "user"),
+    @JsonSubTypes.Type(value = AnonymousLimits.class, name = "anonymous")
 })
 @SuppressWarnings("unused")
-public interface LimitsBean extends Serializable {
+public interface Limits extends Serializable {
 
     /**
      * Returns the upload limit of the affected user type.

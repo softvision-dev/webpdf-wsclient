@@ -4,20 +4,23 @@ import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.DocumentFileBean;
-import net.webpdf.wsclient.schema.beans.HistoryEntryBean;
+import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RestDocument extends AbstractDocument {
 
+    @NotNull
+    private final ConcurrentHashMap<Integer, HistoryEntry> historyMap = new ConcurrentHashMap<>();
     @Nullable
-    private String documentId;
+    private final String documentId;
     @Nullable
     private DocumentFileBean documentFile;
-    @NotNull
-    private final Map<Integer, HistoryEntryBean> historyMap = new HashMap<>();
 
     /**
      * Manages a REST document with the given document ID.
@@ -36,7 +39,10 @@ public class RestDocument extends AbstractDocument {
      */
     @Nullable
     public String getSourceDocumentId() {
-        return this.documentId;
+        if (this.documentId != null) {
+            return this.documentId;
+        }
+        return this.documentFile != null ? this.documentFile.getDocumentId() : null;
     }
 
     /**
@@ -59,56 +65,50 @@ public class RestDocument extends AbstractDocument {
     }
 
     /**
-     * returns a {@link HistoryEntryBean} from the internal history map, by given historyId.
+     * returns a {@link HistoryEntry} from the internal history map, by given historyId or if the
+     * Document doesn't exist create a new entry from the given {@link HistoryEntry}
      *
-     * @param historyId The history id of the {@link HistoryEntryBean} that shall be returned.
-     * @return A {@link HistoryEntryBean} referencing the history of the uploaded resource.
+     * @param historyBean The {@link HistoryEntry}, that shall be returned or added for further processing.
      * @throws ResultException a {@link ResultException}
      */
-    @SuppressWarnings("unused")
-    @NotNull
-    public HistoryEntryBean getHistoryElement(int historyId) throws ResultException {
-        if (!historyMap.containsKey(historyId)) {
-            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
-        }
-
-        HistoryEntryBean historyBean = new HistoryEntryBean();
-        historyBean.setId(historyId);
-
-        return this.getHistoryElement(historyBean);
-    }
-
-    /**
-     * returns a {@link HistoryEntryBean} from the internal history map, by given historyId or if the
-     * Document doesn't exist create a new entry from the given {@link HistoryEntryBean}
-     *
-     * @param historyBean The {@link HistoryEntryBean}, that shall be returned or added for further processing.
-     * @return A {@link HistoryEntryBean} referencing the uploaded resource history.
-     * @throws ResultException a {@link ResultException}
-     */
-    @NotNull
-    public HistoryEntryBean getHistoryElement(@Nullable HistoryEntryBean historyBean) throws ResultException {
+    void replaceHistoryEntry(@Nullable HistoryEntry historyBean) throws ResultException {
         if (historyBean == null) {
             throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
         }
-
         int historyId = historyBean.getId();
-        if (historyMap.containsKey(historyId)) {
-            return historyMap.get(historyId);
+        if (!this.historyMap.containsKey(historyId)) {
+            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
         }
 
-        historyMap.put(historyId, historyBean);
-
-        return historyBean;
+        // disable active state for all entries, because the new entry is active
+        if (historyBean.isActive()) {
+            for (Map.Entry<Integer, HistoryEntry> historyEntry : this.historyMap.entrySet()) {
+                historyEntry.getValue().setActive(false);
+            }
+        }
+        this.historyMap.put(historyId, historyBean);
     }
 
     /**
-     * returns the {@link List}&lt;{@link HistoryEntryBean}&gt; of the managed REST document.
+     * Store the list of {@link HistoryEntry} entries in the internal history map
      *
-     * @return the {@link List}&lt;{@link HistoryEntryBean}&gt; of the managed REST document.
+     * @param historyEntries list of {@link HistoryEntry} entries
+     */
+    void storeHistory(HistoryEntry[] historyEntries) {
+        this.historyMap.clear();
+
+        for (HistoryEntry historyEntry : historyEntries) {
+            this.historyMap.put(historyEntry.getId(), historyEntry);
+        }
+    }
+
+    /**
+     * Returns a copied {@link List}&lt;{@link HistoryEntry}&gt; of the managed REST document.
+     *
+     * @return the {@link List}&lt;{@link HistoryEntry}&gt; of the managed REST document.
      */
     @NotNull
-    public List<HistoryEntryBean> getHistory() {
+    public List<HistoryEntry> getHistory() {
         return new ArrayList<>(historyMap.values());
     }
 }

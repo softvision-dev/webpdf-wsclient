@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.schema.beans.limits;
 
-public class AnonymousLimitsBean implements LimitsBean {
+public class AnonymousLimits implements Limits {
 
     private int uploadLimit;
     private int maxFiles;

@@ -1,17 +1,18 @@
 package net.webpdf.wsclient.documents;
 
+import net.webpdf.wsclient.WebServiceType;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.http.HttpMethod;
 import net.webpdf.wsclient.http.HttpRestRequest;
 import net.webpdf.wsclient.schema.beans.DocumentFileBean;
-import net.webpdf.wsclient.schema.beans.HistoryEntryBean;
+import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
-
 import org.apache.commons.codec.Charsets;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.ContentType;
@@ -28,7 +29,9 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Document manager - session bounded
@@ -36,10 +39,10 @@ import java.util.*;
 public class DocumentManager {
 
     @NotNull
-    private final Map<String, RestDocument> documentMap = new HashMap<>();
+    private final ConcurrentHashMap<String, RestDocument> documentMap = new ConcurrentHashMap<>();
     @NotNull
     private final RestSession session;
-    private boolean activeDocumentHistory = false;
+    private boolean useHistory = false;
 
     /**
      * Initializes a document manager for the given {@link RestSession}.
@@ -57,22 +60,45 @@ public class DocumentManager {
      * @param outputStream {@link OutputStream} for downloaded content
      * @throws ResultException a {@link ResultException}
      */
+    @Deprecated
     public void downloadDocument(@Nullable RestDocument document, @Nullable OutputStream outputStream) throws ResultException {
         if (document == null || outputStream == null) {
             throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
         }
-        HttpRestRequest.createRequest(this.session)
-            .setAcceptHeader("application/octet-stream")
-            .buildRequest(HttpMethod.GET, "documents/" + document.getSourceDocumentId(), null)
-            .executeRequest(outputStream);
+
+        String documentId = document.getSourceDocumentId();
+        if (!containsDocument(documentId)) {
+            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+        }
+
+        downloadDocument(documentId, outputStream);
     }
 
     /**
-     * Uploads the given {@link DocumentFileBean} to the webPDF server and returns the {@link RestDocument} reference
+     * Downloads {@link RestDocument} referenced by document id from server and stores the content in the {@link OutputStream}
+     *
+     * @param documentId   The document id of the {@link RestDocument}
+     * @param outputStream {@link OutputStream} for downloaded content
+     * @throws ResultException a {@link ResultException}
+     */
+    public void downloadDocument(@NotNull String documentId, @Nullable OutputStream outputStream) throws ResultException {
+
+        if (!containsDocument(documentId)) {
+            throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
+        }
+
+        HttpRestRequest.createRequest(this.session)
+                .setAcceptHeader("application/octet-stream")
+                .buildRequest(HttpMethod.GET, "documents/" + documentId, null)
+                .executeRequest(outputStream);
+    }
+
+    /**
+     * Uploads the given {@link File} to the server and returns the {@link RestDocument} reference
      * to the uploaded resource.
      *
      * @param file The file, that shall be uploaded for further processing.
-     * @return A {@link RestDocument} referencing the uploaded document.
+     * @return a {@link RestDocument} referencing the uploaded document.
      * @throws IOException an {@link IOException}
      */
     @NotNull
@@ -87,37 +113,53 @@ public class DocumentManager {
         HttpEntity entity = builder.build();
 
         List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("history", Boolean.toString(activeDocumentHistory)));
+        parameters.add(new BasicNameValuePair("history", Boolean.toString(useHistory)));
 
         URI uri = this.session.getURI("documents", parameters);
-        RestDocument restDocument = getDocument(HttpRestRequest.createRequest(session)
-                                                    .buildRequest(HttpMethod.POST, uri, entity)
-                                                    .executeRequest(DocumentFileBean.class));
+        DocumentFileBean documentFileBean = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.POST, uri, entity)
+                .executeRequest(DocumentFileBean.class);
 
-        if (activeDocumentHistory) {
-            updateDocumentHistory(restDocument.getDocumentFile());
+        return createRestDocument(documentFileBean);
+    }
+
+    /**
+     * Creates a {@link RestDocument} based on the {@link DocumentFileBean} ans tores the document in internal
+     * document map. Gets the history for the document, too.
+     *
+     * @param documentFileBean document information
+     * @return created {@link RestDocument}
+     * @throws ResultException unable to create the document
+     */
+    private RestDocument createRestDocument(@Nullable DocumentFileBean documentFileBean) throws ResultException {
+        if (documentFileBean == null || documentFileBean.getDocumentId() == null) {
+            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
         }
 
+        RestDocument restDocument = new RestDocument(documentFileBean.getDocumentId());
+        restDocument.setDocumentFile(documentFileBean);
+
+        if (this.useHistory) {
+            fetchHistoryForDocument(restDocument);
+        }
+
+        this.documentMap.put(documentFileBean.getDocumentId(), restDocument);
         return restDocument;
     }
 
     /**
-     * returns the {@link RestDocument} from the internal document map, by given documentId.
+     * Returns the {@link RestDocument} from the internal document map, by given documentId.
      *
      * @param documentId The document id of the {@link RestDocument} that shall be returned.
      * @return A {@link RestDocument} referencing the uploaded resource.
-     * @throws ResultException a {@link ResultException}
+     * @throws ResultException if {@link RestDocument} wasn't found in the internal document map
      */
     @NotNull
-    public RestDocument getDocument(@Nullable String documentId) throws ResultException {
+    public RestDocument findDocument(@NotNull String documentId) throws ResultException {
         if (!containsDocument(documentId)) {
-            throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
+            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
         }
-
-        DocumentFileBean documentFileBean = new DocumentFileBean();
-        documentFileBean.setDocumentId(documentId);
-
-        return this.getDocument(documentFileBean);
+        return this.documentMap.get(documentId);
     }
 
     /**
@@ -128,51 +170,33 @@ public class DocumentManager {
      * @return A {@link RestDocument} referencing the uploaded resource.
      * @throws ResultException a {@link ResultException}
      */
+    @SuppressWarnings("DeprecatedIsStillUsed")
     @NotNull
+    @Deprecated
     public RestDocument getDocument(@Nullable DocumentFileBean documentFileBean) throws ResultException {
         String id = getDocumentID(documentFileBean);
         if (containsDocument(id)) {
-            return documentMap.get(id);
+            return this.documentMap.get(id);
         }
-
-        RestDocument restDocument = new RestDocument(id);
-        restDocument.setDocumentFile(documentFileBean);
-
-        documentMap.put(id, restDocument);
-
-        return restDocument;
+        return createRestDocument(documentFileBean);
     }
 
     /**
      * Deletes the given {@link RestDocument} from the webPDF server by given documentId.
      *
-     * @param documentId The document id of the {@link RestDocument} that shall be returned.
-     * @throws ResultException a {@link ResultException}
+     * @param documentId The document id of the {@link RestDocument} that shall be deleted.
+     * @throws ResultException If document does not exist
      */
-    public void deleteDocument(@Nullable String documentId) throws ResultException {
+    public void deleteDocument(@NotNull String documentId) throws ResultException {
         if (!containsDocument(documentId)) {
-            throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
+            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
         }
 
-        DocumentFileBean documentFileBean = new DocumentFileBean();
-        documentFileBean.setDocumentId(documentId);
-        this.deleteDocument(documentFileBean);
-    }
-
-    /**
-     * Deletes the given {@link RestDocument} from the webPDF server by given {@link DocumentFileBean}.
-     *
-     * @param documentFileBean The {@link DocumentFileBean}, that shall be deleted.
-     * @throws ResultException a {@link ResultException}
-     */
-    public void deleteDocument(@Nullable DocumentFileBean documentFileBean) throws ResultException {
-        String id = getContainedDocumentID(documentFileBean);
-
-        this.documentMap.remove(id);
-
         HttpRestRequest.createRequest(session)
-            .buildRequest(HttpMethod.DELETE, "documents/" + id, null)
-            .executeRequest(Object.class);
+                .buildRequest(HttpMethod.DELETE, "documents/" + documentId, null)
+                .executeRequest(Object.class);
+
+        this.documentMap.remove(documentId);
     }
 
     /**
@@ -184,142 +208,98 @@ public class DocumentManager {
      * @throws ResultException a {@link ResultException}
      */
     @NotNull
-    public RestDocument renameDocument(@Nullable String documentId, @Nullable String fileName) throws IOException {
-        if (!containsDocument(documentId)) {
-            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
-        }
+    public RestDocument renameDocument(@NotNull String documentId, @Nullable String fileName) throws IOException {
+
+        RestDocument restDocument = findDocument(documentId);
 
         DocumentFileBean documentFileBean = new DocumentFileBean();
-        documentFileBean.setDocumentId(documentId);
-        return this.renameDocument(documentFileBean, fileName);
-    }
-
-    /**
-     * Renames the {@link RestDocument} on the webPDF server, by given {@link DocumentFileBean}, to the given filename.
-     *
-     * @param documentFileBean The {@link DocumentFileBean}, that shall be renamed.
-     * @param fileName         The new file name
-     * @return A {@link RestDocument} referencing the renamed resource.
-     * @throws ResultException a {@link ResultException}
-     */
-    @NotNull
-    public RestDocument renameDocument(@Nullable DocumentFileBean documentFileBean, @Nullable String fileName) throws IOException {
-        String id = getContainedDocumentID(documentFileBean);
-
-        Objects.requireNonNull(documentFileBean).setFileName(fileName);
+        documentFileBean.setFileName(fileName);
 
         DocumentFileBean documentFile = HttpRestRequest.createRequest(session)
-                                            .buildRequest(HttpMethod.POST, "documents/" + id + "/update", this.getWebServiceOptions(documentFileBean))
-                                            .executeRequest(DocumentFileBean.class);
+                .buildRequest(HttpMethod.POST, "documents/" + documentId + "/update", this.getWebServiceOptions(documentFileBean))
+                .executeRequest(DocumentFileBean.class);
 
-        RestDocument restDocument = documentMap.get(id);
         restDocument.setDocumentFile(documentFile);
-
         return restDocument;
     }
 
     /**
-     * updates file history information from the server for the given {@link DocumentFileBean}.
+     * Fetches file history information from the server for the given {@link RestDocument}.
      *
-     * @param documentFileBean The {@link DocumentFileBean} of the {@link RestDocument} from whom the history shall be updated.
+     * @param restDocument The {@link RestDocument} for whom the history shall be updated.
      * @throws ResultException a {@link ResultException}
      */
-    public void updateDocumentHistory(@Nullable DocumentFileBean documentFileBean) throws ResultException {
-        String id = getContainedDocumentID(documentFileBean);
+    private void fetchHistoryForDocument(@NotNull RestDocument restDocument) throws ResultException {
 
-        RestDocument restDocument = documentMap.get(id);
-
-        HistoryEntryBean[] history = HttpRestRequest.createRequest(session)
-                                         .buildRequest(HttpMethod.GET, "documents/" + id + "/history", null)
-                                         .executeRequest(HistoryEntryBean[].class);
+        HistoryEntry[] history = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.GET, "documents/" + restDocument.getSourceDocumentId() + "/history", null)
+                .executeRequest(HistoryEntry[].class);
 
         if (history == null) {
-            throw new ResultException(Result.build(Error.HTTP_IO_ERROR));
+            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
         }
 
-        for (HistoryEntryBean historyBean : history) {
-            restDocument.getHistoryElement(historyBean);
-        }
+        restDocument.storeHistory(history);
     }
 
     /**
-     * returns the {@link List}&lt;{@link HistoryEntryBean}&gt; from the internal document history map, by given documentId.
+     * Activates a history entry for the {@link RestDocument}
      *
-     * @param documentId The document id of the {@link RestDocument} from whom the history shall be returned.
-     * @return A {@link List}&lt;{@link HistoryEntryBean}&gt; referencing the uploaded resource history.
+     * @param documentId unique document id
+     * @param historyId  unique history id to activate
+     * @return document for which the active history was changed
+     * @throws ResultException unable to change history
+     */
+    public RestDocument activateHistory(@NotNull String documentId, int historyId) throws ResultException {
+        HistoryEntry historyEntry = new HistoryEntry();
+        historyEntry.setId(historyId);
+        historyEntry.setActive(true);
+        return setDocumentHistoryElement(documentId, historyEntry);
+    }
+
+    /**
+     * Updates the operation value for a history entry in a {@link RestDocument}
+     *
+     * @param documentId unique document id
+     * @param historyId  unique history id to activate
+     * @return operation new operation text
+     * @throws ResultException unable to change history
+     */
+    public RestDocument updateHistoryOperation(@NotNull String documentId, int historyId, @NotNull String operation) throws ResultException {
+        HistoryEntry historyEntry = new HistoryEntry();
+        historyEntry.setId(historyId);
+        historyEntry.setOperation(StringUtils.isEmpty(operation) ? "" : operation);
+        return setDocumentHistoryElement(documentId, historyEntry);
+    }
+
+    /**
+     * Change the {@link HistoryEntry} of a specific {@link HistoryEntry} in a {@link RestDocument}, by given documentId.
+     *
+     * @param documentId   The document id of the {@link RestDocument} from whom the history shall be changed.
+     * @param historyEntry The {@link HistoryEntry} of the {@link HistoryEntry} to change to.
+     * @return The changed {@link HistoryEntry}.
      * @throws ResultException a {@link ResultException}
      */
     @NotNull
-    public List<HistoryEntryBean> getDocumentHistory(@Nullable String documentId) throws ResultException {
+    private RestDocument setDocumentHistoryElement(@NotNull String documentId, @NotNull HistoryEntry historyEntry) throws ResultException {
+        if (!this.useHistory) {
+            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
+        }
         if (!containsDocument(documentId)) {
             throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
         }
 
-        DocumentFileBean documentFileBean = new DocumentFileBean();
-        documentFileBean.setDocumentId(documentId);
+        RestDocument restDocument = this.documentMap.get(documentId);
+        int historyId = historyEntry.getId();
 
-        return this.getDocumentHistory(documentFileBean);
-    }
+        HistoryEntry resultHistoryBean = HttpRestRequest.createRequest(session)
+                .buildRequest(HttpMethod.PUT, "documents/" + documentId + "/history/" + historyId, getWebServiceOptions(historyEntry))
+                .executeRequest(HistoryEntry.class);
 
-    /**
-     * returns the {@link List HistoryElement}&lt;{@link HistoryEntryBean}&gt; from the internal document history map, by given {@link DocumentFileBean}.
-     *
-     * @param documentFileBean The {@link DocumentFileBean} of the {@link RestDocument} from whom the history shall be returned.
-     * @return A {@link List}&lt;{@link HistoryEntryBean}&gt; referencing the uploaded resource history.
-     * @throws ResultException a {@link ResultException}
-     */
-    @NotNull
-    public List<HistoryEntryBean> getDocumentHistory(@Nullable DocumentFileBean documentFileBean) throws ResultException {
-        String id = getContainedDocumentID(documentFileBean);
+        restDocument = updateDocument(restDocument.getDocumentFile());
 
-        RestDocument restDocument = documentMap.get(id);
-        return restDocument.getHistory();
-    }
-
-    /**
-     * Change the {@link HistoryEntryBean} of a specific {@link HistoryEntryBean} in a {@link RestDocument}, by given documentId.
-     *
-     * @param documentId  The document id of the {@link RestDocument} from whom the history shall be changed.
-     * @param historyBean The {@link HistoryEntryBean} of the {@link HistoryEntryBean} to change to.
-     * @return The changed {@link HistoryEntryBean}.
-     * @throws ResultException a {@link ResultException}
-     */
-    @NotNull
-    public HistoryEntryBean setDocumentHistoryElement(@Nullable String documentId, HistoryEntryBean historyBean) throws ResultException {
-        DocumentFileBean documentFileBean = new DocumentFileBean();
-        documentFileBean.setDocumentId(documentId);
-
-        return this.setDocumentHistoryElement(documentFileBean, historyBean);
-    }
-
-    /**
-     * Change the {@link HistoryEntryBean} of a specific {@link HistoryEntryBean} in a {@link RestDocument}, by given {@link DocumentFileBean}.
-     *
-     * @param documentFileBean The {@link DocumentFileBean} of the {@link RestDocument} from whom the history shall be changed.
-     * @param historyBean      The {@link HistoryEntryBean} of the {@link HistoryEntryBean} to change to.
-     * @return The changed {@link HistoryEntryBean}.
-     * @throws ResultException a {@link ResultException}
-     */
-    @NotNull
-    public HistoryEntryBean setDocumentHistoryElement(@Nullable DocumentFileBean documentFileBean, @Nullable HistoryEntryBean historyBean) throws ResultException {
-        if (historyBean == null) {
-            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
-        }
-        String documentId = getContainedDocumentID(documentFileBean);
-
-        RestDocument restDocument = documentMap.get(documentId);
-        int historyId = historyBean.getId();
-
-        HistoryEntryBean resultHistoryBean = HttpRestRequest.createRequest(session)
-                                                 .buildRequest(HttpMethod.PUT, "documents/" + documentId + "/history/" + historyId, getWebServiceOptions(historyBean))
-                                                 .executeRequest(HistoryEntryBean.class);
-
-        if (historyBean.isActive()) {
-            restDocument = updateDocument(restDocument.getDocumentFile());
-            getDocumentHistory(documentId);
-        }
-
-        return restDocument.getHistoryElement(resultHistoryBean);
+        restDocument.replaceHistoryEntry(resultHistoryBean);
+        return restDocument;
     }
 
     /**
@@ -334,10 +314,10 @@ public class DocumentManager {
         String documentId = getContainedDocumentID(documentFileBean);
 
         DocumentFileBean documentFile = HttpRestRequest.createRequest(session)
-                                            .buildRequest(HttpMethod.GET, "documents/" + documentId + "/info", null)
-                                            .executeRequest(DocumentFileBean.class);
+                .buildRequest(HttpMethod.GET, "documents/" + documentId + "/info", null)
+                .executeRequest(DocumentFileBean.class);
 
-        RestDocument restDocument = documentMap.get(documentId);
+        RestDocument restDocument = this.documentMap.get(documentId);
         restDocument.setDocumentFile(documentFile);
 
         return restDocument;
@@ -352,8 +332,8 @@ public class DocumentManager {
     @NotNull
     public List<RestDocument> updateDocumentList() throws ResultException {
         DocumentFileBean[] documentFileList = HttpRestRequest.createRequest(session)
-                                                  .buildRequest(HttpMethod.GET, "documents/list", null)
-                                                  .executeRequest(DocumentFileBean[].class);
+                .buildRequest(HttpMethod.GET, "documents/list", null)
+                .executeRequest(DocumentFileBean[].class);
 
         if (documentFileList == null) {
             throw new ResultException(Result.build(Error.HTTP_IO_ERROR));
@@ -363,22 +343,22 @@ public class DocumentManager {
 
         for (DocumentFileBean documentFile : documentFileList) {
             String documentId = documentFile.getDocumentId();
-            RestDocument restDocument = new RestDocument(documentId);
-            restDocument.setDocumentFile(documentFile);
-            this.documentMap.put(documentId, restDocument);
+            if (!StringUtils.isEmpty(documentId)) {
+                createRestDocument(documentFile);
+            }
         }
 
         return getDocumentList();
     }
 
     /**
-     * Gets all {@link RestDocument} from the internal document map.
+     * Gets a copy of all {@link List}&lt;{@link RestDocument}&gt; from the internal document map.
      *
-     * @return A {@link List} referencing the found {@link RestDocument}s.
+     * @return a {@link List} referencing the {@link RestDocument}s.
      */
     @NotNull
     public List<RestDocument> getDocumentList() {
-        return new ArrayList<>(documentMap.values());
+        return new ArrayList<>(this.documentMap.values());
     }
 
     /**
@@ -397,10 +377,10 @@ public class DocumentManager {
             }
 
             StringEntity stringEntity = new StringEntity(
-                this.session.getDataFormat() == DataFormat.XML
-                    ? SerializeHelper.toXML(parameter, parameter.getClass())
-                    : SerializeHelper.toJSON(parameter),
-                Charsets.UTF_8);
+                    this.session.getDataFormat() == DataFormat.XML
+                            ? SerializeHelper.toXML(parameter, parameter.getClass())
+                            : SerializeHelper.toJSON(parameter),
+                    Charsets.UTF_8);
 
             if (this.session.getDataFormat() != null) {
                 stringEntity.setContentType(this.session.getDataFormat().getMimeType());
@@ -417,17 +397,17 @@ public class DocumentManager {
      *
      * @return is the document history active?
      */
-    public boolean isActiveDocumentHistory() {
-        return activeDocumentHistory;
+    public boolean isUseHistory() {
+        return this.useHistory;
     }
 
     /**
      * De/Activates the creation of a document history
      *
-     * @param activeDocumentHistory De/Activates the creation of a document history
+     * @param useHistory De/Activates the creation of a document history
      */
-    public void setActiveDocumentHistory(boolean activeDocumentHistory) {
-        this.activeDocumentHistory = activeDocumentHistory;
+    public void setUseHistory(boolean useHistory) {
+        this.useHistory = useHistory;
     }
 
     /**
@@ -436,19 +416,8 @@ public class DocumentManager {
      * @param documentId The id, that shall be checked.
      * @return True, if the document is contained.
      */
-    public boolean containsDocument(@Nullable String documentId) {
+    private boolean containsDocument(@Nullable String documentId) {
         return documentId != null && this.documentMap.containsKey(documentId);
-    }
-
-    /**
-     * Checks whether the given document is listed in the document manager.
-     *
-     * @param document The document, that shall be checked.
-     * @return True, if the document is contained.
-     */
-    @SuppressWarnings("unused")
-    public boolean containsDocument(@Nullable DocumentFileBean document) {
-        return document != null && document.getDocumentId() != null && containsDocument(document.getDocumentId());
     }
 
     /**
@@ -459,7 +428,7 @@ public class DocumentManager {
      * @throws ResultException Shall be thrown, if the document id can not be resolved, or the document is not contained.
      */
     @NotNull
-    public String getContainedDocumentID(@Nullable DocumentFileBean document) throws ResultException {
+    private String getContainedDocumentID(@Nullable DocumentFileBean document) throws ResultException {
         String id = getDocumentID(document);
         if (containsDocument(id)) {
             return id;
@@ -475,10 +444,43 @@ public class DocumentManager {
      * @throws ResultException Shall be thrown, if the document id can not be resolved.
      */
     @NotNull
-    public String getDocumentID(@Nullable DocumentFileBean document) throws ResultException {
+    private String getDocumentID(@Nullable DocumentFileBean document) throws ResultException {
         if (document != null && document.getDocumentId() != null) {
             return document.getDocumentId();
         }
         throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+    }
+
+    /**
+     * Executes a webservice operation for a document stored on the server. The document is referenced by it's
+     * documentID and the web service operation specified with {@link WebServiceType}}. The body content (payload) is
+     * defined with {@link HttpEntity}.
+     *
+     * @param documentId     The document ID on which the webservice should be executed
+     * @param webServiceType Webservice which should be executed
+     * @param httpEntity     the entity that should be send with the webservice call (body payload)
+     * @return the processed {@link RestDocument}
+     * @throws ResultException an {@link ResultException}
+     */
+    public RestDocument processDocument(@NotNull String documentId, @NotNull WebServiceType webServiceType, @NotNull HttpEntity httpEntity) throws ResultException {
+        String urlPath = webServiceType.equals(WebServiceType.URLCONVERTER)
+                ? webServiceType.getRestEndpoint()
+                : webServiceType.getRestEndpoint().replace(
+                WebServiceType.ID_PLACEHOLDER,
+                documentId
+        );
+
+        DocumentFileBean documentFileBean = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.POST, urlPath, httpEntity)
+                .executeRequest(DocumentFileBean.class);
+
+        RestDocument restDocument = getDocument(documentFileBean);
+        restDocument.setDocumentFile(documentFileBean);
+
+        if (isUseHistory()) {
+            fetchHistoryForDocument(restDocument);
+        }
+
+        return restDocument;
     }
 }

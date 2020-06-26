@@ -12,7 +12,7 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement(name = "historyEntry")
-public class HistoryEntryBean implements Serializable {
+public class HistoryEntry implements Serializable {
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int id;

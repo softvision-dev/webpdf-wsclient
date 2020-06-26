@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.schema.beans.limits;
 
-public class UserLimitsBean implements LimitsBean {
+public class UserLimits implements Limits {
 
     private int diskSpaceLimit;
     private int maxFiles;

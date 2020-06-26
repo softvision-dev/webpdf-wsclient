@@ -1,11 +1,10 @@
 package net.webpdf.wsclient.documents;
 
-import net.webpdf.wsclient.ConverterRestWebService;
-import net.webpdf.wsclient.WebServiceFactory;
-import net.webpdf.wsclient.WebServiceProtocol;
-import net.webpdf.wsclient.WebServiceType;
+import net.webpdf.wsclient.*;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.beans.HistoryEntryBean;
+import net.webpdf.wsclient.schema.beans.HistoryEntry;
+import net.webpdf.wsclient.schema.operation.PdfaType;
+import net.webpdf.wsclient.schema.operation.RotateType;
 import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.TestResources;
@@ -20,10 +19,10 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+
+@SuppressWarnings("deprecation")
 public class DocumentManagerIntegrationTest {
 
     private final TestResources testResources = new TestResources(DocumentManagerIntegrationTest.class);
@@ -43,7 +42,7 @@ public class DocumentManagerIntegrationTest {
             session.login();
             RestDocument document = session.getDocumentManager().uploadDocument(sourceFile);
             assertNotNull("Valid document should have been returned.", document);
-            document = session.getDocumentManager().getDocument(document.getSourceDocumentId());
+            document = session.getDocumentManager().findDocument(document.getSourceDocumentId());
             assertNotNull("Valid document should have been returned.", document);
             session.getDocumentManager().downloadDocument(document, outputStream);
             assertTrue("The content of the uploaded and the downloaded document should have been equal.", FileUtils.contentEquals(sourceFile, targetFile));
@@ -116,35 +115,108 @@ public class DocumentManagerIntegrationTest {
             assertNotNull("Valid session should have been created.", session);
             session.login();
 
-            session.getDocumentManager().setActiveDocumentHistory(true);
+            session.getDocumentManager().setUseHistory(true);
             RestDocument document = session.getDocumentManager().uploadDocument(sourceFile);
             assertNotNull("Valid document should have been returned.", document);
+            assertNotNull("Valid document id should have been returned.", document.getSourceDocumentId());
             assertNotNull("Valid document file should have been contained.", document.getDocumentFile());
-            List<HistoryEntryBean> historyList = session.getDocumentManager().getDocumentHistory(document.getSourceDocumentId());
-            assertEquals("history list should contain 1 element.", 1, historyList.size());
-            HistoryEntryBean historybean = historyList.get(historyList.size() - 1);
-            assertEquals("history operation should be \"\".", "", historybean.getOperation());
-            historybean.setOperation("File uploaded");
-            assertNotNull("Valid document should have been returned.", document);
-            historybean = session.getDocumentManager().setDocumentHistoryElement(document.getSourceDocumentId(), historybean);
-            assertEquals("history operation should be changed to \"File uploaded\".", "File uploaded", historybean.getOperation());
 
-            ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
-            webService.setDocument(document);
-            webService.process();
-            historyList = session.getDocumentManager().getDocumentHistory(document.getSourceDocumentId());
+            String documentId = document.getSourceDocumentId();
+
+            document = session.getDocumentManager().findDocument(document.getSourceDocumentId());
+            assertNotNull("Uploaded document should have been in the list", document);
+            assertEquals("image/png", document.getDocumentFile().getMimeType());
+
+            List<HistoryEntry> historyList = document.getHistory();
+            assertEquals("history list should contain 1 element.", 1, historyList.size());
+
+            HistoryEntry historyEntry = historyList.get(0);
+            assertEquals("", historyEntry.getOperation());
+            assertEquals("logo", historyEntry.getFileName());
+            assertTrue(historyEntry.isActive());
+
+            RestDocument restDocument = session.getDocumentManager().updateHistoryOperation(documentId, historyEntry.getId(), "File uploaded");
+            assertNotNull("Valid document should have been returned.", document);
+
+            document = session.getDocumentManager().findDocument(documentId);
+            assertNotNull("Changed document should have been in the list", document);
+
+            historyList = document.getHistory();
+            assertEquals("history list should contain 1 element.", 1, historyList.size());
+            historyEntry = document.getHistory().get(0);
+
+            assertEquals("File uploaded", historyEntry.getOperation());
+            assertEquals("logo", historyEntry.getFileName());
+            assertTrue(historyEntry.isActive());
+
+            // execute two web service operations
+            ConverterRestWebService converterRestWebService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+            converterRestWebService.setDocument(document);
+            converterRestWebService.process();
+
+            assertEquals("application/pdf", document.getDocumentFile().getMimeType());
+
+            historyList = document.getHistory();
             assertEquals("history list should contain 2 elements.", 2, historyList.size());
 
-            historybean = historyList.get(historyList.size() - 1);
-            historybean.setOperation("File converted");
-            historybean = session.getDocumentManager().setDocumentHistoryElement(document.getSourceDocumentId(), historybean);
-            assertEquals("history operation should be changed to \"File converted\".", "File converted", historybean.getOperation());
-            assertEquals("Filetype should be application/pdf", "application/pdf", document.getDocumentFile().getMimeType());
+            PdfaRestWebService pdfaRestWebService = WebServiceFactory.createInstance(session, WebServiceType.PDFA);
+            pdfaRestWebService.setDocument(document);
+            pdfaRestWebService.getOperation().setConvert(new PdfaType.Convert());
+            pdfaRestWebService.process();
 
-            historybean = historyList.get(0);
-            historybean.setActive(true);
-            session.getDocumentManager().setDocumentHistoryElement(document.getSourceDocumentId(), historybean);
-            assertEquals("Filetype should be image/png", "image/png", document.getDocumentFile().getMimeType());
+            historyList = document.getHistory();
+            assertEquals("history list should contain 3 elements.", 3, historyList.size());
+
+            document = session.getDocumentManager().findDocument(documentId);
+            assertNotNull("Valid document should have been returned.", document);
+
+            assertFalse(historyList.get(0).isActive());
+            assertFalse(historyList.get(1).isActive());
+
+            historyEntry = historyList.get(2);
+            assertEquals("PDFA", historyEntry.getOperation());
+            assertEquals("logo", historyEntry.getFileName());
+            assertTrue(historyEntry.isActive());
+
+            // change active document
+            document = session.getDocumentManager().activateHistory(documentId, 2);
+            assertNotNull("Valid document should have been returned.", document);
+
+            historyList = document.getHistory();
+            assertEquals("history list should contain 3 elements.", 3, historyList.size());
+            assertFalse(historyList.get(0).isActive());
+            assertTrue(historyList.get(1).isActive());
+            assertFalse(historyList.get(2).isActive());
+
+            historyEntry = historyList.get(1);
+            assertEquals("CONVERTER", historyEntry.getOperation());
+            assertEquals("logo", historyEntry.getFileName());
+            assertTrue(historyEntry.isActive());
+
+            // export to JPEG
+            ToolboxRestWebService toolboxRestWebService = WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
+            toolboxRestWebService.setDocument(document);
+            RotateType rotateType = new RotateType();
+            rotateType.setDegrees(90);
+            toolboxRestWebService.getOperation().add(rotateType);
+            toolboxRestWebService.process();
+
+            document = session.getDocumentManager().findDocument(documentId);
+            assertNotNull("Valid document should have been returned.", document);
+
+            assertEquals("application/pdf", document.getDocumentFile().getMimeType());
+
+            historyList = document.getHistory();
+            assertEquals("history list should contain 4 elements.", 4, historyList.size());
+            assertFalse(historyList.get(0).isActive());
+            assertFalse(historyList.get(1).isActive());
+            assertFalse(historyList.get(2).isActive());
+            assertTrue(historyList.get(3).isActive());
+
+            historyEntry = historyList.get(3);
+            assertEquals("TOOLBOX:ROTATE", historyEntry.getOperation());
+            assertEquals("logo", historyEntry.getFileName());
+            assertTrue(historyEntry.isActive());
         }
     }
 
@@ -175,7 +247,7 @@ public class DocumentManagerIntegrationTest {
             session.login();
             RestDocument document = session.getDocumentManager().uploadDocument(sourceFile);
             assertNotNull("Valid document should have been returned.", document);
-            session.getDocumentManager().downloadDocument(null, outputStream);
+            session.getDocumentManager().downloadDocument((RestDocument) null, outputStream);
         }
     }
 
@@ -205,7 +277,7 @@ public class DocumentManagerIntegrationTest {
         try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
             assertNotNull("Valid session should have been created.", session);
             session.login();
-            session.getDocumentManager().getDocument((String) null);
+            session.getDocumentManager().findDocument("");
         }
     }
 }

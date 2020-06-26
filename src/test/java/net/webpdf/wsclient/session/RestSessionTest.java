@@ -17,7 +17,7 @@ public class RestSessionTest {
         URL url = new URL(SOME_URL);
         try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, url)) {
             assertNotNull("RestSession should have been initialized.", restSession);
-            assertNotNull("Token should have been initialized.", restSession.getToken());
+            assertNull("Token should have not been initialized.", restSession.getToken());
             assertNotNull("HttpClient should have been initialized.", restSession.getHttpClient());
             assertNotNull("DocumentManager should have been initialized.", restSession.getDocumentManager());
             assertEquals("DataFormat should have been JSON.", DataFormat.JSON, restSession.getDataFormat());
@@ -39,7 +39,7 @@ public class RestSessionTest {
         URL url = new URL(SOME_CREDENTIALS_URL);
         try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, url)) {
             assertNotNull("RestSession should have been initialized.", restSession);
-            assertNotNull("Token should have been initialized.", restSession.getToken());
+            assertNull("Token should have not been initialized.", restSession.getToken());
             assertNotNull("HttpClient should have been initialized.", restSession.getHttpClient());
             assertNotNull("DocumentManager should have been initialized.", restSession.getDocumentManager());
             assertEquals("DataFormat should have been JSON.", DataFormat.JSON, restSession.getDataFormat());

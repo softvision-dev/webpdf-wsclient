@@ -383,11 +383,11 @@ public class RestWebserviceIntegrationTest {
             restSession.login();
             TestCase.assertNotNull("Token should have been initialized.", restSession.getToken());
             assertNotEquals("Token should have been not empty.", "", restSession.getToken().getToken());
-            assertNotNull("UserCredentials should have been initialized.", restSession.getUserCredentials());
-            assertTrue("User should be user", restSession.getUserCredentials().isUser());
-            assertFalse("User should not be authenticated", restSession.getUserCredentials().isAuthenticated());
-            assertFalse("User should not be admin", restSession.getUserCredentials().isAdmin());
-            assertEquals("Username should be empty.", "", restSession.getUserCredentials().getUserName());
+            assertNotNull("UserCredentials should have been initialized.", restSession.getUser());
+            assertTrue("User should be user", restSession.getUser().isUser());
+            assertFalse("User should not be authenticated", restSession.getUser().isAuthenticated());
+            assertFalse("User should not be admin", restSession.getUser().isAdmin());
+            assertEquals("Username should be empty.", "", restSession.getUser().getUserName());
         }
 
         // User
@@ -396,11 +396,11 @@ public class RestWebserviceIntegrationTest {
             restSession.login();
             assertNotNull("Token should have been initialized.", restSession.getToken());
             assertNotEquals("Token should have been not empty.", "", restSession.getToken().getToken());
-            assertNotNull("UserInfo should have been initialized.", restSession.getUserCredentials());
-            assertTrue("User should be user", restSession.getUserCredentials().isUser());
-            assertTrue("User should be authenticated", restSession.getUserCredentials().isAuthenticated());
-            assertFalse("User should not be admin", restSession.getUserCredentials().isAdmin());
-            assertEquals("Username should be user.", "user", restSession.getUserCredentials().getUserName());
+            assertNotNull("UserInfo should have been initialized.", restSession.getUser());
+            assertTrue("User should be user", restSession.getUser().isUser());
+            assertTrue("User should be authenticated", restSession.getUser().isAuthenticated());
+            assertFalse("User should not be admin", restSession.getUser().isAdmin());
+            assertEquals("Username should be user.", "user", restSession.getUser().getUserName());
         }
 
         // Admin
@@ -409,11 +409,11 @@ public class RestWebserviceIntegrationTest {
             restSession.login();
             assertNotNull("Token should have been initialized.", restSession.getToken());
             assertNotEquals("Token should have been not empty.", "", restSession.getToken().getToken());
-            assertNotNull("UserInfo should have been initialized.", restSession.getUserCredentials());
-            assertTrue("User should be user", restSession.getUserCredentials().isUser());
-            assertTrue("User should not be authenticated", restSession.getUserCredentials().isAuthenticated());
-            assertTrue("User should not be admin", restSession.getUserCredentials().isAdmin());
-            assertEquals("Username should be admin.", "admin", restSession.getUserCredentials().getUserName());
+            assertNotNull("UserInfo should have been initialized.", restSession.getUser());
+            assertTrue("User should be user", restSession.getUser().isUser());
+            assertTrue("User should not be authenticated", restSession.getUser().isAuthenticated());
+            assertTrue("User should not be admin", restSession.getUser().isAdmin());
+            assertEquals("Username should be admin.", "admin", restSession.getUser().getUserName());
         }
     }
 }

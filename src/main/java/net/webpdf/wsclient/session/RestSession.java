@@ -8,7 +8,7 @@ import net.webpdf.wsclient.http.HttpRestRequest;
 import net.webpdf.wsclient.https.TLSContext;
 import net.webpdf.wsclient.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.schema.beans.Token;
-import net.webpdf.wsclient.schema.beans.UserCredentialsBean;
+import net.webpdf.wsclient.schema.beans.User;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -26,16 +26,16 @@ public class RestSession extends AbstractSession {
     private static final String INFO_PATH = "authentication/user/info/";
     private static final String LOGOUT_PATH = "authentication/user/logout/";
     private static final String LOGIN_PATH = "authentication/user/login/";
-    @Nullable
-    private Token token = new Token();
-    @Nullable
-    private UserCredentialsBean userCredentials = new UserCredentialsBean();
-    @Nullable
-    private CloseableHttpClient httpClient;
-    @NotNull
-    private DocumentManager documentManager = new DocumentManager(this);
     @NotNull
     private final HttpClientBuilder httpClientBuilder;
+    @NotNull
+    private final DocumentManager documentManager = new DocumentManager(this);
+    @Nullable
+    private Token token;
+    @Nullable
+    private User user;
+    @Nullable
+    private CloseableHttpClient httpClient;
 
     /**
      * Creates new {@link RestSession} instance
@@ -50,8 +50,8 @@ public class RestSession extends AbstractSession {
 
         RequestConfig clientConfig = RequestConfig.custom().setAuthenticationEnabled(true).build();
         this.httpClientBuilder = HttpClients.custom()
-                                     .setDefaultRequestConfig(clientConfig)
-                                     .setDefaultCredentialsProvider(this.credentialsProvider);
+                .setDefaultRequestConfig(clientConfig)
+                .setDefaultCredentialsProvider(this.credentialsProvider);
         if (getTlsContext() != null) {
             httpClientBuilder.setSSLContext(getTlsContext().getSslContext());
         }
@@ -137,8 +137,25 @@ public class RestSession extends AbstractSession {
      * @throws IOException HTTP access error
      */
     public void login(@Nullable Token token) throws IOException {
+
         this.token = token;
-        login();
+
+        try {
+            this.token = HttpRestRequest.createRequest(this)
+                    .buildRequest(HttpMethod.GET, LOGIN_PATH, null)
+                    .executeRequest(Token.class);
+
+            this.user = HttpRestRequest.createRequest(this)
+                    .buildRequest(HttpMethod.GET, INFO_PATH, null)
+                    .executeRequest(User.class);
+
+            if (token != null) {
+                this.documentManager.updateDocumentList();
+            }
+        } catch (IOException ex) {
+            this.token = null;
+            throw ex;
+        }
     }
 
     /**
@@ -147,14 +164,7 @@ public class RestSession extends AbstractSession {
      * @throws IOException HTTP access error
      */
     public void login() throws IOException {
-
-        this.token = HttpRestRequest.createRequest(this)
-                         .buildRequest(HttpMethod.GET, LOGIN_PATH, null)
-                         .executeRequest(Token.class);
-
-        this.userCredentials = HttpRestRequest.createRequest(this)
-                                   .buildRequest(HttpMethod.GET, INFO_PATH, null)
-                                   .executeRequest(UserCredentialsBean.class);
+        login(null);
     }
 
     /**
@@ -165,20 +175,20 @@ public class RestSession extends AbstractSession {
     private void logout() throws IOException {
 
         HttpRestRequest.createRequest(this)
-            .buildRequest(HttpMethod.GET, LOGOUT_PATH, null)
-            .executeRequest(Object.class);
+                .buildRequest(HttpMethod.GET, LOGOUT_PATH, null)
+                .executeRequest(Object.class);
 
         this.token = null;
-        this.userCredentials = null;
+        this.user = null;
     }
 
     /**
-     * Returns the {@link UserCredentialsBean} for the currently logged in user
+     * Returns the {@link User} settings for the current session
      *
-     * @return The {@link UserCredentialsBean} for the currently logged in user
+     * @return The {@link User} settings for the current session
      */
     @Nullable
-    public UserCredentialsBean getUserCredentials() {
-        return userCredentials;
+    public User getUser() {
+        return user;
     }
 }

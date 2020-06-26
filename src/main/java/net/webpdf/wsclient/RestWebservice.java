@@ -5,9 +5,6 @@ import net.webpdf.wsclient.documents.RestDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.http.HttpMethod;
-import net.webpdf.wsclient.http.HttpRestRequest;
-import net.webpdf.wsclient.schema.beans.DocumentFileBean;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.session.Session;
@@ -45,26 +42,14 @@ public abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebServic
         if (this.document == null) {
             return null;
         }
-        String urlPath = this.webServiceType.equals(WebServiceType.URLCONVERTER)
-                             ? webServiceType.getRestEndpoint()
-                             : webServiceType.getRestEndpoint().replace(
-            WebServiceType.ID_PLACEHOLDER,
-            this.document.getSourceDocumentId() != null ? this.document.getSourceDocumentId() : ""
-        );
 
         DocumentManager documentManager = ((RestSession) this.session).getDocumentManager();
 
-        DocumentFileBean documentFileBean = HttpRestRequest.createRequest((RestSession) this.session)
-                                                .buildRequest(HttpMethod.POST, urlPath, getWebServiceOptions())
-                                                .executeRequest(DocumentFileBean.class);
-        RestDocument restDocument = documentManager.getDocument(documentFileBean);
-        restDocument.setDocumentFile(documentFileBean);
-
-        if (documentManager.isActiveDocumentHistory()) {
-            documentManager.updateDocumentHistory(restDocument.getDocumentFile());
-        }
-
-        return restDocument;
+        return documentManager.processDocument(
+                this.document.getSourceDocumentId() != null ? this.document.getSourceDocumentId() : "",
+                this.webServiceType,
+                getWebServiceOptions()
+        );
     }
 
     /**
@@ -77,10 +62,10 @@ public abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebServic
     private HttpEntity getWebServiceOptions() throws ResultException {
         try {
             StringEntity stringEntity = new StringEntity(
-                this.session.getDataFormat() == DataFormat.XML
-                    ? SerializeHelper.toXML(this.operation, this.operation.getClass())
-                    : SerializeHelper.toJSON(this.operation),
-                Charsets.UTF_8);
+                    this.session.getDataFormat() == DataFormat.XML
+                            ? SerializeHelper.toXML(this.operation, this.operation.getClass())
+                            : SerializeHelper.toJSON(this.operation),
+                    Charsets.UTF_8);
 
             if (this.session.getDataFormat() != null) {
                 stringEntity.setContentType(this.session.getDataFormat().getMimeType());

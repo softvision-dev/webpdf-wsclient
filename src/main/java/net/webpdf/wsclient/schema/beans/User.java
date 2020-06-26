@@ -1,14 +1,14 @@
 package net.webpdf.wsclient.schema.beans;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.webpdf.wsclient.schema.beans.limits.LimitsBean;
+import net.webpdf.wsclient.schema.beans.limits.Limits;
 import org.jetbrains.annotations.Nullable;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.io.Serializable;
 
 @SuppressWarnings("unused")
-public class UserCredentialsBean implements Serializable {
+public class User implements Serializable {
 
     private boolean isAdmin;
     private boolean isUser;
@@ -18,7 +18,7 @@ public class UserCredentialsBean implements Serializable {
     @Nullable
     private String userName;
     @Nullable
-    private LimitsBean userLimits;
+    private Limits userLimits;
 
     /**
      * Returns true, if the user is an administrator.
@@ -128,7 +128,7 @@ public class UserCredentialsBean implements Serializable {
     @XmlElement(name = "userLimits")
     @JsonProperty("userLimits")
     @Nullable
-    public LimitsBean getUserLimits() {
+    public Limits getUserLimits() {
         return userLimits;
     }
 
@@ -137,7 +137,7 @@ public class UserCredentialsBean implements Serializable {
      *
      * @param userLimits The user limits for the current user.
      */
-    public void setUserLimits(@Nullable LimitsBean userLimits) {
+    public void setUserLimits(@Nullable Limits userLimits) {
         this.userLimits = userLimits;
     }
 }
