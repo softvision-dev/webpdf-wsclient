@@ -68,25 +68,25 @@ public class RestDocument extends AbstractDocument {
      * returns a {@link HistoryEntry} from the internal history map, by given historyId or if the
      * Document doesn't exist create a new entry from the given {@link HistoryEntry}
      *
-     * @param historyBean The {@link HistoryEntry}, that shall be returned or added for further processing.
+     * @param historyEntry The {@link HistoryEntry}, that shall be returned or added for further processing.
      * @throws ResultException a {@link ResultException}
      */
-    void replaceHistoryEntry(@Nullable HistoryEntry historyBean) throws ResultException {
-        if (historyBean == null) {
+    void replaceHistoryEntry(@Nullable HistoryEntry historyEntry) throws ResultException {
+        if (historyEntry == null) {
             throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
         }
-        int historyId = historyBean.getId();
+        int historyId = historyEntry.getId();
         if (!this.historyMap.containsKey(historyId)) {
             throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
         }
 
         // disable active state for all entries, because the new entry is active
-        if (historyBean.isActive()) {
-            for (Map.Entry<Integer, HistoryEntry> historyEntry : this.historyMap.entrySet()) {
-                historyEntry.getValue().setActive(false);
+        if (historyEntry.isActive()) {
+            for (Map.Entry<Integer, HistoryEntry> entry : this.historyMap.entrySet()) {
+                entry.getValue().setActive(false);
             }
         }
-        this.historyMap.put(historyId, historyBean);
+        this.historyMap.put(historyId, historyEntry);
     }
 
     /**
@@ -110,5 +110,60 @@ public class RestDocument extends AbstractDocument {
     @NotNull
     public List<HistoryEntry> getHistory() {
         return new ArrayList<>(historyMap.values());
+    }
+
+    /**
+     * Gets the last {@link HistoryEntry} from the internal map of history entries
+     *
+     * @return last {@link HistoryEntry} in list
+     * @throws ResultException history entry list is empty
+     */
+
+    @NotNull
+    public HistoryEntry lastHistory() throws ResultException {
+        if (this.historyMap.isEmpty()) {
+            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
+        }
+        return this.historyMap.get(this.historyMap.size());
+    }
+
+    /**
+     * Gets the active {@link HistoryEntry}
+     *
+     * @return active {@link HistoryEntry}
+     * @throws ResultException no active history entry
+     */
+    @NotNull
+    public HistoryEntry activeHistory() throws ResultException {
+        for (Map.Entry<Integer, HistoryEntry> entry : this.historyMap.entrySet()) {
+            if (entry.getValue().isActive()) {
+                return entry.getValue();
+            }
+        }
+        throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
+    }
+
+    /**
+     * Finds a {@link HistoryEntry} by it's history id
+     *
+     * @param historyId unique history id
+     * @return found {@link HistoryEntry}
+     * @throws ResultException unable to find history id
+     */
+    @NotNull
+    public HistoryEntry findHistory(int historyId) throws ResultException {
+        if (!this.historyMap.containsKey(historyId)) {
+            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
+        }
+        return this.historyMap.get(historyId);
+    }
+
+    /**
+     * Returns the size of the history entries list
+     *
+     * @return number of history entries
+     */
+    public int getHistorySize() {
+        return this.historyMap.size();
     }
 }

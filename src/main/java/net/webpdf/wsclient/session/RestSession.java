@@ -150,7 +150,7 @@ public class RestSession extends AbstractSession {
                     .executeRequest(User.class);
 
             if (token != null) {
-                this.documentManager.updateDocumentList();
+                this.documentManager.sync();
             }
         } catch (IOException ex) {
             this.token = null;

@@ -22,7 +22,6 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 
-@SuppressWarnings("deprecation")
 public class DocumentManagerIntegrationTest {
 
     private final TestResources testResources = new TestResources(DocumentManagerIntegrationTest.class);
@@ -46,10 +45,10 @@ public class DocumentManagerIntegrationTest {
             assertNotNull("Valid document should have been returned.", document);
             session.getDocumentManager().downloadDocument(document, outputStream);
             assertTrue("The content of the uploaded and the downloaded document should have been equal.", FileUtils.contentEquals(sourceFile, targetFile));
-            List<RestDocument> fileList = session.getDocumentManager().getDocumentList();
+            List<RestDocument> fileList = session.getDocumentManager().getDocuments();
             assertEquals("file list should contain 1 document.", 1, fileList.size());
             session.getDocumentManager().deleteDocument(document.getSourceDocumentId());
-            fileList = session.getDocumentManager().getDocumentList();
+            fileList = session.getDocumentManager().getDocuments();
             assertTrue("file list should be empty.", fileList.isEmpty());
         }
     }
@@ -85,7 +84,7 @@ public class DocumentManagerIntegrationTest {
             assertNotNull("Valid document should have been returned.", document);
             document = session.getDocumentManager().uploadDocument(sourceFile3);
             assertNotNull("Valid document should have been returned.", document);
-            List<RestDocument> fileList = session.getDocumentManager().getDocumentList();
+            List<RestDocument> fileList = session.getDocumentManager().getDocuments();
             assertEquals("file list should contain 3 documents.", 3, fileList.size());
         }
     }
@@ -99,12 +98,12 @@ public class DocumentManagerIntegrationTest {
             RestDocument document = session.getDocumentManager().uploadDocument(sourceFile);
             assertNotNull("Valid document should have been returned.", document);
             RestSession resumedSession = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL));
-            List<RestDocument> fileList = resumedSession.getDocumentManager().getDocumentList();
+            List<RestDocument> fileList = resumedSession.getDocumentManager().getDocuments();
             assertTrue("file list should be empty.", fileList.isEmpty());
             // refresh token
             resumedSession.login(session.getToken());
-            fileList = resumedSession.getDocumentManager().updateDocumentList();
-            assertEquals("file list should contain 1 document.", 1, fileList.size());
+            resumedSession.getDocumentManager().sync();
+            assertEquals("file list should contain 1 document.", 1, resumedSession.getDocumentManager().getDocuments().size());
         }
     }
 
@@ -127,10 +126,9 @@ public class DocumentManagerIntegrationTest {
             assertNotNull("Uploaded document should have been in the list", document);
             assertEquals("image/png", document.getDocumentFile().getMimeType());
 
-            List<HistoryEntry> historyList = document.getHistory();
-            assertEquals("history list should contain 1 element.", 1, historyList.size());
+            assertEquals("history list should contain 1 element.", 1, document.getHistorySize());
 
-            HistoryEntry historyEntry = historyList.get(0);
+            HistoryEntry historyEntry = document.findHistory(1);//historyList.get(0);
             assertEquals("", historyEntry.getOperation());
             assertEquals("logo", historyEntry.getFileName());
             assertTrue(historyEntry.isActive());
@@ -141,9 +139,8 @@ public class DocumentManagerIntegrationTest {
             document = session.getDocumentManager().findDocument(documentId);
             assertNotNull("Changed document should have been in the list", document);
 
-            historyList = document.getHistory();
-            assertEquals("history list should contain 1 element.", 1, historyList.size());
-            historyEntry = document.getHistory().get(0);
+            assertEquals("history list should contain 1 element.", 1, document.getHistorySize());
+            historyEntry = document.findHistory(1);
 
             assertEquals("File uploaded", historyEntry.getOperation());
             assertEquals("logo", historyEntry.getFileName());
@@ -155,45 +152,43 @@ public class DocumentManagerIntegrationTest {
             converterRestWebService.process();
 
             assertEquals("application/pdf", document.getDocumentFile().getMimeType());
-
-            historyList = document.getHistory();
-            assertEquals("history list should contain 2 elements.", 2, historyList.size());
+            assertEquals("history list should contain 2 elements.", 2,document.getHistorySize());
 
             PdfaRestWebService pdfaRestWebService = WebServiceFactory.createInstance(session, WebServiceType.PDFA);
             pdfaRestWebService.setDocument(document);
             pdfaRestWebService.getOperation().setConvert(new PdfaType.Convert());
             pdfaRestWebService.process();
 
-            historyList = document.getHistory();
-            assertEquals("history list should contain 3 elements.", 3, historyList.size());
+            assertEquals("history list should contain 3 elements.", 3, document.getHistorySize());
 
             document = session.getDocumentManager().findDocument(documentId);
             assertNotNull("Valid document should have been returned.", document);
 
-            assertFalse(historyList.get(0).isActive());
-            assertFalse(historyList.get(1).isActive());
+            assertFalse(document.findHistory(1).isActive());
+            assertFalse(document.findHistory(2).isActive());
 
-            historyEntry = historyList.get(2);
+            historyEntry = document.findHistory(3);
             assertEquals("PDFA", historyEntry.getOperation());
             assertEquals("logo", historyEntry.getFileName());
             assertTrue(historyEntry.isActive());
+            assertEquals(historyEntry, document.activeHistory());
 
             // change active document
             document = session.getDocumentManager().activateHistory(documentId, 2);
             assertNotNull("Valid document should have been returned.", document);
 
-            historyList = document.getHistory();
-            assertEquals("history list should contain 3 elements.", 3, historyList.size());
-            assertFalse(historyList.get(0).isActive());
-            assertTrue(historyList.get(1).isActive());
-            assertFalse(historyList.get(2).isActive());
+            assertEquals("history list should contain 3 elements.", 3, document.getHistorySize());
+            assertFalse(document.findHistory(1).isActive());
+            assertTrue(document.findHistory(2).isActive());
+            assertFalse(document.findHistory(3).isActive());
 
-            historyEntry = historyList.get(1);
+            historyEntry = document.findHistory(2);
             assertEquals("CONVERTER", historyEntry.getOperation());
             assertEquals("logo", historyEntry.getFileName());
             assertTrue(historyEntry.isActive());
+            assertEquals(historyEntry, document.activeHistory());
 
-            // export to JPEG
+            // rotate page
             ToolboxRestWebService toolboxRestWebService = WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
             toolboxRestWebService.setDocument(document);
             RotateType rotateType = new RotateType();
@@ -206,17 +201,18 @@ public class DocumentManagerIntegrationTest {
 
             assertEquals("application/pdf", document.getDocumentFile().getMimeType());
 
-            historyList = document.getHistory();
+            List<HistoryEntry> historyList = document.getHistory();
             assertEquals("history list should contain 4 elements.", 4, historyList.size());
             assertFalse(historyList.get(0).isActive());
             assertFalse(historyList.get(1).isActive());
             assertFalse(historyList.get(2).isActive());
             assertTrue(historyList.get(3).isActive());
 
-            historyEntry = historyList.get(3);
+            historyEntry = document.lastHistory();
             assertEquals("TOOLBOX:ROTATE", historyEntry.getOperation());
             assertEquals("logo", historyEntry.getFileName());
             assertTrue(historyEntry.isActive());
+            assertEquals(historyEntry, document.activeHistory());
         }
     }
 

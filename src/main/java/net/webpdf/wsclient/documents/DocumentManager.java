@@ -8,6 +8,7 @@ import net.webpdf.wsclient.http.HttpMethod;
 import net.webpdf.wsclient.http.HttpRestRequest;
 import net.webpdf.wsclient.schema.beans.DocumentFileBean;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
+import net.webpdf.wsclient.schema.beans.Token;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
@@ -174,9 +175,9 @@ public class DocumentManager {
     @NotNull
     @Deprecated
     public RestDocument getDocument(@Nullable DocumentFileBean documentFileBean) throws ResultException {
-        String id = getDocumentID(documentFileBean);
-        if (containsDocument(id)) {
-            return this.documentMap.get(id);
+        String documentID = getDocumentID(documentFileBean);
+        if (containsDocument(documentID)) {
+            return this.documentMap.get(documentID);
         }
         return createRestDocument(documentFileBean);
     }
@@ -324,13 +325,12 @@ public class DocumentManager {
     }
 
     /**
-     * Gets file information for all documents on the server for current session.
+     * Syncs the list of {@link RestDocument} with the server. Clears the internal lists and loads all {@link RestDocument}
+     * again from the sever. This is e.g. used, when calling a login on {@link RestSession} with an existing {@link Token}
      *
-     * @return A {@link List} referencing the found {@link RestDocument}s.
      * @throws ResultException a {@link ResultException}
      */
-    @NotNull
-    public List<RestDocument> updateDocumentList() throws ResultException {
+    public void sync() throws ResultException {
         DocumentFileBean[] documentFileList = HttpRestRequest.createRequest(session)
                 .buildRequest(HttpMethod.GET, "documents/list", null)
                 .executeRequest(DocumentFileBean[].class);
@@ -347,8 +347,6 @@ public class DocumentManager {
                 createRestDocument(documentFile);
             }
         }
-
-        return getDocumentList();
     }
 
     /**
@@ -357,7 +355,7 @@ public class DocumentManager {
      * @return a {@link List} referencing the {@link RestDocument}s.
      */
     @NotNull
-    public List<RestDocument> getDocumentList() {
+    public List<RestDocument> getDocuments() {
         return new ArrayList<>(this.documentMap.values());
     }
 
