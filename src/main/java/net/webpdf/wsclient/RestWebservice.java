@@ -5,6 +5,9 @@ import net.webpdf.wsclient.documents.RestDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.http.HttpMethod;
+import net.webpdf.wsclient.http.HttpRestRequest;
+import net.webpdf.wsclient.schema.beans.DocumentFileBean;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.session.Session;
@@ -36,6 +39,7 @@ public abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebServic
      * @return the result
      * @throws ResultException an {@link ResultException}
      */
+    @SuppressWarnings("deprecation")
     @Override
     @Nullable
     public RestDocument process() throws ResultException {
@@ -43,13 +47,28 @@ public abstract class RestWebservice<T_OPERATION_TYPE> extends AbstractWebServic
             return null;
         }
 
+        String urlPath = this.webServiceType.equals(WebServiceType.URLCONVERTER)
+                ? webServiceType.getRestEndpoint()
+                : webServiceType.getRestEndpoint().replace(
+                WebServiceType.ID_PLACEHOLDER,
+                this.document.getSourceDocumentId() != null ? this.document.getSourceDocumentId() : ""
+        );
+
         DocumentManager documentManager = ((RestSession) this.session).getDocumentManager();
 
-        return documentManager.processDocument(
-                this.document.getSourceDocumentId() != null ? this.document.getSourceDocumentId() : "",
-                this.webServiceType,
-                getWebServiceOptions()
-        );
+        DocumentFileBean documentFileBean = HttpRestRequest.createRequest((RestSession) this.session)
+                .buildRequest(HttpMethod.POST, urlPath, getWebServiceOptions())
+                .executeRequest(DocumentFileBean.class);
+
+        RestDocument restDocument = documentManager.getDocument(documentFileBean);
+        restDocument.setDocumentFile(documentFileBean);
+
+        if (documentFileBean != null && documentManager.isUseHistory()) {
+            String documentId = documentFileBean.getDocumentId() == null ? "" : documentFileBean.getDocumentId();
+            documentManager.updateHistoryForDocument(documentId);
+        }
+
+        return restDocument;
     }
 
     /**

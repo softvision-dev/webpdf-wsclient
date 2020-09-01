@@ -22,6 +22,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 
+@SuppressWarnings("deprecation")
 public class DocumentManagerIntegrationTest {
 
     private final TestResources testResources = new TestResources(DocumentManagerIntegrationTest.class);
@@ -41,12 +42,14 @@ public class DocumentManagerIntegrationTest {
             session.login();
             RestDocument document = session.getDocumentManager().uploadDocument(sourceFile);
             assertNotNull("Valid document should have been returned.", document);
+            assertNotNull(document.getSourceDocumentId());
             document = session.getDocumentManager().findDocument(document.getSourceDocumentId());
             assertNotNull("Valid document should have been returned.", document);
             session.getDocumentManager().downloadDocument(document, outputStream);
             assertTrue("The content of the uploaded and the downloaded document should have been equal.", FileUtils.contentEquals(sourceFile, targetFile));
             List<RestDocument> fileList = session.getDocumentManager().getDocuments();
             assertEquals("file list should contain 1 document.", 1, fileList.size());
+            assertNotNull(document.getSourceDocumentId());
             session.getDocumentManager().deleteDocument(document.getSourceDocumentId());
             fileList = session.getDocumentManager().getDocuments();
             assertTrue("file list should be empty.", fileList.isEmpty());
@@ -63,6 +66,7 @@ public class DocumentManagerIntegrationTest {
             assertNotNull("Valid document should have been returned.", document);
             assertNotNull("Valid document file should have been contained.", document.getDocumentFile());
             assertEquals("Filename should be test", "test", document.getDocumentFile().getFileName());
+            assertNotNull(document.getSourceDocumentId());
             document = session.getDocumentManager().renameDocument(document.getSourceDocumentId(), "new");
             assertNotNull("Valid document should have been returned.", document);
             assertNotNull("Valid document file should have been contained.", document.getDocumentFile());
@@ -124,16 +128,18 @@ public class DocumentManagerIntegrationTest {
 
             document = session.getDocumentManager().findDocument(document.getSourceDocumentId());
             assertNotNull("Uploaded document should have been in the list", document);
+            assertNotNull(document.getDocumentFile());
+            assertNotNull(document.getDocumentFile().getMimeType());
             assertEquals("image/png", document.getDocumentFile().getMimeType());
 
             assertEquals("history list should contain 1 element.", 1, document.getHistorySize());
 
-            HistoryEntry historyEntry = document.findHistory(1);//historyList.get(0);
+            HistoryEntry historyEntry = document.findHistory(1);
             assertEquals("", historyEntry.getOperation());
             assertEquals("logo", historyEntry.getFileName());
             assertTrue(historyEntry.isActive());
 
-            RestDocument restDocument = session.getDocumentManager().updateHistoryOperation(documentId, historyEntry.getId(), "File uploaded");
+            document = session.getDocumentManager().updateHistoryOperation(documentId, historyEntry.getId(), "File uploaded");
             assertNotNull("Valid document should have been returned.", document);
 
             document = session.getDocumentManager().findDocument(documentId);
@@ -151,8 +157,10 @@ public class DocumentManagerIntegrationTest {
             converterRestWebService.setDocument(document);
             converterRestWebService.process();
 
+            assertNotNull(document.getDocumentFile());
+            assertNotNull(document.getDocumentFile().getMimeType());
             assertEquals("application/pdf", document.getDocumentFile().getMimeType());
-            assertEquals("history list should contain 2 elements.", 2,document.getHistorySize());
+            assertEquals("history list should contain 2 elements.", 2, document.getHistorySize());
 
             PdfaRestWebService pdfaRestWebService = WebServiceFactory.createInstance(session, WebServiceType.PDFA);
             pdfaRestWebService.setDocument(document);
@@ -199,6 +207,8 @@ public class DocumentManagerIntegrationTest {
             document = session.getDocumentManager().findDocument(documentId);
             assertNotNull("Valid document should have been returned.", document);
 
+            assertNotNull(document.getDocumentFile());
+            assertNotNull(document.getDocumentFile().getMimeType());
             assertEquals("application/pdf", document.getDocumentFile().getMimeType());
 
             List<HistoryEntry> historyList = document.getHistory();

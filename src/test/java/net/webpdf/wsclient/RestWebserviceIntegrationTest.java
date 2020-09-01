@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.*;
 
+@SuppressWarnings("deprecation")
 public class RestWebserviceIntegrationTest {
 
     private final TestResources testResources = new TestResources(RestWebserviceIntegrationTest.class);
@@ -366,12 +367,12 @@ public class RestWebserviceIntegrationTest {
             Assert.assertTrue(fileOut.exists());
 
             assertEquals("Difference should have been zero.",
-                0.0d,
-                ImageHelper.compare(
-                    ImageIO.read(testResources.getResource("toolbox_image_rest.jpeg")),
-                    ImageIO.read(fileOut)
-                ),
-                0.0d);
+                    0.0d,
+                    ImageHelper.compare(
+                            ImageIO.read(testResources.getResource("toolbox_image_rest.jpeg")),
+                            ImageIO.read(fileOut)
+                    ),
+                    0.0d);
         }
     }
 

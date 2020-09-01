@@ -1,6 +1,5 @@
 package net.webpdf.wsclient.documents;
 
-import net.webpdf.wsclient.WebServiceType;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
@@ -164,6 +163,16 @@ public class DocumentManager {
     }
 
     /**
+     * Checks, if a {@link RestDocument} with a given id exists in the list of documents
+     *
+     * @param documentId id to search in the list of {@link RestDocument}
+     * @return documentId true, if the document exists
+     */
+    public boolean hasDocument(@NotNull String documentId) {
+        return containsDocument(documentId);
+    }
+
+    /**
      * returns the {@link RestDocument} from the internal document map, by given {@link DocumentFileBean} or if the
      * Document doesn't exist create a new entry from the given {@link DocumentFileBean}
      *
@@ -171,7 +180,6 @@ public class DocumentManager {
      * @return A {@link RestDocument} referencing the uploaded resource.
      * @throws ResultException a {@link ResultException}
      */
-    @SuppressWarnings("DeprecatedIsStillUsed")
     @NotNull
     @Deprecated
     public RestDocument getDocument(@Nullable DocumentFileBean documentFileBean) throws ResultException {
@@ -222,6 +230,17 @@ public class DocumentManager {
 
         restDocument.setDocumentFile(documentFile);
         return restDocument;
+    }
+
+    /**
+     * Updates the history entries for the {@link RestDocument} referenced by the document id
+     *
+     * @param documentId The document id of the {@link RestDocument}
+     * @throws ResultException When a document with the given document id does not exist
+     */
+    public void updateHistoryForDocument(@NotNull String documentId) throws ResultException {
+        RestDocument restDocument = findDocument(documentId);
+        fetchHistoryForDocument(restDocument);
     }
 
     /**
@@ -447,38 +466,5 @@ public class DocumentManager {
             return document.getDocumentId();
         }
         throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
-    }
-
-    /**
-     * Executes a webservice operation for a document stored on the server. The document is referenced by it's
-     * documentID and the web service operation specified with {@link WebServiceType}}. The body content (payload) is
-     * defined with {@link HttpEntity}.
-     *
-     * @param documentId     The document ID on which the webservice should be executed
-     * @param webServiceType Webservice which should be executed
-     * @param httpEntity     the entity that should be send with the webservice call (body payload)
-     * @return the processed {@link RestDocument}
-     * @throws ResultException an {@link ResultException}
-     */
-    public RestDocument processDocument(@NotNull String documentId, @NotNull WebServiceType webServiceType, @NotNull HttpEntity httpEntity) throws ResultException {
-        String urlPath = webServiceType.equals(WebServiceType.URLCONVERTER)
-                ? webServiceType.getRestEndpoint()
-                : webServiceType.getRestEndpoint().replace(
-                WebServiceType.ID_PLACEHOLDER,
-                documentId
-        );
-
-        DocumentFileBean documentFileBean = HttpRestRequest.createRequest(this.session)
-                .buildRequest(HttpMethod.POST, urlPath, httpEntity)
-                .executeRequest(DocumentFileBean.class);
-
-        RestDocument restDocument = getDocument(documentFileBean);
-        restDocument.setDocumentFile(documentFileBean);
-
-        if (isUseHistory()) {
-            fetchHistoryForDocument(restDocument);
-        }
-
-        return restDocument;
     }
 }
