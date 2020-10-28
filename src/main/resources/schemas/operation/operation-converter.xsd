@@ -52,6 +52,8 @@
         <xs:attribute name="attachmentMode" default="embed" type="tns:AttachmentModeType" />
         <xs:attribute name="ignoreMissingBodyChunk" default="false" type="xs:boolean" />
         <xs:attribute name="useBackground" default="true" type="xs:boolean" />
+        <xs:attribute name="resizeImages" default="false" type="xs:boolean" />
+        <xs:attribute name="resizeTables" default="false" type="xs:boolean" />
     </xs:complexType>
     <xs:complexType name="ConverterHtmlType">
         <xs:all>
@@ -175,6 +177,8 @@
             <xs:enumeration value="remove" />
             <xs:enumeration value="convert" />
             <xs:enumeration value="convertMerge" />
+            <xs:enumeration value="convertEmbed" />
+            <xs:enumeration value="convertMergeEmbed" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="TextWrapModeType">

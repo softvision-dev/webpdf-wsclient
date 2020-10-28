@@ -85,6 +85,6 @@
         <xs:attribute name="redactTexts" default="true" type="xs:boolean" />
         <xs:attribute name="redactImages" default="true" type="xs:boolean" />
         <xs:attribute name="redactAnnotations" default="true" type="xs:boolean" />
-        <xs:attribute name="redactPathes" default="true" type="xs:boolean" />
+        <xs:attribute name="redactPaths" default="true" type="xs:boolean" />
     </xs:complexType>
 </xs:schema>

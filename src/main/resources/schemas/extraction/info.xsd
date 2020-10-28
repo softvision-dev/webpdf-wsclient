@@ -650,8 +650,8 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="style" type="TransitionStyleType" />
-        <xs:attribute name="direction" type="TransitionDirection" />
+        <xs:attribute name="style" default="none" type="TransitionStyleType" />
+        <xs:attribute name="direction" default="none" type="TransitionDirection" />
     </xs:complexType>
     <xs:complexType name="ImageType">
         <xs:attribute name="objectKey" default="" type="xs:string" />

@@ -6,6 +6,7 @@
         <xs:all>
             <xs:element name="page" type="tns:OcrPageType" minOccurs="0" maxOccurs="1" />
             <xs:element name="pdfa" type="tns:PdfaType" minOccurs="0" />
+            <xs:element name="optimization" type="tns:ImageOptimizationType" minOccurs="0" maxOccurs="1" />
         </xs:all>
         <xs:attribute name="language" default="eng" type="tns:OcrLanguageType" />
         <xs:attribute name="outputFormat" default="pdf">
@@ -30,6 +31,7 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
+        <xs:attribute name="ocrMode" default="pageSegments" type="tns:OcrModeType" />
     </xs:complexType>
     <xs:simpleType name="OcrLanguageType">
         <xs:restriction base="xs:string">
@@ -70,4 +72,11 @@
             </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
+    <xs:simpleType name="OcrModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="pageSegments" />
+            <xs:enumeration value="column" />
+            <xs:enumeration value="unfiltered" />
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>
