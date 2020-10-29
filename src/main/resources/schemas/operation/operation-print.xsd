@@ -18,7 +18,16 @@
                 <xs:attribute name="shrinkToMargins" default="false" type="xs:boolean" />
                 <xs:attribute name="expandToMargins" default="false" type="xs:boolean" />
                 <xs:attribute name="centerInPage" default="false" type="xs:boolean" />
+                <xs:attribute name="dpi" default="0" type="xs:int" />
+                <xs:attribute name="mode" default="default" type="tns:PrintModeType" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+    <xs:simpleType name="PrintModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="default" />
+            <xs:enumeration value="raster" />
+            <xs:enumeration value="image" />
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

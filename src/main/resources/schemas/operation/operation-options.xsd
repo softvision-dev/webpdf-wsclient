@@ -113,7 +113,9 @@
             <xs:enumeration value="singlePage" />
             <xs:enumeration value="singlePageContinous" />
             <xs:enumeration value="twoPages" />
+            <xs:enumeration value="twoPagesRight" />
             <xs:enumeration value="twoPagesContinous" />
+            <xs:enumeration value="twoPagesContinousRight" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="InitialViewType">
@@ -122,6 +124,8 @@
             <xs:enumeration value="outlines" />
             <xs:enumeration value="thumbnails" />
             <xs:enumeration value="fullscreen" />
+            <xs:enumeration value="layers" />
+            <xs:enumeration value="attachments" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="MagnificationType">

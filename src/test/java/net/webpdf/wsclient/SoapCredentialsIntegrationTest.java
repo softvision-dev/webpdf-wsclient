@@ -64,7 +64,7 @@ public class SoapCredentialsIntegrationTest {
     @Test
     public void testWithUserCredentialsInURL() throws Exception {
         try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true))) {
+            testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true))) {
             executeConverter(session);
         }
     }
@@ -72,10 +72,10 @@ public class SoapCredentialsIntegrationTest {
     @Test
     public void testWithUserCredentials() throws Exception {
         try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+            testServer.getServer(TestServer.ServerType.LOCAL))) {
 
             UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
-                    testServer.getLocalUser(), testServer.getLocalPassword());
+                testServer.getLocalUser(), testServer.getLocalPassword());
             session.setCredentials(userCredentials);
 
             executeConverter(session);

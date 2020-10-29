@@ -41,7 +41,7 @@
     </xs:simpleType>
     <xs:complexType name="SelectionAttachmentType">
         <xs:attribute name="pages" default="" type="xs:string" use="optional" />
-        <xs:attribute name="fileMask" type="xs:string" use="optional" />
+        <xs:attribute name="fileMask" default="" type="xs:string" use="optional" />
         <xs:attribute name="context" default="all" type="tns:ContextType" />
     </xs:complexType>
     <xs:complexType name="FileAttachmentType">

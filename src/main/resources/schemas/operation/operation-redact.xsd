@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="RedactType">
@@ -6,6 +6,7 @@
             <xs:extension base="tns:BaseToolboxType">
                 <xs:all>
                     <xs:element name="sanitize" type="tns:SanitizeType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="blacken" type="tns:BlackenType" minOccurs="0" maxOccurs="1" />
                 </xs:all>
             </xs:extension>
         </xs:complexContent>
@@ -71,5 +72,19 @@
                 <xs:attribute name="pages" default="*" type="xs:string" />
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="BlackenType">
+        <xs:attribute name="collisionRatio" default="30">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:maxInclusive value="100" />
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="redactTexts" default="true" type="xs:boolean" />
+        <xs:attribute name="redactImages" default="true" type="xs:boolean" />
+        <xs:attribute name="redactAnnotations" default="true" type="xs:boolean" />
+        <xs:attribute name="redactPaths" default="true" type="xs:boolean" />
     </xs:complexType>
 </xs:schema>

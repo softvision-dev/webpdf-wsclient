@@ -142,7 +142,7 @@ public class HttpRestRequestIntegrationTest {
             builder.addBinaryBody("filedata", file, ContentType.DEFAULT_BINARY, file.getName());
             HttpEntity entity = builder.build();
             assertNotNull("HttpEntity should have been build.", entity);
-            httpRestRequest.buildRequest(HttpMethod.GET, null, entity);
+            httpRestRequest.buildRequest(HttpMethod.GET, (String) null, entity);
             httpRestRequest.executeRequest(DocumentFileBean.class);
         }
     }
@@ -160,7 +160,7 @@ public class HttpRestRequestIntegrationTest {
             HttpEntity entity = builder.build();
             assertNotNull("HttpEntity should have been build.", entity);
             httpRestRequest.buildRequest(HttpMethod.GET, "/documents", entity);
-            httpRestRequest.executeRequest((Class) null);
+            httpRestRequest.executeRequest((Class<?>) null);
         }
     }
 
@@ -171,7 +171,7 @@ public class HttpRestRequestIntegrationTest {
             HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
             assertNotNull("HttpRestRequest should have been build.", httpRestRequest);
             httpRestRequest.setAcceptHeader("application/octet-stream");
-            httpRestRequest.buildRequest(HttpMethod.GET, null, null);
+            httpRestRequest.buildRequest(HttpMethod.GET, (String) null, null);
             httpRestRequest.executeRequest((OutputStream) null);
         }
     }

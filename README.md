@@ -15,7 +15,7 @@ You can use this library, by adding this dependency to your project:
 <dependency>
     <groupId>net.webpdf</groupId>
     <artifactId>webpdf-wsclient</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 
@@ -37,5 +37,5 @@ Learn even more about our product in our [webPDF Documentation](https://www.webp
 Please, see the [license](LICENSE) file for more information.
 
 ## Changes
-The current version 2.0.0 is optimized for webPDF version 8. When using webPDF 7 you might prefer the version 1.0.1 of this library.
+The current version 2.0.1 is optimized for webPDF version 8. When using webPDF 7 you might prefer the version 1.0.1 of this library.
 You might want to have a look at the [changes](CHANGES.md) file for further information.

@@ -120,4 +120,67 @@
             <xs:enumeration value="uri" />
         </xs:restriction>
     </xs:simpleType>
+    <xs:complexType name="ImageOptimizationType">
+        <xs:attribute name="deskew" default="true" type="xs:boolean" />
+        <xs:attribute name="despeckle" default="true" type="xs:boolean" />
+        <xs:attribute name="reduceDithering" default="false" type="xs:boolean" />
+        <xs:attribute name="noiseReduction" default="low" type="tns:OptimizationIntensityType" />
+        <xs:attribute name="noiseReductionValue" default="1.0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0.0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="gammaCorrection" default="off" type="tns:OptimizationIntensityType" />
+        <xs:attribute name="gammaCorrectionValue" default="0.0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0.0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="increaseContrast" default="off" type="tns:OptimizationIntensityType" />
+        <xs:attribute name="increaseContrastValue" default="0">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="-100" />
+                    <xs:maxInclusive value="100" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="edgeAccentuation" default="low" type="tns:OptimizationIntensityType" />
+        <xs:attribute name="edgeAccentuationValue" default="100">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="sharpen" default="low" type="tns:OptimizationIntensityType" />
+        <xs:attribute name="sharpenValue" default="1.0">
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0.0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="medianFilter" default="low" type="tns:OptimizationIntensityType" />
+        <xs:attribute name="medianFilterValue" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="OptimizationIntensityType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="off" />
+            <xs:enumeration value="value" />
+            <xs:enumeration value="low" />
+            <xs:enumeration value="medium" />
+            <xs:enumeration value="high" />
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

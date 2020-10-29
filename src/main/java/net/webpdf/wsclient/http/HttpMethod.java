@@ -2,6 +2,7 @@ package net.webpdf.wsclient.http;
 
 public enum HttpMethod {
     GET,
-    POST
+    POST,
+    DELETE,
+    PUT
 }
-

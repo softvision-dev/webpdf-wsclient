@@ -3,6 +3,7 @@ package net.webpdf.wsclient.session;
 import net.webpdf.wsclient.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.https.TLSContext;
+import net.webpdf.wsclient.proxy.ProxyConfiguration;
 import org.apache.http.auth.Credentials;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +20,21 @@ public interface Session extends AutoCloseable {
      */
     @Nullable
     TLSContext getTlsContext();
+
+    /**
+     * Returns the currently set {@link ProxyConfiguration}.
+     *
+     * @return The currently set {@link ProxyConfiguration}.
+     */
+    @Nullable
+    ProxyConfiguration getProxy();
+
+    /**
+     * Set a {@link ProxyConfiguration}.
+     *
+     * @param proxy The {@link ProxyConfiguration}, that shall be set.
+     */
+    void setProxy(@Nullable ProxyConfiguration proxy) throws ResultException;
 
     /**
      * Terminates the current session.
@@ -68,5 +84,4 @@ public interface Session extends AutoCloseable {
      * @param userCredentials The {@link Credentials} authorizing this session.
      */
     void setCredentials(@Nullable Credentials userCredentials);
-
 }

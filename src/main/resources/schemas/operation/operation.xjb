@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <jaxb:bindings version="2.0"
                xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
                xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -115,6 +115,9 @@
         <jaxb:bindings node="//xs:complexType[@name='TemplateDataType']">
             <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
         </jaxb:bindings>
+        <jaxb:bindings node="//xs:complexType[@name='XslTransformationFileType']">
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+        </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- BarcodeType -->
@@ -146,7 +149,7 @@
         </jaxb:bindings>
         <jaxb:bindings
                 node="//xs:complexType[@name='AnnotationType']//xs:choice//xs:element[@name='add']//xs:complexType">
-            <simplify:property name="textOrMarkup">
+            <simplify:property name="textOrMarkupOrRedact">
                 <simplify:as-element-property/>
             </simplify:property>
         </jaxb:bindings>

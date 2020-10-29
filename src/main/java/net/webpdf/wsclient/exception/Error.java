@@ -18,6 +18,7 @@ public enum Error {
     INVALID_DOCUMENT(-7, "The found document is invalid"),
     NO_OPERATION_DATA(-8, "No operation data available"),
     NO_DOCUMENT(-9, "No document defined"),
+    INVALID_HISTORY_DATA(-10, "Invalid history parameter"),
 
     INVALID_URL(-30, "Invalid URL"),
     HTTP_IO_ERROR(-31, "HTTP IO error"),
@@ -30,7 +31,8 @@ public enum Error {
 
     WSDL_INVALID_FILE(-50, "Unable to access WSDL file"),
     WSDL_INVALID_URL(-51, "Invalid WSDL URL"),
-    SOAP_EXECUTION(-52, "SOAP web service execution error");
+    SOAP_EXECUTION(-52, "SOAP web service execution error"),
+    REST_EXECUTION(-53, "REST web service execution error");
 
     private final int code;
     @NotNull
@@ -81,6 +83,5 @@ public enum Error {
     public int getCode() {
         return this.code;
     }
-
 }
 

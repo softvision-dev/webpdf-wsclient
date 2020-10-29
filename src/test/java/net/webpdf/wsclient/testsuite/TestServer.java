@@ -43,14 +43,21 @@ public final class TestServer extends ExternalResource {
     }
 
     public URL getServer(ServerType serverType) throws URISyntaxException, MalformedURLException {
-        return buildSever(serverType, ServerProtocol.HTTP, false);
+        return buildServer(serverType, ServerProtocol.HTTP, null, null);
+    }
+
+    public URL getServer(ServerType serverType, String user, String password) throws URISyntaxException, MalformedURLException {
+        return buildServer(serverType, ServerProtocol.HTTP, user, password);
     }
 
     public URL getServer(ServerType serverType, ServerProtocol serverProtocol, boolean useCredentials) throws URISyntaxException, MalformedURLException {
-        return buildSever(serverType, serverProtocol, useCredentials);
+        String user = useCredentials ? SERVER_LOCAL_USER : null;
+        String password = useCredentials ? SERVER_LOCAL_PASSWORD : null;
+
+        return buildServer(serverType, serverProtocol, user, password);
     }
 
-    private URL buildSever(ServerType serverType, ServerProtocol serverProtocol, boolean useCredentials) throws URISyntaxException, MalformedURLException {
+    private URL buildServer(ServerType serverType, ServerProtocol serverProtocol, String user, String password) throws URISyntaxException, MalformedURLException {
 
         URI uri;
         URIBuilder uriBuilder;
@@ -59,8 +66,8 @@ public final class TestServer extends ExternalResource {
             case LOCAL:
                 uri = this.uriBuilderLocalServer.build();
                 uriBuilder = new URIBuilder(uri);
-                if (useCredentials) {
-                    uriBuilder.setUserInfo(SERVER_LOCAL_USER, SERVER_LOCAL_PASSWORD);
+                if (user != null && password != null) {
+                    uriBuilder.setUserInfo(user, password);
                 }
                 if (serverProtocol.equals(ServerProtocol.HTTP)) {
                     uriBuilder.setPort(8080);

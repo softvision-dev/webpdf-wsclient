@@ -30,7 +30,7 @@ public final class WebServiceFactory {
      * @throws ResultException a {@link ResultException}
      */
     @NotNull
-    public static <T extends WebService> T createInstance(@NotNull Session session, @NotNull WebServiceType webServiceType)
+    public static <T extends WebService<?, ?, ?>> T createInstance(@NotNull Session session, @NotNull WebServiceType webServiceType)
         throws ResultException {
         switch (session.getWebServiceProtocol()) {
             case SOAP:
@@ -54,7 +54,7 @@ public final class WebServiceFactory {
      * @throws ResultException a {@link ResultException}
      */
     @NotNull
-    public static <T extends WebService> T createInstance(@Nullable Session session, @Nullable StreamSource streamSource)
+    public static <T extends WebService<?, ?, ?>> T createInstance(@Nullable Session session, @Nullable StreamSource streamSource)
         throws ResultException {
         if (session == null) {
             throw new ResultException(Result.build(Error.SESSION_CREATE));
@@ -112,7 +112,7 @@ public final class WebServiceFactory {
      * @throws ResultException a {@link ResultException}
      */
     @SuppressWarnings("unchecked")
-    private static <T extends WebService> T createSoapInstance(@NotNull Session session, @NotNull WebServiceType webServiceType, @Nullable OperationData operationData)
+    private static <T extends WebService<?, ?, ?>> T createSoapInstance(@NotNull Session session, @NotNull WebServiceType webServiceType, @Nullable OperationData operationData)
         throws ResultException {
 
         if (operationData == null) {
@@ -163,7 +163,7 @@ public final class WebServiceFactory {
      * @throws ResultException a {@link ResultException}
      */
     @SuppressWarnings("unchecked")
-    private static <T extends WebService> T createRestInstance(@NotNull Session session, @NotNull WebServiceType webServiceType, @Nullable OperationData operationData)
+    private static <T extends WebService<?,?,?>> T createRestInstance(@NotNull Session session, @NotNull WebServiceType webServiceType, @Nullable OperationData operationData)
         throws ResultException {
 
         if (operationData == null) {

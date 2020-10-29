@@ -1,5 +1,6 @@
 package net.webpdf.wsclient;
 
+import junit.framework.TestCase;
 import net.webpdf.wsclient.documents.RestDocument;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.RestSession;
@@ -8,6 +9,7 @@ import net.webpdf.wsclient.testsuite.ImageHelper;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,9 +23,10 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.*;
 
+@SuppressWarnings("deprecation")
 public class RestWebserviceIntegrationTest {
 
     private final TestResources testResources = new TestResources(RestWebserviceIntegrationTest.class);
@@ -42,9 +45,11 @@ public class RestWebserviceIntegrationTest {
             ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+            File sourceFile = temporaryFolder.newFile("lorem-äüöß ൫-ipsum.docx");
+            FileUtils.copyFile(file, sourceFile);
             File fileOut = temporaryFolder.newFile();
 
-            webService.setDocument(session.getDocumentManager().uploadDocument(file));
+            webService.setDocument(session.getDocumentManager().uploadDocument(sourceFile));
 
             assertNotNull("Operation should have been initialized", webService.getOperation());
             webService.getOperation().setPages("1-5");
@@ -59,6 +64,9 @@ public class RestWebserviceIntegrationTest {
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                 session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
             }
+            assertNotNull("REST document could not be downloaded.", restDocument);
+            assertNotNull("Downloaded REST document is null", restDocument.getDocumentFile());
+            assertEquals(FilenameUtils.removeExtension(sourceFile.getName()), restDocument.getDocumentFile().getFileName());
             Assert.assertTrue(fileOut.exists());
         }
     }
@@ -365,6 +373,48 @@ public class RestWebserviceIntegrationTest {
                             ImageIO.read(fileOut)
                     ),
                     0.0d);
+        }
+    }
+
+    @Test
+    public void testHandleRestSession() throws Exception {
+        // Anonymous
+        try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
+            TestCase.assertNotNull("Valid session should have been created.", restSession);
+            restSession.login();
+            TestCase.assertNotNull("Token should have been initialized.", restSession.getToken());
+            assertNotEquals("Token should have been not empty.", "", restSession.getToken().getToken());
+            assertNotNull("UserCredentials should have been initialized.", restSession.getUser());
+            assertTrue("User should be user", restSession.getUser().isUser());
+            assertFalse("User should not be authenticated", restSession.getUser().isAuthenticated());
+            assertFalse("User should not be admin", restSession.getUser().isAdmin());
+            assertEquals("Username should be empty.", "", restSession.getUser().getUserName());
+        }
+
+        // User
+        try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL, "user", "user"))) {
+            assertNotNull("Valid session should have been created.", restSession);
+            restSession.login();
+            assertNotNull("Token should have been initialized.", restSession.getToken());
+            assertNotEquals("Token should have been not empty.", "", restSession.getToken().getToken());
+            assertNotNull("UserInfo should have been initialized.", restSession.getUser());
+            assertTrue("User should be user", restSession.getUser().isUser());
+            assertTrue("User should be authenticated", restSession.getUser().isAuthenticated());
+            assertFalse("User should not be admin", restSession.getUser().isAdmin());
+            assertEquals("Username should be user.", "user", restSession.getUser().getUserName());
+        }
+
+        // Admin
+        try (RestSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL, "admin", "admin"))) {
+            assertNotNull("Valid session should have been created.", restSession);
+            restSession.login();
+            assertNotNull("Token should have been initialized.", restSession.getToken());
+            assertNotEquals("Token should have been not empty.", "", restSession.getToken().getToken());
+            assertNotNull("UserInfo should have been initialized.", restSession.getUser());
+            assertTrue("User should be user", restSession.getUser().isUser());
+            assertTrue("User should not be authenticated", restSession.getUser().isAuthenticated());
+            assertTrue("User should not be admin", restSession.getUser().isAdmin());
+            assertEquals("Username should be admin.", "admin", restSession.getUser().getUserName());
         }
     }
 }

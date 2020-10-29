@@ -4,22 +4,29 @@ import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.ExceptionBean;
+import net.webpdf.wsclient.schema.stubs.FaultInfo;
+import net.webpdf.wsclient.schema.stubs.WebserviceException;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.xml.bind.DatatypeConverter;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class HttpRestRequest {
@@ -82,13 +89,30 @@ public class HttpRestRequest {
     @NotNull
     public HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable String path, @Nullable HttpEntity httpEntity)
         throws ResultException {
+        URI uri = this.session.getURI(path != null ? path : "");
+        return buildRequest(httpMethod, uri, httpEntity);
+    }
+
+    /**
+     * Build a HTTP request
+     *
+     * @param httpMethod HTTP method (GET, POST, ...)
+     * @param uri        REST resource URL
+     * @param httpEntity data to send with request (POST)
+     * @return a new HTTP request
+     * @throws ResultException if the HTTP method is unknown
+     */
+    @NotNull
+    public HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable URI uri, @Nullable HttpEntity httpEntity) throws ResultException {
         if (httpMethod == null) {
             throw new ResultException(Result.build(Error.UNKNOWN_HTTP_METHOD));
         }
 
-        RequestBuilder requestBuilder;
+        if (uri == null) {
+            uri = this.session.getURI("");
+        }
 
-        URI uri = this.session.getURI(path != null ? path : "");
+        RequestBuilder requestBuilder;
 
         switch (httpMethod) {
             case GET:
@@ -96,6 +120,12 @@ public class HttpRestRequest {
                 break;
             case POST:
                 requestBuilder = RequestBuilder.post(uri);
+                break;
+            case DELETE:
+                requestBuilder = RequestBuilder.delete(uri);
+                break;
+            case PUT:
+                requestBuilder = RequestBuilder.put(uri);
                 break;
             default:
                 throw new ResultException(Result.build(Error.UNKNOWN_HTTP_METHOD));
@@ -109,6 +139,7 @@ public class HttpRestRequest {
         }
 
         requestBuilder.addHeader(HttpHeaders.ACCEPT, this.acceptHeader);
+        requestBuilder.setCharset(StandardCharsets.UTF_8);
 
         if (this.session.getToken() != null && !this.session.getToken().getToken().isEmpty()) {
             requestBuilder.addHeader("Token", this.session.getToken().getToken());
@@ -158,9 +189,16 @@ public class HttpRestRequest {
                                  + " (" + exceptionBean.getErrorCode() + ")\n"
                                  + (exceptionBean.getStackTrace() != null && !exceptionBean.getStackTrace().isEmpty() ?
                                         "Server stack trace: " + exceptionBean.getStackTrace() + "\n" : "");
+            if (exceptionBean.getErrorCode() != 0) {
+                FaultInfo faultInfo = new FaultInfo();
+                faultInfo.setErrorMessage(exceptionBean.getErrorMessage());
+                faultInfo.setErrorCode(exceptionBean.getErrorCode());
+                faultInfo.setStackTrace(exceptionBean.getStackTrace());
+                throw new ResultException(Result.build(Error.REST_EXECUTION, new WebserviceException(responseOutput, faultInfo)));
+            }
         } else {
             try {
-                responseOutput = EntityUtils.toString(httpEntity);
+                responseOutput = EntityUtils.toString(httpEntity, StandardCharsets.UTF_8);
             } catch (IOException ex) {
                 throw new ResultException(Result.build(Error.HTTP_CUSTOM_ERROR, ex));
             }
@@ -205,16 +243,28 @@ public class HttpRestRequest {
 
             HttpEntity httpEntity = closeableHttpResponse.getEntity();
 
-            if (type == null || httpEntity.getContent().available() <= 0) {
+            ContentType contentType = ContentType.getOrDefault(httpEntity);
+            String mimeType = contentType.getMimeType();
+            Charset charset = contentType.getCharset() != null ? contentType.getCharset() : StandardCharsets.UTF_8;
+
+            String value = EntityUtils.toString(httpEntity, charset);
+            if (StringUtils.isEmpty(value)) {
                 return null;
             }
 
-            return DataFormat.XML.equals(this.dataFormat)
-                       ? SerializeHelper.fromXML(httpEntity, type)
-                       : SerializeHelper.fromJSON(httpEntity, type);
+            if (mimeType == null || this.dataFormat == null || !mimeType.equals(this.dataFormat.getMimeType())) {
+                return null;
+            }
+            try (StringReader stringReader = new StringReader(value)) {
+                StreamSource streamSource = new StreamSource(stringReader);
+                return DataFormat.XML.equals(this.dataFormat)
+                           ? SerializeHelper.fromXML(streamSource, type)
+                           : SerializeHelper.fromJSON(streamSource, type);
+            }
+        } catch (ResultException ex) {
+            throw ex;
         } catch (IOException ex) {
             throw new ResultException(Result.build(Error.HTTP_IO_ERROR, ex));
         }
     }
-
 }
