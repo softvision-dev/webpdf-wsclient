@@ -105,6 +105,7 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
+                <xs:attribute name="language" type="xs:string" default="" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

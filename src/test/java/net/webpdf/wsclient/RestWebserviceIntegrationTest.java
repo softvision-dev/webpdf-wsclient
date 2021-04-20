@@ -190,6 +190,15 @@ public class RestWebserviceIntegrationTest {
             webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
             webService.getOperation().getConvert().setImageQuality(90);
 
+            File zugferdFile = testResources.getResource("integration/files/zugferd21-xrechnung-cii.xml");
+            ZugferdType zugferdType = new ZugferdType();
+            ZugferdFileDataType zugferdFileDataType = new ZugferdFileDataType();
+            zugferdFileDataType.setVersion(ZugferdVersionType.V_21_X_RECHNUNG);
+            zugferdFileDataType.setValue(FileUtils.readFileToByteArray(zugferdFile));
+            zugferdFileDataType.setSource(FileDataSourceType.VALUE);
+            zugferdType.setXmlFile(zugferdFileDataType);
+            webService.getOperation().getConvert().setZugferd(zugferdType);
+
             RestDocument restDocument = webService.process();
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                 session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);

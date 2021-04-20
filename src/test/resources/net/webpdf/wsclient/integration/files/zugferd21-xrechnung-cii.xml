@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"
+                          xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"
+                          xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100"
+                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                          xmlns="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"
+                          xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100">
+   <rsm:ExchangedDocumentContext>
+      <ram:GuidelineSpecifiedDocumentContextParameter>
+         <ram:ID>urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_1.2</ram:ID>
+      </ram:GuidelineSpecifiedDocumentContextParameter>
+   </rsm:ExchangedDocumentContext>
+   <rsm:ExchangedDocument>
+      <ram:ID>0815-99-1-a</ram:ID>
+      <ram:TypeCode>380</ram:TypeCode>
+      <ram:IssueDateTime>
+         <udt:DateTimeString format="102">2020-08-21</udt:DateTimeString>
+      </ram:IssueDateTime>
+      <ram:IncludedNote>
+         <ram:Content>Rechnungsbetreff: Informationen zur Rechnung 1</ram:Content>
+         <ram:SubjectCode>AAI</ram:SubjectCode>
+      </ram:IncludedNote>
+      <ram:IncludedNote>
+         <ram:Content>Informationen zur Rechnung 2</ram:Content>
+         <ram:SubjectCode>AAI</ram:SubjectCode>
+      </ram:IncludedNote>
+   </rsm:ExchangedDocument>
+   <rsm:SupplyChainTradeTransaction>
+      <ram:IncludedSupplyChainTradeLineItem>
+         <ram:AssociatedDocumentLineDocument>
+            <ram:LineID>0</ram:LineID>
+         </ram:AssociatedDocumentLineDocument>
+         <ram:SpecifiedTradeProduct>
+            <ram:GlobalID schemeID="0160">L218</ram:GlobalID>
+            <ram:Name>Leimbinder</ram:Name>
+            <ram:Description>Leimbinder 2x18m; Birke</ram:Description>
+         </ram:SpecifiedTradeProduct>
+         <ram:SpecifiedLineTradeAgreement>
+            <ram:GrossPriceProductTradePrice>
+               <ram:ChargeAmount>1294.30</ram:ChargeAmount>
+               <ram:BasisQuantity unitCode="XPP">0.00</ram:BasisQuantity>
+               <ram:AppliedTradeAllowanceCharge>
+                  <ram:ChargeIndicator>
+                     <udt:Indicator>false</udt:Indicator>
+                  </ram:ChargeIndicator>
+                  <ram:ActualAmount>0.00</ram:ActualAmount>
+               </ram:AppliedTradeAllowanceCharge>
+            </ram:GrossPriceProductTradePrice>
+            <ram:NetPriceProductTradePrice>
+               <ram:ChargeAmount>1294.30</ram:ChargeAmount>
+            </ram:NetPriceProductTradePrice>
+         </ram:SpecifiedLineTradeAgreement>
+         <ram:SpecifiedLineTradeDelivery>
+            <ram:BilledQuantity unitCode="XPP">1.00</ram:BilledQuantity>
+         </ram:SpecifiedLineTradeDelivery>
+         <ram:SpecifiedLineTradeSettlement>
+            <ram:ApplicableTradeTax>
+               <ram:TypeCode>VAT</ram:TypeCode>
+               <ram:CategoryCode>S</ram:CategoryCode>
+               <ram:RateApplicablePercent>16.00</ram:RateApplicablePercent>
+            </ram:ApplicableTradeTax>
+            <ram:SpecifiedTradeSettlementLineMonetarySummation>
+               <ram:LineTotalAmount>1294.30</ram:LineTotalAmount>
+            </ram:SpecifiedTradeSettlementLineMonetarySummation>
+         </ram:SpecifiedLineTradeSettlement>
+      </ram:IncludedSupplyChainTradeLineItem>
+      <ram:IncludedSupplyChainTradeLineItem>
+         <ram:AssociatedDocumentLineDocument>
+            <ram:LineID>1</ram:LineID>
+         </ram:AssociatedDocumentLineDocument>
+         <ram:SpecifiedTradeProduct>
+            <ram:GlobalID schemeID="0160">D4567890</ram:GlobalID>
+            <ram:Name>Dichtungsfolie</ram:Name>
+            <ram:Description>Dichtungsfolie 2.5 mm stark, 1.5 m breit</ram:Description>
+         </ram:SpecifiedTradeProduct>
+         <ram:SpecifiedLineTradeAgreement>
+            <ram:GrossPriceProductTradePrice>
+               <ram:ChargeAmount>257.14</ram:ChargeAmount>
+               <ram:BasisQuantity unitCode="XPP">0.00</ram:BasisQuantity>
+               <ram:AppliedTradeAllowanceCharge>
+                  <ram:ChargeIndicator>
+                     <udt:Indicator>false</udt:Indicator>
+                  </ram:ChargeIndicator>
+                  <ram:ActualAmount>0.00</ram:ActualAmount>
+               </ram:AppliedTradeAllowanceCharge>
+            </ram:GrossPriceProductTradePrice>
+            <ram:NetPriceProductTradePrice>
+               <ram:ChargeAmount>257.14</ram:ChargeAmount>
+            </ram:NetPriceProductTradePrice>
+         </ram:SpecifiedLineTradeAgreement>
+         <ram:SpecifiedLineTradeDelivery>
+            <ram:BilledQuantity unitCode="XPP">5.00</ram:BilledQuantity>
+         </ram:SpecifiedLineTradeDelivery>
+         <ram:SpecifiedLineTradeSettlement>
+            <ram:ApplicableTradeTax>
+               <ram:TypeCode>VAT</ram:TypeCode>
+               <ram:CategoryCode>S</ram:CategoryCode>
+               <ram:RateApplicablePercent>7.00</ram:RateApplicablePercent>
+            </ram:ApplicableTradeTax>
+            <ram:SpecifiedTradeSettlementLineMonetarySummation>
+               <ram:LineTotalAmount>1285.70</ram:LineTotalAmount>
+            </ram:SpecifiedTradeSettlementLineMonetarySummation>
+         </ram:SpecifiedLineTradeSettlement>
+      </ram:IncludedSupplyChainTradeLineItem>
+      <ram:ApplicableHeaderTradeAgreement>
+         <ram:BuyerReference>9900 0000 - 1234 56 - 23</ram:BuyerReference>
+         <ram:SellerTradeParty>
+            <ram:Name>Harry Hirsch Holz- und Trockenbau</ram:Name>
+            <ram:DefinedTradeContact>
+               <ram:PersonName>Harry Hirsch</ram:PersonName>
+               <ram:DepartmentName/>
+               <ram:TelephoneUniversalCommunication>
+                  <ram:CompleteNumber>+49 12345 78 657 - 8</ram:CompleteNumber>
+               </ram:TelephoneUniversalCommunication>
+               <ram:EmailURIUniversalCommunication>
+                  <ram:URIID>harry.hirsch@hhhtb.de</ram:URIID>
+               </ram:EmailURIUniversalCommunication>
+            </ram:DefinedTradeContact>
+            <ram:PostalTradeAddress>
+               <ram:PostcodeCode>12345</ram:PostcodeCode>
+               <ram:LineOne>Beispielgasse 17</ram:LineOne>
+               <ram:LineTwo>Haus A</ram:LineTwo>
+               <ram:LineThree/>
+               <ram:CityName>Baustadt</ram:CityName>
+               <ram:CountryID>DE</ram:CountryID>
+               <ram:CountrySubDivisionName>MusterBL</ram:CountrySubDivisionName>
+            </ram:PostalTradeAddress>
+            <ram:SpecifiedTaxRegistration>
+               <ram:ID schemeID="VA">DE 214365879</ram:ID>
+            </ram:SpecifiedTaxRegistration>
+         </ram:SellerTradeParty>
+         <ram:BuyerTradeParty>
+            <ram:Name>Bauamt GmbH &amp; Co KG</ram:Name>
+            <ram:DefinedTradeContact>
+               <ram:PersonName>Manfred Mustermann</ram:PersonName>
+               <ram:DepartmentName/>
+               <ram:TelephoneUniversalCommunication>
+                  <ram:CompleteNumber>+49 12345 98 765 - 44</ram:CompleteNumber>
+               </ram:TelephoneUniversalCommunication>
+               <ram:EmailURIUniversalCommunication>
+                  <ram:URIID>manfred.mustermann@bauamt.de</ram:URIID>
+               </ram:EmailURIUniversalCommunication>
+            </ram:DefinedTradeContact>
+            <ram:PostalTradeAddress>
+               <ram:PostcodeCode>01091</ram:PostcodeCode>
+               <ram:LineOne>Malerweg 2</ram:LineOne>
+               <ram:LineTwo>Hinterhof A</ram:LineTwo>
+               <ram:LineThree/>
+               <ram:CityName>Großstadt</ram:CityName>
+               <ram:CountryID>DE</ram:CountryID>
+               <ram:CountrySubDivisionName>Sachsen</ram:CountrySubDivisionName>
+            </ram:PostalTradeAddress>
+         </ram:BuyerTradeParty>
+         <ram:BuyerOrderReferencedDocument>
+            <ram:IssuerAssignedID>0815-99-1</ram:IssuerAssignedID>
+         </ram:BuyerOrderReferencedDocument>
+         <ram:ContractReferencedDocument>
+            <ram:IssuerAssignedID>23871349</ram:IssuerAssignedID>
+         </ram:ContractReferencedDocument>
+         <ram:SpecifiedProcuringProject>
+            <ram:ID>Bauvorhaben Glücksstraße 4</ram:ID>
+            <ram:Name>Bauvorhaben Glücksstraße 4</ram:Name>
+         </ram:SpecifiedProcuringProject>
+      </ram:ApplicableHeaderTradeAgreement>
+      <ram:ApplicableHeaderTradeDelivery>
+         <ram:ShipToTradeParty/>
+      </ram:ApplicableHeaderTradeDelivery>
+      <ram:ApplicableHeaderTradeSettlement>
+         <ram:TaxCurrencyCode>EUR</ram:TaxCurrencyCode>
+         <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+         <ram:SpecifiedTradeSettlementPaymentMeans>
+            <ram:TypeCode>30</ram:TypeCode>
+            <ram:PayeePartyCreditorFinancialAccount>
+               <ram:IBANID>DE12500105170648489890</ram:IBANID>
+               <ram:AccountName>Harry Hirsch</ram:AccountName>
+               <ram:ProprietaryID/>
+            </ram:PayeePartyCreditorFinancialAccount>
+            <ram:PayeeSpecifiedCreditorFinancialInstitution>
+               <ram:BICID>XUFUXHB</ram:BICID>
+            </ram:PayeeSpecifiedCreditorFinancialInstitution>
+         </ram:SpecifiedTradeSettlementPaymentMeans>
+         <ram:ApplicableTradeTax>
+            <ram:CalculatedAmount>207.09</ram:CalculatedAmount>
+            <ram:TypeCode>VAT</ram:TypeCode>
+            <ram:BasisAmount>1294.30</ram:BasisAmount>
+            <ram:CategoryCode>S</ram:CategoryCode>
+            <ram:TaxPointDate>
+               <udt:DateString format="102">2020-11-02</udt:DateString>
+            </ram:TaxPointDate>
+            <ram:RateApplicablePercent>16.00</ram:RateApplicablePercent>
+         </ram:ApplicableTradeTax>
+         <ram:ApplicableTradeTax>
+            <ram:CalculatedAmount>90.00</ram:CalculatedAmount>
+            <ram:TypeCode>VAT</ram:TypeCode>
+            <ram:BasisAmount>1285.70</ram:BasisAmount>
+            <ram:CategoryCode>S</ram:CategoryCode>
+            <ram:TaxPointDate>
+               <udt:DateString format="102">2020-11-02</udt:DateString>
+            </ram:TaxPointDate>
+            <ram:RateApplicablePercent>7.00</ram:RateApplicablePercent>
+         </ram:ApplicableTradeTax>
+         <ram:SpecifiedTradePaymentTerms>
+            <ram:Description>Zahlungsziel: 10 Tage nach Zugang der Rechnung</ram:Description>
+            <ram:DueDateDateTime>
+               <udt:DateTimeString format="102">2020-08-31</udt:DateTimeString>
+            </ram:DueDateDateTime>
+         </ram:SpecifiedTradePaymentTerms>
+         <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+            <ram:LineTotalAmount>2580.00</ram:LineTotalAmount>
+            <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
+            <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
+            <ram:TaxBasisTotalAmount>2580.00</ram:TaxBasisTotalAmount>
+            <ram:TaxTotalAmount currencyID="EUR">297.09</ram:TaxTotalAmount>
+            <ram:RoundingAmount>0.00</ram:RoundingAmount>
+            <ram:GrandTotalAmount>2877.09</ram:GrandTotalAmount>
+            <ram:TotalPrepaidAmount>0.00</ram:TotalPrepaidAmount>
+            <ram:DuePayableAmount>2877.09</ram:DuePayableAmount>
+         </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+      </ram:ApplicableHeaderTradeSettlement>
+   </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>

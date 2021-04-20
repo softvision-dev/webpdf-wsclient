@@ -107,6 +107,7 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="initialPage" default="1" type="xs:int" />
+        <xs:attribute name="language" default="" type="xs:string" />
         <xs:attribute name="pageLayout" default="singlePage" type="PageLayoutType" />
         <xs:attribute name="magnification" default="fitVisible" type="MagnificationType" />
         <xs:attribute name="magnificationZoom" default="100">

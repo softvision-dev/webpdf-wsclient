@@ -66,6 +66,12 @@
             <xs:enumeration value="v20Basic" />
             <xs:enumeration value="v20EN16931" />
             <xs:enumeration value="v20Extended" />
+            <xs:enumeration value="v21Minimum" />
+            <xs:enumeration value="v21BasicWL" />
+            <xs:enumeration value="v21Basic" />
+            <xs:enumeration value="v21EN16931" />
+            <xs:enumeration value="v21Extended" />
+            <xs:enumeration value="v21XRechnung" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="ZugferdType">
