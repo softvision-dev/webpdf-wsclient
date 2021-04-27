@@ -142,6 +142,7 @@
         <xs:sequence>
             <xs:element name="author" type="AuthorType" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="keywords" type="KeywordType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="custom" type="CustomDescriptionType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="title" default="" type="xs:string" />
         <xs:attribute name="subject" default="" type="xs:string" />
@@ -275,6 +276,10 @@
     </xs:complexType>
     <xs:complexType name="KeywordType">
         <xs:attribute name="keyword" default="" type="xs:string" />
+    </xs:complexType>
+    <xs:complexType name="CustomDescriptionType">
+        <xs:attribute name="key" default="" type="xs:string" />
+        <xs:attribute name="value" default="" type="xs:string" />
     </xs:complexType>
     <xs:complexType name="PasswordType">
         <xs:attribute name="hasOpenPassword" default="false" type="xs:boolean" />

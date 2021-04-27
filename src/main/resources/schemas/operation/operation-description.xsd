@@ -4,6 +4,9 @@
     <xs:complexType name="DescriptionType">
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
+                <xs:sequence>
+                    <xs:element name="custom" type="tns:DescriptionCustomType" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
                 <xs:attribute name="title" default="" type="xs:string" />
                 <xs:attribute name="author" default="" type="xs:string" />
                 <xs:attribute name="creator" default="" type="xs:string" />
@@ -13,5 +16,10 @@
                 <xs:attribute name="allowEmptyValues" default="false" type="xs:boolean" />
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="DescriptionCustomType">
+        <xs:attribute name="key" default="" type="xs:string" />
+        <xs:attribute name="value" default="" type="xs:string" />
+        <xs:attribute name="remove" default="false" type="xs:boolean" />
     </xs:complexType>
 </xs:schema>
