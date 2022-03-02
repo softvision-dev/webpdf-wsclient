@@ -10,7 +10,7 @@ import java.io.OutputStream;
 class InputStreamDataSource implements DataSource {
 
     @NotNull
-    private InputStream inputStream;
+    private final InputStream inputStream;
 
     /**
      * Prepares the given resource for further processing.
@@ -29,7 +29,7 @@ class InputStreamDataSource implements DataSource {
     @Override
     @NotNull
     public InputStream getInputStream() {
-        return new CloseShieldInputStream(inputStream);
+        return CloseShieldInputStream.wrap(this.inputStream);
     }
 
     /**
