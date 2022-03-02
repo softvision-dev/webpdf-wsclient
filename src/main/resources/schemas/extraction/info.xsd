@@ -96,6 +96,7 @@
         <xs:sequence>
             <xs:element name="description" type="DescriptionType" />
             <xs:element name="pdfa" type="PdfaType" />
+            <xs:element name="viewerPreferences" type="ViewerPreferencesType" />
         </xs:sequence>
         <xs:attribute name="objectKey" default="" type="xs:string" />
         <xs:attribute name="version" default="" type="xs:string" />
@@ -691,4 +692,72 @@
         <xs:attribute name="creationDate" default="" type="xs:string" />
         <xs:attribute name="modificationDate" default="" type="xs:string" />
     </xs:complexType>
+    <xs:complexType name="ViewerPreferencesType">
+        <xs:attribute name="hideToolbar" default="false" type="xs:boolean" />
+        <xs:attribute name="hideMenuBar" default="false" type="xs:boolean" />
+        <xs:attribute name="hideWindowUI" default="false" type="xs:boolean" />
+        <xs:attribute name="fitWindow" default="false" type="xs:boolean" />
+        <xs:attribute name="centerWindow" default="false" type="xs:boolean" />
+        <xs:attribute name="displayDocTitle" default="false" type="xs:boolean" />
+        <xs:attribute name="nonFullScreenPageMode" default="none" type="NonFullScreenPageModeType" />
+        <xs:attribute name="textDirection" default="leftToRight" type="TextDirectionType" />
+        <xs:attribute name="viewArea" default="cropBox" type="BoxSelectionType" />
+        <xs:attribute name="viewClip" default="cropBox" type="BoxSelectionType" />
+        <xs:attribute name="printArea" default="cropBox" type="BoxSelectionType" />
+        <xs:attribute name="printClip" default="cropBox" type="BoxSelectionType" />
+        <xs:attribute name="printScaling" default="readerDefault" type="PrintScaleType" />
+        <xs:attribute name="duplex" default="none" type="DuplexType" />
+        <xs:attribute name="printTraySelection" default="readerDefault" type="PrintTraySelectionType" />
+        <xs:attribute name="printPageRange" default="" type="xs:string" />
+        <xs:attribute name="numCopies" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="NonFullScreenPageModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="outlines" />
+            <xs:enumeration value="thumbnails" />
+            <xs:enumeration value="optionalContents" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TextDirectionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="leftToRight" />
+            <xs:enumeration value="rightToLeft" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="DuplexType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="simplex" />
+            <xs:enumeration value="duplexFlipShortEdge" />
+            <xs:enumeration value="duplexFlipLongEdge" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PrintTraySelectionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="readerDefault" />
+            <xs:enumeration value="byPDFSize" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PrintScaleType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="readerDefault" />
+            <xs:enumeration value="noPrintScaling" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="BoxSelectionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="mediaBox" />
+            <xs:enumeration value="cropBox" />
+            <xs:enumeration value="bleedBox" />
+            <xs:enumeration value="trimBox" />
+            <xs:enumeration value="artBox" />
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

@@ -1,6 +1,7 @@
 package net.webpdf.wsclient.tools;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import net.webpdf.wsclient.exception.Error;
@@ -95,6 +96,7 @@ public class SerializeHelper {
         XMLValidationEventHandler xmlValidationEventHandler = new XMLValidationEventHandler();
 
         try {
+            // create a new instance with a list of allowed classes for this context
             JAXBContext jaxbContext = JAXBContext.newInstance(type);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
@@ -107,6 +109,7 @@ public class SerializeHelper {
                 unmarshaller.setEventHandler(xmlValidationEventHandler);
             }
 
+            // unmarshall the given stream with a specific class (ignores @XmlRootElement annotated class name)
             JAXBElement<T> jaxbElement = unmarshaller.unmarshal(streamSource, type);
             return type.cast(jaxbElement.getValue());
 
@@ -159,6 +162,7 @@ public class SerializeHelper {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JaxbAnnotationModule());
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try (Reader reader = streamSource.getReader()) {
             return objectMapper.readValue(reader, type);
         } catch (IOException ex) {

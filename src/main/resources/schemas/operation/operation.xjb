@@ -130,6 +130,9 @@
                 <simplify:as-element-property/>
             </simplify:property>
         </jaxb:bindings>
+        <jaxb:bindings node="//xs:complexType[@name='QrSwissPaymentContentType']">
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+        </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- AttachmentType -->

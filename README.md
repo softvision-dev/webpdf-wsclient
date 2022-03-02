@@ -9,13 +9,16 @@ The library implements the required stubs and session management in ready-to-use
 > **Note**: Unless otherwise marked, the following is based on webPDF version 8 or newer. If you are using an older version please update to use all parameters for the current release of the library. You will always find the newest version at the product [download page](https://download.softvision.de/?product=webpdf).
 
 ## Download
+
+> **Note:** The version 2.0.2 requires at least webPDF server version **8.0.0.2229**
+
 You can use this library, by adding this dependency to your project:
 ```
 <!-- https://mvnrepository.com/artifact/net.webpdf/webpdf-wsclient -->
 <dependency>
     <groupId>net.webpdf</groupId>
     <artifactId>webpdf-wsclient</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
 </dependency>
 ```
 

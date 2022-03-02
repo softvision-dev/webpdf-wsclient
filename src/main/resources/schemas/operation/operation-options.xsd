@@ -86,6 +86,7 @@
                             </xs:choice>
                         </xs:complexType>
                     </xs:element>
+                    <xs:element name="viewerPreferences" type="tns:ViewerPreferencesType" minOccurs="0" maxOccurs="1" />
                 </xs:all>
                 <xs:attribute name="pageLayout" default="singlePage" type="tns:PageLayoutType" />
                 <xs:attribute name="initialView" default="none" type="tns:InitialViewType" />
@@ -105,7 +106,7 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="language" type="xs:string" default="" />
+                <xs:attribute name="language" default="" type="xs:string" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -442,4 +443,63 @@
         </xs:attribute>
         <xs:attribute name="year" type="xs:int" />
     </xs:complexType>
+    <xs:complexType name="ViewerPreferencesType">
+        <xs:attribute name="hideToolbar" default="false" type="xs:boolean" />
+        <xs:attribute name="hideMenuBar" default="false" type="xs:boolean" />
+        <xs:attribute name="hideWindowUI" default="false" type="xs:boolean" />
+        <xs:attribute name="fitWindow" default="false" type="xs:boolean" />
+        <xs:attribute name="centerWindow" default="false" type="xs:boolean" />
+        <xs:attribute name="displayDocTitle" default="false" type="xs:boolean" />
+        <xs:attribute name="nonFullScreenPageMode" default="none" type="tns:NonFullScreenPageModeType" />
+        <xs:attribute name="textDirection" default="leftToRight" type="tns:TextDirectionType" />
+        <xs:attribute name="viewArea" default="crop_box" type="tns:PageBoxType" />
+        <xs:attribute name="viewClip" default="crop_box" type="tns:PageBoxType" />
+        <xs:attribute name="printArea" default="crop_box" type="tns:PageBoxType" />
+        <xs:attribute name="printClip" default="crop_box" type="tns:PageBoxType" />
+        <xs:attribute name="printScaling" default="readerDefault" type="tns:PrintScaleType" />
+        <xs:attribute name="duplex" default="none" type="tns:DuplexType" />
+        <xs:attribute name="printTraySelection" default="readerDefault" type="tns:PrintTraySelectionType" />
+        <xs:attribute name="printPageRange" default="" type="xs:string" />
+        <xs:attribute name="numCopies" default="1">
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="NonFullScreenPageModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="outlines" />
+            <xs:enumeration value="thumbnails" />
+            <xs:enumeration value="optionalContents" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TextDirectionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="leftToRight" />
+            <xs:enumeration value="rightToLeft" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="DuplexType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="simplex" />
+            <xs:enumeration value="duplexFlipShortEdge" />
+            <xs:enumeration value="duplexFlipLongEdge" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PrintTraySelectionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="readerDefault" />
+            <xs:enumeration value="byPDFSize" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PrintScaleType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="readerDefault" />
+            <xs:enumeration value="noPrintScaling" />
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

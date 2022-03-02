@@ -17,6 +17,7 @@
                         <xs:element name="pdf417" type="tns:Pdf417BarcodeType" />
                         <xs:element name="qrcode" type="tns:QrBarcodeType" />
                         <xs:element name="upca" type="tns:UpcaBarcodeType" />
+                        <xs:element name="qrcode-swiss-payment" type="tns:QrSwissPaymentBarcodeType" />
                     </xs:choice>
                     <xs:attribute name="outputFormat" default="pdf" type="tns:BarcodeCreateOutputFormatType" />
                 </xs:complexType>
@@ -108,6 +109,40 @@
             <xs:enumeration value="m" />
             <xs:enumeration value="q" />
             <xs:enumeration value="h" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="QrSwissPaymentFormatType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="codeOnly" />
+            <xs:enumeration value="billOnly" />
+            <xs:enumeration value="billPortraitSheet" />
+            <xs:enumeration value="billExtraSpace" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="QrSwissPaymentSeparatorType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="solidLine" />
+            <xs:enumeration value="solidLineWithScissors" />
+            <xs:enumeration value="dashedLine" />
+            <xs:enumeration value="dashedLineWithScissors" />
+            <xs:enumeration value="dottedLine" />
+            <xs:enumeration value="dottedLineWithScissors" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="QrSwissPaymentLanguageType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="de" />
+            <xs:enumeration value="fr" />
+            <xs:enumeration value="it" />
+            <xs:enumeration value="en" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="QrSwissPaymentPdfModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="insertBefore" />
+            <xs:enumeration value="appendAtEnd" />
+            <xs:enumeration value="addToPage" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="QrBarcodeType">
@@ -246,6 +281,44 @@
             <xs:enumeration value="bmp" />
             <xs:enumeration value="jpg" />
             <xs:enumeration value="png" />
+            <xs:enumeration value="tif" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="QrSwissPaymentBarcodeType">
+        <xs:all>
+            <xs:element name="content" type="tns:QrSwissPaymentContentType" minOccurs="1" maxOccurs="1" />
+            <xs:element name="pdf" type="tns:QrSwissPaymentPdfType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="position" type="tns:RectangleType" minOccurs="0" maxOccurs="1" />
+        </xs:all>
+        <xs:attribute name="format" default="codeOnly">
+            <xs:simpleType>
+                <xs:restriction base="tns:QrSwissPaymentFormatType" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="language" default="de">
+            <xs:simpleType>
+                <xs:restriction base="tns:QrSwissPaymentLanguageType" />
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="dpi" default="200" type="xs:int" />
+        <xs:attribute name="separator" default="dashedLineWithScissors" type="tns:QrSwissPaymentSeparatorType" />
+    </xs:complexType>
+    <xs:complexType name="QrSwissPaymentContentType">
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup" />
+                <xs:attribute name="format" default="json" type="tns:QrSwissPaymentContentFormatType" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="QrSwissPaymentPdfType">
+        <xs:attribute name="page" default="1" type="xs:int" />
+        <xs:attribute name="mode" default="appendAtEnd" type="tns:QrSwissPaymentPdfModeType" />
+    </xs:complexType>
+    <xs:simpleType name="QrSwissPaymentContentFormatType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="plain" />
+            <xs:enumeration value="json" />
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
