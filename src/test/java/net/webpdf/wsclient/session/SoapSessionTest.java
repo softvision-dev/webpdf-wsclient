@@ -1,12 +1,13 @@
 package net.webpdf.wsclient.session;
 
-import net.webpdf.wsclient.WebServiceProtocol;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.session.soap.SoapWebServiceSession;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.net.URL;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SoapSessionTest {
 
@@ -16,44 +17,68 @@ public class SoapSessionTest {
     @Test
     public void testCreateSoapSession() throws Exception {
         URL url = new URL(SOME_URL);
-        try (SoapSession soapSession = SessionFactory.createInstance(WebServiceProtocol.SOAP, url)) {
-            assertNotNull("SOAPSession should have been initialized.", soapSession);
-            assertTrue("SOAPSession should use local wsdl by default.", soapSession.isUseLocalWsdl());
+        try (SoapWebServiceSession soapSession = SessionFactory.createInstance(WebServiceProtocol.SOAP, url)) {
+            assertNotNull(soapSession,
+                    "SOAPSession should have been initialized.");
+            assertTrue(soapSession.isUseLocalWsdl(),
+                    "SOAPSession should use local wsdl by default.");
             soapSession.setUseLocalWsdl(false);
-            assertFalse("SOAPSession should not be using local wsdl after modification.", soapSession.isUseLocalWsdl());
-            assertNotNull("DataFormat should have been initialized.", soapSession.getDataFormat());
-            assertEquals("DataFormat should have been XML.", DataFormat.XML, soapSession.getDataFormat());
-            assertEquals("MimeType should have been xml.", DataFormat.XML.getMimeType(), soapSession.getDataFormat().getMimeType());
-            assertEquals("WebserviceProtocol should have been SOAP.", WebServiceProtocol.SOAP, soapSession.getWebServiceProtocol());
-            assertNull("Credentials should not have been initialized.", soapSession.getCredentials());
+            assertFalse(soapSession.isUseLocalWsdl(),
+                    "SOAPSession should not be using local wsdl after modification.");
+            assertNotNull(soapSession.getDataFormat(),
+                    "DataFormat should have been initialized.");
+            assertEquals(DataFormat.XML, soapSession.getDataFormat(),
+                    "DataFormat should have been XML.");
+            assertEquals(DataFormat.XML.getMimeType(), soapSession.getDataFormat().getMimeType(),
+                    "MimeType should have been xml.");
+            assertEquals(WebServiceProtocol.SOAP, soapSession.getWebServiceProtocol(),
+                    "WebserviceProtocol should have been SOAP.");
+            assertNull(soapSession.getCredentials(),
+                    "Credentials should not have been initialized.");
             soapSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd"));
-            assertEquals("Credentials should define usr for authentication.", "usr", soapSession.getCredentials().getUserPrincipal().getName());
-            assertEquals("Credentials should define pwd as the authentication password.", "pwd", soapSession.getCredentials().getPassword());
+            assertEquals("usr", soapSession.getCredentials().getUserPrincipal().getName(),
+                    "Credentials should define usr for authentication.");
+            assertEquals("pwd", soapSession.getCredentials().getPassword(),
+                    "Credentials should define pwd as the authentication password.");
 
-            assertEquals("URI subpath should have been created.", SOME_URL + "/soap/sub", soapSession.getURI("sub").toString());
+            assertEquals(SOME_URL + "/soap/sub", soapSession.getURI("sub").toString(),
+                    "URI subpath should have been created.");
         }
     }
 
     @Test
     public void testCreateCredentialsSoapSession() throws Exception {
         URL url = new URL(SOME_CREDENTIALS_URL);
-        try (SoapSession soapSession = SessionFactory.createInstance(WebServiceProtocol.SOAP, url)) {
-            assertNotNull("SOAPSession should have been initialized.", soapSession);
-            assertTrue("SOAPSession should use local wsdl by default.", soapSession.isUseLocalWsdl());
+        try (SoapWebServiceSession soapSession = SessionFactory.createInstance(WebServiceProtocol.SOAP, url)) {
+            assertNotNull(soapSession,
+                    "SOAPSession should have been initialized.");
+            assertTrue(soapSession.isUseLocalWsdl(),
+                    "SOAPSession should use local wsdl by default.");
             soapSession.setUseLocalWsdl(false);
-            assertFalse("SOAPSession should not be using local wsdl after modification.", soapSession.isUseLocalWsdl());
-            assertNotNull("DataFormat should have been initialized", soapSession.getDataFormat());
-            assertEquals("DataFormat should have been XML.", DataFormat.XML, soapSession.getDataFormat());
-            assertEquals("MimeType should have been xml.", DataFormat.XML.getMimeType(), soapSession.getDataFormat().getMimeType());
-            assertEquals("WebserviceProtocol should have been SOAP.", WebServiceProtocol.SOAP, soapSession.getWebServiceProtocol());
+            assertFalse(soapSession.isUseLocalWsdl(),
+                    "SOAPSession should not be using local wsdl after modification.");
+            assertNotNull(soapSession.getDataFormat(),
+                    "DataFormat should have been initialized");
+            assertEquals(DataFormat.XML, soapSession.getDataFormat(),
+                    "DataFormat should have been XML.");
+            assertEquals(DataFormat.XML.getMimeType(), soapSession.getDataFormat().getMimeType(),
+                    "MimeType should have been xml.");
+            assertEquals(WebServiceProtocol.SOAP, soapSession.getWebServiceProtocol(),
+                    "WebserviceProtocol should have been SOAP.");
             assertNotNull(soapSession.getCredentials());
-            assertEquals("Credentials should define username for authentication.", "username", soapSession.getCredentials().getUserPrincipal().getName());
-            assertEquals("Credentials should define password as the authentication password.", "password", soapSession.getCredentials().getPassword());
+            assertEquals("username", soapSession.getCredentials().getUserPrincipal().getName(),
+                    "Credentials should define username for authentication.");
+            assertEquals("password", soapSession.getCredentials().getPassword(),
+                    "Credentials should define password as the authentication password.");
             soapSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd"));
-            assertEquals("Credentials should define usr for authentication.", "usr", soapSession.getCredentials().getUserPrincipal().getName());
-            assertEquals("Credentials should define pwd as the authentication password.", "pwd", soapSession.getCredentials().getPassword());
+            assertEquals("usr", soapSession.getCredentials().getUserPrincipal().getName(),
+                    "Credentials should define usr for authentication.");
+            assertEquals("pwd", soapSession.getCredentials().getPassword(),
+                    "Credentials should define pwd as the authentication password.");
 
-            assertEquals("URI subpath should have been created.", SOME_URL + "/soap/sub", soapSession.getURI("sub").toString());
+            assertEquals(SOME_URL + "/soap/sub", soapSession.getURI("sub").toString(),
+                    "URI subpath should have been created.");
         }
     }
+
 }

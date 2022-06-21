@@ -2,10 +2,20 @@
 <xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="RotateType">
+        <xs:annotation>
+            <xs:documentation>The rotate operation element can be used to rotate pages in the document.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
-                <xs:attribute name="pages" default="1" type="xs:string" />
+                <xs:attribute name="pages" default="1" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Defines which page(s) should be rotated. The page number can be an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9"). To specify "all pages," use an asterisk ("*").</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="degrees" default="90">
+                    <xs:annotation>
+                        <xs:documentation>Used to specify the clockwise rotation in degrees. The rotation is always in 90-degree increments (0, 90, 180, 270, 360). Deviating values will always be rounded down to the next lower increment (e.g.: 32 degrees will become 0 degrees and 101 degrees will become 90 degrees). Once the rotation is completed, the new value will be normalized to a range of 0 to 359 degrees. If the page being rotated has an impermissible value (e.g. 112 degrees), this value will be adjusted before the rotation operation as well (112 degrees will become 90 degrees).</xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
                             <xs:minInclusive value="0" />
@@ -13,12 +23,39 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="pageOrientation" default="any" type="tns:PageOrientationType" />
-                <xs:attribute name="pageGroup" default="all" type="tns:PageGroupType" />
+                <xs:attribute name="pageOrientation" default="any" type="tns:PageOrientationType">
+                    <xs:annotation>
+                        <xs:documentation>Used to select pages based on their orientation within the specified page range:
+- any = All pages
+- portrait = All pages in portrait format
+- landscape = All pages in landscape format</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="pageGroup" default="all" type="tns:PageGroupType">
+                    <xs:annotation>
+                        <xs:documentation>Used to select pages based on their page number within the specified page range:
+- all = All pages
+- even = All pages with an even page number
+- odd = All pages with an odd page number</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="orientationDetectMode" default="value" type="tns:OrientationDetectionType">
+                    <xs:annotation>
+                        <xs:documentation>Selects which criteria to use to determine the orientation (portrait/landscape) of pages (see also "pageOrientation"):
+- value = Based solely on the page rotation value entered in the PDF.
+- dimensions = Based on the ratio of the page dimensions to each other.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:simpleType name="PageOrientationType">
+        <xs:annotation>
+            <xs:documentation>Used to select pages based on their orientation within the specified page range:
+- any = All pages
+- portrait = All pages in portrait format
+- landscape = All pages in landscape format</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="any" />
             <xs:enumeration value="portrait" />
@@ -26,10 +63,27 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="PageGroupType">
+        <xs:annotation>
+            <xs:documentation>Used to select pages based on their page number within the specified page range:
+- all = All pages
+- even = All pages with an even page number
+- odd = All pages with an odd page number</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="all" />
             <xs:enumeration value="even" />
             <xs:enumeration value="odd" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="OrientationDetectionType">
+        <xs:annotation>
+            <xs:documentation>Selects which criteria to use to determine the orientation (portrait/landscape) of pages (see also "pageOrientation"):
+- value = Based solely on the page rotation value entered in the PDF.
+- dimensions = Based on the ratio of the page dimensions to each other.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="value" />
+            <xs:enumeration value="dimensions" />
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

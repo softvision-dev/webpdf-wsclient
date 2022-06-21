@@ -1,14 +1,27 @@
 
 package net.webpdf.wsclient.schema.stubs;
 
+import net.webpdf.wsclient.exception.Error;
+import net.webpdf.wsclient.exception.Result;
 import org.jetbrains.annotations.Nullable;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
+ * <p>
+ * An instance of {@link FaultInfo} will be encountered in case the webPDF server´s response indicates the
+ * failure of a webservice call. <br>
+ * It shall describe the failure, by providing an error code, an error message and an optional exception describing the
+ * issue.
+ * </p>
+ * <p>
+ * <b>Important:</b> The hereby contained error codes should not be confused with the wsclient {@link Error} codes,
+ * those shall be represented by a {@link Result} instead.
+ * </p>
+ *
  * <p>Java-class for the FaultInfo complex type.
  *
  * <p>the following schema fragment contains the expected content, that may be contained in this class.
@@ -28,22 +41,20 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SuppressWarnings({"unused"})
+@SuppressWarnings({"unused", "JavadocLinkAsPlainText"})
 @XmlType(name = "FaultInfo", propOrder = {
-    "errorCode",
-    "errorMessage",
-    "stackTrace"
+        "errorCode",
+        "errorMessage",
+        "stackTrace"
 })
 public class FaultInfo {
 
     @XmlElement(namespace = "")
     private int errorCode;
     @XmlElement(namespace = "")
-    @Nullable
-    private String errorMessage;
+    private @Nullable String errorMessage;
     @XmlElement(namespace = "")
-    @Nullable
-    private String stackTrace;
+    private @Nullable String stackTrace;
 
     /**
      * Return the errorCode.
@@ -65,8 +76,7 @@ public class FaultInfo {
      * @return possible object is
      * {@link String }
      */
-    @Nullable
-    public String getErrorMessage() {
+    public @Nullable String getErrorMessage() {
         return errorMessage;
     }
 
@@ -86,8 +96,7 @@ public class FaultInfo {
      * @return possible object is
      * {@link String }
      */
-    @Nullable
-    public String getStackTrace() {
+    public @Nullable String getStackTrace() {
         return stackTrace;
     }
 

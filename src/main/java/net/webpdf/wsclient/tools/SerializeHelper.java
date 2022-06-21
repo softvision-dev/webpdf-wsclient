@@ -3,10 +3,11 @@ package net.webpdf.wsclient.tools;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.session.DataFormat;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
@@ -14,32 +15,37 @@ import org.jetbrains.annotations.Nullable;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.*;
+
+import jakarta.xml.bind.*;
+
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.*;
 import java.net.URL;
 
+/**
+ * The {@link SerializeHelper} provides a set of tools, to translate the server´s responses and data transfer objects,
+ * which may be provided using one of the defined {@link DataFormat}s.
+ */
 public class SerializeHelper {
 
     private final static String OPERATION_SCHEMA = "/schemas/operation/operation.xsd";
 
     /**
-     * Empty private constructor, for static calls and instantiation of and to instances of this helper class.
+     * This class is not intended to be instantiated, use the static methods instead.
      */
     private SerializeHelper() {
     }
 
     /**
-     * Returns the response content from the given http entity as a String for further processing.
+     * Returns the response content from the given {@link HttpEntity} as a String for further processing.
      *
-     * @param httpEntity The entity, that shall be searched for processable content.
-     * @return The response String, that could be extracted.
+     * @param httpEntity The {@link HttpEntity}, that shall be searched for processable content.
+     * @return The extracted response String.
      * @throws IOException Shall be thrown, when extracting the response content failed.
      */
-    @NotNull
-    private static String getResponseContent(@NotNull HttpEntity httpEntity) throws IOException {
+    private static @NotNull String getResponseContent(@NotNull HttpEntity httpEntity) throws IOException {
         try (InputStreamReader inputStreamReader = new InputStreamReader(httpEntity.getContent());
              BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 
@@ -54,16 +60,16 @@ public class SerializeHelper {
     }
 
     /**
-     * Deserialize the object to the given Type T from the xml {@link HttpEntity}.
+     * Deserialize the data transfer object to the given type from the given {@link DataFormat#XML} {@link HttpEntity}.
      *
-     * @param <T>        The type T of the target object.
-     * @param httpEntity the xml {@link HttpEntity}
-     * @param type       the type T of the target object.
-     * @return An object of type T representing the xml {@link HttpEntity}.
-     * @throws ResultException a {@link ResultException}
+     * @param <T>        The expected type of the deserialized data transfer object.
+     * @param httpEntity The deserializable {@link DataFormat#XML} {@link HttpEntity}
+     * @param type       The expected type of the deserialized data transfer object.
+     * @return The deserialized {@link DataFormat#XML} data transfer object.
+     * @throws ResultException Shall be thrown upon a deserialization failure.
      */
-    @NotNull
-    public static <T> T fromXML(@Nullable HttpEntity httpEntity, @Nullable Class<T> type) throws ResultException {
+    public static <T> @NotNull T fromXML(@Nullable HttpEntity httpEntity, @Nullable Class<T> type)
+            throws ResultException {
         try {
             if (httpEntity == null) {
                 throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
@@ -80,16 +86,17 @@ public class SerializeHelper {
     }
 
     /**
-     * Deserialize the object to the given Type T from the xml {@link StreamSource}.
+     * Deserialize the data transfer object to the given type from the given {@link DataFormat#XML}
+     * {@link StreamSource}.
      *
-     * @param <T>          The type T of the target object.
-     * @param streamSource the xml {@link StreamSource}
-     * @param type         the type T of the target object.
-     * @return An object of type T representing the xml {@link StreamSource}.
-     * @throws ResultException a {@link ResultException}
+     * @param <T>          The expected type of the deserialized data transfer object.
+     * @param streamSource The deserializable {@link DataFormat#XML} {@link StreamSource}
+     * @param type         The expected type of the deserialized data transfer object.
+     * @return The deserialized {@link DataFormat#XML} data transfer object.
+     * @throws ResultException Shall be thrown upon a deserialization failure.
      */
-    @NotNull
-    public static <T> T fromXML(@Nullable StreamSource streamSource, @Nullable Class<T> type) throws ResultException {
+    public static <T> @NotNull T fromXML(@Nullable StreamSource streamSource, @Nullable Class<T> type)
+            throws ResultException {
         if (streamSource == null || type == null) {
             throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
         }
@@ -115,22 +122,22 @@ public class SerializeHelper {
 
         } catch (SAXException | JAXBException ex) {
             Result result = Result.build(Error.INVALID_OPERATION_DATA, ex);
-            result.addMessage(xmlValidationEventHandler.getMessages());
+            result.appendMessage(xmlValidationEventHandler.getMessages());
             throw new ResultException(result);
         }
     }
 
     /**
-     * Deserialize the object to the given Type T from the json {@link HttpEntity}.
+     * Deserialize the data transfer object to the given type from the given {@link DataFormat#JSON} {@link HttpEntity}.
      *
-     * @param <T>        The type T of the target object.
-     * @param httpEntity the json {@link HttpEntity}
-     * @param type       the type T of the target object.
-     * @return An object of type T representing the json {@link HttpEntity}.
-     * @throws ResultException a {@link ResultException}
+     * @param <T>        The expected type of the deserialized data transfer object.
+     * @param httpEntity The deserializable {@link DataFormat#JSON} {@link HttpEntity}
+     * @param type       The expected type of the deserialized data transfer object.
+     * @return The deserialized {@link DataFormat#JSON} data transfer object.
+     * @throws ResultException Shall be thrown upon a deserialization failure.
      */
-    @NotNull
-    public static <T> T fromJSON(@Nullable HttpEntity httpEntity, @Nullable Class<T> type) throws ResultException {
+    public static <T> @NotNull T fromJSON(@Nullable HttpEntity httpEntity, @Nullable Class<T> type)
+            throws ResultException {
         try {
             if (httpEntity == null) {
                 throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
@@ -146,21 +153,22 @@ public class SerializeHelper {
     }
 
     /**
-     * Deserialize the object to the given Type T from the json {@link StreamSource}.
+     * Deserialize the data transfer object to the given type from the given {@link DataFormat#JSON}
+     * {@link StreamSource}.
      *
-     * @param <T>          The type T of the target object.
-     * @param streamSource the json {@link StreamSource}
-     * @param type         the type T of the target object.
-     * @return An object of type T representing the json {@link StreamSource}.
-     * @throws ResultException a {@link ResultException}
+     * @param <T>          The expected type of the deserialized data transfer object.
+     * @param streamSource The deserializable {@link DataFormat#JSON} {@link StreamSource}
+     * @param type         The expected type of the deserialized data transfer object.
+     * @return The deserialized {@link DataFormat#JSON} data transfer object.
+     * @throws ResultException Shall be thrown upon a deserialization failure.
      */
-    @NotNull
-    public static <T> T fromJSON(@Nullable StreamSource streamSource, @Nullable Class<T> type) throws ResultException {
+    public static <T> @NotNull T fromJSON(@Nullable StreamSource streamSource, @Nullable Class<T> type)
+            throws ResultException {
         if (streamSource == null || type == null) {
             throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
         }
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JaxbAnnotationModule());
+        objectMapper.registerModule(new JakartaXmlBindAnnotationModule());
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try (Reader reader = streamSource.getReader()) {
@@ -171,29 +179,28 @@ public class SerializeHelper {
     }
 
     /**
-     * Serialize object to json
+     * Serialize a data transfer object to {@link DataFormat#JSON}
      *
-     * @param object the object
-     * @return the json {@link String}
+     * @param object The object to serialize.
+     * @return The resulting {@link DataFormat#JSON} {@link String}.
      */
     @NotNull
     public static String toJSON(@Nullable Object object) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JaxbAnnotationModule());
+        objectMapper.registerModule(new JakartaXmlBindAnnotationModule());
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return objectMapper.writeValueAsString(object);
     }
 
     /**
-     * Serialize object to xml
+     * Serialize a data transfer object to {@link DataFormat#XML}.
      *
-     * @param object the object
-     * @param type   the object type class
-     * @return the xml {@link String}
-     * @throws ResultException an {@link ResultException}
+     * @param object The data transfer object to serialize.
+     * @param type   The annotated type of the data transfer object.
+     * @return The resulting {@link DataFormat#XML} {@link String}.
+     * @throws ResultException Shall be thrown upon a serialization failure.
      */
-    @NotNull
-    public static String toXML(@Nullable Object object, @Nullable Class<?> type) throws ResultException {
+    public static @NotNull String toXML(@Nullable Object object, @Nullable Class<?> type) throws ResultException {
         if (object == null || type == null) {
             throw new ResultException(Result.build(Error.TO_XML_JSON));
         }

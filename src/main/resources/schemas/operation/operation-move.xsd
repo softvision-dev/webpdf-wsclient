@@ -2,28 +2,60 @@
 <xs:schema elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="MoveType">
+        <xs:annotation>
+            <xs:documentation>The move operation element can be used to change the order of the document´s pages.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension xmlns:q1="http://schema.webpdf.de/1.0/operation" base="q1:BaseToolboxType">
-                <xs:attribute name="mode" default="afterPage" type="q1:MoveModeType" />
+                <xs:attribute name="mode" default="afterPage" type="q1:MoveModeType">
+                    <xs:annotation>
+                        <xs:documentation>Used to specify whether the selected page range should be inserted before or after the selected position in the document.
+- afterPage = After the selected position.
+- beforePage = Before the selected position.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="targetPosition" default="1">
+                    <xs:annotation>
+                        <xs:documentation>Used to select the page number after or before which the selected page range should be inserted. This page must not be part of the page range being moved.</xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
                             <xs:minInclusive value="1" />
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="pages" default="1" type="xs:string" />
-                <xs:attribute name="order" default="preserve" type="q1:OrderType" />
+                <xs:attribute name="pages" default="1" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Used to define which page(s) should be moved. The page number can be an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9").</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="order" default="preserve" type="q1:OrderType">
+                    <xs:annotation>
+                        <xs:documentation>Used to select the order of the selected pages at the new position.
+- preserve = Keeps the original order in which the pages were found in the document.
+- reverse = Reverses the original order in which the pages were found in the document.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:simpleType name="MoveModeType">
+        <xs:annotation>
+            <xs:documentation>Used to specify whether the selected page range should be inserted before or after the selected position in the document.
+- afterPage = After the selected position.
+- beforePage = Before the selected position.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="beforePage" />
             <xs:enumeration value="afterPage" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="OrderType">
+        <xs:annotation>
+            <xs:documentation>Used to select the order of the selected pages at the new position.
+- preserve = Keeps the original order in which the pages were found in the document.
+- reverse = Reverses the original order in which the pages were found in the document.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="preserve" />
             <xs:enumeration value="reverse" />

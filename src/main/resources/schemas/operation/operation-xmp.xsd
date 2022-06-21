@@ -2,6 +2,9 @@
 <xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="XmpType">
+        <xs:annotation>
+            <xs:documentation>The xmp operation element can be used to add XMP metadata to the document.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:all>
@@ -9,6 +12,9 @@
                     <xs:element name="data" type="tns:XmpFileDataType" minOccurs="1" maxOccurs="1" />
                 </xs:all>
                 <xs:attribute name="dataFormat" default="json">
+                    <xs:annotation>
+                        <xs:documentation>Format for the XMP metadata being added. As of this writing, only "json" is supported.</xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="tns:XmpDataFormatType">
                             <xs:enumeration value="json" />
@@ -19,17 +25,38 @@
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="XmpNamespaceType">
-        <xs:attribute name="namespaceName" default="" type="xs:string" />
-        <xs:attribute name="namespacePrefix" default="" type="xs:string" />
-        <xs:attribute name="namespaceURI" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>Used to set the namespace for XMP metadata.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="namespaceName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Sets the namespace for the XMP data (e.g. "webPDF XMP Properties")</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="namespacePrefix" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Sets the prefix for the XMP data (e.g. "webpdf")</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="namespaceURI" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Sets the URI for the XMP data (e.g. "http://ns.webpdf.de/webpdf/6.0/")</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="XmpDataFormatType">
+        <xs:annotation>
+            <xs:documentation>Format for the XMP metadata being added. As of this writing, only "json" is supported.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="json" />
             <xs:enumeration value="xml" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="XmpFileDataType">
+        <xs:annotation>
+            <xs:documentation>Contains the XMP metadata that needs to be added, Base64 encoded. Please refer to the chapter "XMP Metadata" for a description of the structure.</xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
                 <xs:attributeGroup ref="tns:FileDataGroup" />

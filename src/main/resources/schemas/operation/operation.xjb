@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<jaxb:bindings version="2.0"
-               xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+<jaxb:bindings version="3.0"
+               xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
                xmlns:xs="http://www.w3.org/2001/XMLSchema"
                xmlns:simplify="http://jaxb2-commons.dev.java.net/basic/simplify"
                xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
@@ -30,13 +30,16 @@
     <!-- PdfPasswordType / BillingType -->
     <jaxb:bindings schemaLocation="operation-common.xsd" node="/xs:schema">
         <jaxb:bindings node="//xs:complexType[@name='BillingType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.ParameterInterface</inheritance:implements>
         </jaxb:bindings>
-        <jaxb:bindings node="//xs:complexType[@name='PdfPasswordType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+        <jaxb:bindings node="//xs:complexType[@name='CertificateFileDataType']">
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;String&gt;</inheritance:implements>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:complexType[@name='PrivateKeyFileDataType']">
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;String&gt;</inheritance:implements>
         </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='BaseToolboxType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.ParameterInterface</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
@@ -87,43 +90,43 @@
         </jaxb:bindings>
 
         <jaxb:bindings node="//xs:complexType[@name='PdfaType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.ParameterInterface</inheritance:implements>
         </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='ZugferdFileDataType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- SignatureType -->
     <jaxb:bindings schemaLocation="operation-signature.xsd" node="/xs:schema">
         <jaxb:bindings node="//xs:complexType[@name='SignatureType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.ParameterInterface</inheritance:implements>
         </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='SignatureFileDataType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- ConverterType -->
     <jaxb:bindings schemaLocation="operation-converter.xsd" node="/xs:schema">
         <jaxb:bindings node="//xs:complexType[@name='ConverterType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.ParameterInterface</inheritance:implements>
         </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='TemplateFileType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='TemplateDataType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='XslTransformationFileType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- BarcodeType -->
     <jaxb:bindings schemaLocation="operation-barcode.xsd" node="/xs:schema">
         <jaxb:bindings node="//xs:complexType[@name='BarcodeType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.ParameterInterface</inheritance:implements>
         </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@id='barcodeChoiceId']">
             <simplify:property name="aztecOrCodabarOrCode128">
@@ -131,28 +134,43 @@
             </simplify:property>
         </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='QrSwissPaymentContentType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- AttachmentType -->
     <jaxb:bindings schemaLocation="operation-attachment.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='AttachmentType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
-        </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='AttachmentFileDataType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- AnnotationType -->
     <jaxb:bindings schemaLocation="operation-annotation.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='AnnotationType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+        <jaxb:bindings
+                node="//xs:complexType[@name='AnnotationType']//xs:choice//xs:element[@id='annotationAddId']//xs:complexType">
+            <simplify:property name="textOrMarkupOrRedact">
+                <simplify:as-element-property/>
+            </simplify:property>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:complexType[@name='AppearanceFileDataType']">
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
         <jaxb:bindings
-                node="//xs:complexType[@name='AnnotationType']//xs:choice//xs:element[@name='add']//xs:complexType">
-            <simplify:property name="textOrMarkupOrRedact">
+                node="//xs:complexType[@name='AnnotationType']//xs:choice//xs:element[@name='remove']//xs:choice//xs:element[@name='select']">
+            <simplify:property name="objectKeyOrPosition">
+                <simplify:as-element-property/>
+            </simplify:property>
+        </jaxb:bindings>
+        <jaxb:bindings
+                node="//xs:complexType[@name='AnnotationType']//xs:choice//xs:element[@name='edit']//xs:choice//xs:element[@name='select']">
+            <simplify:property name="objectKeyOrPosition">
+                <simplify:as-element-property/>
+            </simplify:property>
+        </jaxb:bindings>
+        <jaxb:bindings
+                node="//xs:complexType[@name='AnnotationType']//xs:choice//xs:element[@name='comment']//xs:choice//xs:element[@id='commentAddID']//xs:complexType">
+            <simplify:property name="replyToOrChangeAnnotationStateOrMarkAnnotation">
                 <simplify:as-element-property/>
             </simplify:property>
         </jaxb:bindings>
@@ -160,9 +178,6 @@
 
     <!-- OptionsType -->
     <jaxb:bindings schemaLocation="operation-options.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='OptionsType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
-        </jaxb:bindings>
         <jaxb:bindings
                 node="//xs:complexType[@id='transitionsChoiceId']">
             <simplify:property name="addOrRemove">
@@ -176,134 +191,77 @@
             </simplify:property>
         </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='BackgroundFileDataType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
-        </jaxb:bindings>
-    </jaxb:bindings>
-
-    <!-- PrintType -->
-    <jaxb:bindings schemaLocation="operation-print.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='PrintType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
-        </jaxb:bindings>
-    </jaxb:bindings>
-
-    <!-- Rotate Type -->
-    <jaxb:bindings schemaLocation="operation-rotate.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='RotateType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- Security Type -->
     <jaxb:bindings schemaLocation="operation-security.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='SecurityType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+        <jaxb:bindings node="//xs:complexType[@name='EncryptType']">
+            <inheritance:implements>net.webpdf.wsclient.schema.AccessPermissionType</inheritance:implements>
         </jaxb:bindings>
-    </jaxb:bindings>
-
-    <!-- Description Type -->
-    <jaxb:bindings schemaLocation="operation-description.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='DescriptionType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
-        </jaxb:bindings>
-    </jaxb:bindings>
-
-    <!-- Extraction Type -->
-    <jaxb:bindings schemaLocation="operation-extraction.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='ExtractionType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+        <jaxb:bindings node="//xs:complexType[@name='RecipientType']">
+            <inheritance:implements>net.webpdf.wsclient.schema.AccessPermissionType</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- OcrType -->
     <jaxb:bindings schemaLocation="operation-ocr.xsd" node="/xs:schema">
         <jaxb:bindings node="//xs:complexType[@name='OcrType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.ParameterInterface</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- UrlConverterType -->
     <jaxb:bindings schemaLocation="operation-urlconverter.xsd" node="/xs:schema">
         <jaxb:bindings node="//xs:complexType[@name='UrlConverterType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
-        </jaxb:bindings>
-    </jaxb:bindings>
-
-    <!-- SplitType -->
-    <jaxb:bindings schemaLocation="operation-split.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='SplitType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.ParameterInterface</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- MergeType -->
     <jaxb:bindings schemaLocation="operation-merge.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='MergeType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
-        </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='MergeFileDataType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
-        </jaxb:bindings>
-    </jaxb:bindings>
-
-    <!-- DeleteType -->
-    <jaxb:bindings schemaLocation="operation-delete.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='DeleteType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- WatermarkType -->
     <jaxb:bindings schemaLocation="operation-watermark.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='WatermarkType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
-        </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='WatermarkFileDataType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
-        </jaxb:bindings>
-    </jaxb:bindings>
-
-    <!-- ImageType -->
-    <jaxb:bindings schemaLocation="operation-image.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='ImageType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- FormsType -->
     <jaxb:bindings schemaLocation="operation-forms.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='FormsType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
-        </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='FormsFileDataType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- XmpType -->
     <jaxb:bindings schemaLocation="operation-xmp.xsd" node="/xs:schema">
-        <jaxb:bindings node="//xs:complexType[@name='XmpType']">
-            <inheritance:implements>net.webpdf.wsclient.ParameterInterface</inheritance:implements>
-        </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='XmpFileDataType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- OutlineType -->
     <jaxb:bindings schemaLocation="operation-outline.xsd" node="/xs:schema">
         <jaxb:bindings node="//xs:complexType[@name='ItemType']/xs:complexContent/xs:extension/xs:choice">
-            <jaxb:property name ='actions'/>
+            <jaxb:property name='actions'/>
         </jaxb:bindings>
-        <jaxb:bindings node="//xs:complexType[@name='GoToDestinationActionType']/xs:complexContent/xs:extension/xs:choice">
-            <jaxb:property name ='destination'/>
+        <jaxb:bindings
+                node="//xs:complexType[@name='GoToDestinationActionType']/xs:complexContent/xs:extension/xs:choice">
+            <jaxb:property name='destination'/>
         </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- PortfolioType -->
     <jaxb:bindings schemaLocation="operation-portfolio.xsd" node="/xs:schema">
         <jaxb:bindings node="//xs:complexType[@name='PortfolioFileDataType']">
-            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType</inheritance:implements>
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
         <jaxb:bindings
                 node="//xs:complexType[@id='portfolioAddChoiceId']">

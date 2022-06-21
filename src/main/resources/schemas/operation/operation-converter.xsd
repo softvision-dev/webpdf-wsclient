@@ -4,6 +4,9 @@
     <xs:include schemaLocation="operation-pdfa.xsd" />
     <xs:include schemaLocation="operation-signature.xsd" />
     <xs:complexType name="ConverterType">
+        <xs:annotation>
+            <xs:documentation>Performs the conversion of a document.</xs:documentation>
+        </xs:annotation>
         <xs:all>
             <xs:element name="page" type="tns:PageType" minOccurs="0" />
             <xs:element name="pdfa" type="tns:PdfaType" minOccurs="0" />
@@ -17,9 +20,20 @@
             <xs:element name="text" type="tns:ConverterTextType" minOccurs="0" />
             <xs:element name="transform" type="tns:TransformType" minOccurs="0" maxOccurs="1" />
         </xs:all>
-        <xs:attribute name="pages" default="" type="xs:string" />
-        <xs:attribute name="compression" default="true" type="xs:boolean" />
+        <xs:attribute name="pages" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>A text that defines the page range for the export. Individual pages or a range of pages can be defined here. If the text is empty, the entire file will be exported (e.g.: "1-10" or "1,2,5-10")</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="compression" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true," the data objects in the PDF document will be compressed (ZLib compression), reducing the size of the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="jpegQuality" default="90">
+            <xs:annotation>
+                <xs:documentation>Used to set the quality (as a percentage) of JPEG images in the PDF document.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
@@ -27,16 +41,48 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="reduceResolution" default="false" type="xs:boolean" />
+        <xs:attribute name="reduceResolution" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true," then the DPI resolution of graphics is reduced. The reduction value is set with "dpi."</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="dpi" default="300">
+            <xs:annotation>
+                <xs:documentation>Used to set the DPI solution (pixels per inch) for images.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="tns:DpiType" />
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="embedFonts" default="false" type="xs:boolean" />
-        <xs:attribute name="accessPassword" default="" type="xs:string" />
-        <xs:attribute name="fileExtension" default="" type="xs:string" />
+        <xs:attribute name="embedFonts" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true," fonts will be embedded in the PDF document that is created.
+
+**Important**: If the original fonts are not available on the conversion system, substitute fonts may be embedded instead.
+
+**Important**: If, after the conversion, you want to convert the PDF document to PDF/A, you should not embed any of the fonts, but should instead let the "Pdfa" web service do this.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="accessPassword" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>This parameter can be used to declare a password that will be used to open the source document if it is protected.
+
+**Important:** This option is currently only supported for Microsoft Office 97-2003 binary documents and Microsoft Office 2007 documents. Only the default password methods are supported. Encryption based on digital certificates is not supported.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fileExtension" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>If you use this attribute to enter an extension for the file (e.g., "doc”) that is currently being processed, automatic file format detection will be disabled. Normally, webPDF does not detect file formats based on the corresponding file extension, but on the file contents instead. Accordingly, webPDF will analyze the file and assign the file the appropriate "mime-type" so that the appropriate file converter can then be selected.
+
+**Important**: You should only set a file extension in exceptional cases, as this will completely disable automatic detection. If, for instance, you specify an extension for which webPDF does not have a "mime-type," the conversion will fail.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="maxRecursion" default="1">
+            <xs:annotation>
+                <xs:documentation>Sets the maximum recursions, that may occur when converting a document´s attachments.
+
+**important:** This parameter is intended for internal use only. Please only use this, if you really are sure you need to do so.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="1" />
@@ -44,98 +90,588 @@
             </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
-    <xs:complexType name="SharePointBridgeType" />
-    <xs:complexType name="OfficeBridgeType" />
+    <xs:complexType name="SharePointBridgeType">
+        <xs:annotation>
+            <xs:documentation>Used to specify whether "SharePoint Bridge" should be used when converting a Word document. If the element is set, the Word document will be converted using the SharePoint service (if SharePoint Bridge is enabled).</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="OfficeBridgeType">
+        <xs:annotation>
+            <xs:documentation>Used to specify whether "Office Bridge" should be used when converting Word, Excel, and PowerPoint documents. If this element is set (and Office Bridge is enabled), the document will be converted using the Office software installed on the server.</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
     <xs:complexType name="ConverterMailType">
-        <xs:attribute name="downloadImages" default="false" type="xs:boolean" />
-        <xs:attribute name="adjustFonts" default="false" type="xs:boolean" />
-        <xs:attribute name="attachmentMode" default="embed" type="tns:AttachmentModeType" />
-        <xs:attribute name="ignoreMissingBodyChunk" default="false" type="xs:boolean" />
-        <xs:attribute name="useBackground" default="true" type="xs:boolean" />
-        <xs:attribute name="resizeImages" default="false" type="xs:boolean" />
-        <xs:attribute name="resizeTables" default="false" type="xs:boolean" />
+        <xs:annotation>
+            <xs:documentation>These settings are only used for e-mail documents. The "MIME" (eml; RFC-822) and Outlook (msg) e-mail formats are supported.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="downloadImages" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If “true”, then the images of an e-mail or an HTML document are downloaded automatically. This option could slow down the conversion considerably if there are many images contained or if, for example, e-mail documents are converted in which the images can no longer be invoked.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="adjustFonts" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true", then the font specifications "Arial", "Helvetica" and "Sans-Serif" in HTML documents and e-mails (which are based on HTML) are automatically replaced by the "Arial Unicode MS" font. The improves the appearance of the typeface in the PDF result.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="attachmentMode" default="embed" type="tns:AttachmentModeType">
+            <xs:annotation>
+                <xs:documentation>Specifies the manner in which attachments are to be processed in e-mails.
+- embed = Embed in original format
+- remove = Remove attachments
+- convert = Converts the attachments to PDF format and embeds them as an attachment
+- convertMerge = Converts the attachments to PDF format and appends them as additional page(s) at the end
+
+**important:** If conversion to PDF format is not possible when using "convert" or "convertMerge”, the attachment will be embedded in its original format.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ignoreMissingBodyChunk" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this option is enabled, an error will not be triggered (the conversion will not be aborted) for e-mails if there is no body element in the file structure. However, this should not be confused with an e-mail not having any content.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useBackground" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true", then a background defined in the e-mail (in the HTML content) is also output in the PDF document. If "false", the background will be hidden.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="resizeImages" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If true, then an attempt is made to fit all images that are not in a table to the maximum page width in the PDF document. The graphics will be scaled (while maintaining the aspect ratio) to fit the width of the page and not be cut off. Please note that this may cause the original formatting of the email to be lost or to deviate from the original due to the scaling.
+
+**important:** If the "resizeImages" option is enabled, you must expect that the original appearance of the e-mail document will no longer be preserved.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="resizeTables" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If true, then an attempt is made to fit all tables to the maximum page width in the PDF document. An attempt is made to reduce the individual columns of a table so that the table fits completely within the page width. This works only for simple tables originally defined with dynamic sizes and not for nested tables (table-in-table). Please note that this may cause the original formatting of the email to be lost or to deviate from the original due to scaling.
+
+**important:** If the option "resizeTables" is activated, you must expect that the original appearance of the e-mail document is no longer preserved. The recalculation of the table columns may also result in very narrow columns in the output.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ConverterHtmlType">
+        <xs:annotation>
+            <xs:documentation>These settings are only used for HTML (e.g. websites) and HTML-based documents (e.g. e-mails).</xs:documentation>
+        </xs:annotation>
         <xs:all>
             <xs:element name="templateData" type="tns:TemplateDataType" minOccurs="0" maxOccurs="1" />
         </xs:all>
-        <xs:attribute name="downloadImages" default="false" type="xs:boolean" />
-        <xs:attribute name="adjustFonts" default="false" type="xs:boolean" />
-        <xs:attribute name="baseURL" default="" type="xs:anyURI" />
-        <xs:attribute name="useAsTemplate" default="false" type="xs:boolean" />
-        <xs:attribute name="useBackground" default="true" type="xs:boolean" />
+        <xs:attribute name="downloadImages" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If “true”, then the images of an e-mail or an HTML document are downloaded automatically. This option could slow down the conversion considerably if there are many images contained or if, for example, e-mail documents are converted in which the images can no longer be invoked.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="adjustFonts" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true", then the font specifications "Arial", "Helvetica" and "Sans-Serif" in HTML documents and e-mails (which are based on HTML) are automatically replaced by the "Arial Unicode MS" font. The improves the appearance of the typeface in the PDF result.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="baseURL" default="" type="xs:anyURI">
+            <xs:annotation>
+                <xs:documentation>Used to define the URL used as a basis for all URLs in the HTML document that are not defined as absolute URLs.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useAsTemplate" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true", the HTML document will be interpreted as a template, i.e., the system will search for variables in the HTML and replace them with the data passed in "templateData". The document will not be converted to HTML format until after this step is completed. This means that by using the HTML document as a template together with passed data, you can obtain a dynamically generated PDF document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useBackground" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true", the background defined in the HTML document will be output in the PDF document as well. If "false", the background will be hidden.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ConverterReportType">
-        <xs:attribute name="contentProblems" default="false" type="xs:boolean" />
-        <xs:attribute name="fontAliasUsage" default="false" type="xs:boolean" />
-        <xs:attribute name="fontIsMissing" default="false" type="xs:boolean" />
+        <xs:annotation>
+            <xs:documentation>Can be used to enable expanded error reporting for text-based documents (e.g., Word).</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="contentProblems" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true", then an error (ERR_CONVERTER_CONTENT_PROBLEMS) is triggered if a problem occurs with a content item during the conversion. The following are among the problems:
+- Unicode resolution of characters is not possible
+- Vertical text elements
+- Unsupported text effects
+- Unsupported graphics compression
+- Unsupported colour space
+- Non-integrated sub-document that was not converted
+- Tables with a “right-to-left” alignment in the content
+- The document contains mathematical formulas</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fontAliasUsage" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true", then an error (ERR_CONVERTER_FONT_ALIAS_USED) is triggered if a font was not found during conversion and in its place a substitute (alias) font was used.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fontIsMissing" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true", then an error (ERR_CONVERTER_FONT_IS_MISSING) is triggered if a font was not found during conversion.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ConverterTemplateType">
+        <xs:annotation>
+            <xs:documentation>Can be used to define settings for file formats for which a template is required for conversion. As of this writing, these settings apply to the following file formats:
+- MIME mail (eml)
+- Outlook message (msg)
+- iCalendar (ics) / vCalendar (vcs)
+- vCard (vcf)
+- Serial Vector Format (svg)
+- Text document (txt)
+
+In addition, you can replace the default template with a custom template of your own in "file". You can also use your own variables in this custom template. These variables would then need to be passed with a JSON structure (Base64-encoded) in "data".</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:TemplateType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SyntaxHighlightType">
-        <xs:attribute name="fontSize" default="10px" type="xs:string" />
-        <xs:attribute name="fontOrigin" default="system" type="tns:FontOriginModeType" />
-        <xs:attribute name="fontFamily" default="" type="xs:string" />
-        <xs:attribute name="wordBreak" default="auto" type="tns:TextWrapModeType" />
-        <xs:attribute name="lineNumbers" default="true" type="xs:boolean" />
-        <xs:attribute name="lineHeight" default="12px" type="xs:string" />
-        <xs:attribute name="language" default="" type="xs:string" />
-        <xs:attribute name="available" default="" type="xs:string" />
-        <xs:attribute name="relevance" default="90" type="xs:int" />
+        <xs:annotation>
+            <xs:documentation>This element is used to configure language detection and the representation of syntax elements in recognized programming/script languages.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="fontSize" default="10px" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Used to set the font size for syntax highlighting to the specified value.
+You can use any of the following units:
+- px = Pixels
+- cm = Centimeters
+- mm = Millimetres
+- in = Inches
+- pt = Points
+- pc = Pica</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fontOrigin" default="system" type="tns:FontOriginModeType">
+            <xs:annotation>
+                <xs:documentation>Used to specify whether the selected font should be obtained from your operating system or from the "templates/fonts" folder (in your webPDF installation path).
+Possible values:
+- system = It will be possible to select from the fonts available system-wide.
+- folder =It will be possible to select from the fonts in "templates/fonts".</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fontFamily" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Used to specify the font that should be used for syntax highlighting. If you select "folder" for the "fontOrigin" parameter, the font here needs to be specified with the filename for the file. Otherwise, use the name of the font you want. If the value is left blank, the "Fira Code" font will be used automatically.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="wordBreak" default="auto" type="tns:TextWrapModeType">
+            <xs:annotation>
+                <xs:documentation>Can be used to configure the word wrap behaviour during highlighting
+Possible values:
+- auto = Automatic word wrap if necessary.
+- none = Suppress the addition of extra line breaks.
+- word = Line breaks allowed only after words.
+- all = Line breaks allowed unconditionally.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="lineNumbers" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this value is set to "true", line numbers are added before the code.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="lineHeight" default="12px" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Used to set the line height. You can use any of the following units:
+- px = Pixels
+- cm = Centimeters
+- mm = Millimetres
+- in = Inches
+- pt = Points
+- pc = Pica</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="language" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Used to select a specific language for highlighting recognition. You can select one of the languages listed for the "available" parameter. If you do not set this value, the system will attempt to automatically select an appropriate language from the list of available languages.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="available" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Can be used to specify the languages to which the syntax highlighted should be limited. You can enter multiple languages by separating them with a comma ("java,cpp"). If you do not specify a value, all the languages listed below will be recognized.
+You can select any of the following languages:
+- abnf = Augmented Backus-Naur form
+- accesslog = Apache/Nginx Access Logs
+- actionscript = ActionScript
+- ada = Ada
+- angelscript = AngelScript
+- apache = Apache configuration language
+- applescript = AppleScript
+- arcade = ArcGIS Arcade
+- arduino = Arduino
+- armasm = ARM Assembly
+- asciidoc = AsciiDoc
+- aspectj = AspectJ
+- autohotkey = AutoHotkey
+- autoit = AutoIt
+- avrasm = AVR Assembler
+- awk = Awk
+- axapta = Axapta
+- bash = Bash
+- basic = Basic
+- bnf = Backus-Naur Form
+- brainfuck = Brainfuck
+- cal = C/AL
+- capnproto = Cap'n Proto
+- ceylon = Ceylon
+- clean = Clean
+- clojure-repl = Clojure REPL
+- clojure = Clojure
+- cmake = CMake
+- coffeescript = CoffeeScript
+- coq = Coq
+- cos = Caché Object Script
+- cpp = C++
+- crmsh = crmsh
+- crystal = Crystal
+- cs = C#
+- csp = CSP
+- css = CSS
+- d = D
+- dart = Dart
+- delphi = Delphi
+- diff = Diff
+- django = Django
+- dns = DNS Zone file
+- dockerfile = Dockerfile
+- dos = DOS .bat
+- dsconfig = dsconfig
+- dts = Device Tree
+- dust = Dust
+- ebnf = Extended Backus-Naur Form
+- elixir = Elixir
+- elm = Elm
+- erb = Embedded Ruby
+- erlang-repl = Erlang REPL
+- erlang = Erlang
+- excel = Excel
+- fix = FIX
+- flix = FLIX
+- fortran = Fortran
+- fsharp = F#
+- gams = GAMS
+- gauss = GAUSS
+- gcode = G-code
+- gherkin = Gherkin
+- glsl = GLSL
+- gml = GML
+- go = Go
+- golo = Golo
+- gradle = Gradle
+- groovy = Groovy
+- haml = Haml
+- arduino = Arduino
+- handlebars = Handlebars
+- haskell = Haskell
+- haxe = Haxe
+- hsp = HSP
+- htmlbars = HTMLBars
+- http = HTTP
+- hy = Hy
+- inform7 = Inform 7
+- arduino = Ini, TOML
+- irpf90 = IRPF90
+- isbl = ISBL
+- java = Java
+- javascript = Javascript
+- jboss-cli = jboss-cli
+- json = JSON
+- julia-repl = Julia REPL
+- julia = Julia
+- kotlin = Kotlin
+- lasso = Lasso
+- ldif = LDIF
+- leaf = Leaf
+- less = Less
+- lisp = Lisp
+- livecodeserver = LiveCode
+- livescript = LiveScript
+- llvm = LLVM IR
+- lsl = Linden Scripting Language
+- lua = Lua
+- makefile = Makefile
+- markdown = Markdown
+- mathematica = Mathematica
+- matlab = Matlab
+- maxima = Maxima
+- mel = MEL
+- mercury = Mercury
+- mipsasm = MIPS Assembly
+- mizar = Mizar
+- mojolicious = Mojolicious
+- monkey = Monkey
+- moonscript = MoonScript
+- n1ql = N1QL
+- nginx = Nginx
+- nimrod = Nimrod
+- nix = Nix
+- nsis = NSIS
+- objectivec = Objective-C
+- ocaml = OCaml
+- openscad = OpenSCAD
+- oxygene = Oxygene
+- parser3 = Parser3
+- perl = Perl
+- pf = pf
+- pgsql = PostgreSQL
+- php = PHP
+- plaintext = plaintext
+- pony = Pony
+- powershell = PowerShell
+- processing = Processing
+- profile = Python profile
+- prolog = Prolog
+- properties = Properties
+- protobuf = Protocol Buffers
+- puppet = Puppet
+- purebasic = PureBASIC
+- python = Python
+- q = Q
+- qml = QML
+- r = R
+- reasonml = ReasonML
+- rib = RenderMan RIB
+- roboconf = Roboconf
+- routeros = Microtik RouterOS Script
+- rsl = RenderMan RSL
+- ruby = Ruby
+- ruleslanguage = Oracle Rules Language
+- rust = Rust
+- sas = SAS
+- scala = Scala
+- scheme = Scheme
+- scilab = Scilab
+- scss = SCSS
+- shell = Shell Session
+- smali = Smali
+- smalltalk = Smalltalk
+- sml = SML
+- sqf = SQF
+- sql = SQL
+- stan = Stan
+- stata = Stata
+- step21 = Step Part 21
+- stylus = Stylus
+- subunit = SubUnit
+- swift = Swift
+- taggerscript = Tagger Script
+- tap = Test Anything Protocol
+- tcl = Tcl
+- tex = TeX
+- thrift = Thrift
+- tp = TP
+- twig = Twig
+- typescript = TypeScript
+- vala = Vala
+- vbnet = VB.NET
+- vbscript-html = VBScript in HTML
+- vbscript = VBScript
+- verilog = Verilog
+- vhdl = VHDL
+- vim = Vim Script
+- x86asm = Intel x86 Assembly
+- xl = XL
+- xml = XML
+- xquery = XQuery
+- yaml = YAML
+- zephir = Zephir</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="relevance" default="90" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>The syntax highlighter evaluates the degree of reliability with which it recognizes a language with a value ranging from 0 to 1000 points. This value determines the reliability level starting from which it should highlight syntax for a recognized language. The higher the value, the more closely the content found must match the criteria.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="TextHighlightType">
-        <xs:attribute name="fontSize" default="10px" type="xs:string" />
-        <xs:attribute name="fontOrigin" default="system" type="tns:FontOriginModeType" />
-        <xs:attribute name="fontFamily" default="" type="xs:string" />
-        <xs:attribute name="wordBreak" default="auto" type="tns:TextWrapModeType" />
-        <xs:attribute name="lineNumbers" default="false" type="xs:boolean" />
-        <xs:attribute name="lineHeight" default="12px" type="xs:string" />
-        <xs:attribute name="color" default="#000000" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>This element is used to configure the display of contents for which the syntax highlighter was unable to identify a known language.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="fontSize" default="10px" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Used to set the font size for the text to the specified value.
+You can use any of the following units:
+- px = Pixels
+- cm = Centimeters
+- mm = Millimetres
+- in = Inches
+- pt = Points
+- pc = Pica</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fontOrigin" default="system" type="tns:FontOriginModeType">
+            <xs:annotation>
+                <xs:documentation>Used to specify whether the selected font should be obtained from your operating system or from the "templates/fonts" folder (in your webPDF installation path).
+Possible values:
+- system = It will be possible to select from the fonts available system-wide.
+- folder =It will be possible to select from the fonts in "templates/fonts".</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fontFamily" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Specifies the font to use for the text. If you select "folder" for the "fontOrigin" parameter, the font here needs to be specified with the filename for the file. Otherwise, use the name of the font you want. If the value is left blank, the "SourceHanSans" font will be used automatically.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="wordBreak" default="auto" type="tns:TextWrapModeType">
+            <xs:annotation>
+                <xs:documentation>Can be used to configure the word wrap behaviour during highlighting
+Possible values:
+- auto = Automatic word wrap if necessary.
+- none = Suppress the addition of extra line breaks.
+- word = Line breaks allowed only after words.
+- all = Line breaks allowed unconditionally.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="lineNumbers" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this value is set to "true", line numbers are added before the code.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="lineHeight" default="12px" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Used to set the line height. You can use any of the following units:
+- px = Pixels
+- cm = Centimeters
+- mm = Millimetres
+- in = Inches
+- pt = Points
+- pc = Pica</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="color" default="#000000" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Sets the font color for the text to the given value. The colour needs to be specified as a hexadecimal RGB value with a number sign before it.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ConverterTextType">
+        <xs:annotation>
+            <xs:documentation>The settings are used in purely text-based files that can contain source code that would make syntax highlighting advisable. If you configure this element, the system will attempt, during conversion, to detect whether and in which programming/script language content is stored. Based on the result, it will then determine the type of highlighting (in the generated PDF document) is required.
+SyntaxHighlighter and TextHighlighter are specified alternately. If the syntax highlighter is unable to determine whether the contents belong to any language it knows, the text highlighter will be used instead for formatting.</xs:documentation>
+        </xs:annotation>
         <xs:all>
             <xs:element name="syntaxHighlight" type="tns:SyntaxHighlightType" minOccurs="0" />
             <xs:element name="textHighlight" type="tns:TextHighlightType" minOccurs="0" />
         </xs:all>
-        <xs:attribute name="useSyntaxDetection" default="false" type="xs:boolean" />
+        <xs:attribute name="useSyntaxDetection" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this value is set to "true", syntax highlighting and language detection will be enabled.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="TemplateType">
+        <xs:annotation>
+            <xs:documentation>Can be used to define settings for file formats for which a template is required for conversion. As of this writing, these settings apply to the following file formats:
+- MIME mail (eml)
+- Outlook message (msg)
+- iCalendar (ics) / vCalendar (vcs)
+- vCard (vcf)
+- Serial Vector Format (svg)
+- Text document (txt)
+
+In addition, you can replace the default template with a custom template of your own in "file". You can also use your own variables in this custom template. These variables would then need to be passed with a JSON structure (Base64-encoded) in "data".</xs:documentation>
+        </xs:annotation>
         <xs:all>
             <xs:element name="file" type="tns:TemplateFileType" minOccurs="0" maxOccurs="1" />
             <xs:element name="data" type="tns:TemplateDataType" minOccurs="0" maxOccurs="1" />
         </xs:all>
-        <xs:attribute name="language" type="tns:LanguageType" use="optional" />
+        <xs:attribute name="language" type="tns:LanguageType" use="optional">
+            <xs:annotation>
+                <xs:documentation>An ISO 639-1-compliant language code consisting of 2 letters. If there is one, a localized template will be selected using the language selected here. If not defined, the language in which webPDF is run will be used.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="TransformType">
+        <xs:annotation>
+            <xs:documentation>This element defines a set of transformations to be applied to the document before further converter operations are performed. For example, an XSLT transformation could be applied to an XML document to transform it to HTML before converting that HTML content to a PDF document. 
+This element currently recognizes two forms of transformations:
+- XSLT transformation - a generic transformation to any output format. 
+Optimally, the transformation creates a document format (such as HTML) that the downstream conversion can convert to a PDF document. The generic transformation can contain an arbitrary number of XSLT elements, defined as `&lt;resources&gt;`, each of which is successively applied to the result of the preceding transformation.
+- XInvoice transformation - XML data in XInvoice format (CII or UBL) transformed into a visual image by means of transformation.
+Normally, no further specification is necessary here, because a standard layout for the visual image of an X-invoice is stored on the server. However, if a different layout is to be used, this must be specified via the `&lt;visualization&gt;` element. The file used there must be an XLST stylesheet, which creates the XInvoice data as HTML output.</xs:documentation>
+        </xs:annotation>
         <xs:choice>
             <xs:element name="xslTransformation" type="tns:XslTransformationType" />
             <xs:element name="xRechnung" type="tns:XRechnungType" />
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="XslTransformationType">
+        <xs:annotation>
+            <xs:documentation>This element defines one XSLT transformation and the resources and parameters necessary for it.</xs:documentation>
+        </xs:annotation>
         <xs:all>
             <xs:element name="resources" type="tns:XslTransformationResourcesType" minOccurs="0" maxOccurs="1" />
         </xs:all>
     </xs:complexType>
     <xs:complexType name="XRechnungType">
+        <xs:annotation>
+            <xs:documentation>This element defines one "XRechnung" transformation and the resources and parameters necessary for it.</xs:documentation>
+        </xs:annotation>
         <xs:all>
             <xs:element name="visualization" type="tns:XRechnungResourcesType" minOccurs="0" maxOccurs="1" />
         </xs:all>
     </xs:complexType>
     <xs:complexType name="XslTransformationResourcesType">
+        <xs:annotation>
+            <xs:documentation>This element defines all resources necessary for the transformation. (In the case of XSLT, for example, the XSL stylesheet itself and - if necessary - additional *.css, *.js files or similar). Any number of resources can be passed, but at least one must be present for the transformation to succeed. The individual resources are passed via the individual `&lt;file&gt;` elements, which can occur multiple times.</xs:documentation>
+        </xs:annotation>
         <xs:choice minOccurs="1" maxOccurs="unbounded">
             <xs:element name="file" type="tns:XslTransformationFileType" />
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="XRechnungResourcesType">
+        <xs:annotation>
+            <xs:documentation>This element defines a transformation and the resources and parameters needed for it. An XLST stylesheet must be used, which creates an HTML output. The specification of the element `&lt;visualization&gt;` is optional, because a default layout is stored on the server. The `&lt;visualization&gt;` element can contain one or more `&lt;file&gt;` entries, but must define at least one XLST stylesheet.</xs:documentation>
+        </xs:annotation>
         <xs:choice minOccurs="1" maxOccurs="unbounded">
             <xs:element name="file" type="tns:XslTransformationFileType" />
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="TemplateDataType">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+Contains the Base64-encoded JSON structure that is used as variables in the HTML template if "useAsTemplate" has a value of "true".
+
+Example for data as JSON structure:
+
+```
+{
+  "page1": "Text for page 1",
+  "page2": "Text for page 2",
+  "page3": "Text for page 3",
+  "image": {
+    "name": "Warning!",
+    "data": "... BASE64 encoded image ..."
+  }
+}
+```
+
+Within the HTML document, the "custom." prefix will be prepended to each variable from the JSON structure. The variables can then be used as follows in the HTML code:
+
+```
+<body>
+  <div class="page">
+    <h1>This is Page 1</h1>
+    <i>${custom.page1}</i>
+    <br />
+    ${custom.image.name}
+    <img src="${custom.image.data}" width="100" height="100" />
+  </div>
+  <div class="page">
+    <h1>This is Page 2</h1>
+    <b>${custom.page2}</b>
+  </div>
+  <div class="page">
+    <h1>This is Page 3</h1>
+    <u>${custom.page3}</u>
+  </div>
+</body>
+```
+
+For more information regarding the use of the templates, please refer to the chapter "Server - Conversion - Templates" document.
+]]></xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
                 <xs:attributeGroup ref="tns:FileDataGroup" />
@@ -143,19 +679,41 @@
         </xs:simpleContent>
     </xs:complexType>
     <xs:complexType name="TemplateFileType">
+        <xs:annotation>
+            <xs:documentation>The template is passed as Base64-encoded content in the "file" element. This template is HTML-based and can contain variables. For more information regarding the use of the templates, please refer to the chapter "Server - Conversion - Templates".</xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
                 <xs:attributeGroup ref="tns:FileDataGroup" />
-                <xs:attribute name="name" default="" type="xs:string" />
+                <xs:attribute name="name" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>The name of the template file.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
     <xs:complexType name="XslTransformationFileType">
+        <xs:annotation>
+            <xs:documentation>This element defines a file necessary for the transformation, which is passed "Base64 encoded". This element can be used with `&lt;resources&gt;` or `&lt;visualization&gt;`.
+In the case of `&lt;resources&gt;`, this is a file that defines, for example, an XLST stylesheet or a CSS resource. In the case of an X invoice and the parent `&lt;visualization&gt;` it defines a file (XLST stylesheet) which defines a different layout for the PDF output.</xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
                 <xs:attributeGroup ref="tns:FileDataGroup" />
-                <xs:attribute name="fileName" default="" type="xs:string" />
+                <xs:attribute name="fileName" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>The filename of the file. This is the name under which the resource can be found again and is especially important for resources that are referenced from other files passed here via this name. (For example, the name of a CSS stylesheet that is referenced by name from an XSLT stylesheet).</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="format" default="xslt">
+                    <xs:annotation>
+                        <xs:documentation>The type of the resource passed
+- xlst = An XSLT stylesheet to be used for the transformation.
+- other = Any other resource that is needed for the transformation. For example, this can be a CSS stylesheet, which is used by an output file of a transformation if it results in HTML output.
+
+**important:** The order of the resources can be important if multiple transformations are to be performed, i.e. multiple resources of the format "xlst" are passed. The transformations are performed in the order in which they are passed, in which case each transformation uses the output of the previous transformation as the starting point for its own transformation.</xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="tns:XslTransformationFileFormatType" />
                     </xs:simpleType>
@@ -164,14 +722,30 @@
         </xs:simpleContent>
     </xs:complexType>
     <xs:complexType name="XSLTResourceType">
+        <xs:annotation>
+            <xs:documentation>Defines a resource for a XSLT transformation.</xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
                 <xs:attributeGroup ref="tns:FileDataGroup" />
-                <xs:attribute name="fileName" default="" type="xs:string" />
+                <xs:attribute name="fileName" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>The name of the XSLT resource.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
     <xs:simpleType name="AttachmentModeType">
+        <xs:annotation>
+            <xs:documentation>Specifies the manner in which attachments are to be processed in e-mails.
+- embed = Embed in original format
+- remove = Remove attachments
+- convert = Converts the attachments to PDF format and embeds them as an attachment
+- convertMerge = Converts the attachments to PDF format and appends them as additional page(s) at the end
+
+**important:** If conversion to PDF format is not possible when using "convert" or "convertMerge”, the attachment will be embedded in its original format.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="embed" />
             <xs:enumeration value="remove" />
@@ -182,6 +756,14 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="TextWrapModeType">
+        <xs:annotation>
+            <xs:documentation>Can be used to configure the word wrap behaviour during highlighting
+Possible values:
+- auto = Automatic word wrap if necessary.
+- none = Suppress the addition of extra line breaks.
+- word = Line breaks allowed only after words.
+- all = Line breaks allowed unconditionally.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="auto" />
             <xs:enumeration value="none" />
@@ -190,12 +772,25 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="FontOriginModeType">
+        <xs:annotation>
+            <xs:documentation>Used to specify whether the selected font should be obtained from your operating system or from the "templates/fonts" folder (in your webPDF installation path).
+Possible values:
+- system = It will be possible to select from the fonts available system-wide.
+- folder =It will be possible to select from the fonts in "templates/fonts".</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="system" />
             <xs:enumeration value="folder" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="XslTransformationFileFormatType">
+        <xs:annotation>
+            <xs:documentation>The type of the resource passed
+- xlst = An XSLT stylesheet to be used for the transformation.
+- other = Any other resource that is needed for the transformation. For example, this can be a CSS stylesheet, which is used by an output file of a transformation if it results in HTML output.
+
+**important:** The order of the resources can be important if multiple transformations are to be performed, i.e. multiple resources of the format "xlst" are passed. The transformations are performed in the order in which they are passed, in which case each transformation uses the output of the previous transformation as the starting point for its own transformation.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="xslt" />
             <xs:enumeration value="other" />

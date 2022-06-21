@@ -1,49 +1,50 @@
 package net.webpdf.wsclient.schema.beans;
 
+import net.webpdf.wsclient.session.Session;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 /**
- * Wraps the authentication token value into an onject
+ * An instance of {@link Token} wraps the access token of a webPDF {@link Session} in an object.
  */
 @XmlRootElement
 public class Token implements Serializable {
 
-    @NotNull
-    private String token = "";
+    private @NotNull String token = "";
 
     /**
-     * Creates a {@link Token} with an existing authentication token value (from an existing session)
+     * Creates a {@link Token} with a preexisting access token value.
      *
-     * @param token token of the existing session
+     * @param token token {@code String} value of the existing session
      * @return token {@link Token}
      */
-    public static Token create(String token) {
+    public static @NotNull Token create(@NotNull String token) {
         Token newToken = new Token();
         newToken.setToken(token);
         return newToken;
     }
 
     /**
-     * Returns the authentication token value
+     * Returns the access token {@code String} value.
      *
-     * @return authentication token value
+     * @return The access token {@code String} value.
      */
     @XmlElement
-    @NotNull
-    public String getToken() {
+    public @NotNull String getToken() {
         return token;
     }
 
     /**
-     * Sets a new authentication token value
+     * Sets the access token {@code String} value.
      *
-     * @param token the new token value
+     * @param token The access token {@code String} value.
      */
     public void setToken(@NotNull String token) {
         this.token = token;
     }
+
 }

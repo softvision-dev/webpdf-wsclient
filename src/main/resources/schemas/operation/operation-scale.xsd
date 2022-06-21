@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="ScaleType">
+        <xs:annotation>
+            <xs:documentation>The scale operation element can be used to scale pages in the document. In the following passage, terms such as the "media box", the "bleed box" and similar are used. This assumes, therefore, that you are familiar with the contexts described in the chapter "Display options".</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:choice>
+                    <xs:element name="scalePages" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation>Used to define page scaling operations.</xs:documentation>
+                        </xs:annotation>
+                        <xs:complexType>
+                            <xs:choice>
+                                <xs:element name="dimensions" type="tns:PaddedRectangleType" minOccurs="0" maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation>Care should be taken when applying these parameter: When a padding is set, the page contents will be moved from their original position, which could also mean moving elements into the visible area that were previously hidden by the CropBox.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:choice>
+                            <xs:attribute name="pages" default="" type="xs:string" use="optional">
+                                <xs:annotation>
+                                    <xs:documentation>Specifies which page(s) should be scaled. The page number can be either a single page, a range of pages or a list (separated by commas) (e.g. "1.5-6.9"). The specification of all pages is done with "*".</xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                            <xs:attribute name="scaleBoxes" default="true" type="xs:boolean">
+                                <xs:annotation>
+                                    <xs:documentation>Specifies whether the scaling of the page should also affect the boxes (Mediabox, Cropbox, etc.) of a page. If this is not the case (false), the actual page dimensions, crop boxes, etc. remain as they were originally and only page contents are scaled.
+The content can become much smaller or larger than the containing page in this way, which can lead to either large blank areas or overflow of the page content.</xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                            <xs:attribute name="preserveAspectRatio" default="true" type="xs:boolean">
+                                <xs:annotation>
+                                    <xs:documentation>Specifies whether the ratio of the page dimensions to each other should be maintained when scaling the page. This may result in deviations from the given target height or width (depending on requirements).</xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                            <xs:attributeGroup ref="tns:AlignmentGroup" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

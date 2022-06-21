@@ -2,14 +2,24 @@
 <xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="WatermarkType">
+        <xs:annotation>
+            <xs:documentation>The watermark operation element can be used to add watermarks to the PDF document.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:choice>
                     <xs:element name="text" type="tns:WatermarkTextType" minOccurs="0" maxOccurs="1" />
                     <xs:element name="image" type="tns:WatermarkImageType" minOccurs="0" maxOccurs="1" />
                 </xs:choice>
-                <xs:attribute name="pages" default="" type="xs:string" />
+                <xs:attribute name="pages" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Specifies on which page(s) the watermark should be created. The page number can be an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9"). A blank value or "*" selects all pages of the PDF document.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="angle" default="45">
+                    <xs:annotation>
+                        <xs:documentation>Specifies the rotation angle for the text or image output of the watermark. Values between 0 and 360 are allowed. Rotation is performed clockwise.</xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
                             <xs:minInclusive value="0" />
@@ -21,11 +31,33 @@
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="WatermarkFontType">
-        <xs:attribute name="name" default="" type="xs:string" />
-        <xs:attribute name="outline" default="false" type="xs:boolean" />
-        <xs:attribute name="bold" default="false" type="xs:boolean" />
-        <xs:attribute name="italic" default="false" type="xs:boolean" />
+        <xs:annotation>
+            <xs:documentation>Used to specify the font used for a watermark.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Used to specify the name of the font that should be used for the text output. If a font is not specified, "Helvetica" will be used.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="outline" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>Uses an outline font for the text output.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="bold" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>Used to increase the text output’s weight.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="italic" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>Used to set the italic font posture for the text output.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="size" default="24">
+            <xs:annotation>
+                <xs:documentation>Used to set the text size for the text output.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="1" />
@@ -33,10 +65,31 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="opacity" default="100" type="tns:OpacityType" />
-        <xs:attribute name="color" default="#A0A0A0" type="tns:RgbColorType" />
+        <xs:attribute name="opacity" default="100" type="tns:OpacityType">
+            <xs:annotation>
+                <xs:documentation>Used to set the opacity of the text output as a watermark.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="color" default="#A0A0A0" type="tns:RgbColorType">
+            <xs:annotation>
+                <xs:documentation>Used to set the colour for the watermark. The hereby defined color needs to be specified as a hexadecimal RGB value with a number sign before it.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="WatermarkPositionModeType">
+        <xs:annotation>
+            <xs:documentation>Uses one of multiple preset positions in order to position the watermark on the page.
+- custom = Disable the use of a preset position.
+- top_left = Position the watermark at the top left corner.
+- top_center = Position the watermark in the centre at the top margin.
+- top_right = Position the watermark at the top right corner.
+- center_left = Position the watermark at the centre of the page, to the left.
+- center_center = Position the watermark at the centre of the page.
+- center_right = Position the watermark at the centre of the page, to the right.
+- bottom_left = Position the watermark at the bottom left corner.
+- bottom_center = Position the watermark in the centre at the bottom margin.
+- bottom_right = Position the watermark at the bottom right corner.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="custom" />
             <xs:enumeration value="top_left" />
@@ -51,7 +104,13 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="WatermarkPositionType">
+        <xs:annotation>
+            <xs:documentation>Used to set the position of the watermark in the PDF document.</xs:documentation>
+        </xs:annotation>
         <xs:attribute name="x" default="0">
+            <xs:annotation>
+                <xs:documentation>Used to define the X-axis position (as per metrics), starting from the top left corner of the PDF document, if position is set to "custom.".  If "position is set to a different value, these arguments will be interpreted as "offsets" from the selected position. This specification applies for both the text and image output.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
@@ -59,6 +118,9 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="y" default="0">
+            <xs:annotation>
+                <xs:documentation>Used to define the Y-axis position (as per metrics), starting from the top left corner of the PDF document, if position is set to "custom.".  If "position is set to a different value, these arguments will be interpreted as "offsets" from the selected position. This specification applies for both the text and image output.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
@@ -66,6 +128,9 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="width" default="0">
+            <xs:annotation>
+                <xs:documentation>Forces the specified width for the watermark if the values are not equal 0. In this case, the watermark will be scaled inside the area, which may result in the image losing quality or being distorted (please refer to "aspectRatio" as well)</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
@@ -73,38 +138,85 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="height" default="0">
+            <xs:annotation>
+                <xs:documentation>Forces the specified height for the watermark if the values are not equal 0. In this case, the watermark will be scaled inside the area, which may result in the image losing quality or being distorted (please refer to "aspectRatio" as well)</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="position" default="center_center" type="tns:WatermarkPositionModeType" />
-        <xs:attribute name="aspectRatio" default="true" type="xs:boolean" />
-        <xs:attribute name="metrics" default="mm" type="tns:MetricsType" />
+        <xs:attribute name="position" default="center_center" type="tns:WatermarkPositionModeType">
+            <xs:annotation>
+                <xs:documentation>Uses one of multiple preset positions in order to position the watermark on the page.
+- custom = Disable the use of a preset position.
+- top_left = Position the watermark at the top left corner.
+- top_center = Position the watermark in the centre at the top margin.
+- top_right = Position the watermark at the top right corner.
+- center_left = Position the watermark at the centre of the page, to the left.
+- center_center = Position the watermark at the centre of the page.
+- center_right = Position the watermark at the centre of the page, to the right.
+- bottom_left = Position the watermark at the bottom left corner.
+- bottom_center = Position the watermark in the centre at the bottom margin.
+- bottom_right = Position the watermark at the bottom right corner.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="aspectRatio" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>Forces the aspect ratio to be maintained when a watermark is scaled if "width" and "height" are specified.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="metrics" default="mm" type="tns:MetricsType">
+            <xs:annotation>
+                <xs:documentation>Used to specify the unit in which the maximum dimensions are specified.
+- mm = Millimetres
+- px = Pixels</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="WatermarkTextType">
+        <xs:annotation>
+            <xs:documentation>Used to add a text watermark.</xs:documentation>
+        </xs:annotation>
         <xs:all>
             <xs:element name="font" type="tns:WatermarkFontType" minOccurs="0" maxOccurs="1" />
             <xs:element name="position" type="tns:WatermarkPositionType" minOccurs="0" maxOccurs="1" />
         </xs:all>
-        <xs:attribute name="text" default="Confidential" type="xs:string" />
+        <xs:attribute name="text" default="Confidential" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Specifies the text which will be output as a watermark.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="WatermarkImageType">
+        <xs:annotation>
+            <xs:documentation>Used to add an image as a watermark.</xs:documentation>
+        </xs:annotation>
         <xs:all>
             <xs:element name="data" type="tns:WatermarkFileDataType" minOccurs="1" maxOccurs="1" />
             <xs:element name="position" type="tns:WatermarkPositionType" minOccurs="0" maxOccurs="1" />
         </xs:all>
         <xs:attribute name="scale" default="0">
+            <xs:annotation>
+                <xs:documentation>Specifies the scaling of the image in percent.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="opacity" default="25" type="tns:OpacityType" />
+        <xs:attribute name="opacity" default="25" type="tns:OpacityType">
+            <xs:annotation>
+                <xs:documentation>Used to set the image’s opacity. A percent value between 0 and 100 is allowed, whereby 0 equals the minimum opacity. The higher the value, the more the content of the PDF document will be covered over.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="WatermarkFileDataType">
+        <xs:annotation>
+            <xs:documentation>Contains the watermark image file in "Base64 encoded" format.</xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
                 <xs:attributeGroup ref="tns:FileDataGroup" />

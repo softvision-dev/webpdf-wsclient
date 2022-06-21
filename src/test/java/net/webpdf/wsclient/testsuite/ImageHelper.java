@@ -46,4 +46,5 @@ public class ImageHelper {
         double p = diff / n / 255.0;
         return p * 100.0;
     }
+
 }

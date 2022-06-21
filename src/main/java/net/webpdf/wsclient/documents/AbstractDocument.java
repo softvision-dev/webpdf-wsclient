@@ -1,41 +1,45 @@
 package net.webpdf.wsclient.documents;
 
+import net.webpdf.wsclient.webservice.WebService;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 
-abstract class AbstractDocument implements Document {
+/**
+ * An instance of {@link AbstractDocument} represents a document as it is processed/created by a {@link WebService} or
+ * uploaded to the webPDF server.
+ */
+public abstract class AbstractDocument implements Document {
 
-    @Nullable
-    private URI source;
-    private boolean fileSource;
+    private final @Nullable URI source;
+    private final boolean fileSource;
 
     /**
-     * Prepares a document for webservice processing.
+     * Prepares the given {@link URI} as a new {@link Document} for the processing by webPDF webservices.
      *
-     * @param source The source the document shall be loaded from.
+     * @param source The {@link URI} source of the document.
      */
-    AbstractDocument(@Nullable URI source) {
+    public AbstractDocument(@Nullable URI source) {
         this.source = source;
         this.fileSource = source != null && source.getScheme().startsWith("file");
     }
 
     /**
-     * Returns the {@link URI} of the document source.
+     * Returns the {@link URI} of the document.
      *
-     * @return The {@link URI} of the document source.
+     * @return The {@link URI} of the document.
      */
     @Override
-    @Nullable
-    public URI getSource() {
+    public @Nullable URI getSource() {
         return this.source;
     }
 
     /**
-     * Returns true if the {@link URI} of the document source points to a file.
+     * Returns {@code true}, if the {@link URI} of the document points to a file.
      *
-     * @return True if the {@link URI} of the document source points to a file.
+     * @return {@code true}, if the {@link URI} of the document points to a file.
      */
+    @Override
     public boolean isFileSource() {
         return fileSource;
     }

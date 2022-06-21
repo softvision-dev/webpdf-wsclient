@@ -2,24 +2,70 @@
 <xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="DescriptionType">
+        <xs:annotation>
+            <xs:documentation>The description operation element can be used to change the description for documents.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:sequence>
                     <xs:element name="custom" type="tns:DescriptionCustomType" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
-                <xs:attribute name="title" default="" type="xs:string" />
-                <xs:attribute name="author" default="" type="xs:string" />
-                <xs:attribute name="creator" default="" type="xs:string" />
-                <xs:attribute name="keywords" default="" type="xs:string" />
-                <xs:attribute name="producer" default="" type="xs:string" />
-                <xs:attribute name="subject" default="" type="xs:string" />
-                <xs:attribute name="allowEmptyValues" default="false" type="xs:boolean" />
+                <xs:attribute name="title" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Used to set the PDF document's Title field.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="author" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Used to set the PDF document's Author field. Multiple values should be separated with ";".</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="creator" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Used to set the PDF document's Creator field.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="keywords" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Used to set the PDF document's Keywords field. Multiple values should be separated with ";".</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="producer" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Used to set the PDF document's Producer field.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="subject" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Used to set the PDF document's Subject field.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="allowEmptyValues" default="false" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>If “true," empty values will be accepted.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="DescriptionCustomType">
-        <xs:attribute name="key" default="" type="xs:string" />
-        <xs:attribute name="value" default="" type="xs:string" />
-        <xs:attribute name="remove" default="false" type="xs:boolean" />
+        <xs:annotation>
+            <xs:documentation>If you add another (optional) `&lt;custom .../&gt;` element to the description element, you can use it to store your own values in the PDF description. The element can occur multiple times and defines an additional entry for the description.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="key" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Describes the name of the field to be added to the PDF description. The value must not be empty, must be unique, and must not conflict with the other (default) field names (e.g. "Subject"). If a name conflict occurs, the entry will be skipped and not entered.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="value" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Describes the value to be stored in the PDF description.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="remove" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true", then the field is not added but removed. In this case "value" has no meaning. If the field is not present, then the entry is skipped.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 </xs:schema>

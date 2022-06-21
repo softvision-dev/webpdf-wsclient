@@ -1,55 +1,60 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.documents.RestDocument;
-import net.webpdf.wsclient.documents.SoapDocument;
+import net.webpdf.wsclient.documents.rest.RestDocument;
+import net.webpdf.wsclient.documents.rest.RestWebServiceDocument;
+import net.webpdf.wsclient.documents.soap.SoapDocument;
+import net.webpdf.wsclient.documents.soap.SoapWebServiceDocument;
 import net.webpdf.wsclient.https.TLSContext;
-import net.webpdf.wsclient.proxy.ProxyConfiguration;
+import net.webpdf.wsclient.session.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.schema.operation.PageType;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
-import net.webpdf.wsclient.session.RestSession;
+import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.session.SoapSession;
+import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import net.webpdf.wsclient.webservice.WebServiceFactory;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.webservice.WebServiceType;
+import net.webpdf.wsclient.webservice.rest.UrlConverterRestWebService;
+import net.webpdf.wsclient.webservice.soap.ConverterWebService;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import static junit.framework.TestCase.assertNotNull;
+import static net.webpdf.wsclient.testsuite.TestResources.getDocumentID;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebserviceProxyTest {
 
     private final TestResources testResources = new TestResources(WebserviceProxyTest.class);
     private final File keystoreFile = testResources.getResource("integration/files/ks.jks");
-    @Rule
     public TestServer testServer = new TestServer();
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void testRESTProxyHTTP() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(
-            WebServiceProtocol.REST,
-            testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true)
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST,
+                testServer.getServer(TestServer.ServerType.LOCAL,
+                        TestServer.ServerProtocol.HTTP, true)
         )) {
             session.setProxy(new ProxyConfiguration("127.0.0.1", 8888));
 
             session.login();
 
-            UrlConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.URLCONVERTER);
+            UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
+                    WebServiceType.URLCONVERTER);
 
-            webService.setDocument(new RestDocument(null));
+            webService.setDocument(new RestWebServiceDocument(null));
 
-            File fileOut = temporaryFolder.newFile();
+            File fileOut = testResources.getTempFolder().newFile();
 
-            assertNotNull("Operation should have been initialized", webService.getOperation());
+            assertNotNull(webService.getOperation(), "Operation should have been initialized");
             webService.getOperation().setUrl("https://www.webpdf.de");
 
             webService.getOperation().setPage(new PageType());
@@ -62,32 +67,35 @@ public class WebserviceProxyTest {
 
             RestDocument restDocument = webService.process();
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
             }
-            Assert.assertTrue(fileOut.exists());
+            assertTrue(fileOut.exists());
         }
     }
 
     @Test
     public void testSOAPProxyHTTP() throws Exception {
-        try (SoapSession session = SessionFactory.createInstance(
-            WebServiceProtocol.SOAP,
-            testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP, true)
+        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.SOAP,
+                testServer.getServer(TestServer.ServerType.LOCAL,
+                        TestServer.ServerProtocol.HTTP, true)
         )) {
             session.setProxy(new ProxyConfiguration("localhost", 8888));
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-            File fileOut = temporaryFolder.newFile();
+            File fileOut = testResources.getTempFolder().newFile();
 
             try (FileInputStream fileInputStream = new FileInputStream(file);
                  FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                SoapDocument soapDocument = new SoapDocument(fileInputStream, fileOutputStream);
+                SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(fileInputStream, fileOutputStream);
 
-                ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+                ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
+                        WebServiceType.CONVERTER);
 
                 webService.setDocument(soapDocument);
 
-                Assert.assertNotNull("Operation should have been initialized", webService.getOperation());
+                assertNotNull(webService.getOperation(),
+                        "Operation should have been initialized");
                 webService.getOperation().setPages("1-5");
                 webService.getOperation().setEmbedFonts(true);
 
@@ -97,8 +105,8 @@ public class WebserviceProxyTest {
                 webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
                 try (SoapDocument resultDocument = webService.process()) {
-                    Assert.assertNotNull(resultDocument);
-                    Assert.assertTrue(fileOut.exists());
+                    assertNotNull(resultDocument);
+                    assertTrue(fileOut.exists());
                 }
             }
         }
@@ -109,28 +117,29 @@ public class WebserviceProxyTest {
     public void testSOAPProxyHTTPS() throws Exception {
         TLSContext tlsContext = TLSContext.createDefault();
         tlsContext.setAllowSelfSigned(true);
-        if (keystoreFile != null) {
-            tlsContext.setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
-        }
-        try (SoapSession session = SessionFactory.createInstance(
-            WebServiceProtocol.SOAP,
-            testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTPS, true),
-            tlsContext
+        tlsContext.setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
+        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.SOAP,
+                testServer.getServer(TestServer.ServerType.LOCAL,
+                        TestServer.ServerProtocol.HTTPS, true),
+                tlsContext
         )) {
             session.setProxy(new ProxyConfiguration("localhost", 8888));
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-            File fileOut = temporaryFolder.newFile();
+            File fileOut = testResources.getTempFolder().newFile();
 
             try (FileInputStream fileInputStream = new FileInputStream(file);
                  FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                SoapDocument soapDocument = new SoapDocument(fileInputStream, fileOutputStream);
+                SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(fileInputStream, fileOutputStream);
 
-                ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+                ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
+                        WebServiceType.CONVERTER);
 
                 webService.setDocument(soapDocument);
 
-                Assert.assertNotNull("Operation should have been initialized", webService.getOperation());
+                assertNotNull(webService.getOperation(),
+                        "Operation should have been initialized");
                 webService.getOperation().setPages("1-5");
                 webService.getOperation().setEmbedFonts(true);
 
@@ -140,8 +149,8 @@ public class WebserviceProxyTest {
                 webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
                 try (SoapDocument resultDocument = webService.process()) {
-                    Assert.assertNotNull(resultDocument);
-                    Assert.assertTrue(fileOut.exists());
+                    assertNotNull(resultDocument);
+                    assertTrue(fileOut.exists());
                 }
             }
         }
@@ -151,25 +160,26 @@ public class WebserviceProxyTest {
     public void testRESTProxyHTTPS() throws Exception {
         TLSContext tlsContext = TLSContext.createDefault();
         tlsContext.setAllowSelfSigned(true);
-        if (keystoreFile != null) {
-            tlsContext.setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
-        }
-        try (RestSession session = SessionFactory.createInstance(
-            WebServiceProtocol.REST,
-            testServer.getServer(TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTPS, true),
-            tlsContext
+        tlsContext.setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST,
+                testServer.getServer(TestServer.ServerType.LOCAL,
+                        TestServer.ServerProtocol.HTTPS, true),
+                tlsContext
         )) {
             session.setProxy(new ProxyConfiguration("127.0.0.1", 8888));
 
             session.login();
 
-            UrlConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.URLCONVERTER);
+            UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
+                    WebServiceType.URLCONVERTER);
 
-            webService.setDocument(new RestDocument(null));
+            webService.setDocument(new RestWebServiceDocument(null));
 
-            File fileOut = temporaryFolder.newFile();
+            File fileOut = testResources.getTempFolder().newFile();
 
-            assertNotNull("Operation should have been initialized", webService.getOperation());
+            assertNotNull(webService.getOperation(),
+                    "Operation should have been initialized");
             webService.getOperation().setUrl("https://www.webpdf.de");
 
             webService.getOperation().setPage(new PageType());
@@ -182,9 +192,10 @@ public class WebserviceProxyTest {
 
             RestDocument restDocument = webService.process();
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
             }
-            Assert.assertTrue(fileOut.exists());
+            assertTrue(fileOut.exists());
         }
     }
+
 }

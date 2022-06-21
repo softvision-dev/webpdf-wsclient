@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<!--Created with Liquid Studio 2018 (https://www.liquid-technologies.com)-->
 <xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="ImageType">
+        <xs:annotation>
+            <xs:documentation>The image operation element can be used to export a document as an image.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:choice>
@@ -11,19 +13,40 @@
                     <xs:element name="jpeg" type="tns:JpegType" />
                     <xs:element name="gif" type="tns:GifType" />
                     <xs:element name="bmp" type="tns:BmpType" />
+                    <xs:element name="svg" type="tns:SvgType" />
                 </xs:choice>
-                <xs:attribute name="pages" default="1" type="xs:string" />
-                <xs:attribute name="fileNameTemplate" default="page[%d]" type="xs:string" />
+                <xs:attribute name="pages" default="1" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Used to define the page number or page range (e.g., "1,5-6,9") that should be converted to an image file format. If only a single page is defined, the image file will be returned directly. If a range of pages is declared, then the call will return a ZIP file containing all the exported pages. The name of the individual image file (when multiple pages are exported) is defined with the "fileNameTemplate" attribute. 
+The "tif" format is an exception when exporting multiple pages. When using this format, the "multipage" attribute can be used to define whether a multi-page TIFF will be generated or whether the individual pages will be exported to a ZIP file (as with the other image file formats).</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="fileNameTemplate" default="page[%d]" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>When exporting multiple pages, this parameter is used to define the file name that will be used for the generated image files in the ZIP file. The file name must include the string "%d". This string will be replaced with a consecutive number in the file name.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="ImageBaseType">
+        <xs:annotation>
+            <xs:documentation>A common base type for image file formats to which the PDF document will be exported.</xs:documentation>
+        </xs:annotation>
         <xs:attribute name="dpi" default="72">
+            <xs:annotation>
+                <xs:documentation>This parameter is used to define the image's DPI resolution. The larger the value, the larger the image's x, y resolution. In addition, the larger the DPI resolution, the larger the size of the image file.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="tns:DpiType" />
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="width" default="0">
+            <xs:annotation>
+                <xs:documentation>Used to limit the maximum width of the exported image.
+
+0 = No restriction</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
@@ -31,20 +54,54 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="height" default="0">
+            <xs:annotation>
+                <xs:documentation>Used to limit the maximum height of the exported image.
+
+0 = No restriction</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="metrics" default="mm" type="tns:MetricsType" />
+        <xs:attribute name="metrics" default="mm" type="tns:MetricsType">
+            <xs:annotation>
+                <xs:documentation>Used to specify the unit in which the maximum dimensions are specified.
+- mm = Millimetres
+- px = Pixels </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="TiffType">
+        <xs:annotation>
+            <xs:documentation>Defines a target TIFF image format.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ImageBaseType">
-                <xs:attribute name="multipage" default="false" type="xs:boolean" />
-                <xs:attribute name="compression" default="none" type="tns:TiffCompressionType" />
+                <xs:attribute name="multipage" default="false" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>If "true," a "multi-page TIFF" will be created when multiple pages are exported as "tif" images. All the pages will be exported to a single file, and a ZIP file with individual images will not be generated.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="compression" default="none" type="tns:TiffCompressionType">
+                    <xs:annotation>
+                        <xs:documentation>This parameter is used to specify the compression method when exporting pages as "tif" images. The following values are available:
+- none = No compression
+- rle = TIFF CCITT Modified Huffman RLE compression
+- deflate = TIFF Deflate lossless compression (Zip-in-TIFF). 
+- group3 = TIFF CCITT Group 3 fax encoding
+- group4 = TIFF CCITT Group 4 fax encoding
+- jpeg = TIFF JPEG-in-TIFF compression
+- lzw = TIFF LZW compression
+- packbits = TIFF Byte-oriented run-length encoding "PackBits" compression
+- zlib = TIFF ZLib compression</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="jpegQuality" default="80">
+                    <xs:annotation>
+                        <xs:documentation>When exporting to "jpg" format, this parameter can be used to define the image's quality as a percentage. The value must fall between 0 and 100. The larger the value, the better the quality and the lower the compression level.</xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
                             <xs:minInclusive value="0" />
@@ -52,11 +109,30 @@
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="blackAndWhiteQuality" default="high" type="tns:TiffBlackAndWhiteQualityType" />
+                <xs:attribute name="blackAndWhiteQuality" default="high" type="tns:TiffBlackAndWhiteQualityType">
+                    <xs:annotation>
+                        <xs:documentation>For "tif" exports, this parameter is used to define the quality of black-and-white images if "group3" or "group4" is used as a compression method. The higher the quality, the more time that will be required in order to render the image:
+- low = Direct conversion (best reserved for “text only” content)
+- middle = A diffusion filter will be applied to the image before conversion
+- high = Greyscale conversion and a diffusion filter will be applied to the image before conversion</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:simpleType name="TiffCompressionType">
+        <xs:annotation>
+            <xs:documentation>This parameter is used to specify the compression method when exporting pages as "tif" images. The following values are available:
+- none = No compression
+- rle = TIFF CCITT Modified Huffman RLE compression
+- deflate = TIFF Deflate lossless compression (Zip-in-TIFF). 
+- group3 = TIFF CCITT Group 3 fax encoding
+- group4 = TIFF CCITT Group 4 fax encoding
+- jpeg = TIFF JPEG-in-TIFF compression
+- lzw = TIFF LZW compression
+- packbits = TIFF Byte-oriented run-length encoding "PackBits" compression
+- zlib = TIFF ZLib compression</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="none" />
             <xs:enumeration value="rle" />
@@ -70,6 +146,12 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="TiffBlackAndWhiteQualityType">
+        <xs:annotation>
+            <xs:documentation>For "tif" exports, this parameter is used to define the quality of black-and-white images if "group3" or "group4" is used as a compression method. The higher the quality, the more time that will be required in order to render the image:
+- low = Direct conversion (best reserved for “text only” content)
+- middle = A diffusion filter will be applied to the image before conversion
+- high = Greyscale conversion and a diffusion filter will be applied to the image before conversion</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="low" />
             <xs:enumeration value="middle" />
@@ -77,17 +159,26 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="PngType">
+        <xs:annotation>
+            <xs:documentation>Defines a target PNG image format.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ImageBaseType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="JpegType">
+        <xs:annotation>
+            <xs:documentation>Defines a target JPEG image format.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ImageBaseType">
                 <xs:all>
                     <xs:element name="sizeOptimization" type="tns:SizeOptimizationType" minOccurs="0" maxOccurs="1" />
                 </xs:all>
                 <xs:attribute name="jpegQuality" default="80">
+                    <xs:annotation>
+                        <xs:documentation>When exporting to "jpg" format, this parameter can be used to define the image's quality as a percentage. The value must fall between 0 and 100. The larger the value, the better the quality and the lower the compression level.</xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
                             <xs:minInclusive value="0" />
@@ -99,18 +190,49 @@
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="GifType">
+        <xs:annotation>
+            <xs:documentation>Defines a target GIF image format.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ImageBaseType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="BmpType">
+        <xs:annotation>
+            <xs:documentation>Defines a target BMP image format.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:ImageBaseType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="SvgType">
+        <xs:annotation>
+            <xs:documentation>Defines a target SVG image format.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ImageBaseType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SizeOptimizationType">
-        <xs:attribute name="maxSize" default="100000" type="xs:int" />
-        <xs:attribute name="maxRetries" default="5" type="xs:int" />
-        <xs:attribute name="stepSize" default="10" type="xs:int" />
+        <xs:annotation>
+            <xs:documentation>If you use a JPEG "image type element," the file size can be automatically optimized. The corresponding optimization routine will attempt to limit the file to a max. size by gradually reducing the JPEG quality until the image is smaller than a specific size. If the "sizeOptimization" block is present, the image will be optimized. If it is not present, the image will not be optimized further after being exported.
+
+**important:** Please note that optimization can make the graphic export operation significantly slower. In addition to this, make sure to use values for the "dpi", "height", and "width" parameters that ensure that the size you want can actually be reached with compression.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="maxSize" default="100000" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>Used to define the maximum size of the JPEG file (file size), in bytes, that should be reached. The optimization routine will be successfully completed if the file reaches or falls below the specified file size. Make sure to use a value &gt; 0; otherwise, an error will be thrown.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="maxRetries" default="5" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>Used to specify the number of runs that should be used for optimization. If the target size cannot be reached after the specified number of runs, the operation will be cancelled and an error code will be returned.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="stepSize" default="10" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>Used to define the increment by which the JPEG quality (jpegQuality) should be reduced every run in order to reach the desired file size. If the values for maxRetries and stepSize result in an illegal JPEG quality value being reached, the operation will be cancelled and an error code will be returned.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 </xs:schema>

@@ -1,21 +1,22 @@
 package net.webpdf.wsclient.testsuite;
 
 import org.apache.http.client.utils.URIBuilder;
-import org.junit.rules.ExternalResource;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 
-public final class TestServer extends ExternalResource {
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public final class TestServer {
 
     private static final String SERVER_PATH = "/webPDF";
 
@@ -27,18 +28,19 @@ public final class TestServer extends ExternalResource {
     private static final String SERVER_LOCAL_USER = System.getProperty(KEY_SERVER_LOCAL_USER);
     private static final String SERVER_LOCAL_PASSWORD = System.getProperty(KEY_SERVER_LOCAL_PASSWORD);
     private static final String SERVER_PUBLIC_URL = System.getProperty(KEY_SERVER_PUBLIC_URL);
-    private URIBuilder uriBuilderLocalServer;
-    private URIBuilder uriBuilderPublicServer;
+    private final URIBuilder uriBuilderLocalServer;
+    private final URIBuilder uriBuilderPublicServer;
 
-    @Override
-    protected void before() throws Throwable {
-        this.uriBuilderLocalServer = new URIBuilder(SERVER_LOCAL_URL).setPath(SERVER_PATH);
+    public TestServer() {
+        this.uriBuilderLocalServer = assertDoesNotThrow(() ->
+                new URIBuilder(SERVER_LOCAL_URL).setPath(SERVER_PATH));
         if (!uriBuilderLocalServer.isAbsolute()) {
-            throw new IOException("Invalid URL '" + SERVER_LOCAL_URL + "'");
+            fail("Invalid URL '" + SERVER_LOCAL_URL + "'");
         }
-        this.uriBuilderPublicServer = new URIBuilder(SERVER_PUBLIC_URL).setPath(SERVER_PATH);
+        this.uriBuilderPublicServer = assertDoesNotThrow(() ->
+                new URIBuilder(SERVER_PUBLIC_URL).setPath(SERVER_PATH));
         if (!uriBuilderPublicServer.isAbsolute()) {
-            throw new IOException("Invalid URL '" + SERVER_PUBLIC_URL + "'");
+            fail("Invalid URL '" + SERVER_PUBLIC_URL + "'");
         }
     }
 
@@ -114,7 +116,7 @@ public final class TestServer extends ExternalResource {
         for (Certificate cert : certs) {
             ks.setCertificateEntry("webPDF", cert);
         }
-        try (OutputStream fos = new FileOutputStream(keystoreFile)) {
+        try (OutputStream fos = Files.newOutputStream(keystoreFile.toPath())) {
             ks.store(fos, "".toCharArray());
         }
         return keystoreFile;
@@ -129,4 +131,5 @@ public final class TestServer extends ExternalResource {
         HTTP,
         HTTPS
     }
+
 }

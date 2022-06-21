@@ -1,11 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <xs:schema xmlns="http://schema.webpdf.de/1.0/extraction/info" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/extraction/info" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="document">
+        <xs:annotation>
+            <xs:documentation>A document element describes the contents and properties of a given PDF document.</xs:documentation>
+        </xs:annotation>
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="information" type="InformationType" />
                 <xs:element name="security" type="SecurityType" />
                 <xs:element name="attachments" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Lists the attachments embedded into this document.</xs:documentation>
+                    </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="attachment" type="AttachmentType" minOccurs="0" maxOccurs="unbounded" />
@@ -13,6 +19,9 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="pages" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Lists and describes the properties of the document´s pages.</xs:documentation>
+                    </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="page" minOccurs="0" maxOccurs="unbounded">
@@ -30,17 +39,46 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="form" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Describes the properties of the document´s form. (Should the document contain a form.)</xs:documentation>
+                    </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
                             <xs:element name="field" type="FieldType" minOccurs="0" maxOccurs="unbounded" />
                         </xs:sequence>
-                        <xs:attribute name="objectKey" default="" type="xs:string" />
-                        <xs:attribute name="formType" default="none" type="FormsFormatType" />
-                        <xs:attribute name="defaultAppearance" default="" type="xs:string" />
-                        <xs:attribute name="needAppearances" default="false" type="xs:boolean" />
+                        <xs:attribute name="objectKey" default="" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>The object ID of the form.
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                        <xs:attribute name="formType" default="none" type="FormsFormatType">
+                            <xs:annotation>
+                                <xs:documentation>When set to another value than "none", the document does contain a PDF form in the hereby given format.
+
+- none = The document does not contain a form.
+- acroForm = The document contains a standard PDF Acroform.
+- staticXFA = The document contains a "XML Forms Architecture" form with a fixed layout (static).
+- dynamicXFA = The document contains a "XML Forms Architecture" form with an adaptable/interactive layout (dynamic).</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                        <xs:attribute name="defaultAppearance" default="" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>If present, this contains the default appearance of the form´s fields. This shall be a string containing graphics and text state operators for example definining text colors, sizes etc.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
+                        <xs:attribute name="needAppearances" default="false" type="xs:boolean">
+                            <xs:annotation>
+                                <xs:documentation>When set to "true" the displaying Application shall generate appearances for all widgets defining the document´s form.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="annotations" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Lists the annotations, that have been found in the document.</xs:documentation>
+                    </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
                             <xs:element name="annotation" type="AnnotationType" />
@@ -48,6 +86,9 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="signatures" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Lists a document´s signatures.</xs:documentation>
+                    </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
                             <xs:element name="signature" type="SignatureType" />
@@ -55,6 +96,9 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="backgrounds" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation>Lists the background definitions for pages of the document.</xs:documentation>
+                    </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
                             <xs:element name="background" type="BackgroundContentType" />
@@ -62,6 +106,9 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="headersFooters" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation>Lists the header/footer definitions for pages of the document.</xs:documentation>
+                    </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
                             <xs:element name="headerFooter" type="HeaderFooterType" />
@@ -69,6 +116,9 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="transitions" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation>Lists the page transitions for the full screen mode of the document.</xs:documentation>
+                    </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
                             <xs:element name="transition" type="TransitionType" />
@@ -76,6 +126,9 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="images" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation>Lists the image resources used in the document.</xs:documentation>
+                    </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
                             <xs:element name="image" type="ImageType" />
@@ -83,45 +136,123 @@
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="folders" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation>Lists the folders contained in a PDF collection (portfolio), that are used to structure the embedded attachments.</xs:documentation>
+                    </xs:annotation>
                     <xs:complexType>
                         <xs:sequence minOccurs="0" maxOccurs="unbounded">
                             <xs:element name="folder" type="FolderType" />
                         </xs:sequence>
+                        <xs:attribute name="initialFile" default="" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>The object ID of the initially visible attachment.
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+                            </xs:annotation>
+                        </xs:attribute>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
     <xs:complexType name="InformationType">
+        <xs:annotation>
+            <xs:documentation>Summarizes structural information and settings for the PDF document.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="description" type="DescriptionType" />
             <xs:element name="pdfa" type="PdfaType" />
             <xs:element name="viewerPreferences" type="ViewerPreferencesType" />
         </xs:sequence>
-        <xs:attribute name="objectKey" default="" type="xs:string" />
-        <xs:attribute name="version" default="" type="xs:string" />
+        <xs:attribute name="objectKey" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The object ID of the document´s catalog. (root)
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="version" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The version name of the PDF standard the document claims compatibility with.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="fileSize" default="0">
+            <xs:annotation>
+                <xs:documentation>The byte size of the document.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:long">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="initialPage" default="1" type="xs:int" />
-        <xs:attribute name="language" default="" type="xs:string" />
-        <xs:attribute name="pageLayout" default="singlePage" type="PageLayoutType" />
-        <xs:attribute name="magnification" default="fitVisible" type="MagnificationType" />
+        <xs:attribute name="initialPage" default="1" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>The first page, that shall be displayed when opening the document in a PDF Reader.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="language" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The natural language of the document. This could either contain the language name or a language tag.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="pageLayout" default="singlePage" type="PageLayoutType">
+            <xs:annotation>
+                <xs:documentation>The set initial page layout of the document. When opening the document in a Reader, this layout shall be selected to display pages.
+
+- singlePage = One page at a time.
+- oneColumn = One continuous column of pages.
+- twoColumnLeft = The pages in two columns, with odd-numbered pages on the left.
+- twoColumnRight = The pages in two columns, with odd-numbered pages on the right.
+- twoPageLeft = Display the pages two at a time, with odd-numbered pages on the left.
+- twoPageRight = Display the pages two at a time, with odd-numbered pages on the right.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="magnification" default="fitVisible" type="MagnificationType">
+            <xs:annotation>
+                <xs:documentation>The initial page zoom settings of the document. When opening the document in a Reader, this zoom settings shall be used.
+- none = Uses the application’s default view.
+- fitWidth = Page width.
+- fitPage = Page dimensions.
+- fitHeight = Page height.
+- fitVisible = Page content width.
+- fitActual = Uses the original page dimensions (100% zoom factor).
+- zoom = Sets an explicit magnification value.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="magnificationZoom" default="100">
+            <xs:annotation>
+                <xs:documentation>If a magnification "zoom" is selected for this document, this is the actual percentage the pages of the document shall be zoomed to, when opening the document in a PDF Reader.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="initialView" default="none" type="InitialViewType" />
-        <xs:attribute name="encrypted" default="false" type="xs:boolean" />
-        <xs:attribute name="portfolio" default="false" type="xs:boolean" />
-        <xs:attribute name="pages">
+        <xs:attribute name="initialView" default="none" type="InitialViewType">
+            <xs:annotation>
+                <xs:documentation>Defines which sub-windows will be opened when the PDF document is opened.
+- none = No special view
+- outlines = Opens the “Bookmarks" tab
+- thumbnails = Opens the “Thumbnails" tab
+- fullscreen = Opens the document in full screen mode</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="encrypted" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>This will be set to "true" for a document, that is either password protected or certificate encrypted.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="portfolio" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>Will be set to "true" for a "PDF collection" (Portfolio), that serves as the container for other documents.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="pages" default="0">
+            <xs:annotation>
+                <xs:documentation>The number of pages contained in the document.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
@@ -129,42 +260,114 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="attachments" default="0">
+            <xs:annotation>
+                <xs:documentation>The number of attachments contained in the document.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="formType" default="none" type="FormsFormatType" />
-        <xs:attribute name="signatures" default="0" type="xs:int" />
-        <xs:attribute name="docMDP" default="none" type="DocMdpType" />
+        <xs:attribute name="formType" default="none" type="FormsFormatType">
+            <xs:annotation>
+                <xs:documentation>When set to another value than "none", the document does contain a PDF form in the hereby given format.
+
+- none = The document does not contain a form.
+- acroForm = The document contains a standard PDF Acroform.
+- staticXFA = The document contains a "XML Forms Architecture" form with a fixed layout (static).
+- dynamicXFA = The document contains a "XML Forms Architecture" form with an adaptable/interactive layout (dynamic).</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="signatures" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>The number of signatures contained in the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="docMDP" default="none" type="DocMdpType">
+            <xs:annotation>
+                <xs:documentation>A document "Modification Detection and Prevention" may be set, that defines which modifications of the document are allowed and which modifications would render the signature invalid.
+
+- none = The document is unprotected - modify it as you please.
+- noChangesAllowed = Any modifications of the document would render the signatures invalid.
+- formFillingSignatures = You may fill in forms and further sign the document.
+- formFillingSignaturesAndAnnotations = Form filling, signing and adding annotations are allowed.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="DescriptionType">
+        <xs:annotation>
+            <xs:documentation>The document´s description contains a number of metadata attributes, that further describe the author, creation, contents etc of the document.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="author" type="AuthorType" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="keywords" type="KeywordType" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="custom" type="CustomDescriptionType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
-        <xs:attribute name="title" default="" type="xs:string" />
-        <xs:attribute name="subject" default="" type="xs:string" />
-        <xs:attribute name="creator" default="" type="xs:string" />
-        <xs:attribute name="producer" default="" type="xs:string" />
-        <xs:attribute name="application" default="" type="xs:string" />
-        <xs:attribute name="creationDate" default="" type="xs:string" />
-        <xs:attribute name="modificationDate" default="" type="xs:string" />
+        <xs:attribute name="title" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The document´s title.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="subject" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The document´s subject.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="creator" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>If the document has been converted to a PDF from another format, this is the name of the application, that created the original document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="producer" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>If the document has been converted to a PDF from another format, this is the name of the application, that converted it.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="application" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The application used to create the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="creationDate" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The date of the document´s creation.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="modificationDate" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The date of the most recent modification of the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="SecurityType">
+        <xs:annotation>
+            <xs:documentation>An element of this type shall contain information concerning the security settings, manipulation protection and used password of a PDF document.</xs:documentation>
+        </xs:annotation>
         <xs:choice>
             <xs:element name="password" type="PasswordType" minOccurs="0" maxOccurs="1" />
         </xs:choice>
         <xs:attributeGroup ref="securityFlags" />
     </xs:complexType>
     <xs:complexType name="AttachmentType">
+        <xs:annotation>
+            <xs:documentation>This type is used to describe an attachment, that has been embedded in a PDF file.
+The attachment itself may have connected document information, in that case the "document" element will be set.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element ref="document" minOccurs="0" />
         </xs:sequence>
-        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="objectKey" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The object ID of the attachment.
+
+**info:** A PDF objects ID consists of two number, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="number">
+            <xs:annotation>
+                <xs:documentation>The position number of the attachment in the embedded files of the document.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="1" />
@@ -172,35 +375,77 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="page" default="0">
+            <xs:annotation>
+                <xs:documentation>The page (if any), the attachment is placed on.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="name" default="" type="xs:string" />
+        <xs:attribute name="name" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The file name of the attachment.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="size" default="0">
+            <xs:annotation>
+                <xs:documentation>The byte size of the attachment.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:double">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="description" default="" type="xs:string" />
-        <xs:attribute name="mimeType" default="" type="xs:string" />
-        <xs:attribute name="folderId" default="0" type="xs:int" />
+        <xs:attribute name="description" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The file description of the attachment.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mimeType" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The attachment´s MIME type.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="folderId" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>The numeric ID of the folder containing the attachment.
+(This is only relevant for PDF Collections/Portfolios - otherwise attachments may not be arranged in a folder tree.)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="PageType">
-        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>This type is used to describe a page of a PDF document.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="objectKey" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The object ID of the page.
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="number" default="0">
+            <xs:annotation>
+                <xs:documentation>The page number of this page.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="label" default="" type="xs:string" />
+        <xs:attribute name="label" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The page label of this page.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="width" default="0">
+            <xs:annotation>
+                <xs:documentation>The width of this page in pixels.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
                     <xs:minInclusive value="0" />
@@ -208,6 +453,9 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="height" default="0">
+            <xs:annotation>
+                <xs:documentation>The height of this page in pixels.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
                     <xs:minInclusive value="0" />
@@ -215,6 +463,9 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="rotation" default="0">
+            <xs:annotation>
+                <xs:documentation>The rotation of this page in degrees.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
@@ -223,20 +474,71 @@
         </xs:attribute>
     </xs:complexType>
     <xs:attributeGroup name="securityFlags">
-        <xs:attribute name="canAssemble" default="true" type="xs:boolean" />
-        <xs:attribute name="canExtractContent" default="true" type="xs:boolean" />
-        <xs:attribute name="canExtractForAccessibility" default="true" type="xs:boolean" />
-        <xs:attribute name="canFillInForm" default="true" type="xs:boolean" />
-        <xs:attribute name="canModify" default="true" type="xs:boolean" />
-        <xs:attribute name="canModifyAnnotations" default="true" type="xs:boolean" />
-        <xs:attribute name="canPrint" default="true" type="xs:boolean" />
-        <xs:attribute name="canPrintHighRes" default="true" type="xs:boolean" />
+        <xs:attribute name="canAssemble" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true," the document can be rearranged (e.g., pages can be deleted, inserted, and rotated).</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="canExtractContent" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true," content can be extracted (copied) from the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="canExtractForAccessibility" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true," content can be extracted (copied) for accessibility purposes.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="canFillInForm" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true," form fields can be filled out and the document can be signed.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="canModify" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true," changes to the document are permitted.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="canModifyAnnotations" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true," comments can be added to the document and deleted from the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="canPrint" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true," the document can be printed.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="canPrintHighRes" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If "true," the document can be printed at high resolution levels.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:attributeGroup>
     <xs:complexType name="PdfaType">
-        <xs:attribute name="part" default="" type="xs:string" />
-        <xs:attribute name="conformance" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>The PDF/A standard the document claims to be conforming to.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="part" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The ISO-19005 part number.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="conformance" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The PDF/A conformance level.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="FormsFormatType">
+        <xs:annotation>
+            <xs:documentation>When set to another value than "none", the document does contain a PDF form in the hereby given format.
+
+- none = The document does not contain a form.
+- acroForm = The document contains a standard PDF Acroform.
+- staticXFA = The document contains a "XML Forms Architecture" form with a fixed layout (static).
+- dynamicXFA = The document contains a "XML Forms Architecture" form with an adaptable/interactive layout (dynamic).</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="none" />
             <xs:enumeration value="acroForm" />
@@ -245,56 +547,217 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="FieldType">
+        <xs:annotation>
+            <xs:documentation>Lists the properties of a PDF form field.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="annotation" type="AnnotationType" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="signature" type="SignatureType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="annotation" type="AnnotationType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Selects the visible representation (widget annotation) for the form field.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="signature" type="SignatureType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Select the signature set for a signature form field.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="value" type="FormValueStyle" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
-        <xs:attribute name="objectKey" default="" type="xs:string" />
-        <xs:attribute name="type" default="" type="xs:string" />
-        <xs:attribute name="subType" default="" type="xs:string" />
-        <xs:attribute name="name" default="" type="xs:string" />
-        <xs:attribute name="mappingName" default="" type="xs:string" />
-        <xs:attribute name="alternateName" default="" type="xs:string" />
-        <xs:attribute name="fullyQualifiedName" default="" type="xs:string" />
-        <xs:attribute name="noExport" default="false" type="xs:boolean" />
-        <xs:attribute name="readOnly" default="false" type="xs:boolean" />
-        <xs:attribute name="required" default="false" type="xs:boolean" />
-        <xs:attribute name="multiSelect" default="false" type="xs:boolean" />
+        <xs:attribute name="objectKey" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The object ID of the form field.
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="type" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Indicates the type of the form field.
+
+- Btn = Button
+- Tx = Textfield
+- Ch = Choicefield
+- Sig = Signaturefield</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="subType" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The implementation name of the the form field.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The partial name of the form field.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mappingName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The mapping name of the form field.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="alternateName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The alternate name of the form field.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fullyQualifiedName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The fully qualified name of the form field.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="noExport" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>When set to true, the form field shall not be included in exports of the document´s form data.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="readOnly" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>When set to true, the form field´s contents may be displayed but not altered.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="required" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>When set to true, the form field must be filled in.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="multiSelect" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>When set to true, the form field allows multiple items to be seleted.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="SignatureType">
-        <xs:attribute name="objectKey" default="" type="xs:string" />
-        <xs:attribute name="name" default="" type="xs:string" />
-        <xs:attribute name="reason" default="" type="xs:string" />
-        <xs:attribute name="contact" default="" type="xs:string" />
-        <xs:attribute name="location" default="" type="xs:string" />
-        <xs:attribute name="date" default="" type="xs:string" />
-        <xs:attribute name="filter" default="" type="xs:string" />
-        <xs:attribute name="subFilter" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>An element of this type represents the properties of a signature.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="objectKey" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The object ID of the signature.
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The name of the person or authority signing the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="reason" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The reason for signing the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contact" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The contact information provided by the signer.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="location" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The location the document has been signed at.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="date" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The date the signature has been created.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="filter" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The name of the preferred signature handler used for validation. (Adobe.PPKLite, EntrustPPKEF etc.)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="subFilter" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The encoding of the signature value, that shall also be used for validation. (adbe.x509.rsa_sha1, adbe.pkcs7.sha1, etc.)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="AuthorType">
-        <xs:attribute name="name" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>An element of this type is used to enumerate the persons, that created a document.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The name of the person creating the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="KeywordType">
-        <xs:attribute name="keyword" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>An element of this type defines a keyword the document can be associated with.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="keyword" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>A keyword the document can be associated with.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="CustomDescriptionType">
-        <xs:attribute name="key" default="" type="xs:string" />
-        <xs:attribute name="value" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>An element of this type defines some custom attribute to be listed in the document´s metadata.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="key" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The name of the custom attribute.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="value" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The value of the custom attribute.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="PasswordType">
-        <xs:attribute name="hasOpenPassword" default="false" type="xs:boolean" />
-        <xs:attribute name="hasPermissionPassword" default="false" type="xs:boolean" />
+        <xs:annotation>
+            <xs:documentation>An element of this type shall contain information concerning the used encryption and the used encryption key.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="hasOpenPassword" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this is set to "true", the document is encrypted and requires a password to be opened.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="hasPermissionPassword" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this is set to "true", the document has a change protection and a password is required to claim ownership and modify the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="hasAsymmetricEncryption" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this is set to "true", the document is asymmetrically encrypted and a matching private key is required to decrypt it.
+Otherwise the document is symetrically encrypted and requires a password.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="keyLength" default="0">
+            <xs:annotation>
+                <xs:documentation>The Bit length of the key used for encryption.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="keyAlgorithm" default="none" type="KeyAlgorithmType" />
+        <xs:attribute name="keyAlgorithm" default="none" type="KeyAlgorithmType">
+            <xs:annotation>
+                <xs:documentation>The algorithm used for encryption.
+- none = The document is not encrypted.
+- aes = The document has been encrypted using the Advanced Encryption Standard.
+- rc4 = The document has been encrypted using the RC4 cipher.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="PageLayoutType">
+        <xs:annotation>
+            <xs:documentation>The set initial page layout of a document. When opening the document in a Reader, this layout shall be selected to display pages.
+
+- singlePage = One page at a time.
+- oneColumn = One continuous column of pages.
+- twoColumnLeft = The pages in two columns, with odd-numbered pages on the left.
+- twoColumnRight = The pages in two columns, with odd-numbered pages on the right.
+- twoPageLeft = Display the pages two at a time, with odd-numbered pages on the left.
+- twoPageRight = Display the pages two at a time, with odd-numbered pages on the right.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="singlePage" />
             <xs:enumeration value="oneColumn" />
@@ -305,6 +768,16 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="MagnificationType">
+        <xs:annotation>
+            <xs:documentation>The initial page zoom settings of a document. When opening the document in a Reader, this zoom settings shall be used.
+- none = Uses the application’s default view.
+- fitWidth = Page width.
+- fitPage = Page dimensions.
+- fitHeight = Page height.
+- fitVisible = Page content width.
+- fitActual = Uses the original page dimensions (100% zoom factor).
+- zoom = Sets an explicit magnification value.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="none" />
             <xs:enumeration value="fitWidth" />
@@ -316,6 +789,13 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="InitialViewType">
+        <xs:annotation>
+            <xs:documentation>Defines which sub-windows will be opened when the PDF document is opened.
+- none = No special view
+- outlines = Opens the “Bookmarks" tab
+- thumbnails = Opens the “Thumbnails" tab
+- fullscreen = Opens the document in full screen mode</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="none" />
             <xs:enumeration value="outlines" />
@@ -326,6 +806,12 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="KeyAlgorithmType">
+        <xs:annotation>
+            <xs:documentation>The algorithm used for encryption.
+- none = The document is not encrypted.
+- aes = The document has been encrypted using the Advanced Encryption Standard.
+- rc4 = The document has been encrypted using the RC4 cipher.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="none" />
             <xs:enumeration value="aes" />
@@ -333,43 +819,108 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="RgbColorType">
+        <xs:annotation>
+            <xs:documentation>A color definition. The color will be specified as a hexadecimal RGB value with a number sign before it.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:token">
             <xs:pattern value="#[0-9a-fA-F]{6}" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="OpacityType">
+        <xs:annotation>
+            <xs:documentation>An opacity definition as a percentage, where 100 is fully oqaque and 0 is fully transparent.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:int">
             <xs:minInclusive value="0" />
             <xs:maxInclusive value="100" />
         </xs:restriction>
     </xs:simpleType>
     <xs:attributeGroup name="FlagsAnnotationGroup">
-        <xs:attribute name="locked" default="true" type="xs:boolean" />
-        <xs:attribute name="printable" default="false" type="xs:boolean" />
-        <xs:attribute name="rotatable" default="true" type="xs:boolean" />
-        <xs:attribute name="viewable" default="true" type="xs:boolean" />
-        <xs:attribute name="writable" default="true" type="xs:boolean" />
-        <xs:attribute name="zoomable" default="true" type="xs:boolean" />
-        <xs:attribute name="invisible" default="false" type="xs:boolean" />
-        <xs:attribute name="hidden" default="false" type="xs:boolean" />
+        <xs:attribute name="locked" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this value is set to true, the annotation will be locked so that no changes can be made to it.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="printable" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this value is set to true, the annotation will be included when the page is printed out.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="rotatable" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this value is set to true, the annotation shall be rotatable according to the displayed page rotation.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="viewable" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this value is set to true, the annotation will be shown on the document’s page.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="writable" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this value is set to true, it will be possible to change the annotation’s contents later on.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="zoomable" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this value is set to true, the annotation will adjust its own zoom factor as required for the page in order to always be clearly readable / recognizable.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="invisible" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this value is set to true, the annotation will be visible on the page only when printed, and provided it is a PDF standard annotation.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="hidden" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>If this value is set to true, the annotation will not be shown on the page and will not be printed either.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:attributeGroup>
     <xs:complexType name="AnnotationType">
+        <xs:annotation>
+            <xs:documentation>An element of this type describes an Annotation placed on a page of the document.</xs:documentation>
+        </xs:annotation>
         <xs:sequence minOccurs="0">
             <xs:choice id="positions" minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="rectangle" type="RectangleType" />
-                <xs:element name="point" type="PointType" />
+                <xs:element name="rectangle" type="AnnotationRectangleType" />
+                <xs:element name="point" type="AnnotationPointType" />
             </xs:choice>
             <xs:element name="markup" type="MarkupType" minOccurs="0" />
             <xs:element name="popup" type="PopupType" minOccurs="0" />
             <xs:element name="appearance" type="AppearanceType" minOccurs="0" />
             <xs:element name="line" type="LineType" minOccurs="0" />
             <xs:element name="border" type="BorderStyle" minOccurs="0" />
+            <xs:element name="drawStyle" type="DrawStyleType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
-        <xs:attribute name="objectKey" default="" type="xs:string" />
-        <xs:attribute name="subType" default="" type="xs:string" />
-        <xs:attribute name="name" default="" type="xs:string" use="optional" />
-        <xs:attribute name="contents" default="" type="xs:string" use="optional" />
+        <xs:attribute name="objectKey" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The object ID of the annotation.
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="subType" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The type of an annotation is always "Annot", this is the sub type of the annotation determining the actual behavior and function of the annotation. (i.e. Text, Link, Widget etc.)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" default="" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>The annotation´s name.
+
+**important:** This name is optional and in the best case unique in the annotation´s page context only. Don´t use the name to select an annotation, always prefer selecting objects by object ID, when possible.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contents" default="" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>The annotation´s textual contents or (should an annotation of this type not have such contents) it´s description.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="page" default="0">
+            <xs:annotation>
+                <xs:documentation>The number of the page the annotation is placed on.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
@@ -377,49 +928,139 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attributeGroup ref="FlagsAnnotationGroup" />
-        <xs:attribute name="color" default="#4800FF" type="RgbColorType" />
-        <xs:attribute name="rotation" default="0" type="xs:int" />
-        <xs:attribute name="iconName" default="" type="xs:string" />
+        <xs:attribute name="color" default="#4800FF" type="RgbColorType">
+            <xs:annotation>
+                <xs:documentation>The main color of visible annotations. The color will be specified as a hexadecimal RGB value with a number sign before it.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="rotation" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>The annotation´s rotation.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="iconName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>If the annotation selects an icon (Text annotations), this is the name of that icon.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="MarkupType">
+        <xs:annotation>
+            <xs:documentation>Defines a set of attributes for text markup annotations.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="richContents" type="xs:string" minOccurs="0" default="" />
+            <xs:element name="richContents" type="xs:string" minOccurs="0" default="">
+                <xs:annotation>
+                    <xs:documentation>A richtext string containing defining style and contents of the annotation. (This String shall conform to the richtext conventions of the XML Forms Specification (XFA)).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="relation" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Selects the relation of this annotation to other annotations.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:choice minOccurs="1" maxOccurs="1">
+                        <xs:element name="group" type="GroupRelationType" />
+                        <xs:element name="mark" type="MarkRelationType" />
+                        <xs:element name="state" type="ReplyStateRelationType" />
+                        <xs:element name="comment" type="CommentRelationType" />
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
-        <xs:attribute name="opacity" default="100" type="OpacityType" />
-        <xs:attribute name="creationDate" default="" type="xs:string" />
-        <xs:attribute name="subject" default="" type="xs:string" use="optional" />
-        <xs:attribute name="intents" default="" type="xs:string" use="optional" />
-        <xs:attribute name="creator" default="" type="xs:string" use="optional" />
+        <xs:attribute name="opacity" default="100" type="OpacityType">
+            <xs:annotation>
+                <xs:documentation>The annotations opacity as a percentage, where 100 is fully oqaque and 0 is fully transparent.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="creationDate" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The date of the annotation´s creation. This string will contain the date in ASN.1 standard format. (D:YYYYMMDDHHmmSSOHH'mm)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="subject" default="" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>The annotation´s subject.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="intents" default="" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>The annotation´s intents. Depending on the annotation sub type the intents value shall serve further purposes.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="creator" default="" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>The name of the annotation´s author.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="PopupType">
+        <xs:annotation>
+            <xs:documentation>Defines a set of attributes concerning the annotation´s popup.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="rectangle" type="RectangleType" minOccurs="1" maxOccurs="1" />
+            <xs:element name="rectangle" type="RectangleType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The position of the popup.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
-        <xs:attribute name="isOpen" default="false" type="xs:boolean" />
+        <xs:attribute name="isOpen" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>When set to true, the popup shall be displayed, when opening the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="RectangleType">
-        <xs:attribute name="width" default="0" use="optional">
-            <xs:simpleType>
-                <xs:restriction base="xs:float" />
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="height" default="0" use="optional">
-            <xs:simpleType>
-                <xs:restriction base="xs:float" />
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="x" default="0" use="optional">
-            <xs:simpleType>
-                <xs:restriction base="xs:float" />
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="y" default="0" use="optional">
-            <xs:simpleType>
-                <xs:restriction base="xs:float" />
-            </xs:simpleType>
-        </xs:attribute>
+        <xs:annotation>
+            <xs:documentation>Defines a rectangular area/box.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="PositionsType">
+                <xs:attribute name="width" default="0" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>The width of the rectangle in pixels.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:float" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="height" default="0" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>The height of the rectangle in pixels.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:float" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="x" default="0" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>The x coordinate in pixels.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:float" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="y" default="0" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>The y coordinate in pixels.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:float" />
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
     <xs:simpleType name="DocMdpType">
+        <xs:annotation>
+            <xs:documentation>A document "Modification Detection and Prevention" may be set, that defines which modifications of the document are allowed and which modifications would render the signature invalid.
+
+- none = The document is unprotected - modify it as you please.
+- noChangesAllowed = Any modifications of the document would render the signatures invalid.
+- formFillingSignatures = You may fill in forms and further sign the document.
+- formFillingSignaturesAndAnnotations = Form filling, signing and adding annotations are allowed.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="none" />
             <xs:enumeration value="noChangesAllowed" />
@@ -428,51 +1069,165 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="PointType">
-        <xs:attribute name="x" default="0" use="optional">
-            <xs:simpleType>
-                <xs:restriction base="xs:float" />
-            </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="y" default="0" use="optional">
-            <xs:simpleType>
-                <xs:restriction base="xs:float" />
-            </xs:simpleType>
-        </xs:attribute>
+        <xs:annotation>
+            <xs:documentation>Defines a point.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="PositionsType">
+                <xs:attribute name="x" default="0" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>The x coordinate in pixels.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:float" />
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="y" default="0" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>The y coordinate in pixels.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:float" />
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="AppearanceType" />
-    <xs:complexType name="PositionsType" />
+    <xs:complexType name="AppearanceType">
+        <xs:annotation>
+            <xs:documentation>Defines a set of attributes concerning the appearance of the annotation.</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="PositionsType">
+        <xs:annotation>
+            <xs:documentation>Used to define some sort of position on a PDF page.</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
     <xs:complexType name="LineType">
-        <xs:attribute name="startStyle" default="" type="xs:string" />
-        <xs:attribute name="endStyle" default="" type="xs:string" />
-        <xs:attribute name="showCaption" default="false" type="xs:boolean" />
-        <xs:attribute name="captionHorizontalOffset" default="0" type="xs:float" />
-        <xs:attribute name="captionVerticalOffset" default="0" type="xs:float" />
-        <xs:attribute name="captionPositioning" default="" type="xs:string" />
-        <xs:attribute name="leaderLineLength" default="0" type="xs:float" />
-        <xs:attribute name="leaderLineOffsetLength" default="0" type="xs:float" />
-        <xs:attribute name="leaderLineExtensionLength" default="0" type="xs:float" />
+        <xs:annotation>
+            <xs:documentation>Defines a set of attributes for Line annotations.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="startStyle" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Selects the Line ending style at the start of the line.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="endStyle" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Selects the Line ending style at the end of the line. Possible values are: Square, Circle, Diamond, OpenArrow, ClosedArrow, None, Butt, ROpenArrow, RClosedArrow, Slash</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="showCaption" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>When set to true the line shall display a textual caption.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="captionHorizontalOffset" default="0" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>The horizontal offset of the caption´s leading letter in relation to it´s normal position.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="captionVerticalOffset" default="0" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>The vertical offset of the caption`s leading letter in relation to it´s normal position.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="captionPositioning" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The positioning method for the caption of the line. Possible values are "Inline" (superimposed) and "Top" (above the line).</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="leaderLineLength" default="0" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>The length of leader lines that extend from each endpoint of the line perpendicular to the line itself. A positive value shall mean that the leader lines appear in the direction that is clockwise when traversing the line from its starting point to its ending point; a negative value shall indicate the opposite direction.(0 = no leader lines)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="leaderLineOffsetLength" default="0" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>A non-negative number that shall represent the length of the leader line offset, which is the amount of empty space between the endpoints of the annotation and the beginning of the leader lines.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="leaderLineExtensionLength" default="0" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>A non-negative number that shall represent the length of leader line extensions that extend from the line proper 180 degrees from the leader lines. (0 = no leader line extensions)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="BorderStyle">
-        <xs:attribute name="style" default="S" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>Selects a border style for a drawn shape´s outline.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="style" default="S" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The style of the shapes border.
+
+- S = Solid
+- D = Dashed
+- B = Beveled
+- I = Inset
+- U = Underline
+
+**important:** Further custom styles may be contained and shall default to a solid border if unknown.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="width" default="1">
+            <xs:annotation>
+                <xs:documentation>The border width/line thickness in pixels.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="dashPattern" default="" type="xs:string" />
-        <xs:attribute name="dashPhase" default="0" type="xs:int" />
-        <xs:attribute name="effectStyle" default="" type="xs:string" />
-        <xs:attribute name="effectIntensity" default="0" type="xs:float" />
-        <xs:attribute name="interiorColor" default="#4800FF" type="RgbColorType" />
+        <xs:attribute name="dashPattern" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The dash pattern (array) of a dashed border. The dash array contains the unit lengths of alternating dashes and gaps, that shall be cycled through along the length of the border.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="dashPhase" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>The phase of the dash pattern.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="effectStyle" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The border effect to apply to the border shape.
+
+- S = Apply no border effects.
+- C = Apply a cloud pattern to the border shape.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="effectIntensity" default="0" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>The intensity of a possibly set cloud effect, in a range from 0 to 2.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="interiorColor" default="#4800FF" type="RgbColorType">
+            <xs:annotation>
+                <xs:documentation>The interior (fill) color for the shape.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="BackgroundContentType">
+        <xs:annotation>
+            <xs:documentation>An element of this type defines a background for a page of the document.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="pieceInfo" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Properties listed in the Adobe piece info.</xs:documentation>
+                </xs:annotation>
                 <xs:complexType>
-                    <xs:attribute name="absoluteScaling" default="true" type="xs:boolean" />
+                    <xs:attribute name="absoluteScaling" default="true" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation>When set to true the page shall be scaled relative to it´s own original dimensions, when set to false, it shall be scaled relative to the page dimensions.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                     <xs:attribute name="scale" default="1">
+                        <xs:annotation>
+                            <xs:documentation>The scaling of the background.</xs:documentation>
+                        </xs:annotation>
                         <xs:simpleType>
                             <xs:restriction base="xs:float">
                                 <xs:minInclusive value="0" />
@@ -480,6 +1235,9 @@
                         </xs:simpleType>
                     </xs:attribute>
                     <xs:attribute name="rotation" default="0">
+                        <xs:annotation>
+                            <xs:documentation>The rotation of the background.</xs:documentation>
+                        </xs:annotation>
                         <xs:simpleType>
                             <xs:restriction base="xs:int">
                                 <xs:minInclusive value="0" />
@@ -488,6 +1246,9 @@
                         </xs:simpleType>
                     </xs:attribute>
                     <xs:attribute name="opacity" default="1.0">
+                        <xs:annotation>
+                            <xs:documentation>The opacity of the background, as a percentage in the range 0.0 (fully transparent) to 1.0 (fully opaque).</xs:documentation>
+                        </xs:annotation>
                         <xs:simpleType>
                             <xs:restriction base="xs:float">
                                 <xs:minInclusive value="0" />
@@ -495,17 +1256,60 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
-                    <xs:attribute name="color" default="#FFFFFF" type="RgbColorType" />
-                    <xs:attribute name="alignment" default="top_left" type="Alignment" />
-                    <xs:attribute name="horizOffset" default="0.0" type="xs:float" />
-                    <xs:attribute name="vertOffset" default="0.0" type="xs:float" />
-                    <xs:attribute name="unit" default="" type="xs:string" />
+                    <xs:attribute name="color" default="#FFFFFF" type="RgbColorType">
+                        <xs:annotation>
+                            <xs:documentation>The color of a unicolor background.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="alignment" default="top_left" type="Alignment">
+                        <xs:annotation>
+                            <xs:documentation>Uses one of multiple preset positions in order to position the background on the page.
+- custom = Disable the use of a preset position.
+- top_left = Positions the background in the top left corner.
+- top_center = Positions the background in the centre on the top margin.
+- top_right = Positions the background in the top right corner.
+- center_left = Positions the background at the centre of the page, to the left.
+- center_center = Positions the background at the centre of the page.
+- center_right = Positions the background at the centre of the page, to the right.
+- bottom_left = Positions the background in the bottom left corner.
+- bottom_center = Positions the background in the centre on the bottom margin.
+- bottom_right = Positions the background in the bottom right corner.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="horizOffset" default="0.0" type="xs:float">
+                        <xs:annotation>
+                            <xs:documentation>The horizontal offset in relation to the backgrounds bas position.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="vertOffset" default="0.0" type="xs:float">
+                        <xs:annotation>
+                            <xs:documentation>The vertical offset in relation to the backgrounds bas position.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="unit" default="" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>The Adobe unit used to display offsets in readers. (millimetres, pica, point etc).</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="bounds" type="RectangleType" minOccurs="1" maxOccurs="1" />
+            <xs:element name="bounds" type="RectangleType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The bounding box of the background.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
-        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="objectKey" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The object ID of the background.
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="page" default="0">
+            <xs:annotation>
+                <xs:documentation>The page the background shall be set for.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
@@ -513,16 +1317,26 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="onprint" default="true">
+            <xs:annotation>
+                <xs:documentation>Whether the background shall be visible in printouts of the document.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:boolean" />
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="onscreen" default="true">
+            <xs:annotation>
+                <xs:documentation>Whether the background shall be visible in Readers.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:boolean" />
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="isImage" default="false" type="xs:boolean" />
+        <xs:attribute name="isImage" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>When set to true, the background is using an image resource. (Otherwise it is unicolor)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ColorType">
         <xs:attribute name="r" default="0">
@@ -551,6 +1365,19 @@
         </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="Alignment">
+        <xs:annotation>
+            <xs:documentation>Uses one of multiple preset positions in order to position the background on the page.
+- custom = Disable the use of a preset position.
+- top_left = Positions the background in the top left corner.
+- top_center = Positions the background in the centre on the top margin.
+- top_right = Positions the background in the top right corner.
+- center_left = Positions the background at the centre of the page, to the left.
+- center_center = Positions the background at the centre of the page.
+- center_right = Positions the background at the centre of the page, to the right.
+- bottom_left = Positions the background in the bottom left corner.
+- bottom_center = Positions the background in the centre on the bottom margin.
+- bottom_right = Positions the background in the bottom right corner.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="top_left" />
             <xs:enumeration value="top_center" />
@@ -564,55 +1391,173 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="BoxesType">
+        <xs:annotation>
+            <xs:documentation>This type is used to describe the boxes of a page.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="mediaBox" type="RectangleType" minOccurs="1" maxOccurs="1" />
-            <xs:element name="cropBox" type="RectangleType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="bleedBox" type="RectangleType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="trimBox" type="RectangleType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="artBox" type="RectangleType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="mediaBox" type="RectangleType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The page’s physical dimensions.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="cropBox" type="RectangleType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The visible (printable) page area.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="bleedBox" type="RectangleType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Untrimmed content position on the page (content dimensions plus trim box).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="trimBox" type="RectangleType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Trimmed content position on the page (final content dimensions).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="artBox" type="RectangleType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Position for special page content (images).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="HeaderFooterType">
+        <xs:annotation>
+            <xs:documentation>An element of this type defines header and footer values for a page of the document.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="font" type="FontType" />
             <xs:element name="margin" type="MarginType" />
             <xs:element name="header" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Selects the values for a page header.</xs:documentation>
+                </xs:annotation>
                 <xs:complexType>
-                    <xs:attribute name="left" default="" type="xs:string" />
-                    <xs:attribute name="center" default="" type="xs:string" />
-                    <xs:attribute name="right" default="" type="xs:string" />
+                    <xs:attribute name="left" default="" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>The value displayed at the left of the header.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="center" default="" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>The value displayed at the center of the header.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="right" default="" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>The value displayed at the right of the header.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
             <xs:element name="footer" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Selects the values for a page footer.</xs:documentation>
+                </xs:annotation>
                 <xs:complexType>
-                    <xs:attribute name="left" default="" type="xs:string" />
-                    <xs:attribute name="center" default="" type="xs:string" />
-                    <xs:attribute name="right" default="" type="xs:string" />
+                    <xs:attribute name="left" default="" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>The value displayed at the left of the footer.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="center" default="" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>The value displayed at the center of the footer.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="right" default="" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>The value displayed at the right of the footer.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
-        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:attribute name="objectKey" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The object ID of the header/footer definition.
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="page" default="0">
+            <xs:annotation>
+                <xs:documentation>The page headers/footers shall be defined for.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="color" type="RgbColorType" />
+        <xs:attribute name="color" type="RgbColorType">
+            <xs:annotation>
+                <xs:documentation>The text of headers and footers color.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="FontType">
-        <xs:attribute name="underline" default="false" type="xs:boolean" />
-        <xs:attribute name="size" default="10" type="xs:float" />
-        <xs:attribute name="name" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>Defines a font format for a displayable page content.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="underline" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>When set to true, the text shall be underlined.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="size" default="10" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>The size of the font.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The name of the used font.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="MarginType">
-        <xs:attribute name="left" default="0" type="xs:float" />
-        <xs:attribute name="right" default="0" type="xs:float" />
-        <xs:attribute name="top" default="0" type="xs:float" />
-        <xs:attribute name="bottom" default="0" type="xs:float" />
+        <xs:annotation>
+            <xs:documentation>Defines a margin for a displayble page content.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="left" default="0" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>The left margin in pixels.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="right" default="0" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>The right margin in pixels.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="top" default="0" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>The top margin in pixels.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="bottom" default="0" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>The bottom margin in pixels.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="TransitionStyleType">
+        <xs:annotation>
+            <xs:documentation>The style of transition animation.
+- blinds = Crossfades
+- box = Crossfades in a rectangular pattern
+- cover = Covers
+- dissolve = Dissolves
+- fade = Fades
+- fly = Page flies in
+- glitter = Page dissolves and is replaced
+- push = Page is pushed out
+- split = Splits page
+- uncover = Uncovers page
+- wipe = Wipes page
+- none = No special effect</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="blinds" />
             <xs:enumeration value="box" />
@@ -629,6 +1574,15 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="TransitionDirection">
+        <xs:annotation>
+            <xs:documentation>The direction of the transition animation (provided that it can be applied to the animation).
+- leftToRight = From left to right
+- bottomToTop = From bottom to top
+- rightToLeft = From right to left
+- topToBottom = From top to bottom
+- topLeftToBottomRight = From top left to bottom right
+- none = Use the default value for the animation</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="leftToRight" />
             <xs:enumeration value="bottomToTop" />
@@ -638,34 +1592,124 @@
             <xs:enumeration value="none" />
         </xs:restriction>
     </xs:simpleType>
+    <xs:complexType name="DrawStyleType">
+        <xs:annotation>
+            <xs:documentation>Selects the draw style of an drawable shape.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="drawMode" default="stroke" type="DrawModeType">
+            <xs:annotation>
+                <xs:documentation>Selects the draw style of an drawable shape.
+- fill = fill the shape
+- stroke = draw the outlines of the shape
+- fillAndStroke = draw the outlines and fill the shape</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
     <xs:complexType name="TransitionType">
-        <xs:attribute name="objectKey" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>Defines a page transition for the full screen mode of the document.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="objectKey" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The object ID of the transition definition.
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="page" default="0">
+            <xs:annotation>
+                <xs:documentation>The page a transition shall be defined for.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="autoScroll" default="false" type="xs:boolean" />
-        <xs:attribute name="flyScale" default="1" type="xs:float" />
-        <xs:attribute name="flyAreaOpaque" default="false" type="xs:boolean" />
+        <xs:attribute name="autoScroll" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>Whether or not the page is automatically flipped after a short period.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="flyScale" default="1" type="xs:float">
+            <xs:annotation>
+                <xs:documentation>For a fly animation, this determines the initial scale of the page, when flying in.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="flyAreaOpaque" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>For a fly animation, this determines whether or not the opacity shall stay constantly opaque during the animation.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="duration" default="1">
+            <xs:annotation>
+                <xs:documentation>Selects the duration in seconds, that the animation shall be played for.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
                     <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="style" default="none" type="TransitionStyleType" />
-        <xs:attribute name="direction" default="none" type="TransitionDirection" />
+        <xs:attribute name="style" default="none" type="TransitionStyleType">
+            <xs:annotation>
+                <xs:documentation>The style of transition animation.
+- blinds = Crossfades
+- box = Crossfades in a rectangular pattern
+- cover = Covers
+- dissolve = Dissolves
+- fade = Fades
+- fly = Page flies in
+- glitter = Page dissolves and is replaced
+- push = Page is pushed out
+- split = Splits page
+- uncover = Uncovers page
+- wipe = Wipes page
+- none = No special effect</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="direction" default="none" type="TransitionDirection">
+            <xs:annotation>
+                <xs:documentation>The direction of the transition animation (provided that it can be applied to the animation).
+- leftToRight = From left to right
+- bottomToTop = From bottom to top
+- rightToLeft = From right to left
+- topToBottom = From top to bottom
+- topLeftToBottomRight = From top left to bottom right
+- none = Use the default value for the animation</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ImageType">
-        <xs:attribute name="objectKey" default="" type="xs:string" />
-        <xs:attribute name="width" default="0" type="xs:int" />
-        <xs:attribute name="height" default="0" type="xs:int" />
-        <xs:attribute name="suffix" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>Defines an image resource of a PDF document.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="objectKey" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The object ID of the image resource definition.
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="width" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>The width of the image in pixels.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="height" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>The height of the image in pixels.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="suffix" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Returns the file type suffix of the image. (This suffix depends on the used image encoding and therefore is highly reliable.)</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="page" default="0">
+            <xs:annotation>
+                <xs:documentation>The number of the page containing the image resource.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
@@ -673,6 +1717,9 @@
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="bitsPerComponent" default="0">
+            <xs:annotation>
+                <xs:documentation>The number of bits used to encode one color component.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
@@ -681,35 +1728,198 @@
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="FormValueStyle">
-        <xs:attribute name="export" default="" type="xs:string" />
-        <xs:attribute name="display" default="" type="xs:string" />
-        <xs:attribute name="isDefault" default="false" type="xs:boolean" />
+        <xs:annotation>
+            <xs:documentation>Selects parameters for the handling of a form fields values.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="export" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The exportable value.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="display" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The displayable value.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="isDefault" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>True, if the given value is the default of the connected form field.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="FolderType">
-        <xs:attribute name="id" default="0" type="xs:int" />
-        <xs:attribute name="name" default="" type="xs:string" />
-        <xs:attribute name="path" default="" type="xs:string" />
-        <xs:attribute name="creationDate" default="" type="xs:string" />
-        <xs:attribute name="modificationDate" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>Defines a folder for a PDF collection (portfolio).</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="id" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>The numeric folder ID of the portfolio folder.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The name of the folder.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="path" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The path the folder is positioned at.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="creationDate" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The date of the folder´s creation.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="modificationDate" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The date of the last modification of the folder.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="AnnotationRectangleType">
+        <xs:annotation>
+            <xs:documentation>An upright rectangle positioning the annotation on the page.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="RectangleType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="AnnotationPointType">
+        <xs:annotation>
+            <xs:documentation>Defines one Point of the shape positioning the annotation on the page.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="PointType" />
+        </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="ViewerPreferencesType">
-        <xs:attribute name="hideToolbar" default="false" type="xs:boolean" />
-        <xs:attribute name="hideMenuBar" default="false" type="xs:boolean" />
-        <xs:attribute name="hideWindowUI" default="false" type="xs:boolean" />
-        <xs:attribute name="fitWindow" default="false" type="xs:boolean" />
-        <xs:attribute name="centerWindow" default="false" type="xs:boolean" />
-        <xs:attribute name="displayDocTitle" default="false" type="xs:boolean" />
-        <xs:attribute name="nonFullScreenPageMode" default="none" type="NonFullScreenPageModeType" />
-        <xs:attribute name="textDirection" default="leftToRight" type="TextDirectionType" />
-        <xs:attribute name="viewArea" default="cropBox" type="BoxSelectionType" />
-        <xs:attribute name="viewClip" default="cropBox" type="BoxSelectionType" />
-        <xs:attribute name="printArea" default="cropBox" type="BoxSelectionType" />
-        <xs:attribute name="printClip" default="cropBox" type="BoxSelectionType" />
-        <xs:attribute name="printScaling" default="readerDefault" type="PrintScaleType" />
-        <xs:attribute name="duplex" default="none" type="DuplexType" />
-        <xs:attribute name="printTraySelection" default="readerDefault" type="PrintTraySelectionType" />
-        <xs:attribute name="printPageRange" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>Lists a set of further settings and definitions, that a Reader may honor, when displaying the document.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="hideToolbar" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>The Reader´s toolbars shall be hidden, when opening the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="hideMenuBar" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>The Reader´s menu bar shall be hidden, when opening the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="hideWindowUI" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>The Reader´s navigation controls (such as scrollbars) shall be hidden, when opening the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fitWindow" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>The dimensions of the Reader´s window shall adapt to the first displayed page of the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="centerWindow" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>The Reader`s window shall be positioned at the center of the screen, when opening the document.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="displayDocTitle" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>Instead of the file name the reader shall display the title of the document in it´s title bar.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="nonFullScreenPageMode" default="none" type="NonFullScreenPageModeType">
+            <xs:annotation>
+                <xs:documentation>When displaying the document in windowed mode, the Reader shall show the selected panel.
+
+- none = No panel shall be opened.
+- outlines = The document´s outlines shall be displayed.
+- thumbnails = The document´s page thumbnails shall be shown.
+- optionalContents = document´s layers (OCGs - Optional Content Groups) shall be displayed.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="textDirection" default="leftToRight" type="TextDirectionType">
+            <xs:annotation>
+                <xs:documentation>Selects the predominant document´s text writing/reading direction.
+- leftToRight or
+- rightToLeft</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="viewArea" default="cropBox" type="BoxSelectionType">
+            <xs:annotation>
+                <xs:documentation>Selects the visible box, when displaying the document.
+- media_box = The page’s physical dimensions.
+- crop_box = The visible (printable) page area.
+- bleed_box = Untrimmed content position on the page (content dimensions plus trim box).
+- trim_box = Trimmed content position on the page (final content dimensions).
+- art_box = Position for special page content (images).</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="viewClip" default="cropBox" type="BoxSelectionType">
+            <xs:annotation>
+                <xs:documentation>Selects the box contents shall be cropped at, when displaying the document.
+- media_box = The page’s physical dimensions.
+- crop_box = The visible (printable) page area.
+- bleed_box = Untrimmed content position on the page (content dimensions plus trim box).
+- trim_box = Trimmed content position on the page (final content dimensions).
+- art_box = Position for special page content (images).</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="printArea" default="cropBox" type="BoxSelectionType">
+            <xs:annotation>
+                <xs:documentation>Selects the visible box, when printing the document.
+- media_box = The page’s physical dimensions.
+- crop_box = The visible (printable) page area.
+- bleed_box = Untrimmed content position on the page (content dimensions plus trim box).
+- trim_box = Trimmed content position on the page (final content dimensions).
+- art_box = Position for special page content (images).</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="printClip" default="cropBox" type="BoxSelectionType">
+            <xs:annotation>
+                <xs:documentation>Selects the box contents shall be cropped at, when printing the document.
+- media_box = The page’s physical dimensions.
+- crop_box = The visible (printable) page area.
+- bleed_box = Untrimmed content position on the page (content dimensions plus trim box).
+- trim_box = Trimmed content position on the page (final content dimensions).
+- art_box = Position for special page content (images).</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="printScaling" default="readerDefault" type="PrintScaleType">
+            <xs:annotation>
+                <xs:documentation>The print scaling initially suggested when opening the Reader`s print dialog.
+- readerDefault = The Reader shall use it´s default suggestion.
+- byPDFSize = The Reader shall suggest to not scale the document during printing.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="duplex" default="none" type="DuplexType">
+            <xs:annotation>
+                <xs:documentation>The duplex settings initially suggested when opening the Reader´s print dialog.
+
+- none = The Reader shall use it´s default suggestion.
+- simplex = The Reader shall suggest simplex printing.
+- duplexFlipShortEdge = The Reader shall suggest duplex printing, flipping pages over the shorter edge.
+- duplexFlipLongEdge = The Reader shall suggest duplex printing, flipping pages over the longer edge.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="printTraySelection" default="readerDefault" type="PrintTraySelectionType">
+            <xs:annotation>
+                <xs:documentation>The print tray selection initially suggested when opening the Reader´s print dialog.
+
+- readerDefault = The Reader shall use it´s default suggestion.
+- byPDFSize = The Reader shall select a print tray, that matches the PDF´s page dimensions.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="printPageRange" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Selects the page range, that shall initially be suggested for printing, when opening the Reader´s print dialog.
+
+The page number can be an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9"). To specify "all pages," use an asterisk ("*").</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="numCopies" default="1">
+            <xs:annotation>
+                <xs:documentation>The number of copies initially suggested, when opening the Reader´s print dialog.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="1" />
@@ -718,6 +1928,14 @@
         </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="NonFullScreenPageModeType">
+        <xs:annotation>
+            <xs:documentation>When displaying a document in windowed mode, the Reader shall show the selected panel.
+
+- none = No panel shall be opened.
+- outlines = The document´s outlines shall be displayed.
+- thumbnails = The document´s page thumbnails shall be shown.
+- optionalContents = document´s layers (OCGs - Optional Content Groups) shall be displayed.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="none" />
             <xs:enumeration value="outlines" />
@@ -726,12 +1944,25 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="TextDirectionType">
+        <xs:annotation>
+            <xs:documentation>Selects the predominant document´s text writing/reading direction.
+- leftToRight or
+- rightToLeft</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="leftToRight" />
             <xs:enumeration value="rightToLeft" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="DuplexType">
+        <xs:annotation>
+            <xs:documentation>The duplex settings initially suggested when opening the Reader´s print dialog.
+
+- none = The Reader shall use it´s default suggestion.
+- simplex = The Reader shall suggest simplex printing.
+- duplexFlipShortEdge = The Reader shall suggest duplex printing, flipping pages over the shorter edge.
+- duplexFlipLongEdge = The Reader shall suggest duplex printing, flipping pages over the longer edge.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="none" />
             <xs:enumeration value="simplex" />
@@ -740,24 +1971,140 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="PrintTraySelectionType">
+        <xs:annotation>
+            <xs:documentation>The print tray selection initially suggested when opening the Reader´s print dialog.
+
+- readerDefault = The Reader shall use it´s default suggestion.
+- byPDFSize = The Reader shall select a print tray, that matches the PDF´s page dimensions.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="readerDefault" />
             <xs:enumeration value="byPDFSize" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="PrintScaleType">
+        <xs:annotation>
+            <xs:documentation>The print scaling initially suggested when opening the Reader`s print dialog.
+- readerDefault = The Reader shall use it´s default suggestion.
+- byPDFSize = The Reader shall suggest to not scale the document during printing.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="readerDefault" />
             <xs:enumeration value="noPrintScaling" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="BoxSelectionType">
+        <xs:annotation>
+            <xs:documentation>Selects the visible box, when displaying the document.
+- media_box = The page’s physical dimensions.
+- crop_box = The visible (printable) page area.
+- bleed_box = Untrimmed content position on the page (content dimensions plus trim box).
+- trim_box = Trimmed content position on the page (final content dimensions).
+- art_box = Position for special page content (images).</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="mediaBox" />
             <xs:enumeration value="cropBox" />
             <xs:enumeration value="bleedBox" />
             <xs:enumeration value="trimBox" />
             <xs:enumeration value="artBox" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="DrawModeType">
+        <xs:annotation>
+            <xs:documentation>Selects the draw style of an drawable shape.
+- fill = fill the shape
+- stroke = draw the outlines of the shape
+- fillAndStroke = draw the outlines and fill the shape</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="fill" />
+            <xs:enumeration value="stroke" />
+            <xs:enumeration value="fillAndStroke" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="BaseRelationType">
+        <xs:annotation>
+            <xs:documentation>Defines some sort of relation to another annotation with the given ID.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="objectID" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The object ID of the annotation.
+
+**info:** A PDF object ID consists of two numbers, where the first number selects the object´s number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="GroupRelationType">
+        <xs:annotation>
+            <xs:documentation>Group with the selected annotation.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="BaseRelationType" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="MarkRelationType">
+        <xs:annotation>
+            <xs:documentation>Change the marked state of the selected annotation.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="BaseRelationType">
+                <xs:attribute name="marked" default="false" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>If this is set to true, the selected annotation has been marked, otherwise it has been unmarked.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CommentRelationType">
+        <xs:annotation>
+            <xs:documentation>Adds a textual comment to the selected annotation.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="BaseRelationType">
+                <xs:attribute name="comment" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>The textual comment to add.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ReplyStateRelationType">
+        <xs:annotation>
+            <xs:documentation>Changes the reply state of the selected annotation.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="BaseRelationType">
+                <xs:attribute name="state" default="none" type="ReplyStateType">
+                    <xs:annotation>
+                        <xs:documentation>The set reply state of the commented annotation.
+- accepted = The user agrees with the change.
+- rejected = The user disagrees with the change.
+- cancelled = The change has been cancelled.
+- completed = The change has been completed.
+- none = The user did not set a state.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="ReplyStateType">
+        <xs:annotation>
+            <xs:documentation>The set reply state of a commented annotation.
+- accepted = The user agrees with the change.
+- rejected = The user disagrees with the change.
+- cancelled = The change has been cancelled.
+- completed = The change has been completed.
+- none = The user did not set a state.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="accepted" />
+            <xs:enumeration value="rejected" />
+            <xs:enumeration value="cancelled" />
+            <xs:enumeration value="completed" />
+            <xs:enumeration value="none" />
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

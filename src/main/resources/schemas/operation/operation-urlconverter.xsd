@@ -2,22 +2,60 @@
 <xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="UrlConverterType">
+        <xs:annotation>
+            <xs:documentation>The "URLConverter" web service van be used to convert URL resources (websites) to a PDF document.
+
+**important:** Please keep the limitations of HTML conversion in mind (see chapter "HTML conversion").</xs:documentation>
+        </xs:annotation>
         <xs:all>
             <xs:element name="basicAuth" type="tns:HttpBasicAuthType" minOccurs="0" maxOccurs="1" />
             <xs:element name="page" type="tns:PageType" minOccurs="0" maxOccurs="1" />
             <xs:element name="proxy" type="tns:HttpProxyType" minOccurs="0" maxOccurs="1" />
         </xs:all>
-        <xs:attribute name="url" default="" type="xs:string" />
+        <xs:attribute name="url" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The URL for the resource to be converted.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="HttpBasicAuthType">
-        <xs:attribute name="userName" default="" type="xs:string" />
-        <xs:attribute name="password" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>Used to define the appropriate login information if access to the resource requires a login using the "Basic Authentication" method.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="userName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Username if the URL requests an authentication of the "Basic Authentication" type.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="password" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Password if the URL requests an authentication of the "Basic Authentication" type.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="HttpProxyType">
-        <xs:attribute name="userName" default="" type="xs:string" />
-        <xs:attribute name="password" default="" type="xs:string" />
-        <xs:attribute name="address" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>Used to define the proxy and the access information if the resource must be fetched through a proxy.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="userName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Username if access to the proxy service requires authentication.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="password" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Password if access to the proxy service requires authentication.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="address" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>The address at which the proxy server can be reached.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="port" default="0">
+            <xs:annotation>
+                <xs:documentation>The port that should be used to access the proxy server.</xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />

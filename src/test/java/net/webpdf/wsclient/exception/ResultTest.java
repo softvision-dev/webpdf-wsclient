@@ -1,44 +1,66 @@
 package net.webpdf.wsclient.exception;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResultTest {
     @Test
     public void testBuildResult() {
         Result result = Result.build(Error.NONE);
-        assertEquals("Errorcode should have been NONE.", Error.NONE.getCode(), result.getCode());
-        assertNull("Exception should have been NULL.", result.getException());
-        assertEquals("Errormessage should been according to NONE.", Error.NONE.getMessage(), result.getMessage());
-        assertEquals("Error should have been Error.NONE.", Error.NONE, result.getError());
-        assertTrue("Equality check should have returned true.", result.equalsError(Error.NONE));
-        assertFalse("Check for error occurance should return false.", result.isError());
-        assertTrue("Check for success should return true.", result.isSuccess());
+        assertEquals(Error.NONE.getCode(), result.getCode(),
+                "Errorcode should have been NONE.");
+        assertNull(result.getException(),
+                "Exception should have been NULL.");
+        assertEquals(Error.NONE.getMessage(), result.getMessage(),
+                "Errormessage should been according to NONE.");
+        assertEquals(Error.NONE, result.getError(),
+                "Error should have been Error.NONE.");
+        assertTrue(result.equalsError(Error.NONE),
+                "Equality check should have returned true.");
+        assertFalse(result.isError(),
+                "Check for error occurance should return false.");
+        assertTrue(result.isSuccess(),
+                "Check for success should return true.");
 
         //TODO: DIFFERENTIATE
         result = Result.build(Error.UNKNOWN_EXCEPTION, -20);
-        assertEquals("Errorcode should have been UNKNOWN.", Error.UNKNOWN_EXCEPTION.getCode(), result.getCode());
-        assertEquals("Error should have been Error.UNKNOWN.", Error.UNKNOWN_EXCEPTION, result.getError());
-        assertNull("Exception should have been NULL.", result.getException());
-        assertEquals("Errormessage should been according to NONE with appended exitcode.", Error.UNKNOWN_EXCEPTION.getMessage() + " [-20]", result.getMessage());
-        assertTrue("Equality check should have returned true.", result.equalsError(Error.UNKNOWN_EXCEPTION));
-        assertTrue("Check for error occurance should return true.", result.isError());
-        assertFalse("Check for success should return false.", result.isSuccess());
+        assertEquals(Error.UNKNOWN_EXCEPTION.getCode(), result.getCode(),
+                "Errorcode should have been UNKNOWN.");
+        assertEquals(Error.UNKNOWN_EXCEPTION, result.getError(),
+                "Error should have been Error.UNKNOWN.");
+        assertNull(result.getException(),
+                "Exception should have been NULL.");
+        assertEquals(Error.UNKNOWN_EXCEPTION.getMessage() + " [-20]", result.getMessage(),
+                "Errormessage should been according to NONE with appended exitcode.");
+        assertTrue(result.equalsError(Error.UNKNOWN_EXCEPTION),
+                "Equality check should have returned true.");
+        assertTrue(result.isError(),
+                "Check for error occurance should return true.");
+        assertFalse(result.isSuccess(),
+                "Check for success should return false.");
 
         Exception ex = new IOException("inner message");
         result = Result.build(Error.UNKNOWN_EXCEPTION, ex);
-        assertEquals("Errorcode should have been UNKNOWN.", Error.UNKNOWN_EXCEPTION.getCode(), result.getCode());
-        assertEquals("Error should have been Error.UNKNOWN.", Error.UNKNOWN_EXCEPTION, result.getError());
-        assertEquals("Exception should have been set.", result.getException(), ex);
-        assertEquals("Errormessage should been according to UNKNOWN.", Error.UNKNOWN_EXCEPTION.getMessage(), result.getMessage());
-        assertTrue("Equality check should have returned true.", result.equalsError(Error.UNKNOWN_EXCEPTION));
-        assertTrue("Check for error occurance should return true.", result.isError());
-        assertFalse("Check for success should return false.", result.isSuccess());
+        assertEquals(Error.UNKNOWN_EXCEPTION.getCode(), result.getCode(),
+                "Errorcode should have been UNKNOWN.");
+        assertEquals(Error.UNKNOWN_EXCEPTION, result.getError(),
+                "Error should have been Error.UNKNOWN.");
+        assertEquals(result.getException(), ex,
+                "Exception should have been set.");
+        assertEquals(Error.UNKNOWN_EXCEPTION.getMessage(), result.getMessage(),
+                "Errormessage should been according to UNKNOWN.");
+        assertTrue(result.equalsError(Error.UNKNOWN_EXCEPTION),
+                "Equality check should have returned true.");
+        assertTrue(result.isError(),
+                "Check for error occurance should return true.");
+        assertFalse(result.isSuccess(),
+                "Check for success should return false.");
 
-        result.addMessage("further message");
-        assertEquals("Errormessage should been according to UNKNOWN with appended further message.", Error.UNKNOWN_EXCEPTION.getMessage() + "\nFurther message", result.getMessage());
+        result.appendMessage("further message");
+        assertEquals(Error.UNKNOWN_EXCEPTION.getMessage() + "\nFurther message", result.getMessage(),
+                "Errormessage should been according to UNKNOWN with appended further message.");
     }
 }

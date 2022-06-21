@@ -2,28 +2,65 @@
 <xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="SplitType">
+        <xs:annotation>
+            <xs:documentation>The split operation element can be used to split documents.
+
+**important:** Acroforms are correctly split, but contained XFA data are removed.</xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:attribute name="mode" default="last" type="tns:SplitModeType">
                     <xs:annotation>
-                        <xs:documentation xml:lang="DE">Definiert den Modus für die Split-Operation</xs:documentation>
-                        <xs:documentation xml:lang="EN">Defines the split mode</xs:documentation>
+                        <xs:documentation>Defines the mode used to split the PDF document.
+- last = Last page - Uses "pages" to define the last page that will be contained in the new PDF document.
+- first = First page - Uses "pages" to define the first page that will be contained in the new PDF document.
+- list = List of pages - Uses "pages" to define a list of pages that should be extracted from the document. A single PDF document will be created on the basis of this list.
+- single = Selected pages - Uses the "pages" attribute to define a list of pages that should be extracted from the document. And creates a ZIP file with the corresponding pages.
+- each = Every nth page - Uses the "pages" attribute to define the interval at which pages should be extracted. The "startPage" attribute is used to define the page on which the process will start. The result will be a ZIP file.
+- group = Group pages - Multiple pages will be added to a single PDF document. The "pages" attribute can be used to define how many pages will be saved in a single PDF document. The "startPage" attribute is used to define the page on which the process will start. The result will be a ZIP file.
+- burst = Ungroup pages - A new PDF document will be generated from each page. The result will be a ZIP file.</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="pages" default="1" type="xs:string" />
+                <xs:attribute name="pages" default="1" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Defines which page(s) should be used for the split operation. The page number can be an individual page, a page range, or a list (separated with commas) (e.g. "1,5-6,9"). The "mode" attribute defines whether a single page or a range of pages can be used: With "last" and “first," an individual page is specified; with "list," a list of pages can be used.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="startPage" default="1">
+                    <xs:annotation>
+                        <xs:documentation>Used for "each" and "group" in the "mode" attribute.</xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
                             <xs:minInclusive value="1" />
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="fileNameTemplate" default="page[%d]" type="xs:string" />
-                <xs:attribute name="singleFileAsZip" default="true" type="xs:boolean" />
+                <xs:attribute name="fileNameTemplate" default="page[%d]" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>If the "split" operation generates a ZIP document (please refer to "mode"), this template can be used to define the file name of the PDF document in the ZIP document. The "%d" placeholder must be used in the template in order to define the PDF document page.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="singleFileAsZip" default="true" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>Only mode with "single", "burst", "each", or "group".
+The returned pages will be generated as a ZIP file even if selection is used to select only one single file. You can change this behaviour by setting this option to "false". In this case, the page will not be zipped, and will instead be returned directly as is. However, this will only work if selection has been used to select one page and one page only.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:simpleType name="SplitModeType">
+        <xs:annotation>
+            <xs:documentation>Defines the mode used to split the PDF document.
+- last = Last page - Uses "pages" to define the last page that will be contained in the new PDF document.
+- first = First page - Uses "pages" to define the first page that will be contained in the new PDF document.
+- list = List of pages - Uses "pages" to define a list of pages that should be extracted from the document. A single PDF document will be created on the basis of this list.
+- single = Selected pages - Uses the "pages" attribute to define a list of pages that should be extracted from the document. And creates a ZIP file with the corresponding pages.
+- each = Every nth page - Uses the "pages" attribute to define the interval at which pages should be extracted. The "startPage" attribute is used to define the page on which the process will start. The result will be a ZIP file.
+- group = Group pages - Multiple pages will be added to a single PDF document. The "pages" attribute can be used to define how many pages will be saved in a single PDF document. The "startPage" attribute is used to define the page on which the process will start. The result will be a ZIP file.
+- burst = Ungroup pages - A new PDF document will be generated from each page. The result will be a ZIP file.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="last" />
             <xs:enumeration value="first" />

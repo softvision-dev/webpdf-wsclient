@@ -3,16 +3,31 @@
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="PdfaType">
         <xs:annotation>
-            <xs:documentation />
+            <xs:documentation>When using the "Pdfa" web service, both the
+- `&lt;convert&gt;` and 
+- `&lt;analyze&gt;` 
+
+operations can be used. The "convert" operation is used to convert PDF documents to PDF/A, while the "analyze" operation is used to validate existing PDF/A documents.</xs:documentation>
         </xs:annotation>
         <xs:choice>
             <xs:element id="pdfaConvertId" name="convert">
+                <xs:annotation>
+                    <xs:documentation>Used to convert a PDF document to PDF/A.</xs:documentation>
+                </xs:annotation>
                 <xs:complexType>
                     <xs:all>
                         <xs:element name="zugferd" type="tns:ZugferdType" minOccurs="0" maxOccurs="1" />
+                        <xs:element name="errorCorrection" type="tns:PdfaErrorCorrectionType" minOccurs="0" maxOccurs="1" />
                     </xs:all>
-                    <xs:attribute name="level" default="3b" type="tns:PdfaLevelType" />
+                    <xs:attribute name="level" default="3b" type="tns:PdfaLevelType">
+                        <xs:annotation>
+                            <xs:documentation>Specifies the compliance level when creating or validating PDF/A documents (as specified in ISO 19005).</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                     <xs:attribute name="imageQuality" default="75">
+                        <xs:annotation>
+                            <xs:documentation>The quality for images which must be transformed during the conversion because they use a compression which is not allowed (e.g. JPX is not allowed in PDF/A-1) is defined using this parameter. Values in a range from 1 to 100 are allowed whereby a higher value means better quality, but also larger PDF documents.</xs:documentation>
+                        </xs:annotation>
                         <xs:simpleType>
                             <xs:restriction base="xs:int">
                                 <xs:minInclusive value="0" />
@@ -20,19 +35,49 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
-                    <xs:attribute name="errorReport" default="none" type="tns:PdfaErrorReportType" />
-                    <xs:attribute name="successReport" default="none" type="tns:PdfaSuccessReportType" />
-                    <xs:attribute name="autoTagging" default="false" type="xs:boolean" />
+                    <xs:attribute name="errorReport" default="none" type="tns:PdfaErrorReportType">
+                        <xs:annotation>
+                            <xs:documentation>This parameter is used to define whether and in which format the XML report for a failed conversion will be returned.
+- none = An XML report will not be returned
+- message = The XML report will be returned as part of the error message
+- file = The XML report will be saved in a file</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="successReport" default="none" type="tns:PdfaSuccessReportType">
+                        <xs:annotation>
+                            <xs:documentation>This parameter is used to define whether and in which format the XML report for a successful conversion will be returned.
+- none = An XML report will not be returned
+- linked = The XML report will be appended at the end of the PDF/A document.
+- zip = The PDF/A document and the XML report will be packaged together in a ZIP archive.
+
+**tip:** The format of the document generated with "errorReport" and "successReport" is described by the http://schema.webpdf.de/1.0/report/pdfa.xsd schema.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="autoTagging" default="false" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation>In order to convert a document to conformity levels PDF/A 1a-3a, the entire document must have appropriate structure information (tags). If auto tagging is enabled, the corresponding structure information (in the form of page tags) will be generated automatically before the actual conversion.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
             <xs:element id="pdfaAnalyzeId" name="analyze">
+                <xs:annotation>
+                    <xs:documentation>Used to define the parameters for the PDF/A conversion.</xs:documentation>
+                </xs:annotation>
                 <xs:complexType>
-                    <xs:attribute name="level" default="3b" type="tns:PdfaLevelType" />
+                    <xs:attribute name="level" default="3b" type="tns:PdfaLevelType">
+                        <xs:annotation>
+                            <xs:documentation>Specifies the compliance level when creating or validating PDF/A documents (as specified in ISO 19005).</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
         </xs:choice>
     </xs:complexType>
     <xs:simpleType name="PdfaLevelType">
+        <xs:annotation>
+            <xs:documentation>Specifies the compliance level when creating or validating PDF/A documents (as specified in ISO 19005).</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="1a" />
             <xs:enumeration value="1b" />
@@ -45,6 +90,12 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="PdfaErrorReportType">
+        <xs:annotation>
+            <xs:documentation>This parameter is used to define whether and in which format the XML report for a failed conversion will be returned.
+- none = An XML report will not be returned
+- message = The XML report will be returned as part of the error message
+- file = The XML report will be saved in a file</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="none" />
             <xs:enumeration value="file" />
@@ -52,6 +103,14 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="PdfaSuccessReportType">
+        <xs:annotation>
+            <xs:documentation>This parameter is used to define whether and in which format the XML report for a successful conversion will be returned.
+- none = An XML report will not be returned
+- linked = The XML report will be appended at the end of the PDF/A document.
+- zip = The PDF/A document and the XML report will be packaged together in a ZIP archive.
+
+**tip:** The format of the document generated with "errorReport" and "successReport" is described by the http://schema.webpdf.de/1.0/report/pdfa.xsd schema.</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="none" />
             <xs:enumeration value="zip" />
@@ -59,6 +118,22 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="ZugferdVersionType">
+        <xs:annotation>
+            <xs:documentation>Used to define the version of the ZUGFeRD XML file that should be embedded with "xmlFile". Versions 1.0, 2.0 and 2.1.x are supported. Only the “Comfort” profile is available for version 1.0. Meanwhile, the "Minimum", "Basic WL", "Basic", "EN16931" (Comfort), and "Extended" profiles are supported for version 2.0. Version 2.1.x contains the same profiles as version 2.0 and additionally defines the profile "X-Rechnung".
+List of versions with the corresponding profiles:
+- v10Comfort
+- v20Minimum
+- v20BasicWL
+- v20Basic
+- v20EN16931
+- v20Extended
+- v21Minimum
+- v21BasicWL
+- v21Basic
+- v21EN16931
+- v21Extended
+- v21XRechnung</xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:enumeration value="v10Comfort" />
             <xs:enumeration value="v20Minimum" />
@@ -75,16 +150,60 @@
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="ZugferdType">
+        <xs:annotation>
+            <xs:documentation>This element can be optionally used to integrate a ZUGFeRD document. The document must at least be converted to PDF/A-3 format.</xs:documentation>
+        </xs:annotation>
         <xs:all>
             <xs:element name="xmlFile" type="tns:ZugferdFileDataType" />
         </xs:all>
     </xs:complexType>
     <xs:complexType name="ZugferdFileDataType">
+        <xs:annotation>
+            <xs:documentation>ZUGFeRD file (XML) in "Base64 encoded" format. The ZUGFeRD XSD schema will be used to validate the file before embedding. If it is not valid, the operation will be aborted.</xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
                 <xs:attributeGroup ref="tns:FileDataGroup" />
-                <xs:attribute name="version" default="v10Comfort" type="tns:ZugferdVersionType" />
+                <xs:attribute name="version" default="v10Comfort" type="tns:ZugferdVersionType">
+                    <xs:annotation>
+                        <xs:documentation>Used to define the version of the ZUGFeRD XML file that should be embedded with "xmlFile". Versions 1.0, 2.0 and 2.1.x are supported. Only the “Comfort” profile is available for version 1.0. Meanwhile, the "Minimum", "Basic WL", "Basic", "EN16931" (Comfort), and "Extended" profiles are supported for version 2.0. Version 2.1.x contains the same profiles as version 2.0 and additionally defines the profile "X-Rechnung".
+List of versions with the corresponding profiles:
+- v10Comfort
+- v20Minimum
+- v20BasicWL
+- v20Basic
+- v20EN16931
+- v20Extended
+- v21Minimum
+- v21BasicWL
+- v21Basic
+- v21EN16931
+- v21Extended
+- v21XRechnung</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="PdfaErrorCorrectionType">
+        <xs:annotation>
+            <xs:documentation>This parameter can be used to optionally activate automatic error correction. 
+If a PDF/A conversion does not work, this may be due to defective PDF syntax structures in the source document. If error correction is enabled then an attempt will be made to correct these syntax errors automatically.
+
+**important:** If the conversion of an existing PDF document to a certain level (e.g. PDF/A-1) does not work, then there must not always be syntax errors in the document. It may also be that the source document does not have all the necessary content (e.g. missing font embedding) that is mandatory for conversion to a certain level. In this case it may be sufficient to switch to a different PDF/A level.
+Therefore, the conversion report should always be checked first to see if there is really a defective source document before activating error correction.
+
+Error correction tries to correct syntax errors such as defective XREF tables or defective objects (defective data streams) in the PDF structure. First the PDF/conversion is performed normally. If errors are then detected so that a valid PDF/A is not created, an attempt is made to perform error correction.
+If the error correction works, a second pass of the PDF/A conversion is performed. If this run works, then the corresponding PDF/A document is delivered. If not, the corresponding error code and possibly the error report will be delivered.
+
+**important:** If error correction is active, then visual and/or content deviations may occur in the converted PDF/A document. If you activate this option, then the resulting document should be checked in any case.
+
+It is recommended to perform the PDF/A conversion first without activating the error correction to be sure that the document is not visually and contentwise changed after the conversion. Only if the conversion was not possible (and the error report was checked) should the option be activated in a second call. The PDF/A document of the second call should be checked for visual and content problems.</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="enabled" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>Enables or disables error correction. If the option is set to "true" then PDF syntax errors in the PDF document will be corrected during PDF/A conversion.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 </xs:schema>

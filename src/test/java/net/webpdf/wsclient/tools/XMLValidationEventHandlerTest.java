@@ -1,39 +1,48 @@
 package net.webpdf.wsclient.tools;
 
-import org.junit.Test;
+import jakarta.xml.bind.ValidationEvent;
+import jakarta.xml.bind.ValidationEventLocator;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Node;
-
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventLocator;
 
 import java.net.URL;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XMLValidationEventHandlerTest {
     @Test
     public void testEvents() {
         XMLValidationEventHandler eventHandler = new XMLValidationEventHandler();
-        assertEquals("The initial state of an eventHandler should always be OK.", XMLStatus.OK, eventHandler.getXMLStatus());
-        assertTrue("Initially an eventHandler should not indicate a failure.", eventHandler.isValid());
+        assertEquals(XMLStatus.OK, eventHandler.getXMLStatus(),
+                "The initial state of an eventHandler should always be OK.");
+        assertTrue(eventHandler.isValid(),
+                "Initially an eventHandler should not indicate a failure.");
         eventHandler.handleEvent(null);
-        assertEquals("A null event should not alter the current status.", XMLStatus.OK, eventHandler.getXMLStatus());
-        assertTrue("A null event should not influence the current validation.", eventHandler.isValid());
+        assertEquals(XMLStatus.OK, eventHandler.getXMLStatus(),
+                "A null event should not alter the current status.");
+        assertTrue(eventHandler.isValid(),
+                "A null event should not influence the current validation.");
         eventHandler.handleEvent(new TestValidationEvent(ValidationEvent.WARNING));
-        assertEquals("A warning event should lead to an according status.", XMLStatus.WARNING, eventHandler.getXMLStatus());
-        assertFalse("The handler shall indicate a failure after an occurring warning.", eventHandler.isValid());
+        assertEquals(XMLStatus.WARNING, eventHandler.getXMLStatus(),
+                "A warning event should lead to an according status.");
+        assertFalse(eventHandler.isValid(),
+                "The handler shall indicate a failure after an occurring warning.");
         eventHandler.handleEvent(new TestValidationEvent(ValidationEvent.ERROR));
-        assertEquals("An error event should lead to an according status", XMLStatus.ERROR, eventHandler.getXMLStatus());
-        assertFalse("The handler shall indicate a failure after an occurring error.", eventHandler.isValid());
+        assertEquals(XMLStatus.ERROR, eventHandler.getXMLStatus(),
+                "An error event should lead to an according status");
+        assertFalse(eventHandler.isValid(),
+                "The handler shall indicate a failure after an occurring error.");
         eventHandler.handleEvent(new TestValidationEvent(ValidationEvent.FATAL_ERROR));
-        assertEquals("A fatal error event should lead to an according status", XMLStatus.FATAL, eventHandler.getXMLStatus());
-        assertFalse("The handler shall indicate a failure after an occurring fatal error.", eventHandler.isValid());
+        assertEquals(XMLStatus.FATAL, eventHandler.getXMLStatus(),
+                "A fatal error event should lead to an according status");
+        assertFalse(eventHandler.isValid(),
+                "The handler shall indicate a failure after an occurring fatal error.");
 
-        assertEquals("The summary of events is not as expected.",
-            "LEVEL:0 (line: 0; column: 0)\n" +
-                "LEVEL:1 (line: 0; column: 0)\n" +
-                "LEVEL:2 (line: 0; column: 0)",
-            eventHandler.getMessages()
+        assertEquals("LEVEL:0 (line: 0; column: 0)\n" +
+                        "LEVEL:1 (line: 0; column: 0)\n" +
+                        "LEVEL:2 (line: 0; column: 0)",
+                eventHandler.getMessages(),
+                "The summary of events is not as expected."
         );
     }
 
@@ -94,5 +103,7 @@ public class XMLValidationEventHandlerTest {
                 }
             };
         }
+
     }
+
 }

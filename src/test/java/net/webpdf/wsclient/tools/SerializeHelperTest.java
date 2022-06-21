@@ -7,14 +7,13 @@ import net.webpdf.wsclient.schema.operation.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.FileEntity;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.Charset;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SerializeHelperTest {
 
@@ -22,39 +21,55 @@ public class SerializeHelperTest {
 
     @Test
     public void testFromXML() throws Exception {
-        String source = FileUtils.readFileToString(testResources.getResource("convert.xml"), Charset.defaultCharset());
+        String source = FileUtils.readFileToString(testResources.getResource("convert.xml"),
+                Charset.defaultCharset());
         try (StringReader reader = new StringReader(source)) {
             StreamSource streamSource = new StreamSource(reader);
             OperationData operationData = SerializeHelper.fromXML(streamSource, OperationData.class);
             ConverterType converterType = operationData.getConverter();
-            Assert.assertNotNull("Converter parameters should have been initialized.", converterType);
-            assertEquals("Pages attribute should have been 1-5", "1-5", converterType.getPages());
-            Assert.assertTrue("EmbedFonts attribute should have been true", converterType.isSetEmbedFonts());
+            assertNotNull(converterType,
+                    "Converter parameters should have been initialized.");
+            assertEquals("1-5", converterType.getPages(),
+                    "Pages attribute should have been 1-5");
+            assertTrue(converterType.isSetEmbedFonts(),
+                    "EmbedFonts attribute should have been true");
             PdfaType pdfa = converterType.getPdfa();
-            Assert.assertNotNull("Pdfa element should have been initialized.", pdfa);
+            assertNotNull(pdfa,
+                    "Pdfa element should have been initialized.");
             PdfaType.Convert convert = pdfa.getConvert();
-            Assert.assertNotNull("Convert element should have been initialized.", convert);
-            assertEquals("Level attribute should have been LEVEL_3B", PdfaLevelType.LEVEL_3B, convert.getLevel());
-            assertEquals("ErrorReport attribute should have been MESSAGE", PdfaErrorReportType.MESSAGE, convert.getErrorReport());
+            assertNotNull(convert,
+                    "Convert element should have been initialized.");
+            assertEquals(PdfaLevelType.LEVEL_3B, convert.getLevel(),
+                    "Level attribute should have been LEVEL_3B");
+            assertEquals(PdfaErrorReportType.MESSAGE, convert.getErrorReport(),
+                    "ErrorReport attribute should have been MESSAGE");
         }
     }
 
     @Test
     public void testFromJSON() throws Exception {
-        String source = FileUtils.readFileToString(testResources.getResource("convert.json"), Charset.defaultCharset());
+        String source = FileUtils.readFileToString(testResources.getResource("convert.json"),
+                Charset.defaultCharset());
         try (StringReader reader = new StringReader(source)) {
             StreamSource streamSource = new StreamSource(reader);
             OperationData operationData = SerializeHelper.fromJSON(streamSource, OperationData.class);
             ConverterType converterType = operationData.getConverter();
-            Assert.assertNotNull("Converter parameters should have been initialized.", converterType);
-            assertEquals("Pages attribute should have been 1-5", "1-5", converterType.getPages());
-            Assert.assertTrue("EmbedFonts attribute should have been true", converterType.isSetEmbedFonts());
+            assertNotNull(converterType,
+                    "Converter parameters should have been initialized.");
+            assertEquals("1-5", converterType.getPages(),
+                    "Pages attribute should have been 1-5");
+            assertTrue(converterType.isSetEmbedFonts(),
+                    "EmbedFonts attribute should have been true");
             PdfaType pdfa = converterType.getPdfa();
-            Assert.assertNotNull("Pdfa element should have been initialized.", pdfa);
+            assertNotNull(pdfa,
+                    "Pdfa element should have been initialized.");
             PdfaType.Convert convert = pdfa.getConvert();
-            Assert.assertNotNull("Convert element should have been initialized.", convert);
-            assertEquals("Level attribute should have been LEVEL_3B", PdfaLevelType.LEVEL_3B, convert.getLevel());
-            assertEquals("ErrorReport attribute should have been MESSAGE", PdfaErrorReportType.MESSAGE, convert.getErrorReport());
+            assertNotNull(convert,
+                    "Convert element should have been initialized.");
+            assertEquals(PdfaLevelType.LEVEL_3B, convert.getLevel(),
+                    "Level attribute should have been LEVEL_3B");
+            assertEquals(PdfaErrorReportType.MESSAGE, convert.getErrorReport(),
+                    "ErrorReport attribute should have been MESSAGE");
         }
     }
 
@@ -63,15 +78,22 @@ public class SerializeHelperTest {
         HttpEntity entity = new FileEntity(testResources.getResource("convert.xml"));
         OperationData operationData = SerializeHelper.fromXML(entity, OperationData.class);
         ConverterType converterType = operationData.getConverter();
-        Assert.assertNotNull("Converter parameters should have been initialized.", converterType);
-        assertEquals("Pages attribute should have been 1-5", "1-5", converterType.getPages());
-        Assert.assertTrue("EmbedFonts attribute should have been true", converterType.isSetEmbedFonts());
+        assertNotNull(converterType,
+                "Converter parameters should have been initialized.");
+        assertEquals("1-5", converterType.getPages(),
+                "Pages attribute should have been 1-5");
+        assertTrue(converterType.isSetEmbedFonts(),
+                "EmbedFonts attribute should have been true");
         PdfaType pdfa = converterType.getPdfa();
-        Assert.assertNotNull("Pdfa element should have been initialized.", pdfa);
+        assertNotNull(pdfa,
+                "Pdfa element should have been initialized.");
         PdfaType.Convert convert = pdfa.getConvert();
-        Assert.assertNotNull("Convert element should have been initialized.", convert);
-        assertEquals("Level attribute should have been LEVEL_3B", PdfaLevelType.LEVEL_3B, convert.getLevel());
-        assertEquals("ErrorReport attribute should have been MESSAGE", PdfaErrorReportType.MESSAGE, convert.getErrorReport());
+        assertNotNull(convert,
+                "Convert element should have been initialized.");
+        assertEquals(PdfaLevelType.LEVEL_3B, convert.getLevel(),
+                "Level attribute should have been LEVEL_3B");
+        assertEquals(PdfaErrorReportType.MESSAGE, convert.getErrorReport(),
+                "ErrorReport attribute should have been MESSAGE");
     }
 
     @Test
@@ -79,15 +101,22 @@ public class SerializeHelperTest {
         HttpEntity entity = new FileEntity(testResources.getResource("convert.json"));
         OperationData operationData = SerializeHelper.fromJSON(entity, OperationData.class);
         ConverterType converterType = operationData.getConverter();
-        Assert.assertNotNull("Converter parameters should have been initialized.", converterType);
-        assertEquals("Pages attribute should have been 1-5", "1-5", converterType.getPages());
-        Assert.assertTrue("EmbedFonts attribute should have been true", converterType.isSetEmbedFonts());
+        assertNotNull(converterType,
+                "Converter parameters should have been initialized.");
+        assertEquals("1-5", converterType.getPages(),
+                "Pages attribute should have been 1-5");
+        assertTrue(converterType.isSetEmbedFonts(),
+                "EmbedFonts attribute should have been true");
         PdfaType pdfa = converterType.getPdfa();
-        Assert.assertNotNull("Pdfa element should have been initialized.", pdfa);
+        assertNotNull(pdfa,
+                "Pdfa element should have been initialized.");
         PdfaType.Convert convert = pdfa.getConvert();
-        Assert.assertNotNull("Convert element should have been initialized.", convert);
-        assertEquals("Level attribute should have been LEVEL_3B", PdfaLevelType.LEVEL_3B, convert.getLevel());
-        assertEquals("ErrorReport attribute should have been MESSAGE", PdfaErrorReportType.MESSAGE, convert.getErrorReport());
+        assertNotNull(convert,
+                "Convert element should have been initialized.");
+        assertEquals(PdfaLevelType.LEVEL_3B, convert.getLevel(),
+                "Level attribute should have been LEVEL_3B");
+        assertEquals(PdfaErrorReportType.MESSAGE, convert.getErrorReport(),
+                "ErrorReport attribute should have been MESSAGE");
     }
 
     @Test
@@ -95,19 +124,19 @@ public class SerializeHelperTest {
         try {
             HttpEntity entity = new FileEntity(testResources.getResource("convert.json"));
             SerializeHelper.fromXML(entity, OperationData.class);
-            Assert.fail("ResultException expected");
+            fail("ResultException expected");
         } catch (ResultException ex) {
-            assertEquals(String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
+            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
 
         try {
             HttpEntity entity = new FileEntity(testResources.getResource("convert.xml"));
             SerializeHelper.fromJSON(entity, OperationData.class);
-            Assert.fail("ResultException expected");
+            fail("ResultException expected");
         } catch (ResultException ex) {
-            assertEquals(String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
+            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
     }
 
@@ -115,62 +144,62 @@ public class SerializeHelperTest {
     public void testNullParameters() {
         try {
             SerializeHelper.fromXML((StreamSource) null, OperationData.class);
-            Assert.fail("ResultException expected");
+            fail("ResultException expected");
         } catch (ResultException ex) {
-            assertEquals(String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
+            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
         try {
             SerializeHelper.fromXML(new StreamSource(), null);
-            Assert.fail("ResultException expected");
+            fail("ResultException expected");
         } catch (ResultException ex) {
-            assertEquals(String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
+            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
 
         try {
             SerializeHelper.fromXML((HttpEntity) null, OperationData.class);
-            Assert.fail("ResultException expected");
+            fail("ResultException expected");
         } catch (ResultException ex) {
-            assertEquals(String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
+            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
         try {
             SerializeHelper.fromXML(new FileEntity(new File("")), null);
-            Assert.fail("ResultException expected");
+            fail("ResultException expected");
         } catch (ResultException ex) {
-            assertEquals(String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
+            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
 
         try {
             SerializeHelper.fromJSON((StreamSource) null, OperationData.class);
-            Assert.fail("ResultException expected");
+            fail("ResultException expected");
         } catch (ResultException ex) {
-            assertEquals(String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
+            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
         try {
             SerializeHelper.fromJSON(new StreamSource(), null);
-            Assert.fail("ResultException expected");
+            fail("ResultException expected");
         } catch (ResultException ex) {
-            assertEquals(String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
+            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
 
         try {
-            SerializeHelper.fromJSON((HttpEntity)null, OperationData.class);
-            Assert.fail("ResultException expected");
+            SerializeHelper.fromJSON((HttpEntity) null, OperationData.class);
+            fail("ResultException expected");
         } catch (ResultException ex) {
-            assertEquals(String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
+            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
         try {
             SerializeHelper.fromJSON(new FileEntity(new File("")), null);
-            Assert.fail("ResultException expected");
+            fail("ResultException expected");
         } catch (ResultException ex) {
-            assertEquals(String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
+            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
     }
 
@@ -190,14 +219,16 @@ public class SerializeHelperTest {
         OperationData operationData = new OperationData();
         operationData.setConverter(converterType);
 
-        assertEquals("Serialization content does not match the source object.",
-            "{\"converter\":{\"pdfa\":{\"convert\":{\"level\":\"3b\",\"errorReport\":\"message\"}},\"pages\":\"1-5\",\"embedFonts\":true}}",
-            SerializeHelper.toJSON(operationData));
+        assertEquals("{\"converter\":{\"pdfa\":{\"convert\":{\"level\":\"3b\",\"errorReport\":\"message\"}}," +
+                        "\"pages\":\"1-5\",\"embedFonts\":true}}",
+                SerializeHelper.toJSON(operationData),
+                "Serialization content does not match the source object.");
     }
 
     @Test
     public void toJSONNullContent() throws Exception {
-        assertEquals("JSON serialization result is not as expected.", "null", SerializeHelper.toJSON(null));
+        assertEquals("null", SerializeHelper.toJSON(null),
+                "JSON serialization result is not as expected.");
     }
 
     @Test
@@ -216,30 +247,34 @@ public class SerializeHelperTest {
         OperationData operationData = new OperationData();
         operationData.setConverter(converterType);
 
-        assertEquals("Serialization content does not match the source object.",
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                "<operation xmlns=\"http://schema.webpdf.de/1.0/operation\">\n" +
-                "    <converter pages=\"1-5\" embedFonts=\"true\">\n" +
-                "        <pdfa>\n" +
-                "            <convert level=\"3b\" errorReport=\"message\"/>\n" +
-                "        </pdfa>\n" +
-                "    </converter>\n" +
-                "</operation>\n",
-            SerializeHelper.toXML(operationData, OperationData.class));
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                        "<operation xmlns=\"http://schema.webpdf.de/1.0/operation\">\n" +
+                        "    <converter pages=\"1-5\" embedFonts=\"true\">\n" +
+                        "        <pdfa>\n" +
+                        "            <convert level=\"3b\" errorReport=\"message\"/>\n" +
+                        "        </pdfa>\n" +
+                        "    </converter>\n" +
+                        "</operation>\n",
+                SerializeHelper.toXML(operationData, OperationData.class),
+                "Serialization content does not match the source object.");
     }
 
-    @Test(expected = ResultException.class)
-    public void toXMLNullContent() throws Exception {
-        SerializeHelper.toXML(null, OperationData.class);
+    @Test
+    public void toXMLNullContent() {
+        assertThrows(ResultException.class,
+                () -> SerializeHelper.toXML(null, OperationData.class));
     }
 
-    @Test(expected = ResultException.class)
-    public void toXMLNullType() throws Exception {
-        SerializeHelper.toXML(new ConverterType(), null);
+    @Test
+    public void toXMLNullType() {
+        assertThrows(ResultException.class,
+                () -> SerializeHelper.toXML(new ConverterType(), null));
     }
 
-    @Test(expected = ResultException.class)
-    public void toXMLInvalidType() throws Exception {
-        SerializeHelper.toXML(new ConverterType(), String.class);
+    @Test
+    public void toXMLInvalidType() {
+        assertThrows(ResultException.class,
+                () -> SerializeHelper.toXML(new ConverterType(), String.class));
     }
+
 }

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jaxb:bindings version="2.0"
-               xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+<jaxb:bindings version="3.0"
+               xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
                xmlns:xs="http://www.w3.org/2001/XMLSchema"
-               xmlns:annox="http://annox.dev.java.net"
                jaxb:extensionBindingPrefixes="annox simplify inheritance">
 
     <!--
@@ -28,7 +27,7 @@
     <jaxb:bindings schemaLocation="barcode.xsd" node="/xs:schema">
 
         <jaxb:schemaBindings>
-            <jaxb:package name="net.webpdf.wsclient.schema.barcode"/>
+            <jaxb:package name="net.webpdf.parameter.schema.barcode"/>
         </jaxb:schemaBindings>
 
         <!-- Rename the root element -->
@@ -41,39 +40,13 @@
     <jaxb:bindings schemaLocation="text.xsd" node="/xs:schema">
 
         <jaxb:schemaBindings>
-            <jaxb:package name="net.webpdf.wsclient.schema.extraction.text"/>
+            <jaxb:package name="net.webpdf.parameter.schema.extraction.text"/>
         </jaxb:schemaBindings>
 
         <jaxb:bindings node="//xs:element[@name='texts']">
             <jaxb:class name="TextsType"/>
             <jaxb:property name="TextsType"/>
         </jaxb:bindings>
-    </jaxb:bindings>
-
-
-    <!-- This prevents JSON to Class conversion errors in SerializeHelper.fromJson, when the XSD file are not updated. -->
-    <jaxb:bindings schemaLocation="info.xsd" node="//xs:element" multiple="true">
-        <annox:annotateClass
-                target="class">@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-        </annox:annotateClass>
-    </jaxb:bindings>
-
-    <jaxb:bindings schemaLocation="info.xsd" node="/xs:schema">
-
-        <jaxb:schemaBindings>
-            <jaxb:package name="net.webpdf.wsclient.schema.extraction.info"/>
-        </jaxb:schemaBindings>
-
-        <jaxb:bindings node="//xs:element[@name='document']">
-            <jaxb:class name="DocumentType"/>
-            <jaxb:property name="DocumentType"/>
-        </jaxb:bindings>
-
-        <!-- Rename the operation element -->
-        <jaxb:bindings node="//xs:choice[@id='positions']">
-            <jaxb:property name="positions"/>
-        </jaxb:bindings>
-
     </jaxb:bindings>
 
 </jaxb:bindings>

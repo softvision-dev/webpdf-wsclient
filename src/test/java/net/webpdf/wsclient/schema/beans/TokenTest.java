@@ -1,14 +1,13 @@
 package net.webpdf.wsclient.schema.beans;
 
-import net.webpdf.wsclient.exception.ResultException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TokenTest {
 
     @Test
-    public void testToken(){
+    public void testToken() {
         Token token = new Token();
         assertNotNull(token.getToken());
         token.setToken("");
@@ -28,4 +27,5 @@ public class TokenTest {
         assertNotNull(token.getToken());
         assertFalse(token.getToken().isEmpty());
     }
+
 }
