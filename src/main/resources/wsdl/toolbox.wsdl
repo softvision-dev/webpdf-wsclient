@@ -12,12 +12,10 @@
     </wsp:Policy>
     <types>
         <xsd:schema>
-            <xsd:import namespace="http://schema.webpdf.de/1.0/soap/toolbox"
-                        schemaLocation="http://localhost:8080/webPDF/soap/toolbox?xsd=1"/>
+            <xsd:import namespace="http://schema.webpdf.de/1.0/soap/toolbox"/>
         </xsd:schema>
         <xsd:schema>
-            <xsd:import namespace="http://schema.webpdf.de/1.0/operation"
-                        schemaLocation="http://localhost:8080/webPDF/soap/toolbox?xsd=2"/>
+            <xsd:import namespace="http://schema.webpdf.de/1.0/operation"/>
         </xsd:schema>
     </types>
     <message name="execute">
@@ -55,8 +53,6 @@
         </operation>
     </binding>
     <service name="ToolboxService">
-        <port name="ToolboxPort" binding="tns:ToolboxPortBinding">
-            <soap12:address location="http://localhost:8080/webPDF/soap/toolbox"/>
-        </port>
+        <port name="ToolboxPort" binding="tns:ToolboxPortBinding"/>
     </service>
 </definitions>

@@ -12,12 +12,10 @@
     </wsp:Policy>
     <types>
         <xsd:schema>
-            <xsd:import namespace="http://schema.webpdf.de/1.0/soap/pdfa"
-                        schemaLocation="http://localhost:8080/webPDF/soap/pdfa?xsd=1"/>
+            <xsd:import namespace="http://schema.webpdf.de/1.0/soap/pdfa"/>
         </xsd:schema>
         <xsd:schema>
-            <xsd:import namespace="http://schema.webpdf.de/1.0/operation"
-                        schemaLocation="http://localhost:8080/webPDF/soap/pdfa?xsd=2"/>
+            <xsd:import namespace="http://schema.webpdf.de/1.0/operation"/>
         </xsd:schema>
     </types>
     <message name="execute">
@@ -55,8 +53,6 @@
         </operation>
     </binding>
     <service name="PdfaService">
-        <port name="PdfaPort" binding="tns:PdfaPortBinding">
-            <soap12:address location="http://localhost:8080/webPDF/soap/pdfa"/>
-        </port>
+        <port name="PdfaPort" binding="tns:PdfaPortBinding"/>
     </service>
 </definitions>
