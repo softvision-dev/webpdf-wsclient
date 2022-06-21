@@ -2,7 +2,8 @@ package net.webpdf.wsclient.session.rest;
 
 import net.webpdf.wsclient.documents.rest.RestDocument;
 import net.webpdf.wsclient.documents.rest.documentmanager.DocumentManager;
-import net.webpdf.wsclient.schema.beans.Token;
+import net.webpdf.wsclient.session.token.Token;
+import net.webpdf.wsclient.session.token.TokenProvider;
 import net.webpdf.wsclient.schema.beans.User;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
@@ -54,6 +55,21 @@ public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Sessi
      * @throws IOException Shall be thrown in case of a HTTP access error.
      */
     void login() throws IOException;
+
+    /**
+     * Login into the server using the given {@link Token}.
+     * @param token The {@link Token} to provide a session for.
+     * @throws IOException Shall be thrown in case of a HTTP access error.
+     */
+    void login(@Nullable Token token) throws IOException;
+
+    /**
+     * Login into the server using the given {@link TokenProvider}.
+     *
+     * @param tokenProvider The {@link TokenProvider} to provide a session for.
+     * @throws IOException HTTP access error.
+     */
+    void login(@Nullable TokenProvider tokenProvider) throws IOException;
 
     /**
      * Returns the {@link User} logged in via this {@link RestSession}.

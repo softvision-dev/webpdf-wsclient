@@ -1,0 +1,6 @@
+{
+  "authority": "Insert the URI of the Azure authorization provider here.",
+  "clientId": "Insert the ID of the client - that requires authorization - here.",
+  "clientSecret": "Insert the secret - known to that client - here.",
+  "scope": "Insert the scopes - the client is requesting access to - here."
+}

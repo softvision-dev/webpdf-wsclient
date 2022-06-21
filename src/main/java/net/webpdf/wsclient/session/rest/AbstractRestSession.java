@@ -6,10 +6,11 @@ import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.http.HttpMethod;
 import net.webpdf.wsclient.http.HttpRestRequest;
 import net.webpdf.wsclient.https.TLSContext;
-import net.webpdf.wsclient.schema.beans.Token;
+import net.webpdf.wsclient.session.token.Token;
 import net.webpdf.wsclient.schema.beans.User;
 import net.webpdf.wsclient.session.AbstractSession;
 import net.webpdf.wsclient.session.proxy.ProxyConfiguration;
+import net.webpdf.wsclient.session.token.TokenProvider;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -42,7 +43,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     private static final @NotNull String LOGIN_PATH = "authentication/user/login/";
     private final @NotNull HttpClientBuilder httpClientBuilder;
     private @Nullable Token token = new Token();
-    private @Nullable User userCredentials = new User();
+    private @Nullable User user = new User();
     private @Nullable CloseableHttpClient httpClient;
     private final @NotNull DocumentManager<T_REST_DOCUMENT> documentManager = createDocumentManager();
 
@@ -104,14 +105,38 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      */
     @Override
     public void login() throws IOException {
+        login((Token) null);
+    }
 
-        this.token = HttpRestRequest.createRequest(this)
-                .buildRequest(HttpMethod.GET, LOGIN_PATH, null)
-                .executeRequest(Token.class);
+    /**
+     * Login into the server using the given {@link Token}.
+     *
+     * @param token The {@link Token} to provide a session for.
+     * @throws IOException Shall be thrown in case of a HTTP access error.
+     */
+    @Override
+    public void login(@Nullable Token token) throws IOException {
+        this.token = token;
 
-        this.userCredentials = HttpRestRequest.createRequest(this)
+        if (token == null || !token.isAccessToken()) {
+            this.token = HttpRestRequest.createRequest(this)
+                    .buildRequest(HttpMethod.GET, LOGIN_PATH, null)
+                    .executeRequest(Token.class);
+        }
+        this.user = HttpRestRequest.createRequest(this)
                 .buildRequest(HttpMethod.GET, INFO_PATH, null)
                 .executeRequest(User.class);
+    }
+
+    /**
+     * Login into the server using the given {@link TokenProvider}.
+     *
+     * @param tokenProvider The {@link TokenProvider} to provide a session for.
+     * @throws IOException HTTP access error.
+     */
+    @Override
+    public void login(@Nullable TokenProvider tokenProvider) throws IOException {
+        login(tokenProvider != null ? tokenProvider.provideToken() : null);
     }
 
     /**
@@ -121,7 +146,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      */
     @Override
     public @Nullable User getUser() {
-        return userCredentials;
+        return user;
     }
 
     /**
@@ -170,7 +195,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
                 .executeRequest(Object.class);
 
         this.token = null;
-        this.userCredentials = null;
+        this.user = null;
     }
 
     /**

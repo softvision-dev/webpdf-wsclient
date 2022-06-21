@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.schema.beans;
 
+import net.webpdf.wsclient.session.token.Token;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

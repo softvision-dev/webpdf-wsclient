@@ -53,5 +53,25 @@
     <orderEntry type="library" name="Maven: com.sun.xml.bind.external:rngom:3.0.2" level="project" />
     <orderEntry type="library" name="Maven: com.sun.xml.dtd-parser:dtd-parser:1.4.5" level="project" />
     <orderEntry type="library" name="Maven: com.sun.istack:istack-commons-tools:4.0.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.microsoft.azure:msal4j:1.12.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.nimbusds:oauth2-oidc-sdk:9.32" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.github.stephenc.jcip:jcip-annotations:1.0-1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.nimbusds:content-type:2.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.nimbusds:lang-tag:1.6" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.nimbusds:nimbus-jose-jwt:9.21" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: net.minidev:json-smart:2.4.8" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: net.minidev:accessors-smart:2.4.8" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.ow2.asm:asm:9.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.slf4j:slf4j-api:1.7.36" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.auth0:auth0:1.42.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.squareup.okhttp3:okhttp:4.9.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.squareup.okio:okio:2.8.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.4.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.4.10" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.squareup.okhttp3:logging-interceptor:4.9.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.10" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.10" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.auth0:java-jwt:3.19.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: net.jodah:failsafe:2.4.1" level="project" />
   </component>
 </module>
