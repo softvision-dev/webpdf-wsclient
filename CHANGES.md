@@ -47,3 +47,4 @@
     - DocumentManager is only available for REST sessions.
     - InputStreamDataSource and WSClientProxySelector are only available for SOAP sessions.
     - Removed support for selectable transfer DataFormat. SOAP shall always use XML, REST shall always use JSON.
+- Adding REST OAuth Token support.
