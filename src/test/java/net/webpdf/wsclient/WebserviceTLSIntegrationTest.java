@@ -125,14 +125,16 @@ public class WebserviceTLSIntegrationTest {
 
     @ParameterizedTest
     @CsvSource(delimiter = '|', value = {
-            "PUBLIC|HTTPS|0|true|false",
+            /*"PUBLIC|HTTPS|0|true|false",
             "PUBLIC|HTTP|-34|true|false",
             "PUBLIC|HTTPS|0|false|false",
-            "PUBLIC|HTTPS|0|false|true",
+            "PUBLIC|HTTPS|0|false|true",*/
             "LOCAL|HTTPS|0|false|true",
             "LOCAL|HTTPS|-31|true|false",
             "LOCAL|HTTPS|0|true|true"
     })
+    // TODO: The public webPDF Server currently provides the wrong Token type - all calls to the public server will fail.
+    //  re-enable those tests, as soon, as possible.
     public void testRestSSL(String type, String protocol, int expectedErrorCode, boolean setKeystoreFile,
             boolean selfSigned) throws Exception {
 

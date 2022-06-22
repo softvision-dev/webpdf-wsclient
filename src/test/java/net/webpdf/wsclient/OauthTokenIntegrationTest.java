@@ -10,7 +10,7 @@ import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
 import net.webpdf.wsclient.documents.rest.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
-import net.webpdf.wsclient.session.token.Token;
+import net.webpdf.wsclient.session.token.OAuthToken;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.TestResources;
@@ -76,9 +76,7 @@ public class OauthTokenIntegrationTest {
                         );
 
                         // Create and return the webPDF wsclient access Token.
-                        // Important: Use the method "createAccessToken" instead of "createToken" here.
-                        return Token.createAccessToken(tokenRequest.execute().getAccessToken());
-
+                        return new OAuthToken(tokenRequest.execute().getAccessToken());
                     })
             );
 
@@ -136,8 +134,7 @@ public class OauthTokenIntegrationTest {
                                         assertDoesNotThrow(() -> future.get());
 
                                 // Create and return the webPDF wsclient access Token.
-                                // Important: Use the method "createAccessToken" instead of "createToken" here.
-                                return Token.createAccessToken(authenticationResult.accessToken());
+                                return new OAuthToken(authenticationResult.accessToken());
                             })
             );
 

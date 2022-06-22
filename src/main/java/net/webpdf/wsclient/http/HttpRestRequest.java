@@ -137,19 +137,22 @@ public class HttpRestRequest {
                 throw new ResultException(Result.build(Error.UNKNOWN_HTTP_METHOD));
         }
 
-        if (this.session.getCredentials() != null) {
+        requestBuilder.addHeader(HttpHeaders.ACCEPT, this.acceptHeader);
+        requestBuilder.setCharset(StandardCharsets.UTF_8);
+
+        if (this.session.getToken() != null && !this.session.getToken().getToken().isEmpty()) {
+            requestBuilder.addHeader(HttpHeaders.AUTHORIZATION, "Bearer" +
+                    this.session.getToken().getToken());
+        } else if (this.session.getCredentials() != null) {
             String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(
                     (this.session.getCredentials().getUserPrincipal().getName()
-                            + ":" + this.session.getCredentials().getPassword()).getBytes(StandardCharsets.ISO_8859_1));
+                            + ":" + this.session.getCredentials().getPassword())
+                            .getBytes(StandardCharsets.ISO_8859_1));
             requestBuilder.addHeader(HttpHeaders.AUTHORIZATION, basicAuth);
         }
 
         requestBuilder.addHeader(HttpHeaders.ACCEPT, this.acceptHeader);
         requestBuilder.setCharset(StandardCharsets.UTF_8);
-
-        if (this.session.getToken() != null && !this.session.getToken().getToken().isEmpty()) {
-            requestBuilder.addHeader("Token", this.session.getToken().getToken());
-        }
 
         if (httpEntity != null) {
             requestBuilder.setEntity(httpEntity);

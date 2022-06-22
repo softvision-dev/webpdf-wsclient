@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.exception;
 
+import net.webpdf.wsclient.session.token.SessionToken;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.http.HttpMethod;
 import org.jetbrains.annotations.NotNull;
@@ -104,6 +105,11 @@ public enum Error {
      * A JSON structure could not be translated to valid XML.
      */
     TO_XML_JSON(-37, "Unable to convert to XML/JSON"),
+
+    /**
+     * It is only allowed to refresh webPDF server {@link SessionToken}s in this way.
+     */
+    FORBIDDEN_TOKEN_REFRESH(-40, "Only SessionToken instances may be refreshed in this way."),
 
     /**
      * The server´s WSDL could not be downloaded, please check, if the server is running and accessible.

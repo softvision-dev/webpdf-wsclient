@@ -2,6 +2,9 @@ package net.webpdf.wsclient.session.rest;
 
 import net.webpdf.wsclient.documents.rest.RestDocument;
 import net.webpdf.wsclient.documents.rest.documentmanager.DocumentManager;
+import net.webpdf.wsclient.exception.Error;
+import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.session.token.SessionToken;
 import net.webpdf.wsclient.session.token.Token;
 import net.webpdf.wsclient.session.token.TokenProvider;
 import net.webpdf.wsclient.schema.beans.User;
@@ -58,6 +61,7 @@ public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Sessi
 
     /**
      * Login into the server using the given {@link Token}.
+     *
      * @param token The {@link Token} to provide a session for.
      * @throws IOException Shall be thrown in case of a HTTP access error.
      */
@@ -69,7 +73,22 @@ public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Sessi
      * @param tokenProvider The {@link TokenProvider} to provide a session for.
      * @throws IOException HTTP access error.
      */
-    void login(@Nullable TokenProvider tokenProvider) throws IOException;
+    void login(@Nullable TokenProvider<?> tokenProvider) throws IOException;
+
+    /**
+     * <p>
+     * Refreshes the {@link RestSession} and prevents it from expiring. Also refreshes the currently set
+     * {@link SessionToken}.
+     * </p>
+     * <p>
+     * <b>Important:</b> This may only be used to refresh {@link SessionToken}s, attempts to refresh {@link Session}s
+     * based on other {@link Token} types in this manner, shall result in a {@link Error#FORBIDDEN_TOKEN_REFRESH}
+     * error.
+     * </p>
+     *
+     * @throws ResultException Shall be thrown, when refreshing the session failed.
+     */
+    void refresh() throws ResultException;
 
     /**
      * Returns the {@link User} logged in via this {@link RestSession}.

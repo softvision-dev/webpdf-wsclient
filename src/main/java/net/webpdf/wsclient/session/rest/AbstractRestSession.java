@@ -2,11 +2,16 @@ package net.webpdf.wsclient.session.rest;
 
 import net.webpdf.wsclient.documents.rest.RestDocument;
 import net.webpdf.wsclient.documents.rest.documentmanager.DocumentManager;
+import net.webpdf.wsclient.exception.Error;
+import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.http.HttpMethod;
 import net.webpdf.wsclient.http.HttpRestRequest;
 import net.webpdf.wsclient.https.TLSContext;
+import net.webpdf.wsclient.session.Session;
+import net.webpdf.wsclient.session.token.OAuthToken;
 import net.webpdf.wsclient.session.token.Token;
+import net.webpdf.wsclient.session.token.SessionToken;
 import net.webpdf.wsclient.schema.beans.User;
 import net.webpdf.wsclient.session.AbstractSession;
 import net.webpdf.wsclient.session.proxy.ProxyConfiguration;
@@ -41,8 +46,9 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     private static final @NotNull String INFO_PATH = "authentication/user/info/";
     private static final @NotNull String LOGOUT_PATH = "authentication/user/logout/";
     private static final @NotNull String LOGIN_PATH = "authentication/user/login/";
+    private static final @NotNull String REFRESH_PATH = "authentication/user/refresh/";
     private final @NotNull HttpClientBuilder httpClientBuilder;
-    private @Nullable Token token = new Token();
+    private @Nullable Token token = new SessionToken();
     private @Nullable User user = new User();
     private @Nullable CloseableHttpClient httpClient;
     private final @NotNull DocumentManager<T_REST_DOCUMENT> documentManager = createDocumentManager();
@@ -99,17 +105,26 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
-     * Login into the webPDF server and prepare a session {@link Token}.
+     * Login into the webPDF server and prepare a new {@link SessionToken}.
      *
      * @throws IOException Shall be thrown in case of a HTTP access error.
      */
     @Override
     public void login() throws IOException {
-        login((Token) null);
+        login((SessionToken) null);
     }
 
     /**
+     * <p>
      * Login into the server using the given {@link Token}.
+     * <ul>
+     * <li><b>In case the token is {@code null}:</b> A fresh {@link SessionToken} shall be created.</li>
+     * <li><b>In case the token is a {@link SessionToken}:</b> The token shall be used and can be refreshed using
+     * {@link #refresh()}.</li>
+     * <li><b>In case the token is an {@link OAuthToken}:</b> The token shall be used, however it can not be
+     * refreshed using {@link #refresh()} - use {@link OAuthToken#refresh(String)} instead.</li>
+     * </ul>
+     * </p>
      *
      * @param token The {@link Token} to provide a session for.
      * @throws IOException Shall be thrown in case of a HTTP access error.
@@ -118,10 +133,10 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     public void login(@Nullable Token token) throws IOException {
         this.token = token;
 
-        if (token == null || !token.isAccessToken()) {
+        if (token == null) {
             this.token = HttpRestRequest.createRequest(this)
                     .buildRequest(HttpMethod.GET, LOGIN_PATH, null)
-                    .executeRequest(Token.class);
+                    .executeRequest(SessionToken.class);
         }
         this.user = HttpRestRequest.createRequest(this)
                 .buildRequest(HttpMethod.GET, INFO_PATH, null)
@@ -129,14 +144,42 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
-     * Login into the server using the given {@link TokenProvider}.
+     * <p>
+     * Login into the server using the given {@link TokenProvider}.<br>
+     * This shall call {@link #login(Token)} using the {@link Token} produced by {@link TokenProvider#provideToken()}.
+     * </p>
      *
      * @param tokenProvider The {@link TokenProvider} to provide a session for.
      * @throws IOException HTTP access error.
      */
     @Override
-    public void login(@Nullable TokenProvider tokenProvider) throws IOException {
+    public void login(@Nullable TokenProvider<?> tokenProvider) throws IOException {
         login(tokenProvider != null ? tokenProvider.provideToken() : null);
+    }
+
+    /**
+     * <p>
+     * Refreshes the {@link RestSession} and prevents it from expiring. Also refreshes the currently set
+     * {@link SessionToken}.
+     * </p>
+     * <p>
+     * <b>Important:</b> This may only be used to refresh {@link SessionToken}s, attempts to refresh {@link Session}s
+     * based on other {@link Token} types in this manner, shall result in a {@link Error#FORBIDDEN_TOKEN_REFRESH}
+     * error.
+     * </p>
+     *
+     * @throws ResultException Shall be thrown, when refreshing the session failed.
+     */
+    @Override
+    public void refresh() throws ResultException {
+        if (this.token instanceof SessionToken) {
+            this.token = ((SessionToken) this.token).provideRefreshToken();
+            this.token = HttpRestRequest.createRequest(this)
+                    .buildRequest(HttpMethod.GET, REFRESH_PATH, null)
+                    .executeRequest(SessionToken.class);
+        } else {
+            throw new ResultException(Result.build(Error.FORBIDDEN_TOKEN_REFRESH));
+        }
     }
 
     /**
