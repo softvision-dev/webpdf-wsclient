@@ -54,7 +54,7 @@ public class SessionToken implements Serializable, Token {
     }
 
     /**
-     * Returns the access token {@code String} value. Shall return an empty String for an anonymous session.
+     * Returns the access token {@code String} value. Shall return an empty String for an uninitialized session.
      *
      * @return The access token {@code String} value.
      */
@@ -64,7 +64,7 @@ public class SessionToken implements Serializable, Token {
     }
 
     /**
-     * Returns the token expiry time in seconds. Shall return -1 for an anonymous session.
+     * Returns the token expiry time in seconds. Shall return -1 for an uninitialized  session.
      *
      * @return The token expiry time in seconds.
      */
