@@ -24,7 +24,6 @@ import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.PdfaRestWebService;
 import net.webpdf.wsclient.webservice.soap.PdfaWebService;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -171,11 +170,6 @@ public class OauthTokenIntegrationTest {
     public void testSOAPAuth0TokenTest() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(TestServer.ServerType.LOCAL))) {
-
-            UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
-                    testServer.getLocalUser(), testServer.getLocalPassword());
-            session.setCredentials(userCredentials);
-
             assertDoesNotThrow(() -> session.setCredentials(
                     // Implement the Auth0 TokenProvider
                     () -> {
@@ -223,11 +217,6 @@ public class OauthTokenIntegrationTest {
     public void testSOAPAzureTokenTest() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(TestServer.ServerType.LOCAL))) {
-
-            UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
-                    testServer.getLocalUser(), testServer.getLocalPassword());
-            session.setCredentials(userCredentials);
-
             assertDoesNotThrow(() -> session.setCredentials(
                     // Implement the Azure TokenProvider
                     () -> {
