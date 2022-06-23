@@ -25,85 +25,95 @@ import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SoapCredentialsIntegrationTest {
 
     private final TestResources testResources = new TestResources(SoapCredentialsIntegrationTest.class);
     public TestServer testServer = new TestServer();
 
-    private void executeConverter(Session<SoapDocument> session) throws Exception {
+    private void executeConverter(Session<SoapDocument> session) {
         File file = testResources.getResource("integration/files/lorem-ipsum.docx");
         File fileOut = testResources.getTempFolder().newFile();
 
-        try (FileInputStream fileInputStream = new FileInputStream(file);
-             FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-            SoapDocument soapDocument = new SoapWebServiceDocument(fileInputStream, fileOutputStream);
+        assertDoesNotThrow(() -> {
+            try (FileInputStream fileInputStream = new FileInputStream(file);
+                 FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
+                SoapDocument soapDocument = new SoapWebServiceDocument(fileInputStream, fileOutputStream);
 
-            ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+                ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
+                        WebServiceType.CONVERTER);
 
-            webService.setDocument(soapDocument);
+                webService.setDocument(soapDocument);
 
-            assertNotNull(webService.getOperation(), "Operation should have been initialized");
-            webService.getOperation().setPages("1-5");
-            webService.getOperation().setEmbedFonts(true);
+                assertNotNull(webService.getOperation(), "Operation should have been initialized");
+                webService.getOperation().setPages("1-5");
+                webService.getOperation().setEmbedFonts(true);
 
-            webService.getOperation().setPdfa(new PdfaType());
-            webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-            webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-            webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+                webService.getOperation().setPdfa(new PdfaType());
+                webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
+                webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+                webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
-            try (SoapDocument resultDocument = webService.process()) {
-                assertNotNull(resultDocument);
-                assertTrue(fileOut.exists());
+                try (SoapDocument resultDocument = webService.process()) {
+                    assertNotNull(resultDocument);
+                    assertTrue(fileOut.exists());
+                }
             }
-        }
+        });
     }
 
     @Test
-    public void testWithUserCredentialsInURL() throws Exception {
-        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(TestServer.ServerType.LOCAL,
-                        TestServer.ServerProtocol.HTTP, true))) {
-            executeConverter(session);
-        }
-    }
-
-    @Test
-    public void testWithUserCredentials() throws Exception {
-        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
-
-            UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
-                    testServer.getLocalUser(), testServer.getLocalPassword());
-            session.setCredentials(userCredentials);
-
-            executeConverter(session);
-        }
-    }
-
-    @Test
-    public void testWithSetOptions() throws Exception {
-        File resFile = testResources.getResource("convert.xml");
-        String xml = FileUtils.readFileToString(resFile, Charset.defaultCharset());
-
-        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(TestServer.ServerType.LOCAL));
-             StringReader stringReader = new StringReader(xml)) {
-            ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
-                    new StreamSource(stringReader));
-
-            File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-            File fileOut = testResources.getTempFolder().newFile();
-
-            webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
-
-            try (SoapDocument soapDocument = webService.process()) {
-                assertNotNull(soapDocument);
-                assertTrue(fileOut.exists());
+    public void testWithUserCredentialsInURL() {
+        assertDoesNotThrow(() -> {
+            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.SOAP, testServer.getServer(
+                            TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP,
+                            true))) {
+                executeConverter(session);
             }
-        }
+        });
+    }
+
+    @Test
+    public void testWithUserCredentials() {
+        assertDoesNotThrow(() -> {
+            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+                    testServer.getServer(TestServer.ServerType.LOCAL))) {
+
+                UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
+                        testServer.getLocalUser(), testServer.getLocalPassword());
+                session.setCredentials(userCredentials);
+
+                executeConverter(session);
+            }
+        });
+    }
+
+    @Test
+    public void testWithSetOptions() {
+        assertDoesNotThrow(() -> {
+            File resFile = testResources.getResource("convert.xml");
+            String xml = FileUtils.readFileToString(resFile, Charset.defaultCharset());
+
+            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.SOAP,
+                    testServer.getServer(TestServer.ServerType.LOCAL));
+                 StringReader stringReader = new StringReader(xml)) {
+                ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
+                        new StreamSource(stringReader));
+
+                File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+                File fileOut = testResources.getTempFolder().newFile();
+
+                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+
+                try (SoapDocument soapDocument = webService.process()) {
+                    assertNotNull(soapDocument);
+                    assertTrue(fileOut.exists());
+                }
+            }
+        });
     }
 
 }

@@ -1,31 +1,31 @@
 package net.webpdf.wsclient.webservice.soap;
 
+import jakarta.activation.DataHandler;
+import jakarta.xml.bind.DatatypeConverter;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.soap.MTOMFeature;
 import net.webpdf.wsclient.documents.soap.SoapDocument;
-import net.webpdf.wsclient.session.soap.SoapSession;
-import net.webpdf.wsclient.webservice.AbstractWebService;
-import net.webpdf.wsclient.webservice.WebServiceProtocol;
-import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.https.TLSContext;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
+import net.webpdf.wsclient.session.credentials.TokenCredentials;
+import net.webpdf.wsclient.session.soap.SoapSession;
+import net.webpdf.wsclient.webservice.AbstractWebService;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.webservice.WebServiceType;
+import org.apache.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import jakarta.activation.DataHandler;
-import jakarta.xml.bind.DatatypeConverter;
-
 import javax.xml.namespace.QName;
-
-import jakarta.xml.ws.BindingProvider;
-import jakarta.xml.ws.handler.MessageContext;
-import jakarta.xml.ws.soap.MTOMFeature;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 
@@ -158,20 +158,29 @@ public abstract class SoapWebService<T_SOAP_DOCUMENT extends SoapDocument, T_WEB
         // set auth information
         if (getSession().getCredentials() != null) {
 
-            String authHeader = "Basic " + DatatypeConverter.printBase64Binary((
-                    getSession().getCredentials().getUserPrincipal().toString() + ":"
-                            + getSession().getCredentials().getPassword())
-                    .getBytes());
-
-            getHeaders().put("Authorization", Collections.singletonList(authHeader));
+            boolean tokenCredentials = getSession().getCredentials() instanceof TokenCredentials;
+            if (tokenCredentials) {
+                getHeaders().put(HttpHeaders.AUTHORIZATION,
+                        Collections.singletonList("Bearer" +
+                                getSession().getCredentials().getUserPrincipal().getName()));
+            } else {
+                String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(
+                        (getSession().getCredentials().getUserPrincipal().getName()
+                                + ":" + getSession().getCredentials().getPassword())
+                                .getBytes(StandardCharsets.ISO_8859_1));
+                getHeaders().put(HttpHeaders.AUTHORIZATION, Collections.singletonList(basicAuth));
+            }
 
             if (!getHeaders().isEmpty()) {
                 Map<String, Object> requestContext = bindingProvider.getRequestContext();
                 requestContext.put(MessageContext.HTTP_REQUEST_HEADERS, getHeaders());
-                requestContext.put(BindingProvider.USERNAME_PROPERTY,
-                        getSession().getCredentials().getUserPrincipal().getName());
-                requestContext.put(BindingProvider.PASSWORD_PROPERTY,
-                        getSession().getCredentials().getPassword());
+
+                if (!tokenCredentials) {
+                    requestContext.put(BindingProvider.USERNAME_PROPERTY,
+                            getSession().getCredentials().getUserPrincipal().getName());
+                    requestContext.put(BindingProvider.PASSWORD_PROPERTY,
+                            getSession().getCredentials().getPassword());
+                }
             }
         }
 

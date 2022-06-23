@@ -9,7 +9,10 @@ import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
 import net.webpdf.wsclient.documents.rest.RestDocument;
+import net.webpdf.wsclient.documents.soap.SoapDocument;
+import net.webpdf.wsclient.documents.soap.SoapWebServiceDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
+import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.token.OAuthToken;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -19,7 +22,9 @@ import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.PdfaRestWebService;
+import net.webpdf.wsclient.webservice.soap.PdfaWebService;
 import org.apache.commons.io.FileUtils;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -48,14 +53,15 @@ public class OauthTokenIntegrationTest {
      * <p>
      * <b>Be aware:</b><br>
      * - The hereby used Auth0 authorization provider must be known to your webPDF server. (server.xml)<br>
-     * - The values of the hereby defined claims must be adapted to the used client and authorization provider.
+     * - The values of the claims defined in 'integration/files/auth0-client-id.json' must be adapted to the used
+     * client and authorization provider.
      * </p>
      *
      * @throws Exception Shall be thrown, when executing the request failed.
      */
     @Disabled("Adapt the values in 'auth0-client-id.json' first, otherwise this can not succeed.")
     @Test
-    public void testAuth0TokenTest() throws Exception {
+    public void testRestAuth0TokenTest() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                 testServer.getServer(TestServer.ServerType.LOCAL))) {
 
@@ -95,14 +101,15 @@ public class OauthTokenIntegrationTest {
      * <p>
      * <b>Be aware:</b><br>
      * - The hereby used Azure authorization provider must be known to your webPDF server. (server.xml)<br>
-     * - The values of the hereby defined claims must be adapted to the used client and authorization provider.
+     * - The values of the claims defined in 'integration/files/azure-client-id.json' must be adapted to the used
+     * client and authorization provider.
      * </p>
      *
      * @throws Exception Shall be thrown, when executing the request failed.
      */
     @Disabled("Adapt the values in 'azure-client-id.json' first, otherwise this can not succeed.")
     @Test
-    public void testAzureTokenTest() throws Exception {
+    public void testRestAzureTokenTest() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                 testServer.getServer(TestServer.ServerType.LOCAL))) {
 
@@ -144,6 +151,119 @@ public class OauthTokenIntegrationTest {
     }
 
     /**
+     * <p>
+     * Use an Auth0 authorization provider to create a webPDF wsclient {@link SoapSession}.
+     * </p>
+     * <p>
+     * This serves as an example implementation how such an OAuth session can be created.
+     * </p>
+     * <p>
+     * <b>Be aware:</b><br>
+     * - The hereby used Auth0 authorization provider must be known to your webPDF server. (server.xml)<br>
+     * - The values of the claims defined in 'integration/files/auth0-client-id.json' must be adapted to the used
+     * client and authorization provider.
+     * </p>
+     *
+     * @throws Exception Shall be thrown, when executing the request failed.
+     */
+    @Disabled("Adapt the values in 'auth0-client-id.json' first, otherwise this can not succeed.")
+    @Test
+    public void testSOAPAuth0TokenTest() throws Exception {
+        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+                testServer.getServer(TestServer.ServerType.LOCAL))) {
+
+            UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
+                    testServer.getLocalUser(), testServer.getLocalPassword());
+            session.setCredentials(userCredentials);
+
+            assertDoesNotThrow(() -> session.setCredentials(
+                    // Implement the Auth0 TokenProvider
+                    () -> {
+
+                        Auth0Config auth0Config = new Auth0Config(testResources.getResource(
+                                "integration/files/auth0-client-id.json"));
+                        // Request an access token from the Auth0 authorization provider:
+                        AuthAPI auth = new AuthAPI(
+                                auth0Config.getAuthority(),
+                                auth0Config.getClientID(),
+                                auth0Config.getClientSecret()
+                        );
+                        TokenRequest tokenRequest = auth.requestToken(
+                                auth0Config.getAudience()
+                        );
+
+                        // Create and return the webPDF wsclient access Token.
+                        return new OAuthToken(tokenRequest.execute().getAccessToken());
+                    })
+            );
+
+            // Execute requests to webPDF webservices using the access token:
+            executeWSRequest(session);
+        }
+    }
+
+    /**
+     * <p>
+     * Use an Azure authorization provider to create a webPDF wsclient {@link SoapSession}.
+     * </p>
+     * <p>
+     * This serves as an example implementation how such an OAuth session can be created.
+     * </p>
+     * <p>
+     * <b>Be aware:</b><br>
+     * - The hereby used Azure authorization provider must be known to your webPDF server. (server.xml)<br>
+     * - The values of the claims defined in 'integration/files/azure-client-id.json' must be adapted to the used
+     * client and authorization provider.
+     * </p>
+     *
+     * @throws Exception Shall be thrown, when executing the request failed.
+     */
+    @Disabled("Adapt the values in 'azure-client-id.json' first, otherwise this can not succeed.")
+    @Test
+    public void testSOAPAzureTokenTest() throws Exception {
+        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+                testServer.getServer(TestServer.ServerType.LOCAL))) {
+
+            UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
+                    testServer.getLocalUser(), testServer.getLocalPassword());
+            session.setCredentials(userCredentials);
+
+            assertDoesNotThrow(() -> session.setCredentials(
+                    // Implement the Azure TokenProvider
+                    () -> {
+                        AzureConfig azureConfig = new AzureConfig(testResources.getResource(
+                                "integration/files/azure-client-id.json"));
+                        // Request an access token from the Azure authorization provider:
+                        ConfidentialClientApplication app = ConfidentialClientApplication.builder(
+                                        azureConfig.getClientID(),
+                                        ClientCredentialFactory.createFromSecret(
+                                                azureConfig.getClientSecret()
+                                        ))
+                                .authority(
+                                        azureConfig.getAuthority()
+                                )
+                                .build();
+                        ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
+                                        Collections.singleton(
+                                                azureConfig.getScope()
+                                        ))
+                                .build();
+                        CompletableFuture<IAuthenticationResult> future =
+                                app.acquireToken(clientCredentialParam);
+                        IAuthenticationResult authenticationResult =
+                                assertDoesNotThrow(() -> future.get());
+
+                        // Create and return the webPDF wsclient access Token.
+                        return new OAuthToken(authenticationResult.accessToken());
+                    })
+            );
+
+            // Execute requests to webPDF webservices using the access token:
+            executeWSRequest(session);
+        }
+    }
+
+    /**
      * Executes an exemplary call to the PDF/A webservice and checks whether a result is created and received.
      *
      * @param session The {@link RestSession} to use.
@@ -173,6 +293,33 @@ public class OauthTokenIntegrationTest {
         assertTrue(fileOut.exists());
     }
 
+    /**
+     * Executes an exemplary call to the PDF/A webservice and checks whether a result is created and received.
+     *
+     * @param session The {@link SoapSession} to use.
+     * @throws Exception Shall be thrown, when executing the request failed.
+     */
+    private void executeWSRequest(@NotNull SoapSession<SoapDocument> session) throws Exception {
+        PdfaWebService<SoapDocument> webService =
+                WebServiceFactory.createInstance(session, WebServiceType.PDFA);
+
+        File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+        File fileOut = testResources.getTempFolder().newFile();
+
+        webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+
+        assertNotNull(webService.getOperation(),
+                "Operation should have been initialized");
+        webService.getOperation().setConvert(new PdfaType.Convert());
+        webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+        webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+        webService.getOperation().getConvert().setImageQuality(90);
+
+        try (SoapDocument soapDocument = webService.process()) {
+            assertNotNull(soapDocument);
+            assertTrue(fileOut.exists());
+        }
+    }
 
     /**
      * <p>

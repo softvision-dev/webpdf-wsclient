@@ -4,11 +4,16 @@ import net.webpdf.wsclient.documents.soap.SoapDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.https.TLSContext;
 import net.webpdf.wsclient.session.AbstractSession;
+import net.webpdf.wsclient.session.credentials.TokenCredentials;
 import net.webpdf.wsclient.session.proxy.ProxyConfiguration;
+import net.webpdf.wsclient.session.token.Token;
+import net.webpdf.wsclient.session.token.TokenProvider;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import org.apache.http.auth.Credentials;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 
@@ -81,6 +86,27 @@ public abstract class AbstractSoapSession<T_SOAP_DOCUMENT extends SoapDocument>
             this.proxySelector = new WSClientProxySelector(
                     new URI[]{getURI("")}, proxy.getHost());
         }
+    }
+
+    /**
+     * Uses the given {@link Token} as the {@link Credentials} authorizing this session.
+     *
+     * @param token The {@link Token} authorizing this session.
+     */
+    @Override
+    public void setCredentials(@Nullable Token token) {
+        setCredentials(token != null ? new TokenCredentials<>(token) : null);
+    }
+
+    /**
+     * Uses the given {@link TokenProvider}, to produce a {@link Token}, that shall be used as the {@link Credentials}
+     * authorizing this session.
+     *
+     * @param tokenProvider The {@link TokenProvider} creating the {@link Token} authorizing this session.
+     */
+    @Override
+    public void setCredentials(@Nullable TokenProvider<?> tokenProvider) throws IOException {
+        setCredentials(tokenProvider != null ? tokenProvider.provideToken() : null);
     }
 
     /**

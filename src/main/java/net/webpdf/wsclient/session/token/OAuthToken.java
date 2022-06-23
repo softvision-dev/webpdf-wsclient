@@ -46,8 +46,9 @@ public class OAuthToken implements Token {
      * Refreshes the {@link OAuthToken} by replacing the stored accessToken with a refreshed, new access token.
      * </p>
      * <p>
-     * <b>Important:</b> Refreshing an {@link OAuthToken} must be organized via the authorization provider itself. The
-     * webPDF server can and shall not solve this.
+     * <b>Important:</b> It is out of scope for The webPDF server (and wsclient) to actually implement a refreshing
+     * logic for all possible authorization providers.
+     * The actual refreshing and handling of a refresh token must be solved elsewhere.
      * </p>
      *
      * @param accessToken The refreshed access token {@code String} value.
