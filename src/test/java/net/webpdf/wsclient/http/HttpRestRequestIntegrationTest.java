@@ -2,6 +2,7 @@ package net.webpdf.wsclient.http;
 
 import net.webpdf.wsclient.session.token.SessionToken;
 import net.webpdf.wsclient.session.token.Token;
+import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
@@ -35,7 +36,7 @@ public class HttpRestRequestIntegrationTest {
         File outputFile = testResources.getTempFolder().newFile();
         File outputFile2 = testResources.getTempFolder().newFile();
         try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL));
+                testServer.getServer(ServerType.LOCAL));
              OutputStream fos = Files.newOutputStream(outputFile.toPath());
              OutputStream fos2 = Files.newOutputStream(outputFile2.toPath())) {
             session.login();
@@ -100,7 +101,7 @@ public class HttpRestRequestIntegrationTest {
         File file = testResources.getResource("test.pdf");
         File outputFile = testResources.getTempFolder().newFile();
         try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL));
+                testServer.getServer(ServerType.LOCAL));
              OutputStream fos = Files.newOutputStream(outputFile.toPath())) {
             UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
                     testServer.getLocalUser(), testServer.getLocalPassword());
@@ -141,7 +142,7 @@ public class HttpRestRequestIntegrationTest {
         assertThrows(ResultException.class,
                 () -> {
                     try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                            testServer.getServer(TestServer.ServerType.LOCAL))) {
+                            testServer.getServer(ServerType.LOCAL))) {
                         UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
                                 "invalid", "invalid");
                         session.setCredentials(userCredentials);
@@ -155,7 +156,7 @@ public class HttpRestRequestIntegrationTest {
         assertThrows(ResultException.class,
                 () -> {
                     try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                            testServer.getServer(TestServer.ServerType.LOCAL))) {
+                            testServer.getServer(ServerType.LOCAL))) {
                         session.login();
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest,
@@ -173,7 +174,7 @@ public class HttpRestRequestIntegrationTest {
                 () -> {
                     File file = testResources.getResource("test.pdf");
                     try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                            testServer.getServer(TestServer.ServerType.LOCAL))) {
+                            testServer.getServer(ServerType.LOCAL))) {
                         session.login();
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest, "HttpRestRequest should have been build.");
@@ -194,7 +195,7 @@ public class HttpRestRequestIntegrationTest {
                 () -> {
                     File file = testResources.getResource("test.pdf");
                     try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                            testServer.getServer(TestServer.ServerType.LOCAL))) {
+                            testServer.getServer(ServerType.LOCAL))) {
                         session.login();
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest,
@@ -218,7 +219,7 @@ public class HttpRestRequestIntegrationTest {
                 () -> {
                     File file = testResources.getResource("test.pdf");
                     try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                            testServer.getServer(TestServer.ServerType.LOCAL))) {
+                            testServer.getServer(ServerType.LOCAL))) {
                         session.login();
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest,
@@ -241,7 +242,7 @@ public class HttpRestRequestIntegrationTest {
         assertThrows(ResultException.class,
                 () -> {
                     try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                            testServer.getServer(TestServer.ServerType.LOCAL))) {
+                            testServer.getServer(ServerType.LOCAL))) {
                         session.login();
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest,

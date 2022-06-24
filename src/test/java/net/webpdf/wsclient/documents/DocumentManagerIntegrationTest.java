@@ -7,6 +7,7 @@ import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
 import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
@@ -34,7 +35,7 @@ public class DocumentManagerIntegrationTest {
         File sourceFile = testResources.getResource("test.pdf");
         File targetFile = testResources.getTempFolder().newFile();
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL));
+                testServer.getServer(ServerType.LOCAL));
              OutputStream outputStream = Files.newOutputStream(targetFile.toPath())
         ) {
             assertNotNull(session,
@@ -66,7 +67,7 @@ public class DocumentManagerIntegrationTest {
     public void testDocumentRename() throws Exception {
         File sourceFile = testResources.getResource("test.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             assertNotNull(session,
                     "Valid session should have been created.");
             session.login();
@@ -95,7 +96,7 @@ public class DocumentManagerIntegrationTest {
         File sourceFile2 = testResources.getResource("logo.png");
         File sourceFile3 = testResources.getResource("lorem-ipsum.txt");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             assertNotNull(session,
                     "Valid session should have been created.");
             session.login();
@@ -118,7 +119,7 @@ public class DocumentManagerIntegrationTest {
     public void testDocumentHistory() throws Exception {
         File sourceFile = testResources.getResource("logo.png");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             assertNotNull(session,
                     "Valid session should have been created.");
             session.login();
@@ -174,7 +175,7 @@ public class DocumentManagerIntegrationTest {
         File sourceFile = testResources.getResource("test.pdf");
         File targetFile = testResources.getTempFolder().newFile();
         try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL));
+                testServer.getServer(ServerType.LOCAL));
              OutputStream outputStream = Files.newOutputStream(targetFile.toPath())
         ) {
             assertNotNull(session, "Valid session should have been created.");
@@ -193,7 +194,7 @@ public class DocumentManagerIntegrationTest {
                 () -> {
                     File sourceFile = testResources.getResource("test.pdf");
                     try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                            testServer.getServer(TestServer.ServerType.LOCAL))) {
+                            testServer.getServer(ServerType.LOCAL))) {
                         assertNotNull(session,
                                 "Valid session should have been created.");
                         session.login();
@@ -210,7 +211,7 @@ public class DocumentManagerIntegrationTest {
         assertThrows(ResultException.class,
                 () -> {
                     try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                            testServer.getServer(TestServer.ServerType.LOCAL))) {
+                            testServer.getServer(ServerType.LOCAL))) {
                         assertNotNull(session, "Valid session should have been created.");
                         session.login();
                         session.getDocumentManager().uploadDocument(null);
@@ -224,7 +225,7 @@ public class DocumentManagerIntegrationTest {
                 () -> {
                     try (RestSession<RestDocument> session = SessionFactory.createInstance(
                             WebServiceProtocol.REST,
-                            testServer.getServer(TestServer.ServerType.LOCAL))) {
+                            testServer.getServer(ServerType.LOCAL))) {
                         assertNotNull(session, "Valid session should have been created.");
                         session.login();
                         session.getDocumentManager().getDocument(null);

@@ -107,7 +107,7 @@ public final class TestServer {
     }
 
     public File getDemoKeystoreFile(File keystoreFile) throws Exception {
-        URL serverUrl = getServer(TestServer.ServerType.PUBLIC, ServerProtocol.HTTPS, false);
+        URL serverUrl = getServer(ServerType.PUBLIC, ServerProtocol.HTTPS, false);
         HttpsURLConnection conn = (HttpsURLConnection) serverUrl.openConnection();
         conn.connect();
         Certificate[] certs = conn.getServerCertificates();
@@ -120,16 +120,6 @@ public final class TestServer {
             ks.store(fos, "".toCharArray());
         }
         return keystoreFile;
-    }
-
-    public enum ServerType {
-        LOCAL,
-        PUBLIC
-    }
-
-    public enum ServerProtocol {
-        HTTP,
-        HTTPS
     }
 
 }

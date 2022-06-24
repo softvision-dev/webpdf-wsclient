@@ -7,6 +7,7 @@ import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
@@ -30,7 +31,7 @@ public class SoapFailureIntegrationTest {
         File file = testResources.getResource("integration/files/invalid.gif");
         File fileOut = testResources.getTempFolder().newFile();
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.CONVERTER);
             FileUtils.deleteQuietly(fileOut);
@@ -49,7 +50,7 @@ public class SoapFailureIntegrationTest {
         File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
         File fileOut = testResources.getTempFolder().newFile();
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             SignatureWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.SIGNATURE);
             SignatureType.Add add = new SignatureType.Add();
@@ -74,7 +75,7 @@ public class SoapFailureIntegrationTest {
         File file = testResources.getResource("integration/files/user-owner-password.pdf");
         File fileOut = testResources.getTempFolder().newFile();
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             PdfaWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.PDFA);
             FileUtils.deleteQuietly(fileOut);
@@ -93,7 +94,7 @@ public class SoapFailureIntegrationTest {
         File file = testResources.getResource("integration/files/user-owner-password.pdf");
         File fileOut = testResources.getTempFolder().newFile();
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             ToolboxWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.TOOLBOX);
             ExtractionType extractionType = new ExtractionType();
@@ -117,7 +118,7 @@ public class SoapFailureIntegrationTest {
         File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
         File fileOut = testResources.getTempFolder().newFile();
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             UrlConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.URLCONVERTER);
             FileUtils.deleteQuietly(fileOut);
@@ -137,7 +138,7 @@ public class SoapFailureIntegrationTest {
         File file = testResources.getResource("integration/files/user-owner-password.pdf");
         File fileOut = testResources.getTempFolder().newFile();
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             OcrWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.OCR);
             FileUtils.deleteQuietly(fileOut);

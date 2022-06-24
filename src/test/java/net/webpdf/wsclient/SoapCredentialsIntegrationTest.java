@@ -8,6 +8,8 @@ import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.soap.SoapSession;
+import net.webpdf.wsclient.testsuite.ServerProtocol;
+import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
@@ -68,7 +70,7 @@ public class SoapCredentialsIntegrationTest {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
                     WebServiceProtocol.SOAP, testServer.getServer(
-                            TestServer.ServerType.LOCAL, TestServer.ServerProtocol.HTTP,
+                            ServerType.LOCAL, ServerProtocol.HTTP,
                             true))) {
                 executeConverter(session);
             }
@@ -79,7 +81,7 @@ public class SoapCredentialsIntegrationTest {
     public void testWithUserCredentials() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(TestServer.ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL))) {
 
                 UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
                         testServer.getLocalUser(), testServer.getLocalPassword());
@@ -98,7 +100,7 @@ public class SoapCredentialsIntegrationTest {
 
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
                     WebServiceProtocol.SOAP,
-                    testServer.getServer(TestServer.ServerType.LOCAL));
+                    testServer.getServer(ServerType.LOCAL));
                  StringReader stringReader = new StringReader(xml)) {
                 ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         new StreamSource(stringReader));

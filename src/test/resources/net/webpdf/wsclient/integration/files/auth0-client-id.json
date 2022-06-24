@@ -1,6 +1,0 @@
-{
-  "authority": "Insert the URI of the Auth0 authorization provider here.",
-  "clientId": "Insert the ID of the client - that requires authorization - here.",
-  "clientSecret": "Insert the secret - known to that client - here.",
-  "audience": "Insert the audience - the client is claiming to be part of - here."
-}

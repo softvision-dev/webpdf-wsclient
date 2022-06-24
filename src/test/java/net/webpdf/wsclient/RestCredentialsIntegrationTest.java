@@ -6,6 +6,8 @@ import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.testsuite.ServerProtocol;
+import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
@@ -59,8 +61,8 @@ public class RestCredentialsIntegrationTest {
     @Test
     public void testWithUserCredentialsInURL() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL,
-                        TestServer.ServerProtocol.HTTP, true))) {
+                testServer.getServer(ServerType.LOCAL,
+                        ServerProtocol.HTTP, true))) {
             session.login();
             executeConverter(session);
         }
@@ -69,7 +71,7 @@ public class RestCredentialsIntegrationTest {
     @Test
     public void testWithUserCredentials() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
 
             UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
                     testServer.getLocalUser(), testServer.getLocalPassword());
@@ -86,7 +88,7 @@ public class RestCredentialsIntegrationTest {
         String json = FileUtils.readFileToString(resFile, Charset.defaultCharset());
 
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL));
+                testServer.getServer(ServerType.LOCAL));
              StringReader stringReader = new StringReader(json)) {
             session.login();
 

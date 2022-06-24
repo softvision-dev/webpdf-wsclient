@@ -8,6 +8,7 @@ import net.webpdf.wsclient.schema.operation.SignatureType;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
@@ -29,7 +30,7 @@ public class RestFailureIntegrationTest {
     public void testConverterFailure() throws Exception {
         File file = testResources.getResource("integration/files/invalid.gif");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             session.login();
             ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.CONVERTER);
@@ -48,7 +49,7 @@ public class RestFailureIntegrationTest {
     public void testSignatureFailure() throws Exception {
         File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             session.login();
             SignatureRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.SIGNATURE);
@@ -75,7 +76,7 @@ public class RestFailureIntegrationTest {
     public void testPdfaFailure() throws Exception {
         File file = testResources.getResource("integration/files/user-owner-password.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             session.login();
             PdfaRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.PDFA);
@@ -94,7 +95,7 @@ public class RestFailureIntegrationTest {
     public void testToolboxFailure() throws Exception {
         File file = testResources.getResource("integration/files/user-owner-password.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             session.login();
             ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.TOOLBOX);
@@ -119,7 +120,7 @@ public class RestFailureIntegrationTest {
     public void testUrlConverterFailure() throws Exception {
         File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             session.login();
             UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.URLCONVERTER);
@@ -138,7 +139,7 @@ public class RestFailureIntegrationTest {
     public void testOCRFailure() throws Exception {
         File file = testResources.getResource("integration/files/user-owner-password.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             session.login();
             OcrRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.OCR);

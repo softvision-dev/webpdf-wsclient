@@ -7,6 +7,7 @@ import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.ImageHelper;
+import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
@@ -38,7 +39,7 @@ public class RestWebserviceIntegrationTest {
     public void testConverter() throws Exception {
 
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
 
             session.login();
 
@@ -80,7 +81,7 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testToolbox() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
 
             session.login();
 
@@ -134,7 +135,7 @@ public class RestWebserviceIntegrationTest {
     @Disabled("this assumes, that 'test' actually is a certificate acronym in your webPDF server keystore.")
     public void testSignature() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
 
             session.login();
 
@@ -188,7 +189,7 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testPdfa() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
 
             session.login();
 
@@ -225,7 +226,7 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testOcr() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
 
             session.login();
 
@@ -258,7 +259,7 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testBarcode() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
 
             session.login();
 
@@ -317,7 +318,7 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testUrlConverter() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
 
             session.login();
 
@@ -354,7 +355,7 @@ public class RestWebserviceIntegrationTest {
         File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
         String json = FileUtils.readFileToString(configFile, Charset.defaultCharset());
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL));
+                testServer.getServer(ServerType.LOCAL));
              StringReader stringReader = new StringReader(json)) {
             StreamSource streamSource = new StreamSource(stringReader);
             session.login();
@@ -373,7 +374,7 @@ public class RestWebserviceIntegrationTest {
     @Test
     public void testToolboxSwitchToOutputFile() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
 
             session.login();
 
@@ -415,7 +416,7 @@ public class RestWebserviceIntegrationTest {
     public void testHandleRestSession() throws Exception {
         // Anonymous
         try (RestSession<RestDocument> restSession = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             assertNotNull(restSession,
                     "Valid session should have been created.");
             restSession.login();
@@ -437,7 +438,7 @@ public class RestWebserviceIntegrationTest {
 
         // User
         try (RestWebServiceSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL, "user", "user"))) {
+                testServer.getServer(ServerType.LOCAL, "user", "user"))) {
             assertNotNull(restSession,
                     "Valid session should have been created.");
             restSession.login();
@@ -459,7 +460,7 @@ public class RestWebserviceIntegrationTest {
 
         // Admin
         try (RestWebServiceSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL, "admin", "admin"))) {
+                testServer.getServer(ServerType.LOCAL, "admin", "admin"))) {
             assertNotNull(restSession,
                     "Valid session should have been created.");
             restSession.login();

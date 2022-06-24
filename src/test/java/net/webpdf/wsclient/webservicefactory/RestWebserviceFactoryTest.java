@@ -7,6 +7,7 @@ import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
@@ -33,7 +34,7 @@ public class RestWebserviceFactoryTest {
     private <T extends RestWebService<RestDocument, ?>> T getWebService(WebServiceType webServiceType)
             throws IOException, URISyntaxException {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(TestServer.ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL))) {
             return WebServiceFactory.createInstance(session, webServiceType);
         }
     }
@@ -45,7 +46,7 @@ public class RestWebserviceFactoryTest {
         String json = FileUtils.readFileToString(configFile, Charset.defaultCharset());
 
         try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
+                WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL))) {
             try (StringReader stringReader = new StringReader(json)) {
                 StreamSource streamSource = new StreamSource(stringReader);
                 webService = WebServiceFactory.createInstance(session, streamSource);
@@ -324,7 +325,7 @@ public class RestWebserviceFactoryTest {
     @Test
     public void testNoOperationData() throws Exception {
         try (Session<RestDocument> session = SessionFactory.createInstance(
-                WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
+                WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL))) {
             WebServiceFactory.createInstance(session, (StreamSource) null);
             fail("ResultException expected");
         } catch (ResultException ex) {

@@ -9,6 +9,8 @@ import net.webpdf.wsclient.https.TLSContext;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.testsuite.ServerProtocol;
+import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
@@ -60,29 +62,29 @@ public class WebserviceTLSIntegrationTest {
 
     @Test
     public void testSoapSSL() throws Exception {
-        testSoapSSL(testServer.getServer(TestServer.ServerType.PUBLIC,
-                        TestServer.ServerProtocol.HTTPS, false),
+        testSoapSSL(testServer.getServer(ServerType.PUBLIC,
+                        ServerProtocol.HTTPS, false),
                 testServer.getDemoKeystoreFile(keystoreFile), false);
     }
 
     @Test
     public void testSoapSSLSelfSigned() throws Exception {
-        testSoapSSL(testServer.getServer(TestServer.ServerType.LOCAL,
-                TestServer.ServerProtocol.HTTPS, false), null, true);
+        testSoapSSL(testServer.getServer(ServerType.LOCAL,
+                ServerProtocol.HTTPS, false), null, true);
     }
 
     @Test
     public void testSoapSSLWrongKeystore() {
         assertThrows(WebServiceException.class,
-                () -> testSoapSSL(testServer.getServer(TestServer.ServerType.LOCAL,
-                                TestServer.ServerProtocol.HTTPS, false),
+                () -> testSoapSSL(testServer.getServer(ServerType.LOCAL,
+                                ServerProtocol.HTTPS, false),
                         testServer.getDemoKeystoreFile(keystoreFile), false));
     }
 
     @Test
     public void testSoapSSLCACertsFallback() throws Exception {
         testSoapSSL(testServer.getServer(
-                        TestServer.ServerType.PUBLIC, TestServer.ServerProtocol.HTTPS,
+                        ServerType.PUBLIC, ServerProtocol.HTTPS,
                         false),
                 null, false);
     }
@@ -90,8 +92,8 @@ public class WebserviceTLSIntegrationTest {
     @Test
     public void testSoapSSLProtocolFailure() {
         assertThrows(WebServiceException.class, () ->
-                testSoapSSL(testServer.getServer(TestServer.ServerType.PUBLIC,
-                                TestServer.ServerProtocol.HTTP, false),
+                testSoapSSL(testServer.getServer(ServerType.PUBLIC,
+                                ServerProtocol.HTTP, false),
                         testServer.getDemoKeystoreFile(keystoreFile), false));
     }
 
@@ -138,8 +140,8 @@ public class WebserviceTLSIntegrationTest {
     public void testRestSSL(String type, String protocol, int expectedErrorCode, boolean setKeystoreFile,
             boolean selfSigned) throws Exception {
 
-        TestServer.ServerType serverType = TestServer.ServerType.valueOf(type);
-        TestServer.ServerProtocol serverProtocol = TestServer.ServerProtocol.valueOf(protocol);
+        ServerType serverType = ServerType.valueOf(type);
+        ServerProtocol serverProtocol = ServerProtocol.valueOf(protocol);
 
         try {
             URL url = testServer.getServer(serverType, serverProtocol, false);
