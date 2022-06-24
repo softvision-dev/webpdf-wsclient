@@ -6,7 +6,7 @@ import com.microsoft.aad.msal4j.ClientCredentialFactory;
 import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
-import net.webpdf.wsclient.testsuite.ServerType;
+import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.config.TestConfig;
 import net.webpdf.wsclient.testsuite.integration.annotations.OAuthTest;
 import net.webpdf.wsclient.testsuite.integration.annotations.OAuthProviderSelection;
@@ -20,8 +20,8 @@ import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.token.OAuthToken;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.testsuite.TestResources;
-import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -53,38 +53,38 @@ public class OauthTokenIntegrationTest {
      * <b>Be aware:</b><br>
      * - The hereby used Auth0 authorization provider must be known to your webPDF server. (server.xml)
      * </p>
-     *
-     * @throws Exception Shall be thrown, when executing the request failed.
      */
     @Test
     @OAuthTest(provider = OAuthProviderSelection.AUTH_0)
-    public void testRestAuth0TokenTest() throws Exception {
-        try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(ServerType.LOCAL))) {
-            Auth0Config auth0Config = TestConfig.getInstance().getAuth0Config();
+    public void testRestAuth0TokenTest() {
+        assertDoesNotThrow(() -> {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL))) {
+                Auth0Config auth0Config = TestConfig.getInstance().getAuth0Config();
 
-            // Receive Auth0 access token and provide it to the RestSession:
-            assertDoesNotThrow(() -> session.login(
-                    // Implement the Auth0 TokenProvider
-                    () -> {
-                        // Request an access token from the Auth0 authorization provider:
-                        AuthAPI auth = new AuthAPI(
-                                auth0Config.getAuthority(),
-                                auth0Config.getClientID(),
-                                auth0Config.getClientSecret()
-                        );
-                        TokenRequest tokenRequest = auth.requestToken(
-                                auth0Config.getAudience()
-                        );
+                // Receive Auth0 access token and provide it to the RestSession:
+                assertDoesNotThrow(() -> session.login(
+                        // Implement the Auth0 TokenProvider
+                        () -> {
+                            // Request an access token from the Auth0 authorization provider:
+                            AuthAPI auth = new AuthAPI(
+                                    auth0Config.getAuthority(),
+                                    auth0Config.getClientID(),
+                                    auth0Config.getClientSecret()
+                            );
+                            TokenRequest tokenRequest = auth.requestToken(
+                                    auth0Config.getAudience()
+                            );
 
-                        // Create and return the webPDF wsclient access Token.
-                        return new OAuthToken(tokenRequest.execute().getAccessToken());
-                    })
-            );
+                            // Create and return the webPDF wsclient access Token.
+                            return new OAuthToken(tokenRequest.execute().getAccessToken());
+                        })
+                );
 
-            // Execute requests to webPDF webservices using the access token:
-            executeWSRequest(session);
-        }
+                // Execute requests to webPDF webservices using the access token:
+                executeWSRequest(session);
+            }
+        });
     }
 
     /**
@@ -98,49 +98,49 @@ public class OauthTokenIntegrationTest {
      * <b>Be aware:</b><br>
      * - The hereby used Azure authorization provider must be known to your webPDF server. (server.xml)
      * </p>
-     *
-     * @throws Exception Shall be thrown, when executing the request failed.
      */
     @Test
     @OAuthTest(provider = OAuthProviderSelection.AZURE)
-    public void testRestAzureTokenTest() throws Exception {
-        try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(ServerType.LOCAL))) {
-            AzureConfig azureConfig = TestConfig.getInstance().getAzureConfig();
+    public void testRestAzureTokenTest() {
+        assertDoesNotThrow(() -> {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL))) {
+                AzureConfig azureConfig = TestConfig.getInstance().getAzureConfig();
 
-            // Receive Azure access token and provide it to the RestSession:
-            assertDoesNotThrow(
-                    () -> session.login(
-                            // Implement the Azure TokenProvider
-                            () -> {
-                                // Request an access token from the Azure authorization provider:
-                                ConfidentialClientApplication app = ConfidentialClientApplication.builder(
-                                                azureConfig.getClientID(),
-                                                ClientCredentialFactory.createFromSecret(
-                                                        azureConfig.getClientSecret()
-                                                ))
-                                        .authority(
-                                                azureConfig.getAuthority()
-                                        )
-                                        .build();
-                                ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
-                                                Collections.singleton(
-                                                        azureConfig.getScope()
-                                                ))
-                                        .build();
-                                CompletableFuture<IAuthenticationResult> future =
-                                        app.acquireToken(clientCredentialParam);
-                                IAuthenticationResult authenticationResult =
-                                        assertDoesNotThrow(() -> future.get());
+                // Receive Azure access token and provide it to the RestSession:
+                assertDoesNotThrow(
+                        () -> session.login(
+                                // Implement the Azure TokenProvider
+                                () -> {
+                                    // Request an access token from the Azure authorization provider:
+                                    ConfidentialClientApplication app = ConfidentialClientApplication.builder(
+                                                    azureConfig.getClientID(),
+                                                    ClientCredentialFactory.createFromSecret(
+                                                            azureConfig.getClientSecret()
+                                                    ))
+                                            .authority(
+                                                    azureConfig.getAuthority()
+                                            )
+                                            .build();
+                                    ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
+                                                    Collections.singleton(
+                                                            azureConfig.getScope()
+                                                    ))
+                                            .build();
+                                    CompletableFuture<IAuthenticationResult> future =
+                                            app.acquireToken(clientCredentialParam);
+                                    IAuthenticationResult authenticationResult =
+                                            assertDoesNotThrow(() -> future.get());
 
-                                // Create and return the webPDF wsclient access Token.
-                                return new OAuthToken(authenticationResult.accessToken());
-                            })
-            );
+                                    // Create and return the webPDF wsclient access Token.
+                                    return new OAuthToken(authenticationResult.accessToken());
+                                })
+                );
 
-            // Execute requests to webPDF webservices using the access token:
-            executeWSRequest(session);
-        }
+                // Execute requests to webPDF webservices using the access token:
+                executeWSRequest(session);
+            }
+        });
     }
 
     /**
@@ -154,37 +154,37 @@ public class OauthTokenIntegrationTest {
      * <b>Be aware:</b><br>
      * - The hereby used Auth0 authorization provider must be known to your webPDF server. (server.xml)
      * </p>
-     *
-     * @throws Exception Shall be thrown, when executing the request failed.
      */
     @Test
     @OAuthTest(provider = OAuthProviderSelection.AUTH_0)
-    public void testSOAPAuth0TokenTest() throws Exception {
-        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(ServerType.LOCAL))) {
-            Auth0Config auth0Config = TestConfig.getInstance().getAuth0Config();
+    public void testSOAPAuth0TokenTest() {
+        assertDoesNotThrow(() -> {
+            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+                    testServer.getServer(ServerType.LOCAL))) {
+                Auth0Config auth0Config = TestConfig.getInstance().getAuth0Config();
 
-            assertDoesNotThrow(() -> session.setCredentials(
-                    // Implement the Auth0 TokenProvider
-                    () -> {
-                        // Request an access token from the Auth0 authorization provider:
-                        AuthAPI auth = new AuthAPI(
-                                auth0Config.getAuthority(),
-                                auth0Config.getClientID(),
-                                auth0Config.getClientSecret()
-                        );
-                        TokenRequest tokenRequest = auth.requestToken(
-                                auth0Config.getAudience()
-                        );
+                assertDoesNotThrow(() -> session.setCredentials(
+                        // Implement the Auth0 TokenProvider
+                        () -> {
+                            // Request an access token from the Auth0 authorization provider:
+                            AuthAPI auth = new AuthAPI(
+                                    auth0Config.getAuthority(),
+                                    auth0Config.getClientID(),
+                                    auth0Config.getClientSecret()
+                            );
+                            TokenRequest tokenRequest = auth.requestToken(
+                                    auth0Config.getAudience()
+                            );
 
-                        // Create and return the webPDF wsclient access Token.
-                        return new OAuthToken(tokenRequest.execute().getAccessToken());
-                    })
-            );
+                            // Create and return the webPDF wsclient access Token.
+                            return new OAuthToken(tokenRequest.execute().getAccessToken());
+                        })
+                );
 
-            // Execute requests to webPDF webservices using the access token:
-            executeWSRequest(session);
-        }
+                // Execute requests to webPDF webservices using the access token:
+                executeWSRequest(session);
+            }
+        });
     }
 
     /**
@@ -198,105 +198,107 @@ public class OauthTokenIntegrationTest {
      * <b>Be aware:</b><br>
      * - The hereby used Azure authorization provider must be known to your webPDF server. (server.xml)
      * </p>
-     *
-     * @throws Exception Shall be thrown, when executing the request failed.
      */
     @Test
     @OAuthTest(provider = OAuthProviderSelection.AZURE)
-    public void testSOAPAzureTokenTest() throws Exception {
-        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(ServerType.LOCAL))) {
-            AzureConfig azureConfig = TestConfig.getInstance().getAzureConfig();
+    public void testSOAPAzureTokenTest() {
+        assertDoesNotThrow(() -> {
+            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+                    testServer.getServer(ServerType.LOCAL))) {
+                AzureConfig azureConfig = TestConfig.getInstance().getAzureConfig();
 
-            assertDoesNotThrow(() -> session.setCredentials(
-                    // Implement the Azure TokenProvider
-                    () -> {
-                        // Request an access token from the Azure authorization provider:
-                        ConfidentialClientApplication app = ConfidentialClientApplication.builder(
-                                        azureConfig.getClientID(),
-                                        ClientCredentialFactory.createFromSecret(
-                                                azureConfig.getClientSecret()
-                                        ))
-                                .authority(
-                                        azureConfig.getAuthority()
-                                )
-                                .build();
-                        ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
-                                        Collections.singleton(
-                                                azureConfig.getScope()
-                                        ))
-                                .build();
-                        CompletableFuture<IAuthenticationResult> future =
-                                app.acquireToken(clientCredentialParam);
-                        IAuthenticationResult authenticationResult =
-                                assertDoesNotThrow(() -> future.get());
+                assertDoesNotThrow(() -> session.setCredentials(
+                        // Implement the Azure TokenProvider
+                        () -> {
+                            // Request an access token from the Azure authorization provider:
+                            ConfidentialClientApplication app = ConfidentialClientApplication.builder(
+                                            azureConfig.getClientID(),
+                                            ClientCredentialFactory.createFromSecret(
+                                                    azureConfig.getClientSecret()
+                                            ))
+                                    .authority(
+                                            azureConfig.getAuthority()
+                                    )
+                                    .build();
+                            ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
+                                            Collections.singleton(
+                                                    azureConfig.getScope()
+                                            ))
+                                    .build();
+                            CompletableFuture<IAuthenticationResult> future =
+                                    app.acquireToken(clientCredentialParam);
+                            IAuthenticationResult authenticationResult =
+                                    assertDoesNotThrow(() -> future.get());
 
-                        // Create and return the webPDF wsclient access Token.
-                        return new OAuthToken(authenticationResult.accessToken());
-                    })
-            );
+                            // Create and return the webPDF wsclient access Token.
+                            return new OAuthToken(authenticationResult.accessToken());
+                        })
+                );
 
-            // Execute requests to webPDF webservices using the access token:
-            executeWSRequest(session);
-        }
+                // Execute requests to webPDF webservices using the access token:
+                executeWSRequest(session);
+            }
+        });
     }
 
     /**
      * Executes an exemplary call to the PDF/A webservice and checks whether a result is created and received.
      *
      * @param session The {@link RestSession} to use.
-     * @throws Exception Shall be thrown, when executing the request failed.
      */
-    private void executeWSRequest(@NotNull RestSession<RestDocument> session) throws Exception {
-        PdfaRestWebService<RestDocument> webService =
-                WebServiceFactory.createInstance(session, WebServiceType.PDFA);
+    private void executeWSRequest(@NotNull RestSession<RestDocument> session) {
+        assertDoesNotThrow(() -> {
+            PdfaRestWebService<RestDocument> webService =
+                    WebServiceFactory.createInstance(session, WebServiceType.PDFA);
 
-        File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-        File fileOut = testResources.getTempFolder().newFile();
+            File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+            File fileOut = testResources.getTempFolder().newFile();
 
-        webService.setDocument(session.getDocumentManager().uploadDocument(file));
-        assertNotNull(webService.getOperation(), "Operation should have been initialized");
-        webService.getOperation().setConvert(new PdfaType.Convert());
-        webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-        webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
-        webService.getOperation().getConvert().setImageQuality(90);
+            webService.setDocument(session.getDocumentManager().uploadDocument(file));
+            assertNotNull(webService.getOperation(), "Operation should have been initialized");
+            webService.getOperation().setConvert(new PdfaType.Convert());
+            webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+            webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+            webService.getOperation().getConvert().setImageQuality(90);
 
-        RestDocument restDocument = webService.process();
-        assertNotNull(restDocument);
-        String documentID = restDocument.getDocumentId();
-        assertNotNull(documentID);
-        try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-            session.getDocumentManager().downloadDocument(documentID, fileOutputStream);
-        }
-        assertTrue(fileOut.exists());
+            RestDocument restDocument = webService.process();
+            assertNotNull(restDocument);
+            String documentID = restDocument.getDocumentId();
+            assertNotNull(documentID);
+            try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
+                session.getDocumentManager().downloadDocument(documentID, fileOutputStream);
+            }
+            assertTrue(fileOut.exists());
+        });
     }
 
     /**
      * Executes an exemplary call to the PDF/A webservice and checks whether a result is created and received.
      *
      * @param session The {@link SoapSession} to use.
-     * @throws Exception Shall be thrown, when executing the request failed.
      */
-    private void executeWSRequest(@NotNull SoapSession<SoapDocument> session) throws Exception {
-        PdfaWebService<SoapDocument> webService =
-                WebServiceFactory.createInstance(session, WebServiceType.PDFA);
+    private void executeWSRequest(@NotNull SoapSession<SoapDocument> session) {
+        assertDoesNotThrow(() -> {
+            PdfaWebService<SoapDocument> webService =
+                    WebServiceFactory.createInstance(session, WebServiceType.PDFA);
 
-        File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-        File fileOut = testResources.getTempFolder().newFile();
+            File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+            File fileOut = testResources.getTempFolder().newFile();
 
-        webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+            webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
-        assertNotNull(webService.getOperation(),
-                "Operation should have been initialized");
-        webService.getOperation().setConvert(new PdfaType.Convert());
-        webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-        webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
-        webService.getOperation().getConvert().setImageQuality(90);
+            assertNotNull(webService.getOperation(),
+                    "Operation should have been initialized");
+            webService.getOperation().setConvert(new PdfaType.Convert());
+            webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+            webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+            webService.getOperation().getConvert().setImageQuality(90);
 
-        try (SoapDocument soapDocument = webService.process()) {
-            assertNotNull(soapDocument);
-            assertTrue(fileOut.exists());
-        }
+            try (SoapDocument soapDocument = webService.process()) {
+                assertNotNull(soapDocument);
+                assertTrue(fileOut.exists());
+            }
+        });
     }
 
 }

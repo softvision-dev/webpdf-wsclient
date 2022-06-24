@@ -6,10 +6,10 @@ import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.testsuite.ServerProtocol;
-import net.webpdf.wsclient.testsuite.ServerType;
-import net.webpdf.wsclient.testsuite.TestResources;
-import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.testsuite.server.ServerProtocol;
+import net.webpdf.wsclient.testsuite.server.ServerType;
+import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
@@ -25,91 +25,98 @@ import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 
-import static net.webpdf.wsclient.testsuite.TestResources.getDocumentID;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static net.webpdf.wsclient.testsuite.io.TestResources.getDocumentID;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RestCredentialsIntegrationTest {
 
     private final TestResources testResources = new TestResources(RestCredentialsIntegrationTest.class);
     public TestServer testServer = new TestServer();
 
-    private void executeConverter(RestSession<RestDocument> session) throws Exception {
-        ConverterRestWebService<RestDocument> webService =
-                WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
-
-        File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-        File fileOut = testResources.getTempFolder().newFile();
-
-        webService.setDocument(session.getDocumentManager().uploadDocument(file));
-
-        assertNotNull(webService.getOperation(), "Operation should have been initialized");
-        webService.getOperation().setPages("1-5");
-        webService.getOperation().setEmbedFonts(true);
-
-        webService.getOperation().setPdfa(new PdfaType());
-        webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-        webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-        webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
-
-        RestDocument restDocument = webService.process();
-        try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-            session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
-        }
-        assertTrue(fileOut.exists());
-    }
-
-    @Test
-    @IntegrationTest
-    public void testWithUserCredentialsInURL() throws Exception {
-        try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(ServerType.LOCAL,
-                        ServerProtocol.HTTP, true))) {
-            session.login();
-            executeConverter(session);
-        }
-    }
-
-    @Test
-    @IntegrationTest
-    public void testWithUserCredentials() throws Exception {
-        try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(ServerType.LOCAL))) {
-
-            UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
-                    testServer.getLocalUser(), testServer.getLocalPassword());
-            session.setCredentials(userCredentials);
-
-            session.login();
-            executeConverter(session);
-        }
-    }
-
-    @Test
-    @IntegrationTest
-    public void testWithSetOptions() throws Exception {
-        File resFile = testResources.getResource("convert.json");
-        String json = FileUtils.readFileToString(resFile, Charset.defaultCharset());
-
-        try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(ServerType.LOCAL));
-             StringReader stringReader = new StringReader(json)) {
-            session.login();
-
-            ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
-                    new StreamSource(stringReader));
+    private void executeConverter(RestSession<RestDocument> session) {
+        assertDoesNotThrow(() -> {
+            ConverterRestWebService<RestDocument> webService =
+                    WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = testResources.getTempFolder().newFile();
 
             webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
+            assertNotNull(webService.getOperation(), "Operation should have been initialized");
+            webService.getOperation().setPages("1-5");
+            webService.getOperation().setEmbedFonts(true);
+
+            webService.getOperation().setPdfa(new PdfaType());
+            webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
+            webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+            webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+
             RestDocument restDocument = webService.process();
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                 session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
             }
             assertTrue(fileOut.exists());
-        }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testWithUserCredentialsInURL() {
+        assertDoesNotThrow(() -> {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL,
+                            ServerProtocol.HTTP, true))) {
+                session.login();
+                executeConverter(session);
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testWithUserCredentials() {
+        assertDoesNotThrow(() -> {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL))) {
+
+                UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
+                        testServer.getLocalUser(), testServer.getLocalPassword());
+                session.setCredentials(userCredentials);
+
+                session.login();
+                executeConverter(session);
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testWithSetOptions() {
+        assertDoesNotThrow(() -> {
+            File resFile = testResources.getResource("convert.json");
+            String json = FileUtils.readFileToString(resFile, Charset.defaultCharset());
+
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL));
+                 StringReader stringReader = new StringReader(json)) {
+                session.login();
+
+                ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
+                        new StreamSource(stringReader));
+
+                File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+                File fileOut = testResources.getTempFolder().newFile();
+
+                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+
+                RestDocument restDocument = webService.process();
+                try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
+                    session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
+                }
+                assertTrue(fileOut.exists());
+            }
+        });
     }
 
 }

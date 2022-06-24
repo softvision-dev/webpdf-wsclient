@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.testsuite;
+package net.webpdf.wsclient.testsuite.server;
 
 import net.webpdf.wsclient.testsuite.config.TestConfig;
 import org.apache.http.client.utils.URIBuilder;

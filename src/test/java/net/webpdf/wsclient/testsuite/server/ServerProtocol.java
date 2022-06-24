@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.testsuite;
+package net.webpdf.wsclient.testsuite.server;
 
 public enum ServerProtocol {
 

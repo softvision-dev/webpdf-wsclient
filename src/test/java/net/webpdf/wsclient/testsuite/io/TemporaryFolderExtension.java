@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.testsuite;
+package net.webpdf.wsclient.testsuite.io;
 
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.Nullable;

@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.testsuite;
+package net.webpdf.wsclient.testsuite.io;
 
 import net.webpdf.wsclient.documents.rest.RestDocument;
 import org.jetbrains.annotations.NotNull;
