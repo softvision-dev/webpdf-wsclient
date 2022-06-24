@@ -52,8 +52,7 @@ public class OauthTokenIntegrationTest {
      * <p>
      * <b>Be aware:</b><br>
      * - The hereby used Auth0 authorization provider must be known to your webPDF server. (server.xml)<br>
-     * - The values of the claims defined in 'integration/files/auth0-client-id.json' must be adapted to the used
-     * client and authorization provider.
+     * - This is using the integrationTest config defined in "config/integrationTestConfig.json".
      * </p>
      *
      * @throws Exception Shall be thrown, when executing the request failed.
@@ -99,8 +98,7 @@ public class OauthTokenIntegrationTest {
      * <p>
      * <b>Be aware:</b><br>
      * - The hereby used Azure authorization provider must be known to your webPDF server. (server.xml)<br>
-     * - The values of the claims defined in 'integration/files/azure-client-id.json' must be adapted to the used
-     * client and authorization provider.
+     * - This is using the integrationTest config defined in "config/integrationTestConfig.json".
      * </p>
      *
      * @throws Exception Shall be thrown, when executing the request failed.
@@ -157,8 +155,7 @@ public class OauthTokenIntegrationTest {
      * <p>
      * <b>Be aware:</b><br>
      * - The hereby used Auth0 authorization provider must be known to your webPDF server. (server.xml)<br>
-     * - The values of the claims defined in 'integration/files/auth0-client-id.json' must be adapted to the used
-     * client and authorization provider.
+     * - This is using the integrationTest config defined in "config/integrationTestConfig.json".
      * </p>
      *
      * @throws Exception Shall be thrown, when executing the request failed.
@@ -203,8 +200,7 @@ public class OauthTokenIntegrationTest {
      * <p>
      * <b>Be aware:</b><br>
      * - The hereby used Azure authorization provider must be known to your webPDF server. (server.xml)<br>
-     * - The values of the claims defined in 'integration/files/azure-client-id.json' must be adapted to the used
-     * client and authorization provider.
+     * - This is using the integrationTest config defined in "config/integrationTestConfig.json".
      * </p>
      *
      * @throws Exception Shall be thrown, when executing the request failed.
