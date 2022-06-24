@@ -35,32 +35,30 @@ public class WebserviceTLSIntegrationTest {
     private final File keystoreFile = testResources.getResource("integration/files/ks.jks");
     public TestServer testServer = new TestServer();
 
-    private void testSoapSSL(URL url, File keystoreFile, boolean selfSigned) {
-        assertDoesNotThrow(() -> {
-            TLSContext tlsContext = TLSContext.createDefault();
-            tlsContext.setAllowSelfSigned(selfSigned);
-            if (keystoreFile != null) {
-                tlsContext.setTrustStore(keystoreFile, "");
-            }
+    private void testSoapSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
+        TLSContext tlsContext = TLSContext.createDefault();
+        tlsContext.setAllowSelfSigned(selfSigned);
+        if (keystoreFile != null) {
+            tlsContext.setTrustStore(keystoreFile, "");
+        }
 
-            try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, url,
-                    tlsContext)) {
-                ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.CONVERTER);
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, url,
+                tlsContext)) {
+            ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
+                    WebServiceType.CONVERTER);
 
-                File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-                File fileOut = testResources.getTempFolder().newFile();
+            File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+            File fileOut = testResources.getTempFolder().newFile();
 
-                try (SoapDocument soapDocument = new SoapWebServiceDocument(file.toURI(), fileOut)) {
-                    webService.setDocument(soapDocument);
+            try (SoapDocument soapDocument = new SoapWebServiceDocument(file.toURI(), fileOut)) {
+                webService.setDocument(soapDocument);
 
-                    try (SoapDocument soapDocument2 = webService.process()) {
-                        assertNotNull(soapDocument2);
-                        assertTrue(fileOut.exists());
-                    }
+                try (SoapDocument soapDocument2 = webService.process()) {
+                    assertNotNull(soapDocument2);
+                    assertTrue(fileOut.exists());
                 }
             }
-        });
+        }
     }
 
     @Test
@@ -105,34 +103,33 @@ public class WebserviceTLSIntegrationTest {
                         testServer.getDemoKeystoreFile(keystoreFile), false));
     }
 
-    private void testRestSSL(URL url, File keystoreFile, boolean selfSigned) {
-        assertDoesNotThrow(() -> {
-            TLSContext tlsContext = TLSContext.createDefault();
-            tlsContext.setAllowSelfSigned(selfSigned);
-            if (keystoreFile != null) {
-                tlsContext.setTrustStore(keystoreFile, "");
+    private void testRestSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
+
+        TLSContext tlsContext = TLSContext.createDefault();
+        tlsContext.setAllowSelfSigned(selfSigned);
+        if (keystoreFile != null) {
+            tlsContext.setTrustStore(keystoreFile, "");
+        }
+
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST, url, tlsContext)) {
+
+            session.login();
+
+            ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
+                    WebServiceType.CONVERTER);
+
+            File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+            File fileOut = testResources.getTempFolder().newFile();
+
+            webService.setDocument(session.getDocumentManager().uploadDocument(file));
+
+            RestDocument restDocument = webService.process();
+            try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
+                session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
             }
-
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST, url, tlsContext)) {
-
-                session.login();
-
-                ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.CONVERTER);
-
-                File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-                File fileOut = testResources.getTempFolder().newFile();
-
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
-
-                RestDocument restDocument = webService.process();
-                try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
-                }
-                assertTrue(fileOut.exists());
-            }
-        });
+            assertTrue(fileOut.exists());
+        }
     }
 
     @ParameterizedTest
