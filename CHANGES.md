@@ -48,3 +48,6 @@
     - InputStreamDataSource and WSClientProxySelector are only available for SOAP sessions.
     - Removed support for selectable transfer DataFormat. SOAP shall always use XML, REST shall always use JSON.
 - Adding REST and SOAP OAuth Token support.
+- Adapted IntegrationTests:
+    - Adding accessible config file "config/integrationTestConfig.json", to allow easier adaptation and configuration of some integration tests.
+    - Adding conditional integration test execution.
