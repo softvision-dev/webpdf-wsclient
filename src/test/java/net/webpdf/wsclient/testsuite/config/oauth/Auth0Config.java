@@ -16,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class Auth0Config extends OAuthConfig {
 
+    public static final @NotNull String OAUTH_AUTH_0_CONFIG_NODE = "/integrationTests/oAuth/auth0Client";
+
     /**
      * <p>
      * Example implementation that reads the value of Auth0 client claims from the given json config file.<br>
@@ -39,8 +41,7 @@ public class Auth0Config extends OAuthConfig {
      * @return The value of the "authority" claim.
      */
     public @NotNull String getAuthority() {
-        String claim = getClaim("authority");
-        return claim != null ? claim : "";
+        return getString("authority", "");
     }
 
     /**
@@ -49,8 +50,7 @@ public class Auth0Config extends OAuthConfig {
      * @return The value of the "clientId" claim.
      */
     public @NotNull String getClientID() {
-        String claim = getClaim("clientId");
-        return claim != null ? claim : "";
+        return getString("clientId", "");
     }
 
     /**
@@ -59,8 +59,7 @@ public class Auth0Config extends OAuthConfig {
      * @return The value of the "clientSecret" claim.
      */
     public @NotNull String getClientSecret() {
-        String claim = getClaim("clientSecret");
-        return claim != null ? claim : "";
+        return getString("clientSecret", "");
     }
 
     /**
@@ -69,8 +68,7 @@ public class Auth0Config extends OAuthConfig {
      * @return The value of the "audience" claim.
      */
     public @NotNull String getAudience() {
-        String claim = getClaim("audience");
-        return claim != null ? claim : "";
+        return getString("audience", "");
     }
 
 }

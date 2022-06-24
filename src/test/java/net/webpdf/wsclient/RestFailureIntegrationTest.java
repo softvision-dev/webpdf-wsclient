@@ -11,6 +11,7 @@ import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -27,6 +28,7 @@ public class RestFailureIntegrationTest {
     public TestServer testServer = new TestServer();
 
     @Test
+    @IntegrationTest
     public void testConverterFailure() throws Exception {
         File file = testResources.getResource("integration/files/invalid.gif");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
@@ -46,6 +48,7 @@ public class RestFailureIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testSignatureFailure() throws Exception {
         File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
@@ -73,6 +76,7 @@ public class RestFailureIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testPdfaFailure() throws Exception {
         File file = testResources.getResource("integration/files/user-owner-password.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
@@ -92,6 +96,7 @@ public class RestFailureIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testToolboxFailure() throws Exception {
         File file = testResources.getResource("integration/files/user-owner-password.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
@@ -117,6 +122,7 @@ public class RestFailureIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testUrlConverterFailure() throws Exception {
         File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
@@ -136,6 +142,7 @@ public class RestFailureIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testOCRFailure() throws Exception {
         File file = testResources.getResource("integration/files/user-owner-password.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,

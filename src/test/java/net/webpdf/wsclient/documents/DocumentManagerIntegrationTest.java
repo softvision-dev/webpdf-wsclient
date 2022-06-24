@@ -10,6 +10,7 @@ import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -31,6 +32,7 @@ public class DocumentManagerIntegrationTest {
     public TestServer testServer = new TestServer();
 
     @Test
+    @IntegrationTest
     public void testHandleDocument() throws Exception {
         File sourceFile = testResources.getResource("test.pdf");
         File targetFile = testResources.getTempFolder().newFile();
@@ -64,6 +66,7 @@ public class DocumentManagerIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testDocumentRename() throws Exception {
         File sourceFile = testResources.getResource("test.pdf");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
@@ -91,6 +94,7 @@ public class DocumentManagerIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testDocumentList() throws Exception {
         File sourceFile1 = testResources.getResource("test.pdf");
         File sourceFile2 = testResources.getResource("logo.png");
@@ -116,6 +120,7 @@ public class DocumentManagerIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testDocumentHistory() throws Exception {
         File sourceFile = testResources.getResource("logo.png");
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
@@ -171,6 +176,7 @@ public class DocumentManagerIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testHandleDocumentByID() throws Exception {
         File sourceFile = testResources.getResource("test.pdf");
         File targetFile = testResources.getTempFolder().newFile();
@@ -189,6 +195,7 @@ public class DocumentManagerIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void downloadToNullStream() {
         assertThrows(ResultException.class,
                 () -> {
@@ -204,9 +211,11 @@ public class DocumentManagerIntegrationTest {
                         session.getDocumentManager().downloadDocument(getDocumentID(document), null);
                     }
                 });
+
     }
 
     @Test
+    @IntegrationTest
     public void uploadNullFile() {
         assertThrows(ResultException.class,
                 () -> {
@@ -220,6 +229,7 @@ public class DocumentManagerIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testRequestNullDocument() {
         assertThrows(ResultException.class,
                 () -> {

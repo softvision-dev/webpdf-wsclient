@@ -17,6 +17,7 @@ import net.webpdf.wsclient.testsuite.ServerProtocol;
 import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.testsuite.integration.annotations.ProxyTest;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -39,6 +40,7 @@ public class WebserviceProxyTest {
     public TestServer testServer = new TestServer();
 
     @Test
+    @ProxyTest
     public void testRESTProxyHTTP() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(
                 WebServiceProtocol.REST,
@@ -76,6 +78,7 @@ public class WebserviceProxyTest {
     }
 
     @Test
+    @ProxyTest
     public void testSOAPProxyHTTP() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
                 WebServiceProtocol.SOAP,
@@ -116,6 +119,7 @@ public class WebserviceProxyTest {
 
 
     @Test
+    @ProxyTest
     public void testSOAPProxyHTTPS() throws Exception {
         TLSContext tlsContext = TLSContext.createDefault();
         tlsContext.setAllowSelfSigned(true);
@@ -159,6 +163,7 @@ public class WebserviceProxyTest {
     }
 
     @Test
+    @ProxyTest
     public void testRESTProxyHTTPS() throws Exception {
         TLSContext tlsContext = TLSContext.createDefault();
         tlsContext.setAllowSelfSigned(true);

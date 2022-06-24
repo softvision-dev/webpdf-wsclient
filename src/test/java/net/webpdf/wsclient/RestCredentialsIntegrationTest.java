@@ -10,6 +10,7 @@ import net.webpdf.wsclient.testsuite.ServerProtocol;
 import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -59,6 +60,7 @@ public class RestCredentialsIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testWithUserCredentialsInURL() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                 testServer.getServer(ServerType.LOCAL,
@@ -69,6 +71,7 @@ public class RestCredentialsIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testWithUserCredentials() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -83,6 +86,7 @@ public class RestCredentialsIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testWithSetOptions() throws Exception {
         File resFile = testResources.getResource("convert.json");
         String json = FileUtils.readFileToString(resFile, Charset.defaultCharset());

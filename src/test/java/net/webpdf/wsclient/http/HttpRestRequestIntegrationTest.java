@@ -3,6 +3,7 @@ package net.webpdf.wsclient.http;
 import net.webpdf.wsclient.session.token.SessionToken;
 import net.webpdf.wsclient.session.token.Token;
 import net.webpdf.wsclient.testsuite.ServerType;
+import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
@@ -31,6 +32,7 @@ public class HttpRestRequestIntegrationTest {
     public TestServer testServer = new TestServer();
 
     @Test
+    @IntegrationTest
     public void testRestRequestAndSessionRefreshing() throws Exception {
         File file = testResources.getResource("test.pdf");
         File outputFile = testResources.getTempFolder().newFile();
@@ -97,6 +99,7 @@ public class HttpRestRequestIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testWithCredentials() throws Exception {
         File file = testResources.getResource("test.pdf");
         File outputFile = testResources.getTempFolder().newFile();
@@ -138,6 +141,7 @@ public class HttpRestRequestIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testWithInvalidCredentials() {
         assertThrows(ResultException.class,
                 () -> {
@@ -152,6 +156,7 @@ public class HttpRestRequestIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testNullEntity() {
         assertThrows(ResultException.class,
                 () -> {
@@ -169,6 +174,7 @@ public class HttpRestRequestIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testNullHttpMethod() {
         assertThrows(ResultException.class,
                 () -> {
@@ -190,6 +196,7 @@ public class HttpRestRequestIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testNullHttpPath() {
         assertThrows(IOException.class,
                 () -> {
@@ -214,6 +221,7 @@ public class HttpRestRequestIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testNullTypRequest() {
         assertThrows(IOException.class,
                 () -> {
@@ -238,6 +246,7 @@ public class HttpRestRequestIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testHttpPathNullOutput() {
         assertThrows(ResultException.class,
                 () -> {

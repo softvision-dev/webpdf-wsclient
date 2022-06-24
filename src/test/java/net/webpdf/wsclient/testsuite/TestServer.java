@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.testsuite;
 
+import net.webpdf.wsclient.testsuite.config.TestConfig;
 import org.apache.http.client.utils.URIBuilder;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -19,28 +20,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 public final class TestServer {
 
     private static final String SERVER_PATH = "/webPDF";
-
-    private static final String KEY_SERVER_LOCAL_URL = "server.local.url";
-    private static final String KEY_SERVER_LOCAL_USER = "server.local.user";
-    private static final String KEY_SERVER_LOCAL_PASSWORD = "server.local.password";
-    private static final String KEY_SERVER_PUBLIC_URL = "server.public.url";
-    private static final String SERVER_LOCAL_URL = System.getProperty(KEY_SERVER_LOCAL_URL);
-    private static final String SERVER_LOCAL_USER = System.getProperty(KEY_SERVER_LOCAL_USER);
-    private static final String SERVER_LOCAL_PASSWORD = System.getProperty(KEY_SERVER_LOCAL_PASSWORD);
-    private static final String SERVER_PUBLIC_URL = System.getProperty(KEY_SERVER_PUBLIC_URL);
     private final URIBuilder uriBuilderLocalServer;
     private final URIBuilder uriBuilderPublicServer;
 
     public TestServer() {
         this.uriBuilderLocalServer = assertDoesNotThrow(() ->
-                new URIBuilder(SERVER_LOCAL_URL).setPath(SERVER_PATH));
+                new URIBuilder(TestConfig.getInstance().getServerConfig().getLocalURL()).setPath(SERVER_PATH));
         if (!uriBuilderLocalServer.isAbsolute()) {
-            fail("Invalid URL '" + SERVER_LOCAL_URL + "'");
+            fail("Invalid URL '" + TestConfig.getInstance().getServerConfig().getLocalURL() + "'");
         }
         this.uriBuilderPublicServer = assertDoesNotThrow(() ->
-                new URIBuilder(SERVER_PUBLIC_URL).setPath(SERVER_PATH));
+                new URIBuilder(TestConfig.getInstance().getServerConfig().getPublicURL()).setPath(SERVER_PATH));
         if (!uriBuilderPublicServer.isAbsolute()) {
-            fail("Invalid URL '" + SERVER_PUBLIC_URL + "'");
+            fail("Invalid URL '" + TestConfig.getInstance().getServerConfig().getPublicURL() + "'");
         }
     }
 
@@ -53,8 +45,8 @@ public final class TestServer {
     }
 
     public URL getServer(ServerType serverType, ServerProtocol serverProtocol, boolean useCredentials) throws URISyntaxException, MalformedURLException {
-        String user = useCredentials ? SERVER_LOCAL_USER : null;
-        String password = useCredentials ? SERVER_LOCAL_PASSWORD : null;
+        String user = useCredentials ? TestConfig.getInstance().getServerConfig().getLocalUser() : null;
+        String password = useCredentials ? TestConfig.getInstance().getServerConfig().getLocalPassword() : null;
 
         return buildServer(serverType, serverProtocol, user, password);
     }
@@ -99,11 +91,11 @@ public final class TestServer {
     }
 
     public String getLocalUser() {
-        return SERVER_LOCAL_USER;
+        return TestConfig.getInstance().getServerConfig().getLocalUser();
     }
 
     public String getLocalPassword() {
-        return SERVER_LOCAL_PASSWORD;
+        return TestConfig.getInstance().getServerConfig().getLocalPassword();
     }
 
     public File getDemoKeystoreFile(File keystoreFile) throws Exception {

@@ -9,6 +9,7 @@ import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -30,6 +31,7 @@ public class SoapWebserviceIntegrationTest {
 
     @SuppressWarnings("Duplicates")
     @Test
+    @IntegrationTest
     public void testConverter() throws Exception {
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -57,6 +59,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testToolbox() throws Exception {
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -111,6 +114,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     @Disabled("this assumes, that 'test' actually is a certificate acronym in your webPDF server keystore.")
     public void testSignature() throws Exception {
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
@@ -162,6 +166,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testPdfa() throws Exception {
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -192,6 +197,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testOcr() throws Exception {
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -223,6 +229,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testBarcode() throws Exception {
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -279,6 +286,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testUrlConverter() throws Exception {
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -308,6 +316,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testConverterRemoteWSDL() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -336,6 +345,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testToolboxRemoteWSDL() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -391,6 +401,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     @Disabled("this assumes, that 'test' actually is a certificate acronym in your webPDF server keystore.")
     public void testSignatureRemoteWSDL() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
@@ -443,6 +454,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testPdfaRemoteWSDL() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -474,6 +486,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testOcrRemoteWSDL() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -506,6 +519,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testBarcodeRemoteWSDL() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
@@ -563,6 +577,7 @@ public class SoapWebserviceIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testUrlConverterRemoteWSDL() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {

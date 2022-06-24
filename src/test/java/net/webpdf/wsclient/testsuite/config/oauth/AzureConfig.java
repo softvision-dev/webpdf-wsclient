@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AzureConfig extends OAuthConfig {
 
+    public static final @NotNull String OAUTH_AZURE_CONFIG_NODE = "/integrationTests/oAuth/azureClient";
+
     /**
      * <p>
      * Example implementation that reads the value of Azure client claims from the given json config file.<br>
@@ -40,8 +42,7 @@ public class AzureConfig extends OAuthConfig {
      * @return The value of the "authority" claim.
      */
     public @NotNull String getAuthority() {
-        String claim = getClaim("authority");
-        return claim != null ? claim : "";
+        return getString("authority", "");
     }
 
     /**
@@ -50,8 +51,7 @@ public class AzureConfig extends OAuthConfig {
      * @return The value of the "clientId" claim.
      */
     public @NotNull String getClientID() {
-        String claim = getClaim("clientId");
-        return claim != null ? claim : "";
+        return getString("clientId", "");
     }
 
     /**
@@ -60,8 +60,7 @@ public class AzureConfig extends OAuthConfig {
      * @return The value of the "clientSecret" claim.
      */
     public @NotNull String getClientSecret() {
-        String claim = getClaim("clientSecret");
-        return claim != null ? claim : "";
+        return getString("clientSecret", "");
     }
 
     /**
@@ -70,8 +69,7 @@ public class AzureConfig extends OAuthConfig {
      * @return The value of the "scope" claim.
      */
     public @NotNull String getScope() {
-        String claim = getClaim("scope");
-        return claim != null ? claim : "";
+        return getString("scope", "");
     }
 
 }

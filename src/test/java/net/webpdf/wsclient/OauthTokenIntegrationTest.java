@@ -7,8 +7,8 @@ import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
 import net.webpdf.wsclient.testsuite.ServerType;
-import net.webpdf.wsclient.testsuite.config.IntegrationTestConfig;
-import net.webpdf.wsclient.testsuite.integration.annotations.OAuthTestCondition;
+import net.webpdf.wsclient.testsuite.config.TestConfig;
+import net.webpdf.wsclient.testsuite.integration.annotations.OAuthTest;
 import net.webpdf.wsclient.testsuite.integration.annotations.OAuthProviderSelection;
 import net.webpdf.wsclient.testsuite.config.oauth.Auth0Config;
 import net.webpdf.wsclient.testsuite.config.oauth.AzureConfig;
@@ -51,18 +51,17 @@ public class OauthTokenIntegrationTest {
      * </p>
      * <p>
      * <b>Be aware:</b><br>
-     * - The hereby used Auth0 authorization provider must be known to your webPDF server. (server.xml)<br>
-     * - This is using the integrationTest config defined in "config/integrationTestConfig.json".
+     * - The hereby used Auth0 authorization provider must be known to your webPDF server. (server.xml)
      * </p>
      *
      * @throws Exception Shall be thrown, when executing the request failed.
      */
     @Test
-    @OAuthTestCondition(provider = OAuthProviderSelection.AUTH_0)
+    @OAuthTest(provider = OAuthProviderSelection.AUTH_0)
     public void testRestAuth0TokenTest() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                 testServer.getServer(ServerType.LOCAL))) {
-            Auth0Config auth0Config = IntegrationTestConfig.getInstance().getAuth0Config();
+            Auth0Config auth0Config = TestConfig.getInstance().getAuth0Config();
 
             // Receive Auth0 access token and provide it to the RestSession:
             assertDoesNotThrow(() -> session.login(
@@ -97,18 +96,17 @@ public class OauthTokenIntegrationTest {
      * </p>
      * <p>
      * <b>Be aware:</b><br>
-     * - The hereby used Azure authorization provider must be known to your webPDF server. (server.xml)<br>
-     * - This is using the integrationTest config defined in "config/integrationTestConfig.json".
+     * - The hereby used Azure authorization provider must be known to your webPDF server. (server.xml)
      * </p>
      *
      * @throws Exception Shall be thrown, when executing the request failed.
      */
     @Test
-    @OAuthTestCondition(provider = OAuthProviderSelection.AZURE)
+    @OAuthTest(provider = OAuthProviderSelection.AZURE)
     public void testRestAzureTokenTest() throws Exception {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                 testServer.getServer(ServerType.LOCAL))) {
-            AzureConfig azureConfig = IntegrationTestConfig.getInstance().getAzureConfig();
+            AzureConfig azureConfig = TestConfig.getInstance().getAzureConfig();
 
             // Receive Azure access token and provide it to the RestSession:
             assertDoesNotThrow(
@@ -154,18 +152,17 @@ public class OauthTokenIntegrationTest {
      * </p>
      * <p>
      * <b>Be aware:</b><br>
-     * - The hereby used Auth0 authorization provider must be known to your webPDF server. (server.xml)<br>
-     * - This is using the integrationTest config defined in "config/integrationTestConfig.json".
+     * - The hereby used Auth0 authorization provider must be known to your webPDF server. (server.xml)
      * </p>
      *
      * @throws Exception Shall be thrown, when executing the request failed.
      */
     @Test
-    @OAuthTestCondition(provider = OAuthProviderSelection.AUTH_0)
+    @OAuthTest(provider = OAuthProviderSelection.AUTH_0)
     public void testSOAPAuth0TokenTest() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
-            Auth0Config auth0Config = IntegrationTestConfig.getInstance().getAuth0Config();
+            Auth0Config auth0Config = TestConfig.getInstance().getAuth0Config();
 
             assertDoesNotThrow(() -> session.setCredentials(
                     // Implement the Auth0 TokenProvider
@@ -199,18 +196,17 @@ public class OauthTokenIntegrationTest {
      * </p>
      * <p>
      * <b>Be aware:</b><br>
-     * - The hereby used Azure authorization provider must be known to your webPDF server. (server.xml)<br>
-     * - This is using the integrationTest config defined in "config/integrationTestConfig.json".
+     * - The hereby used Azure authorization provider must be known to your webPDF server. (server.xml)
      * </p>
      *
      * @throws Exception Shall be thrown, when executing the request failed.
      */
     @Test
-    @OAuthTestCondition(provider = OAuthProviderSelection.AZURE)
+    @OAuthTest(provider = OAuthProviderSelection.AZURE)
     public void testSOAPAzureTokenTest() throws Exception {
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
-            AzureConfig azureConfig = IntegrationTestConfig.getInstance().getAzureConfig();
+            AzureConfig azureConfig = TestConfig.getInstance().getAzureConfig();
 
             assertDoesNotThrow(() -> session.setCredentials(
                     // Implement the Azure TokenProvider

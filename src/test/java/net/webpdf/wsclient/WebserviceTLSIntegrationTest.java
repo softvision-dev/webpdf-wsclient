@@ -13,6 +13,7 @@ import net.webpdf.wsclient.testsuite.ServerProtocol;
 import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.testsuite.integration.annotations.TLSTest;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -61,6 +62,7 @@ public class WebserviceTLSIntegrationTest {
     }
 
     @Test
+    @TLSTest
     public void testSoapSSL() throws Exception {
         testSoapSSL(testServer.getServer(ServerType.PUBLIC,
                         ServerProtocol.HTTPS, false),
@@ -68,12 +70,14 @@ public class WebserviceTLSIntegrationTest {
     }
 
     @Test
+    @TLSTest
     public void testSoapSSLSelfSigned() throws Exception {
         testSoapSSL(testServer.getServer(ServerType.LOCAL,
                 ServerProtocol.HTTPS, false), null, true);
     }
 
     @Test
+    @TLSTest
     public void testSoapSSLWrongKeystore() {
         assertThrows(WebServiceException.class,
                 () -> testSoapSSL(testServer.getServer(ServerType.LOCAL,
@@ -82,6 +86,7 @@ public class WebserviceTLSIntegrationTest {
     }
 
     @Test
+    @TLSTest
     public void testSoapSSLCACertsFallback() throws Exception {
         testSoapSSL(testServer.getServer(
                         ServerType.PUBLIC, ServerProtocol.HTTPS,
@@ -90,6 +95,7 @@ public class WebserviceTLSIntegrationTest {
     }
 
     @Test
+    @TLSTest
     public void testSoapSSLProtocolFailure() {
         assertThrows(WebServiceException.class, () ->
                 testSoapSSL(testServer.getServer(ServerType.PUBLIC,
@@ -126,6 +132,7 @@ public class WebserviceTLSIntegrationTest {
     }
 
     @ParameterizedTest
+    @TLSTest
     @CsvSource(delimiter = '|', value = {
             /*"PUBLIC|HTTPS|0|true|false",
             "PUBLIC|HTTP|-34|true|false",

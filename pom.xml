@@ -52,10 +52,6 @@
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <server.local.url>http://localhost</server.local.url>
-        <server.local.user>admin</server.local.user>
-        <server.local.password>admin</server.local.password>
-        <server.public.url>https://portal.webpdf.de</server.public.url>
     </properties>
 
     <profiles>
@@ -74,67 +70,6 @@
                             <additionalClasspathElements>
                                 <additionalClasspathElement>${basedir}/src/main/resources</additionalClasspathElement>
                             </additionalClasspathElements>
-                            <systemPropertyVariables>
-                                <server.local.url>${server.local.url}</server.local.url>
-                                <server.local.user>${server.local.user}</server.local.user>
-                                <server.local.password>${server.local.password}</server.local.password>
-                                <server.public.url>${server.public.url}</server.public.url>
-                            </systemPropertyVariables>
-                            <excludes>
-                                <exclude>**/*IntegrationTest.java</exclude>
-                                <exclude>**/*ProxyTest.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>integration</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.0.0-M7</version>
-                        <configuration>
-                            <additionalClasspathElements>
-                                <additionalClasspathElement>${basedir}/src/main/resources</additionalClasspathElement>
-                            </additionalClasspathElements>
-                            <systemPropertyVariables>
-                                <server.local.url>${server.local.url}</server.local.url>
-                                <server.local.user>${server.local.user}</server.local.user>
-                                <server.local.password>${server.local.password}</server.local.password>
-                                <server.public.url>${server.public.url}</server.public.url>
-                            </systemPropertyVariables>
-                            <excludes>
-                                <exclude>**/*ProxyTest.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>proxy</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.0.0-M7</version>
-                        <configuration>
-                            <additionalClasspathElements>
-                                <additionalClasspathElement>${basedir}/src/main/resources</additionalClasspathElement>
-                            </additionalClasspathElements>
-                            <systemPropertyVariables>
-                                <server.local.url>${server.local.url}</server.local.url>
-                                <server.local.user>${server.local.user}</server.local.user>
-                                <server.local.password>${server.local.password}</server.local.password>
-                                <server.public.url>${server.public.url}</server.public.url>
-                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>

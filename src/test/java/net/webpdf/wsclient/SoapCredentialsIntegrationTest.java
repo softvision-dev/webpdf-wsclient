@@ -12,6 +12,7 @@ import net.webpdf.wsclient.testsuite.ServerProtocol;
 import net.webpdf.wsclient.testsuite.ServerType;
 import net.webpdf.wsclient.testsuite.TestResources;
 import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -66,6 +67,7 @@ public class SoapCredentialsIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testWithUserCredentialsInURL() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
@@ -78,6 +80,7 @@ public class SoapCredentialsIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testWithUserCredentials() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
@@ -93,6 +96,7 @@ public class SoapCredentialsIntegrationTest {
     }
 
     @Test
+    @IntegrationTest
     public void testWithSetOptions() {
         assertDoesNotThrow(() -> {
             File resFile = testResources.getResource("convert.xml");
