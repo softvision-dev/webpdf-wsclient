@@ -13,7 +13,7 @@ public class ProxyTestConditionExt extends IntegrationTestConditionExt {
             return result;
         }
 
-        return TestConfig.getInstance().isProxyTestsActive() ?
+        return TestConfig.getInstance().getIntegrationTestConfig().isProxyTestsActive() ?
                 ConditionEvaluationResult.enabled(
                         "Proxy Tests are enabled via 'config/testConfig.json'.") :
                 ConditionEvaluationResult.disabled(

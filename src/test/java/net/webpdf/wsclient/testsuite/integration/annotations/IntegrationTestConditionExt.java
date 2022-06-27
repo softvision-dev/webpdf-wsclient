@@ -9,7 +9,7 @@ public class IntegrationTestConditionExt implements ExecutionCondition {
 
     @Override
     public ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext context) {
-        return TestConfig.getInstance().isIntegrationTestsActive() ?
+        return TestConfig.getInstance().getIntegrationTestConfig().isIntegrationTestsActive() ?
                 ConditionEvaluationResult.enabled(
                         "Integration Tests are enabled via 'config/testConfig.json'.") :
                 ConditionEvaluationResult.disabled(

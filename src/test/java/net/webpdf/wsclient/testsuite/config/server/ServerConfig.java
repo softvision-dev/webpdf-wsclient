@@ -25,8 +25,33 @@ public class ServerConfig extends ConfigNodeContainer {
         return getString("/local/password", "");
     }
 
+    public int getLocalHttpPort() {
+        return getInteger("/local/httpPort", -1);
+    }
+
+    public int getLocalHttpsPort() {
+        return getInteger("/local/httpsPort", -1);
+    }
+
+    public @NotNull String getLocalPath() {
+        return getString("/local/path", "");
+    }
+
     public @NotNull String getPublicURL() {
         return getString("/public/url", "");
+    }
+
+
+    public int getPublicHttpPort() {
+        return getInteger("/public/httpPort", -1);
+    }
+
+    public int getPublicHttpsPort() {
+        return getInteger("/public/httpsPort", -1);
+    }
+
+    public @NotNull String getPublicPath() {
+        return getString("/public/path", "");
     }
 
 }

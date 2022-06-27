@@ -9,4 +9,6 @@ public interface ConfigNode {
     @SuppressWarnings("SameParameterValue")
     boolean getBoolean(@NotNull String key, boolean defaultValue);
 
+    int getInteger(@NotNull String key, int defaultValue);
+
 }

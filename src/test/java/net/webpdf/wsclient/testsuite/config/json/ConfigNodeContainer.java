@@ -23,4 +23,9 @@ public abstract class ConfigNodeContainer implements ConfigNode {
         return node.getBoolean(key, defaultValue);
     }
 
+    @Override
+    public int getInteger(@NotNull String key, int defaultValue) {
+        return node.getInteger(key, defaultValue);
+    }
+
 }

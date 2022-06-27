@@ -2,11 +2,17 @@
   "server": {
     "local": {
       "url": "http://localhost",
+      "httpPort": "8080",
+      "httpsPort": "8443",
+      "path": "/webPDF",
       "user": "admin",
       "password": "admin"
     },
     "public": {
-      "url": "https://portal.webpdf.de"
+      "url": "https://portal.webpdf.de",
+      "httpPort": "80",
+      "httpsPort": "443",
+      "path": "/webPDF"
     }
   },
   "integrationTests": {

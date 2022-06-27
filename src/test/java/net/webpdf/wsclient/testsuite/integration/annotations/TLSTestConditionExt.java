@@ -13,7 +13,7 @@ public class TLSTestConditionExt extends IntegrationTestConditionExt {
             return result;
         }
 
-        return TestConfig.getInstance().isTlsTestsActive() ?
+        return TestConfig.getInstance().getIntegrationTestConfig().isTlsTestsActive() ?
                 ConditionEvaluationResult.enabled(
                         "TLS Tests are enabled via 'config/testConfig.json'.") :
                 ConditionEvaluationResult.disabled(

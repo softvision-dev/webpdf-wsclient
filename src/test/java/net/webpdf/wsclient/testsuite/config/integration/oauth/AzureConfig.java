@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.testsuite.config.oauth;
+package net.webpdf.wsclient.testsuite.config.integration.oauth;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.jetbrains.annotations.NotNull;
@@ -6,21 +6,22 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>
- * Example implementation that reads the value of Auth0 client claims from the given json config file.<br>
+ * Example implementation that reads the value of Azure client claims from the given json config file.<br>
  * As said: This is just an example - Feel free to provide the claims in the way most fitting for your application.
  * </p>
  * <p>
- * You can find a documentation of Auth0 access tokens here:
- * <a href="https://auth0.com/docs/secure/tokens/access-tokens/get-access-tokens">Request Auth0 access tokens</a>
+ * You can find a documentation of Azure access tokens here:
+ * <a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-acquire-cache-tokens">
+ * Request Azure access tokens (MSAL)</a>
  * </p>
  */
-public class Auth0Config extends OAuthConfig {
+public class AzureConfig extends OAuthConfig {
 
-    public static final @NotNull String OAUTH_AUTH_0_CONFIG_NODE = "/integrationTests/oAuth/auth0Client";
+    public static final @NotNull String OAUTH_AZURE_CONFIG_NODE = "/oAuth/azureClient";
 
     /**
      * <p>
-     * Example implementation that reads the value of Auth0 client claims from the given json config file.<br>
+     * Example implementation that reads the value of Azure client claims from the given json config file.<br>
      * As said: This is just an example - Feel free to provide the claims in the way most fitting for your
      * application.<br>
      * <b>Be aware:</b> The values and names of the claims, that need to be defined are depending on the used
@@ -31,7 +32,7 @@ public class Auth0Config extends OAuthConfig {
      * @param clientID A json config node, that contains all claims required to request the access token from
      *                 the authorization provider.
      */
-    public Auth0Config(@Nullable JsonNode clientID) {
+    public AzureConfig(@Nullable JsonNode clientID) {
         super(clientID);
     }
 
@@ -63,12 +64,12 @@ public class Auth0Config extends OAuthConfig {
     }
 
     /**
-     * Returns the value of the claim "audience".
+     * Returns the value of the claim "scope".
      *
-     * @return The value of the "audience" claim.
+     * @return The value of the "scope" claim.
      */
-    public @NotNull String getAudience() {
-        return getString("audience", "");
+    public @NotNull String getScope() {
+        return getString("scope", "");
     }
 
 }

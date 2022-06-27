@@ -10,8 +10,8 @@ import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.config.TestConfig;
 import net.webpdf.wsclient.testsuite.integration.annotations.OAuthTest;
 import net.webpdf.wsclient.testsuite.integration.annotations.OAuthProviderSelection;
-import net.webpdf.wsclient.testsuite.config.oauth.Auth0Config;
-import net.webpdf.wsclient.testsuite.config.oauth.AzureConfig;
+import net.webpdf.wsclient.testsuite.config.integration.oauth.Auth0Config;
+import net.webpdf.wsclient.testsuite.config.integration.oauth.AzureConfig;
 import net.webpdf.wsclient.documents.rest.RestDocument;
 import net.webpdf.wsclient.documents.soap.SoapDocument;
 import net.webpdf.wsclient.documents.soap.SoapWebServiceDocument;
@@ -60,7 +60,7 @@ public class OauthTokenIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-                Auth0Config auth0Config = TestConfig.getInstance().getAuth0Config();
+                Auth0Config auth0Config = TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config();
 
                 // Receive Auth0 access token and provide it to the RestSession:
                 assertDoesNotThrow(() -> session.login(
@@ -105,7 +105,7 @@ public class OauthTokenIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-                AzureConfig azureConfig = TestConfig.getInstance().getAzureConfig();
+                AzureConfig azureConfig = TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig();
 
                 // Receive Azure access token and provide it to the RestSession:
                 assertDoesNotThrow(
@@ -161,7 +161,7 @@ public class OauthTokenIntegrationTest {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
-                Auth0Config auth0Config = TestConfig.getInstance().getAuth0Config();
+                Auth0Config auth0Config = TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config();
 
                 assertDoesNotThrow(() -> session.setCredentials(
                         // Implement the Auth0 TokenProvider
@@ -205,7 +205,7 @@ public class OauthTokenIntegrationTest {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
-                AzureConfig azureConfig = TestConfig.getInstance().getAzureConfig();
+                AzureConfig azureConfig = TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig();
 
                 assertDoesNotThrow(() -> session.setCredentials(
                         // Implement the Azure TokenProvider

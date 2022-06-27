@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.testsuite.config.oauth;
+package net.webpdf.wsclient.testsuite.config.integration.oauth;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import net.webpdf.wsclient.testsuite.config.json.ConfigNodeContainer;

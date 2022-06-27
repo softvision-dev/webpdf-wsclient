@@ -6,6 +6,7 @@ import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
 import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.testsuite.integration.certificate.GenericCertificate;
 import net.webpdf.wsclient.testsuite.io.ImageHelper;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.io.TestResources;
@@ -17,7 +18,6 @@ import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -139,7 +139,6 @@ public class RestWebserviceIntegrationTest {
 
     @Test
     @IntegrationTest
-    @Disabled("this assumes, that 'test' actually is a certificate acronym in your webPDF server keystore.")
     public void testSignature() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
@@ -155,36 +154,25 @@ public class RestWebserviceIntegrationTest {
 
                 webService.setDocument(session.getDocumentManager().uploadDocument(file));
 
+                GenericCertificate genericCertificate = new GenericCertificate("John Doe");
+
                 assertNotNull(webService.getOperation(), "Operation should have been initialized");
-                webService.getOperation().setAdd(new SignatureType.Add());
-                webService.getOperation().getAdd().setKeyName("test");
-                webService.getOperation().getAdd().setAppearance(new SignatureType.Add.Appearance());
-                webService.getOperation().getAdd().getAppearance().setPage(1);
-                webService.getOperation().getAdd().getAppearance().setName("John Doe, Company");
+                SignatureType.Add add = new SignatureType.Add();
+                webService.getOperation().setAdd(add);
+                add.setSigner(new SignatureType.Add.Signer());
 
-                SignatureIdentifierType signatureIdentifierType = new SignatureIdentifierType();
-                signatureIdentifierType.setShowCommonName(true);
-                signatureIdentifierType.setShowOrganisationName(false);
-                signatureIdentifierType.setShowSignedBy(true);
-                signatureIdentifierType.setShowCountry(false);
-                signatureIdentifierType.setShowMail(false);
-                signatureIdentifierType.setShowOrganisationUnit(false);
-                webService.getOperation().getAdd().getAppearance().setIdentifierElements(signatureIdentifierType);
+                KeyPairType keyPairType = new KeyPairType();
+                CertificateFileDataType certificateFileDataType = new CertificateFileDataType();
+                certificateFileDataType.setValue(genericCertificate.getCertificatesAsPEM());
+                certificateFileDataType.setSource(FileDataSourceType.VALUE);
+                keyPairType.setCertificate(certificateFileDataType);
 
-                SignaturePositionType signaturePositionType = new SignaturePositionType();
-                signaturePositionType.setX(5.0f);
-                signaturePositionType.setY(5.0f);
-                signaturePositionType.setWidth(80.0f);
-                signaturePositionType.setHeight(15.0f);
-                webService.getOperation().getAdd().getAppearance().setPosition(signaturePositionType);
+                PrivateKeyFileDataType privateKeyFileDataType = new PrivateKeyFileDataType();
+                privateKeyFileDataType.setValue(genericCertificate.getPrivateKeyAsPEM());
+                privateKeyFileDataType.setSource(FileDataSourceType.VALUE);
+                keyPairType.setPrivateKey(privateKeyFileDataType);
 
-                SignatureImageType signatureImageType = new SignatureImageType();
-                signatureImageType.setPosition(SignatureImagePositionType.LEFT);
-
-                SignatureFileDataType signatureFileDataType = new SignatureFileDataType();
-                signatureFileDataType.setValue(Files.readAllBytes(testResources.getResource("integration/files/logo.png").toPath()));
-                signatureImageType.setData(signatureFileDataType);
-                webService.getOperation().getAdd().getAppearance().setImage(signatureImageType);
+                add.getSigner().setKeyPair(keyPairType);
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {

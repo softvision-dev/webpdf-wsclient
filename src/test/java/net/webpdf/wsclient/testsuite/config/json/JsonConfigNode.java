@@ -31,6 +31,15 @@ public class JsonConfigNode implements ConfigNode {
         return valueNode != null ? valueNode.asBoolean() : defaultValue;
     }
 
+    @Override
+    public int getInteger(@NotNull String key, int defaultValue) {
+        if (this.node == null) {
+            return defaultValue;
+        }
+        JsonNode valueNode = getNode(key);
+        return valueNode != null ? valueNode.asInt() : defaultValue;
+    }
+
     private @Nullable JsonNode getNode(@NotNull String key) {
         return this.node != null ?
                 this.node.at(key.startsWith("/") ? key : "/" + key) :
