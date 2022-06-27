@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.session.documents.soap;
+package net.webpdf.wsclient.session.soap.documents;
 
 import jakarta.activation.DataHandler;
 import net.webpdf.wsclient.session.documents.Document;

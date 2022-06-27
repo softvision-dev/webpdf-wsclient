@@ -1,6 +1,6 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.session.documents.rest.RestDocument;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.ExtractionTextType;
 import net.webpdf.wsclient.schema.operation.ExtractionType;

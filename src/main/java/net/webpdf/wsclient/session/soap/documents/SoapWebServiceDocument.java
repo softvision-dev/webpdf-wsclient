@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.session.documents.soap;
+package net.webpdf.wsclient.session.soap.documents;
 
 import net.webpdf.wsclient.session.documents.AbstractDocument;
 import net.webpdf.wsclient.webservice.soap.SoapWebService;

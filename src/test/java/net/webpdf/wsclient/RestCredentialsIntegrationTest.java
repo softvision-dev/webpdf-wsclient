@@ -1,6 +1,6 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.session.documents.rest.RestDocument;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;

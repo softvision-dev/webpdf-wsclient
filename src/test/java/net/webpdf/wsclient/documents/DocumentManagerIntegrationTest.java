@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.documents;
 
-import net.webpdf.wsclient.session.documents.rest.RestDocument;
-import net.webpdf.wsclient.session.documents.rest.RestWebServiceDocument;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
+import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import net.webpdf.wsclient.session.rest.RestSession;

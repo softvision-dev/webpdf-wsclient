@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.webservice.soap;
 
-import net.webpdf.wsclient.session.documents.soap.SoapDocument;
+import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;

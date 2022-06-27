@@ -1,8 +1,8 @@
 package net.webpdf.wsclient.webservice;
 
 import net.webpdf.wsclient.session.documents.Document;
-import net.webpdf.wsclient.session.documents.rest.RestDocument;
-import net.webpdf.wsclient.session.documents.soap.SoapDocument;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
+import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;

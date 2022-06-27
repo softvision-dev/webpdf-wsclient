@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.webservice.rest;
 
-import net.webpdf.wsclient.session.documents.rest.RestDocument;
-import net.webpdf.wsclient.session.documents.rest.manager.DocumentManager;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
+import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.webservice.AbstractWebService;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;

@@ -5,7 +5,7 @@ import jakarta.xml.bind.DatatypeConverter;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.handler.MessageContext;
 import jakarta.xml.ws.soap.MTOMFeature;
-import net.webpdf.wsclient.session.documents.soap.SoapDocument;
+import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;

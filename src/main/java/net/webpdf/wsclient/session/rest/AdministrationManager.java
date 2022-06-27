@@ -1,7 +1,6 @@
-package net.webpdf.wsclient.session.administration;
+package net.webpdf.wsclient.session.rest;
 
-import net.webpdf.wsclient.session.documents.rest.RestDocument;
-import net.webpdf.wsclient.session.rest.RestSession;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import org.jetbrains.annotations.NotNull;
 
 /**

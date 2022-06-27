@@ -1,9 +1,9 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.session.documents.rest.RestDocument;
-import net.webpdf.wsclient.session.documents.rest.RestWebServiceDocument;
-import net.webpdf.wsclient.session.documents.soap.SoapDocument;
-import net.webpdf.wsclient.session.documents.soap.SoapWebServiceDocument;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
+import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
+import net.webpdf.wsclient.session.soap.documents.SoapDocument;
+import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.schema.operation.PageType;

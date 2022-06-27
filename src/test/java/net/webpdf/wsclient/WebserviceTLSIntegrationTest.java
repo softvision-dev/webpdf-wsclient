@@ -1,9 +1,9 @@
 package net.webpdf.wsclient;
 
 import jakarta.xml.ws.WebServiceException;
-import net.webpdf.wsclient.session.documents.rest.RestDocument;
-import net.webpdf.wsclient.session.documents.soap.SoapDocument;
-import net.webpdf.wsclient.session.documents.soap.SoapWebServiceDocument;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
+import net.webpdf.wsclient.session.soap.documents.SoapDocument;
+import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.rest.RestSession;
