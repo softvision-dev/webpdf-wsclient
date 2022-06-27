@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.webservice.rest;
 
-import net.webpdf.wsclient.documents.rest.RestDocument;
-import net.webpdf.wsclient.documents.rest.documentmanager.DocumentManager;
+import net.webpdf.wsclient.session.documents.rest.RestDocument;
+import net.webpdf.wsclient.session.documents.rest.manager.DocumentManager;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.webservice.AbstractWebService;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
@@ -9,8 +9,8 @@ import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.http.HttpMethod;
-import net.webpdf.wsclient.http.HttpRestRequest;
+import net.webpdf.wsclient.session.connection.http.HttpMethod;
+import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.tools.SerializeHelper;

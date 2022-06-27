@@ -1,13 +1,13 @@
 package net.webpdf.wsclient.session;
 
-import net.webpdf.wsclient.documents.Document;
+import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.session.rest.AbstractRestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.https.TLSContext;
-import net.webpdf.wsclient.session.proxy.ProxyConfiguration;
+import net.webpdf.wsclient.session.connection.https.TLSContext;
+import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;

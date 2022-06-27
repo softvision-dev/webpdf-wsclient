@@ -2,8 +2,8 @@ package net.webpdf.wsclient.schema.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import net.webpdf.wsclient.documents.Document;
-import net.webpdf.wsclient.documents.rest.documentmanager.DocumentManager;
+import net.webpdf.wsclient.session.documents.Document;
+import net.webpdf.wsclient.session.documents.rest.manager.DocumentManager;
 import net.webpdf.wsclient.session.rest.RestSession;
 import org.jetbrains.annotations.Nullable;
 

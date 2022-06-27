@@ -2,7 +2,7 @@ package net.webpdf.wsclient.schema.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import net.webpdf.wsclient.documents.Document;
+import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.schema.extraction.info.DocumentType;
 import net.webpdf.wsclient.session.Session;
 import org.apache.http.HttpEntity;

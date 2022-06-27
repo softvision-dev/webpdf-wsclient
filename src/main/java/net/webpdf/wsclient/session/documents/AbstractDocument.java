@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.documents;
+package net.webpdf.wsclient.session.documents;
 
 import net.webpdf.wsclient.webservice.WebService;
 import org.jetbrains.annotations.Nullable;

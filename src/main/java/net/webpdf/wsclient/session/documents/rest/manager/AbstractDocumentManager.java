@@ -1,11 +1,11 @@
-package net.webpdf.wsclient.documents.rest.documentmanager;
+package net.webpdf.wsclient.session.documents.rest.manager;
 
-import net.webpdf.wsclient.documents.rest.RestDocument;
+import net.webpdf.wsclient.session.documents.rest.RestDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.http.HttpMethod;
-import net.webpdf.wsclient.http.HttpRestRequest;
+import net.webpdf.wsclient.session.connection.http.HttpMethod;
+import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import net.webpdf.wsclient.session.DataFormat;

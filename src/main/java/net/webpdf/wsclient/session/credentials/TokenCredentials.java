@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.session.credentials;
 
-import net.webpdf.wsclient.session.token.Token;
+import net.webpdf.wsclient.session.credentials.token.Token;
 import org.apache.http.auth.BasicUserPrincipal;
 import org.apache.http.auth.Credentials;
 import org.jetbrains.annotations.NotNull;

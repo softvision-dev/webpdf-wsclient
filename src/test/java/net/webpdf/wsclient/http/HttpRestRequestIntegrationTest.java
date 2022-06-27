@@ -1,7 +1,9 @@
 package net.webpdf.wsclient.http;
 
-import net.webpdf.wsclient.session.token.SessionToken;
-import net.webpdf.wsclient.session.token.Token;
+import net.webpdf.wsclient.session.connection.http.HttpMethod;
+import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
+import net.webpdf.wsclient.session.credentials.token.SessionToken;
+import net.webpdf.wsclient.session.credentials.token.Token;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;

@@ -1,8 +1,8 @@
 package net.webpdf.wsclient.exception;
 
-import net.webpdf.wsclient.session.token.SessionToken;
+import net.webpdf.wsclient.session.credentials.token.SessionToken;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
-import net.webpdf.wsclient.http.HttpMethod;
+import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import org.jetbrains.annotations.NotNull;
 
 /**

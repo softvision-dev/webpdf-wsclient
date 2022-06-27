@@ -1,6 +1,6 @@
-package net.webpdf.wsclient.documents.rest.documentmanager;
+package net.webpdf.wsclient.session.documents.rest.manager;
 
-import net.webpdf.wsclient.documents.rest.RestWebServiceDocument;
+import net.webpdf.wsclient.session.documents.rest.RestWebServiceDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;

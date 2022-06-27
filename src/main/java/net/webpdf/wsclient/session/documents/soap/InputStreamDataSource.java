@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.documents.soap;
+package net.webpdf.wsclient.session.documents.soap;
 
 import org.apache.commons.io.input.CloseShieldInputStream;
 import org.jetbrains.annotations.NotNull;

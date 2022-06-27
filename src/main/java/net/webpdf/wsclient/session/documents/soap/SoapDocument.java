@@ -1,7 +1,7 @@
-package net.webpdf.wsclient.documents.soap;
+package net.webpdf.wsclient.session.documents.soap;
 
 import jakarta.activation.DataHandler;
-import net.webpdf.wsclient.documents.Document;
+import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.soap.SoapWebService;
 import org.jetbrains.annotations.Nullable;

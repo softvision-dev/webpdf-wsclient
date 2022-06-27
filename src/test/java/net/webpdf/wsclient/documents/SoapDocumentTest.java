@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.documents;
 
-import net.webpdf.wsclient.documents.soap.SoapWebServiceDocument;
+import net.webpdf.wsclient.session.documents.soap.SoapWebServiceDocument;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;

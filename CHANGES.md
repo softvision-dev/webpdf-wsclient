@@ -52,3 +52,4 @@
     - Adding accessible config file "config/testConfig.json", to allow easier adaptation and configuration of tests.
     - Adding conditional integration test execution.
     - Removing and simplifying maven test profiles.
+- Adding support for admin endpoint.

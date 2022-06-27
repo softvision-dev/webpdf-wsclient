@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.http;
+package net.webpdf.wsclient.session.connection.http;
 
 /**
  * {@link HttpMethod} enumerates all supported HTTP request methods.

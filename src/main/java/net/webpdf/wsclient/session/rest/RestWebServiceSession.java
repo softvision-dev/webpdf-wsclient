@@ -1,11 +1,12 @@
 package net.webpdf.wsclient.session.rest;
 
-import net.webpdf.wsclient.documents.rest.RestDocument;
-import net.webpdf.wsclient.documents.rest.RestWebServiceDocument;
-import net.webpdf.wsclient.documents.rest.documentmanager.DocumentManager;
-import net.webpdf.wsclient.documents.rest.documentmanager.RestWebServiceDocumentManager;
+import net.webpdf.wsclient.session.administration.AdministrationManager;
+import net.webpdf.wsclient.session.documents.rest.RestDocument;
+import net.webpdf.wsclient.session.documents.rest.RestWebServiceDocument;
+import net.webpdf.wsclient.session.documents.rest.manager.DocumentManager;
+import net.webpdf.wsclient.session.documents.rest.manager.RestWebServiceDocumentManager;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.https.TLSContext;
+import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import org.apache.http.client.config.RequestConfig;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +51,16 @@ public class RestWebServiceSession extends AbstractRestSession<RestWebServiceDoc
     @Override
     protected @NotNull DocumentManager<RestWebServiceDocument> createDocumentManager() {
         return new RestWebServiceDocumentManager(this);
+    }
+
+    /**
+     * Creates a new {@link AdministrationManager} matching this {@link RestSession}.
+     *
+     * @return The created {@link AdministrationManager}.
+     */
+    @Override
+    protected @NotNull AdministrationManager<RestWebServiceDocument> createAdministrationManager() {
+        return new AdministrationManager<>(this);
     }
 
 }

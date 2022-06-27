@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.webservice;
 
-import net.webpdf.wsclient.documents.Document;
+import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.BillingType;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;

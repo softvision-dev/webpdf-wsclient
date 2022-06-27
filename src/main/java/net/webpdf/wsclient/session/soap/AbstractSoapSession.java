@@ -1,13 +1,13 @@
 package net.webpdf.wsclient.session.soap;
 
-import net.webpdf.wsclient.documents.soap.SoapDocument;
+import net.webpdf.wsclient.session.documents.soap.SoapDocument;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.https.TLSContext;
+import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.AbstractSession;
 import net.webpdf.wsclient.session.credentials.TokenCredentials;
-import net.webpdf.wsclient.session.proxy.ProxyConfiguration;
-import net.webpdf.wsclient.session.token.Token;
-import net.webpdf.wsclient.session.token.TokenProvider;
+import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
+import net.webpdf.wsclient.session.credentials.token.Token;
+import net.webpdf.wsclient.session.credentials.token.TokenProvider;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import org.apache.http.auth.Credentials;
 import org.jetbrains.annotations.NotNull;

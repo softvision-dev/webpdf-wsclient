@@ -1,12 +1,13 @@
 package net.webpdf.wsclient.session.rest;
 
-import net.webpdf.wsclient.documents.rest.RestDocument;
-import net.webpdf.wsclient.documents.rest.documentmanager.DocumentManager;
+import net.webpdf.wsclient.session.administration.AdministrationManager;
+import net.webpdf.wsclient.session.documents.rest.RestDocument;
+import net.webpdf.wsclient.session.documents.rest.manager.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.session.token.SessionToken;
-import net.webpdf.wsclient.session.token.Token;
-import net.webpdf.wsclient.session.token.TokenProvider;
+import net.webpdf.wsclient.session.credentials.token.SessionToken;
+import net.webpdf.wsclient.session.credentials.token.Token;
+import net.webpdf.wsclient.session.credentials.token.TokenProvider;
 import net.webpdf.wsclient.schema.beans.User;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
@@ -51,6 +52,13 @@ public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Sessi
      * @return The active {@link DocumentManager} of this {@link RestSession}.
      */
     @NotNull DocumentManager<T_REST_DOCUMENT> getDocumentManager();
+
+    /**
+     * Returns the active {@link AdministrationManager} of this {@link RestSession}.
+     *
+     * @return The active {@link AdministrationManager} of this {@link RestSession}.
+     */
+    @NotNull AdministrationManager<T_REST_DOCUMENT> getAdministrationManager();
 
     /**
      * Login into the webPDF server and prepare a session {@link Token}.

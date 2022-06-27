@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.http;
+package net.webpdf.wsclient.session.connection.http;
 
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;

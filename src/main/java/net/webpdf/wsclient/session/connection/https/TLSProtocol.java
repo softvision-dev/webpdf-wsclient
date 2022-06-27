@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.https;
+package net.webpdf.wsclient.session.connection.https;
 
 import org.jetbrains.annotations.NotNull;
 

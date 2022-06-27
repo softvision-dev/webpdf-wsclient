@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.testsuite.io;
 
-import net.webpdf.wsclient.documents.rest.RestDocument;
+import net.webpdf.wsclient.session.documents.rest.RestDocument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.session.token;
+package net.webpdf.wsclient.session.credentials.token;
 
 import net.webpdf.wsclient.session.Session;
 import org.jetbrains.annotations.NotNull;

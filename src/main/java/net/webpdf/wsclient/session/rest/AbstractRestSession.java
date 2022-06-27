@@ -1,21 +1,22 @@
 package net.webpdf.wsclient.session.rest;
 
-import net.webpdf.wsclient.documents.rest.RestDocument;
-import net.webpdf.wsclient.documents.rest.documentmanager.DocumentManager;
+import net.webpdf.wsclient.session.administration.AdministrationManager;
+import net.webpdf.wsclient.session.documents.rest.RestDocument;
+import net.webpdf.wsclient.session.documents.rest.manager.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.http.HttpMethod;
-import net.webpdf.wsclient.http.HttpRestRequest;
-import net.webpdf.wsclient.https.TLSContext;
+import net.webpdf.wsclient.session.connection.http.HttpMethod;
+import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
+import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.Session;
-import net.webpdf.wsclient.session.token.OAuthToken;
-import net.webpdf.wsclient.session.token.Token;
-import net.webpdf.wsclient.session.token.SessionToken;
+import net.webpdf.wsclient.session.credentials.token.OAuthToken;
+import net.webpdf.wsclient.session.credentials.token.Token;
+import net.webpdf.wsclient.session.credentials.token.SessionToken;
 import net.webpdf.wsclient.schema.beans.User;
 import net.webpdf.wsclient.session.AbstractSession;
-import net.webpdf.wsclient.session.proxy.ProxyConfiguration;
-import net.webpdf.wsclient.session.token.TokenProvider;
+import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
+import net.webpdf.wsclient.session.credentials.token.TokenProvider;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -52,6 +53,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     private @Nullable User user = new User();
     private @Nullable CloseableHttpClient httpClient;
     private final @NotNull DocumentManager<T_REST_DOCUMENT> documentManager = createDocumentManager();
+    private final @NotNull AdministrationManager<T_REST_DOCUMENT> administrationManager = createAdministrationManager();
 
     /**
      * Creates a new {@link AbstractRestSession} instance providing connection information, authorization objects and
@@ -102,6 +104,16 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     @Override
     public @NotNull DocumentManager<T_REST_DOCUMENT> getDocumentManager() {
         return documentManager;
+    }
+
+    /**
+     * Returns the active {@link AdministrationManager} of this {@link RestSession}.
+     *
+     * @return The active {@link AdministrationManager} of this {@link RestSession}.
+     */
+    @Override
+    public @NotNull AdministrationManager<T_REST_DOCUMENT> getAdministrationManager() {
+        return administrationManager;
     }
 
     /**
@@ -247,5 +259,12 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      * @return The created {@link DocumentManager}.
      */
     protected abstract @NotNull DocumentManager<T_REST_DOCUMENT> createDocumentManager();
+
+    /**
+     * Creates a new {@link AdministrationManager} matching this {@link RestSession}.
+     *
+     * @return The created {@link AdministrationManager}.
+     */
+    protected abstract @NotNull AdministrationManager<T_REST_DOCUMENT> createAdministrationManager();
 
 }

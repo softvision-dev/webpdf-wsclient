@@ -1,6 +1,6 @@
-package net.webpdf.wsclient.documents.soap;
+package net.webpdf.wsclient.session.documents.soap;
 
-import net.webpdf.wsclient.documents.AbstractDocument;
+import net.webpdf.wsclient.session.documents.AbstractDocument;
 import net.webpdf.wsclient.webservice.soap.SoapWebService;
 import org.jetbrains.annotations.Nullable;
 

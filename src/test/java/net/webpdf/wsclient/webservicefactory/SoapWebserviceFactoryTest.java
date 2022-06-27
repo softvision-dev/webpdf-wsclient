@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.webservicefactory;
 
-import net.webpdf.wsclient.documents.soap.SoapDocument;
+import net.webpdf.wsclient.session.documents.soap.SoapDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.*;

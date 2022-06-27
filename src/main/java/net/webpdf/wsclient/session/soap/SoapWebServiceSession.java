@@ -1,9 +1,9 @@
 package net.webpdf.wsclient.session.soap;
 
-import net.webpdf.wsclient.documents.soap.SoapWebServiceDocument;
+import net.webpdf.wsclient.session.documents.soap.SoapWebServiceDocument;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.https.TLSContext;
+import net.webpdf.wsclient.session.connection.https.TLSContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
