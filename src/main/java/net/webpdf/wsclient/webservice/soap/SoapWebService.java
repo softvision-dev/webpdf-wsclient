@@ -5,6 +5,7 @@ import jakarta.xml.bind.DatatypeConverter;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.handler.MessageContext;
 import jakarta.xml.ws.soap.MTOMFeature;
+import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
@@ -34,26 +35,26 @@ import java.util.Map;
  * ({@link WebServiceType}), using {@link WebServiceProtocol#SOAP} and expecting a {@link SoapDocument}
  * as the result.
  *
- * @param <T_SOAP_DOCUMENT>  The expected {@link SoapDocument} type for the documents used by the webPDF server.
- * @param <T_WEBPDF_PORT>    The interface stub type to operate the webservice endpoint with.
- * @param <T_OPERATION_TYPE> The {@link WebServiceType} of the targeted webservice endpoint.
+ * @param <T_OPERATION_PARAMETER> The parameter type of the targeted webservice endpoint.
+ * @param <T_SOAP_DOCUMENT>       The expected {@link SoapDocument} type for the documents used by the webPDF server.
+ * @param <T_WEBPDF_PORT>         The interface stub type to operate the webservice endpoint with.
  */
-public abstract class SoapWebService<T_SOAP_DOCUMENT extends SoapDocument, T_WEBPDF_PORT, T_OPERATION_TYPE>
-        extends AbstractWebService<T_SOAP_DOCUMENT, SoapSession<T_SOAP_DOCUMENT>, T_OPERATION_TYPE, T_SOAP_DOCUMENT> {
+public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOAP_DOCUMENT extends SoapDocument>
+        extends AbstractWebService<SoapSession<T_SOAP_DOCUMENT>, OperationData, T_OPERATION_PARAMETER, T_SOAP_DOCUMENT,
+        BillingType, PdfPasswordType> {
 
     private static final String SSL_SOCKET_FACTORY = "com.sun.xml.ws.transport.https.client.SSLSocketFactory";
     private final @NotNull MTOMFeature feature = new MTOMFeature();
     private final @NotNull QName qname;
     private final @NotNull URI webserviceURL;
     private final @NotNull T_WEBPDF_PORT port;
-    @Nullable
-    private final TLSContext tlsContext;
+    private final @Nullable TLSContext tlsContext;
 
     /**
      * Creates a webservice interface of the given {@link WebServiceType} for the given {@link SoapSession}.
      *
-     * @param webServiceType The {@link WebServiceType} interface, that shall be created.
      * @param session        The {@link SoapSession} the webservice interface shall be created for.
+     * @param webServiceType The {@link WebServiceType} interface, that shall be created.
      */
     public SoapWebService(@NotNull SoapSession<T_SOAP_DOCUMENT> session, @NotNull WebServiceType webServiceType)
             throws ResultException {
@@ -65,14 +66,6 @@ public abstract class SoapWebService<T_SOAP_DOCUMENT extends SoapDocument, T_WEB
     }
 
     /**
-     * Execute the webservice operation and returns the {@link DataHandler} of the resulting document.
-     *
-     * @return The {@link DataHandler} of the resulting document.
-     * @throws WebServiceException Shall be thrown, upon an execution failure.
-     */
-    protected abstract @Nullable DataHandler processService() throws WebServiceException;
-
-    /**
      * Execute the webservice operation and returns the resulting {@link SoapDocument}.
      *
      * @return The resulting {@link SoapDocument}.
@@ -80,7 +73,7 @@ public abstract class SoapWebService<T_SOAP_DOCUMENT extends SoapDocument, T_WEB
      */
     @Override
     public @NotNull T_SOAP_DOCUMENT process() throws ResultException {
-        if (getDocument() == null) {
+        if (getSourceDocument() == null) {
             throw new ResultException(Result.build(Error.NO_DOCUMENT));
         }
 
@@ -91,15 +84,43 @@ public abstract class SoapWebService<T_SOAP_DOCUMENT extends SoapDocument, T_WEB
             resultDataHandler = processService();
 
             if (resultDataHandler != null) {
-                getDocument().save(resultDataHandler);
+                getSourceDocument().save(resultDataHandler);
             }
 
-            return getDocument();
+            return getSourceDocument();
 
         } catch (IOException | WebServiceException ex) {
             throw new ResultException(Result.build(Error.SOAP_EXECUTION, ex));
         }
     }
+
+    /**
+     * Returns the {@link PdfPasswordType} of the current webservice.
+     *
+     * @return the {@link PdfPasswordType} of the current webservice.
+     */
+    @Override
+    public @NotNull PdfPasswordType getPassword() {
+        return getOperationData().getPassword();
+    }
+
+    /**
+     * Returns the {@link BillingType} of the current webservice.
+     *
+     * @return the {@link BillingType} of the current webservice.
+     */
+    @Override
+    public @NotNull BillingType getBilling() {
+        return getOperationData().getBilling();
+    }
+
+    /**
+     * Execute the webservice operation and returns the {@link DataHandler} of the resulting document.
+     *
+     * @return The {@link DataHandler} of the resulting document.
+     * @throws WebServiceException Shall be thrown, upon an execution failure.
+     */
+    protected abstract @Nullable DataHandler processService() throws WebServiceException;
 
     /**
      * Returns the {@link QName} of the current SOAP webservice.
@@ -196,6 +217,7 @@ public abstract class SoapWebService<T_SOAP_DOCUMENT extends SoapDocument, T_WEB
      * Create a matching webservice port for future executions of this {@link SoapWebService}.
      *
      * @return The webservice port, that shall be used for executions.
+     * @throws ResultException Shall be thrown, upon an execution failure.
      */
     protected abstract @NotNull T_WEBPDF_PORT provideWSPort() throws ResultException;
 

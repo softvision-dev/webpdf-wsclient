@@ -1,11 +1,10 @@
 package net.webpdf.wsclient.webservice.rest;
 
+import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
-import net.webpdf.wsclient.schema.operation.OperationData;
-import net.webpdf.wsclient.schema.operation.OcrType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,8 +12,11 @@ import org.jetbrains.annotations.Nullable;
  * An instance of {@link OcrRestWebService} wraps a wsclient connection to the webPDF webservice endpoint
  * {@link WebServiceType#OCR}, using {@link WebServiceProtocol#REST} and expecting a {@link RestDocument}
  * as the result.
+ *
+ * @param <T_REST_DOCUMENT> The expected {@link RestDocument} type for the documents used by the webPDF server.
  */
-public class OcrRestWebService<T_REST_DOCUMENT extends RestDocument> extends RestWebService<T_REST_DOCUMENT, OcrType> {
+public class OcrRestWebService<T_REST_DOCUMENT extends RestDocument>
+        extends RestWebService<OperationOcrOperation, OperationOcr, T_REST_DOCUMENT> {
 
     /**
      * Creates a {@link OcrRestWebService} for the given {@link RestSession}
@@ -26,37 +28,61 @@ public class OcrRestWebService<T_REST_DOCUMENT extends RestDocument> extends Res
     }
 
     /**
-     * Returns the {@link OcrRestWebService} specific {@link OcrType}, which allows setting parameters for
+     * Returns the {@link OcrRestWebService} specific {@link OperationOcr}, which allows setting parameters for
      * the webservice execution.
      *
-     * @return The {@link OcrType} operation parameters.
+     * @return The {@link OperationOcr} operation parameters.
      */
     @Override
-    public @NotNull OcrType getOperation() {
+    public @NotNull OperationOcr getOperationParameters() {
         return getOperationData().getOcr();
     }
 
     /**
-     * Sets the {@link OcrRestWebService} specific {@link OcrType} element, which allows setting parameters for
+     * Sets the {@link OcrRestWebService} specific {@link OperationOcr} element, which allows setting parameters for
      * the webservice execution.
      *
-     * @param operationData Sets the {@link OcrType} operation parameters.
+     * @param operation Sets the {@link OperationOcr} operation parameters.
      */
     @Override
-    public void setOperation(@Nullable OcrType operationData) {
-        if (operationData != null) {
-            getOperationData().setOcr(operationData);
+    public void setOperationParameters(@Nullable OperationOcr operation) {
+        if (operation != null) {
+            getOperationData().setOcr(operation);
         }
     }
 
     /**
-     * Initializes and prepares the execution of this {@link OcrRestWebService} via the given {@link OperationData}.
+     * Returns the {@link OperationPdfPassword} of the current webservice.
      *
-     * @param operation The {@link OperationData} initializing the {@link OcrRestWebService}.
+     * @return the {@link OperationPdfPassword} of the current webservice.
      */
     @Override
-    protected void initOperation(@NotNull OperationData operation) {
-        getOperationData().setOcr(new OcrType());
+    public @Nullable OperationPdfPassword getPassword() {
+        return getOperationData().getPassword();
+    }
+
+    /**
+     * Returns the {@link OperationBilling} of the current webservice.
+     *
+     * @return the {@link OperationBilling} of the current webservice.
+     */
+    @Override
+    public @Nullable OperationBilling getBilling() {
+        return getOperationData().getBilling();
+    }
+
+    /**
+     * Initializes and prepares the execution of this {@link OcrRestWebService}.
+     *
+     * @return The prepared {@link OperationOcrOperation}.
+     */
+    @Override
+    protected @NotNull OperationOcrOperation initOperation() {
+        OperationOcrOperation operationData = new OperationOcrOperation();
+        operationData.setBilling(new OperationBilling());
+        operationData.setPassword(new OperationPdfPassword());
+        operationData.setOcr(new OperationOcr());
+        return operationData;
     }
 
 }

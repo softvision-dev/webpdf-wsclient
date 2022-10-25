@@ -1,9 +1,8 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.openapi.OperationConvertPdfa;
+import net.webpdf.wsclient.openapi.OperationPdfa;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
-import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
-import net.webpdf.wsclient.schema.operation.PdfaLevelType;
-import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.server.ServerProtocol;
@@ -41,16 +40,18 @@ public class RestCredentialsIntegrationTest {
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = testResources.getTempFolder().newFile();
 
-            webService.setDocument(session.getDocumentManager().uploadDocument(file));
+            webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
-            assertNotNull(webService.getOperation(), "Operation should have been initialized");
-            webService.getOperation().setPages("1-5");
-            webService.getOperation().setEmbedFonts(true);
+            assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+            webService.getOperationParameters().setPages("1-5");
+            webService.getOperationParameters().setEmbedFonts(true);
 
-            webService.getOperation().setPdfa(new PdfaType());
-            webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-            webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-            webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+            OperationPdfa pdfa = new OperationPdfa();
+            webService.getOperationParameters().setPdfa(pdfa);
+            OperationConvertPdfa convertPdfa = new OperationConvertPdfa();
+            pdfa.setConvert(convertPdfa);
+            convertPdfa.setLevel(OperationConvertPdfa.LevelEnum._3B);
+            convertPdfa.setErrorReport(OperationConvertPdfa.ErrorReportEnum.MESSAGE);
 
             RestDocument restDocument = webService.process();
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -108,7 +109,7 @@ public class RestCredentialsIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {

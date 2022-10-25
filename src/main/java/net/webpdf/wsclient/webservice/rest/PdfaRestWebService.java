@@ -1,11 +1,10 @@
 package net.webpdf.wsclient.webservice.rest;
 
+import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
-import net.webpdf.wsclient.schema.operation.OperationData;
-import net.webpdf.wsclient.schema.operation.PdfaType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,8 +12,11 @@ import org.jetbrains.annotations.Nullable;
  * An instance of {@link PdfaRestWebService} wraps a wsclient connection to the webPDF webservice endpoint
  * {@link WebServiceType#PDFA}, using {@link WebServiceProtocol#REST} and expecting a {@link RestDocument}
  * as the result.
+ *
+ * @param <T_REST_DOCUMENT> The expected {@link RestDocument} type for the documents used by the webPDF server.
  */
-public class PdfaRestWebService<T_REST_DOCUMENT extends RestDocument> extends RestWebService<T_REST_DOCUMENT, PdfaType> {
+public class PdfaRestWebService<T_REST_DOCUMENT extends RestDocument>
+        extends RestWebService<OperationPdfaOperation, OperationPdfa, T_REST_DOCUMENT> {
 
     /**
      * Creates a {@link PdfaRestWebService} for the given {@link RestSession}
@@ -26,37 +28,61 @@ public class PdfaRestWebService<T_REST_DOCUMENT extends RestDocument> extends Re
     }
 
     /**
-     * Returns the {@link PdfaRestWebService} specific {@link PdfaType}, which allows setting parameters for
+     * Returns the {@link PdfaRestWebService} specific {@link OperationPdfa}, which allows setting parameters for
      * the webservice execution.
      *
-     * @return The {@link PdfaType} operation parameters.
+     * @return The {@link OperationPdfa} operation parameters.
      */
     @Override
-    public @NotNull PdfaType getOperation() {
+    public @NotNull OperationPdfa getOperationParameters() {
         return getOperationData().getPdfa();
     }
 
     /**
-     * Sets the {@link PdfaRestWebService} specific {@link PdfaType} element, which allows setting parameters for
+     * Sets the {@link PdfaRestWebService} specific {@link OperationPdfa} element, which allows setting parameters for
      * the webservice execution.
      *
-     * @param operationData Sets the {@link PdfaType} operation parameters.
+     * @param operation Sets the {@link OperationPdfa} operation parameters.
      */
     @Override
-    public void setOperation(@Nullable PdfaType operationData) {
-        if (operationData != null) {
-            getOperationData().setPdfa(operationData);
+    public void setOperationParameters(@Nullable OperationPdfa operation) {
+        if (operation != null) {
+            getOperationData().setPdfa(operation);
         }
     }
 
     /**
-     * Initializes and prepares the execution of this {@link PdfaRestWebService} via the given {@link OperationData}.
+     * Returns the {@link OperationPdfPassword} of the current webservice.
      *
-     * @param operation The {@link OperationData} initializing the {@link PdfaRestWebService}.
+     * @return the {@link OperationPdfPassword} of the current webservice.
      */
     @Override
-    protected void initOperation(@NotNull OperationData operation) {
-        getOperationData().setPdfa(new PdfaType());
+    public @Nullable OperationPdfPassword getPassword() {
+        return getOperationData().getPassword();
+    }
+
+    /**
+     * Returns the {@link OperationBilling} of the current webservice.
+     *
+     * @return the {@link OperationBilling} of the current webservice.
+     */
+    @Override
+    public @Nullable OperationBilling getBilling() {
+        return getOperationData().getBilling();
+    }
+
+    /**
+     * Initializes and prepares the execution of this {@link PdfaRestWebService}.
+     *
+     * @return The prepared {@link OperationPdfaOperation}.
+     */
+    @Override
+    protected @NotNull OperationPdfaOperation initOperation() {
+        OperationPdfaOperation operationData = new OperationPdfaOperation();
+        operationData.setBilling(new OperationBilling());
+        operationData.setPassword(new OperationPdfPassword());
+        operationData.setPdfa(new OperationPdfa());
+        return operationData;
     }
 
 }

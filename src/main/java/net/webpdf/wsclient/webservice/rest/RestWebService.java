@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.webservice.rest;
 
+import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
 import net.webpdf.wsclient.session.rest.RestSession;
@@ -28,17 +29,19 @@ import java.nio.charset.UnsupportedCharsetException;
  * ({@link WebServiceType}), using {@link WebServiceProtocol#REST} and expecting a {@link RestDocument}
  * as the result.
  *
- * @param <T_REST_DOCUMENT>  The expected {@link RestDocument} type for the documents used by the webPDF server.
- * @param <T_OPERATION_TYPE> The {@link WebServiceType} of the targeted webservice endpoint.
+ * @param <T_OPERATION_DATA>      The operation type of the targeted webservice endpoint.
+ * @param <T_OPERATION_PARAMETER> The parameter type of the targeted webservice endpoint.
+ * @param <T_REST_DOCUMENT>       The expected {@link RestDocument} type for the documents used by the webPDF server.
  */
-public abstract class RestWebService<T_REST_DOCUMENT extends RestDocument, T_OPERATION_TYPE>
-        extends AbstractWebService<T_REST_DOCUMENT, RestSession<T_REST_DOCUMENT>, T_OPERATION_TYPE, T_REST_DOCUMENT> {
+public abstract class RestWebService<T_OPERATION_DATA, T_OPERATION_PARAMETER, T_REST_DOCUMENT extends RestDocument>
+        extends AbstractWebService<RestSession<T_REST_DOCUMENT>, T_OPERATION_DATA, T_OPERATION_PARAMETER,
+        T_REST_DOCUMENT, OperationBilling, OperationPdfPassword> {
 
     /**
      * Creates a webservice interface of the given {@link WebServiceType} for the given {@link RestSession}.
      *
-     * @param webServiceType The {@link WebServiceType} interface, that shall be created.
      * @param session        The {@link RestSession} the webservice interface shall be created for.
+     * @param webServiceType The {@link WebServiceType} interface, that shall be created.
      */
     public RestWebService(@NotNull RestSession<T_REST_DOCUMENT> session, @NotNull WebServiceType webServiceType) {
         super(webServiceType, session);
@@ -52,21 +55,21 @@ public abstract class RestWebService<T_REST_DOCUMENT extends RestDocument, T_OPE
      */
     @Override
     public @Nullable T_REST_DOCUMENT process() throws ResultException {
-        if (getDocument() == null) {
+        if (getSourceDocument() == null) {
             return null;
         }
 
         String urlPath = getWebServiceType().equals(WebServiceType.URLCONVERTER) ?
                 getWebServiceType().getRestEndpoint() : getWebServiceType().getRestEndpoint().replace(
-                WebServiceType.ID_PLACEHOLDER, getDocument().getDocumentId() != null ?
-                        getDocument().getDocumentId() : ""
+                WebServiceType.ID_PLACEHOLDER, getSourceDocument().getDocumentId() != null ?
+                        getSourceDocument().getDocumentId() : ""
         );
 
         DocumentManager<T_REST_DOCUMENT> documentManager = getSession().getDocumentManager();
 
-        DocumentFile documentFile = HttpRestRequest.createRequest(getSession())
-                .buildRequest(HttpMethod.POST, urlPath, getWebServiceOptions())
-                .executeRequest(DocumentFile.class);
+        HttpRestRequest request = HttpRestRequest.createRequest(getSession())
+                .buildRequest(HttpMethod.POST, urlPath, getWebServiceOptions());
+        DocumentFile documentFile = request.executeRequest(DocumentFile.class);
 
         T_REST_DOCUMENT restDocument = null;
         if (documentFile != null) {

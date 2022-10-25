@@ -1,10 +1,8 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.operation.ExtractionTextType;
-import net.webpdf.wsclient.schema.operation.ExtractionType;
-import net.webpdf.wsclient.schema.operation.SignatureType;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -37,7 +35,7 @@ public class RestFailureIntegrationTest {
                 session.login();
                 ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.CONVERTER);
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
                 webService.process();
             } catch (ResultException ex) {
@@ -59,15 +57,15 @@ public class RestFailureIntegrationTest {
                 session.login();
                 SignatureRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.SIGNATURE);
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
-                SignatureType.Add add = new SignatureType.Add();
-                SignatureType.Add.Appearance appearance = new SignatureType.Add.Appearance();
+                OperationAddSignature add = new OperationAddSignature();
+                OperationAppearanceAdd appearance = new OperationAppearanceAdd();
                 appearance.setPage(2000);
                 add.setAppearance(appearance);
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setAdd(add);
+                webService.getOperationParameters().setAdd(add);
 
                 webService.process();
             } catch (ResultException ex) {
@@ -89,7 +87,7 @@ public class RestFailureIntegrationTest {
                 session.login();
                 PdfaRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.PDFA);
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
                 webService.process();
             } catch (ResultException ex) {
@@ -111,13 +109,16 @@ public class RestFailureIntegrationTest {
                 session.login();
                 ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.TOOLBOX);
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
-                ExtractionType extractionType = new ExtractionType();
-                ExtractionTextType textType = new ExtractionTextType();
+                OperationBaseToolbox baseToolbox = new OperationBaseToolbox();
+                webService.getOperationParameters().add(baseToolbox);
+                OperationToolboxExtractionExtraction extractionType = new OperationToolboxExtractionExtraction();
+                baseToolbox.setExtraction(extractionType);
+                OperationExtractionText textType = new OperationExtractionText();
                 textType.setPages("2000");
                 extractionType.setText(textType);
-                webService.getOperation().add(extractionType);
+
 
                 webService.process();
             } catch (ResultException ex) {
@@ -139,7 +140,7 @@ public class RestFailureIntegrationTest {
                 session.login();
                 UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
                 webService.process();
             } catch (ResultException ex) {
@@ -161,7 +162,7 @@ public class RestFailureIntegrationTest {
                 session.login();
                 OcrRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.OCR);
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
                 webService.process();
             } catch (ResultException ex) {

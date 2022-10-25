@@ -1,9 +1,8 @@
 package net.webpdf.wsclient.webservice;
 
+import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.operation.BillingType;
-import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,62 +11,80 @@ import org.jetbrains.annotations.Nullable;
  * ({@link WebServiceType}), using a specific {@link WebServiceProtocol} and expecting a specific {@link Document} type
  * as the result.
  *
- * @param <T_DOCUMENT>       The expected {@link Document} type for the results produced by the webPDF server.
- * @param <T_OPERATION_TYPE> The {@link WebServiceType} of the targeted webservice endpoint.
- * @param <T_RESULT>         The result type, that is expected.
+ * @param <T_SESSION>             The expected {@link Session} type for the webservice connection.
+ * @param <T_OPERATION_DATA>      The operation type of the targeted webservice endpoint.
+ * @param <T_OPERATION_PARAMETER> The parameter type of the targeted webservice endpoint.
+ * @param <T_DOCUMENT>            The expected {@link Document} type for the results produced by the webPDF server.
+ * @param <T_BILLING>             The operation´s billing type configuring the server´s billing log entries.
+ * @param <T_PASSWORD>            The operation´s password type, used to configure material for password-protected documents.
  */
-public interface WebService<T_DOCUMENT extends Document, T_OPERATION_TYPE, T_RESULT> {
+public interface WebService<T_SESSION extends Session<T_DOCUMENT>, T_OPERATION_DATA, T_OPERATION_PARAMETER,
+        T_DOCUMENT extends Document, T_BILLING, T_PASSWORD> {
 
     /**
-     * Execute the webservice operation and returns the resulting {@link Document}.
+     * Returns the {@link T_SESSION} of the current webservice.
      *
-     * @return The resulting {@link Document}.
+     * @return The {@link T_SESSION} of the current webservice.
+     */
+    @NotNull T_SESSION getSession();
+
+    /**
+     * Execute the webservice operation and returns the resulting {@link T_DOCUMENT}.
+     *
+     * @return The resulting {@link T_DOCUMENT}.
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
-    @Nullable T_RESULT process() throws ResultException;
+    @Nullable T_DOCUMENT process() throws ResultException;
 
     /**
-     * Returns the webservice specific operation element, which allows setting parameters for
+     * Returns the webservice specific {@link T_OPERATION_DATA} of the current webservice.
+     *
+     * @return The webservice specific {@link T_OPERATION_DATA} of the current webservice.
+     */
+    @NotNull T_OPERATION_DATA getOperationData();
+
+    /**
+     * Returns the webservice specific {@link T_OPERATION_PARAMETER}, which allows setting parameters for
      * the webservice execution.
      *
-     * @return The webservice specific operation parameters.
+     * @return The webservice specific {@link T_OPERATION_PARAMETER}.
      */
-    @Nullable T_OPERATION_TYPE getOperation();
+    @Nullable T_OPERATION_PARAMETER getOperationParameters();
 
     /**
-     * Sets the web service operation data
+     * Sets the webservice specific {@link T_OPERATION_PARAMETER}, which allows setting parameters for
+     * the webservice execution.
      *
-     * @param operationData the web service operation data
-     * @throws ResultException an {@link ResultException}
+     * @param operation The webservice specific {@link T_OPERATION_PARAMETER}.
      */
-    void setOperation(@Nullable T_OPERATION_TYPE operationData) throws ResultException;
+    void setOperationParameters(@Nullable T_OPERATION_PARAMETER operation);
 
     /**
-     * Returns the {@link Document} which contains the source document, that shall be processed.
+     * Returns the {@link T_DOCUMENT} which contains the source document, that shall be processed.
      *
-     * @return The {@link Document} which contains the source document, that shall be processed.
+     * @return The {@link T_DOCUMENT} which contains the source document, that shall be processed.
      */
-    @Nullable T_DOCUMENT getDocument();
+    @Nullable T_DOCUMENT getSourceDocument();
 
     /**
-     * Set the {@link Document} which contains the source document, that shall be processed.
+     * Set the {@link T_DOCUMENT} which contains the source document, that shall be processed.
      *
-     * @param document The {@link Document} which contains the source document, that shall be processed.
+     * @param document The {@link T_DOCUMENT} which contains the source document, that shall be processed.
      */
-    void setDocument(@Nullable T_DOCUMENT document);
+    void setSourceDocument(@Nullable T_DOCUMENT document);
 
     /**
-     * Returns the {@link PdfPasswordType} of the current webservice.
+     * Returns the {@link T_PASSWORD} of the current webservice.
      *
-     * @return the {@link PdfPasswordType} of the current webservice.
+     * @return the {@link T_PASSWORD} of the current webservice.
      */
-    @NotNull PdfPasswordType getPassword();
+    @Nullable T_PASSWORD getPassword();
 
     /**
-     * Returns the {@link BillingType} of the current webservice.
+     * Returns the {@link T_BILLING} of the current webservice.
      *
-     * @return the {@link BillingType} of the current webservice.
+     * @return the {@link T_BILLING} of the current webservice.
      */
-    @NotNull BillingType getBilling();
+    @Nullable T_BILLING getBilling();
 
 }

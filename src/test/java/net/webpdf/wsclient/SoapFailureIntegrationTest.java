@@ -38,7 +38,7 @@ public class SoapFailureIntegrationTest {
                 ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.CONVERTER);
                 FileUtils.deleteQuietly(fileOut);
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
                 fallbackFailAndClose(webService.process());
             } catch (ResultException ex) {
                 Throwable cause = ex.getCause();
@@ -63,10 +63,10 @@ public class SoapFailureIntegrationTest {
                 SignatureType.Add.Appearance appearance = new SignatureType.Add.Appearance();
                 appearance.setPage(2000);
                 add.setAppearance(appearance);
-                assertNotNull(webService.getOperation(), "Operation should have been initialized");
-                webService.getOperation().setAdd(add);
+                assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+                webService.getOperationParameters().setAdd(add);
                 FileUtils.deleteQuietly(fileOut);
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
                 fallbackFailAndClose(webService.process());
             } catch (ResultException ex) {
                 Throwable cause = ex.getCause();
@@ -88,7 +88,7 @@ public class SoapFailureIntegrationTest {
                 PdfaWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.PDFA);
                 FileUtils.deleteQuietly(fileOut);
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
                 fallbackFailAndClose(webService.process());
             } catch (ResultException ex) {
                 Throwable cause = ex.getCause();
@@ -113,9 +113,9 @@ public class SoapFailureIntegrationTest {
                 ExtractionTextType textType = new ExtractionTextType();
                 textType.setPages("2000");
                 extractionType.setText(textType);
-                webService.getOperation().add(extractionType);
+                webService.getOperationParameters().add(extractionType);
                 FileUtils.deleteQuietly(fileOut);
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
                 fallbackFailAndClose(webService.process());
             } catch (ResultException ex) {
                 Throwable cause = ex.getCause();
@@ -137,7 +137,7 @@ public class SoapFailureIntegrationTest {
                 UrlConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
                 FileUtils.deleteQuietly(fileOut);
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
                 fallbackFailAndClose(webService.process());
                 assertTrue(fileOut.exists());
             } catch (ResultException ex) {
@@ -160,7 +160,7 @@ public class SoapFailureIntegrationTest {
                 OcrWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.OCR);
                 FileUtils.deleteQuietly(fileOut);
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
                 fallbackFailAndClose(webService.process());
                 assertTrue(fileOut.exists());
             } catch (ResultException ex) {

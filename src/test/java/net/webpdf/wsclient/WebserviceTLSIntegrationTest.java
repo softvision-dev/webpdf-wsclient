@@ -51,7 +51,7 @@ public class WebserviceTLSIntegrationTest {
             File fileOut = testResources.getTempFolder().newFile();
 
             try (SoapDocument soapDocument = new SoapWebServiceDocument(file.toURI(), fileOut)) {
-                webService.setDocument(soapDocument);
+                webService.setSourceDocument(soapDocument);
 
                 try (SoapDocument soapDocument2 = webService.process()) {
                     assertNotNull(soapDocument2);
@@ -122,7 +122,7 @@ public class WebserviceTLSIntegrationTest {
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = testResources.getTempFolder().newFile();
 
-            webService.setDocument(session.getDocumentManager().uploadDocument(file));
+            webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
             RestDocument restDocument = webService.process();
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -135,16 +135,14 @@ public class WebserviceTLSIntegrationTest {
     @ParameterizedTest
     @TLSTest
     @CsvSource(delimiter = '|', value = {
-            /*"PUBLIC|HTTPS|0|true|false",
+            "PUBLIC|HTTPS|0|true|false",
             "PUBLIC|HTTP|-34|true|false",
             "PUBLIC|HTTPS|0|false|false",
-            "PUBLIC|HTTPS|0|false|true",*/
+            "PUBLIC|HTTPS|0|false|true",
             "LOCAL|HTTPS|0|false|true",
             "LOCAL|HTTPS|-31|true|false",
             "LOCAL|HTTPS|0|true|true"
     })
-    // TODO: The public webPDF Server currently provides the wrong Token type - all calls to the public server will fail.
-    //  re-enable those tests, as soon, as possible.
     public void testRestSSL(String type, String protocol, int expectedErrorCode, boolean setKeystoreFile,
             boolean selfSigned) {
         assertDoesNotThrow(() -> {

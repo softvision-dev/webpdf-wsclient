@@ -118,7 +118,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     /**
      * Login into the webPDF server and prepare a new {@link SessionToken}.
      *
-     * @throws IOException Shall be thrown in case of a HTTP access error.
+     * @throws IOException Shall be thrown in case of an HTTP access error.
      */
     @Override
     public void login() throws IOException {
@@ -138,7 +138,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      * </p>
      *
      * @param token The {@link Token} to provide a session for.
-     * @throws IOException Shall be thrown in case of a HTTP access error.
+     * @throws IOException Shall be thrown in case of an HTTP access error.
      */
     @Override
     public void login(@Nullable Token token) throws IOException {
@@ -186,7 +186,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
         if (this.token instanceof SessionToken) {
             this.token = ((SessionToken) this.token).provideRefreshToken();
             this.token = HttpRestRequest.createRequest(this)
-                    .buildRequest(HttpMethod.GET, REFRESH_PATH, null)
+                    .buildRequest(HttpMethod.POST, REFRESH_PATH, null)
                     .executeRequest(SessionToken.class);
         } else {
             throw new ResultException(Result.build(Error.FORBIDDEN_TOKEN_REFRESH));
@@ -240,7 +240,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     /**
      * Logout from the {@link RestSession}.
      *
-     * @throws IOException Shall be thrown in case of a HTTP access error.
+     * @throws IOException Shall be thrown in case of an HTTP access error.
      */
     private void logout() throws IOException {
 

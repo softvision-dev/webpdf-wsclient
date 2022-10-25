@@ -1,8 +1,8 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
-import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -27,6 +27,8 @@ import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.webpdf.wsclient.testsuite.io.TestResources.getDocumentID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,17 +56,19 @@ public class RestWebserviceIntegrationTest {
                 FileUtils.copyFile(file, sourceFile);
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(session.getDocumentManager().uploadDocument(sourceFile));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(sourceFile));
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setPages("1-5");
-                webService.getOperation().setEmbedFonts(true);
+                webService.getOperationParameters().setPages("1-5");
+                webService.getOperationParameters().setEmbedFonts(true);
 
-                webService.getOperation().setPdfa(new PdfaType());
-                webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-                webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-                webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+                OperationPdfa pdfa = new OperationPdfa();
+                webService.getOperationParameters().setPdfa(pdfa);
+                OperationConvertPdfa convertPdfa = new OperationConvertPdfa();
+                pdfa.setConvert(convertPdfa);
+                convertPdfa.setLevel(OperationConvertPdfa.LevelEnum._3B);
+                convertPdfa.setErrorReport(OperationConvertPdfa.ErrorReportEnum.MESSAGE);
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -96,37 +100,46 @@ public class RestWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
-                MergeType mergeType = new MergeType();
+                OperationBaseToolbox baseToolbox = new OperationBaseToolbox();
+                OperationToolboxMergeMerge mergeType = new OperationToolboxMergeMerge();
+                baseToolbox.setMerge(mergeType);
                 mergeType.setPage(1);
                 mergeType.setSourceIsZip(false);
-                mergeType.setMode(MergeModeType.AFTER_PAGE);
+                mergeType.setMode(OperationToolboxMergeMerge.ModeEnum.AFTERPAGE);
 
                 // set merge file data
-                mergeType.setData(new MergeFileDataType());
-                mergeType.getData().setFormat(FileDataFormatType.PDF);
+                OperationMergeFileData mergeFileData = new OperationMergeFileData();
+                mergeType.setData(mergeFileData);
+                mergeType.getData().setFormat(OperationMergeFileData.FormatEnum.PDF);
                 mergeType.getData().setValue(Files.readAllBytes(
                         testResources.getResource("integration/files/merge.pdf").toPath()));
-                webService.getOperation().add(mergeType);
+                webService.getOperationParameters().add(baseToolbox);
 
                 // add rotate operation to the toolbox operation list
-                RotateType rotateType = new RotateType();
+                baseToolbox = new OperationBaseToolbox();
+                OperationToolboxRotateRotate rotateType = new OperationToolboxRotateRotate();
+                baseToolbox.setRotate(rotateType);
                 rotateType.setPages("1-5");
                 rotateType.setDegrees(90);
-                webService.getOperation().add(rotateType);
+                webService.getOperationParameters().add(baseToolbox);
 
-                DeleteType deleteType = new DeleteType();
+                baseToolbox = new OperationBaseToolbox();
+                OperationToolboxDeleteDelete deleteType = new OperationToolboxDeleteDelete();
+                baseToolbox.setDelete(deleteType);
                 deleteType.setPages("5-8");
-                webService.getOperation().add(deleteType);
+                webService.getOperationParameters().add(baseToolbox);
 
-                SecurityType securityType = new SecurityType();
-                EncryptType encryptType = new EncryptType();
-                EncryptType.Password password = new EncryptType.Password();
+                baseToolbox = new OperationBaseToolbox();
+                OperationToolboxSecuritySecurity securityType = new OperationToolboxSecuritySecurity();
+                baseToolbox.setSecurity(securityType);
+                OperationEncrypt encryptType = new OperationEncrypt();
+                OperationPasswordEncrypt password = new OperationPasswordEncrypt();
                 password.setOpen("büro");
                 encryptType.setPassword(password);
                 securityType.setEncrypt(encryptType);
-                webService.getOperation().add(securityType);
+                webService.getOperationParameters().add(baseToolbox);
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -152,27 +165,28 @@ public class RestWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
                 GenericCertificate genericCertificate = new GenericCertificate("John Doe");
 
-                assertNotNull(webService.getOperation(), "Operation should have been initialized");
-                SignatureType.Add add = new SignatureType.Add();
-                webService.getOperation().setAdd(add);
-                add.setSigner(new SignatureType.Add.Signer());
+                assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+                OperationAddSignature add = new OperationAddSignature();
+                webService.getOperationParameters().setAdd(add);
+                OperationSignerAdd signer = new OperationSignerAdd();
+                add.setSigner(signer);
 
-                KeyPairType keyPairType = new KeyPairType();
-                CertificateFileDataType certificateFileDataType = new CertificateFileDataType();
+                OperationKeyPair keyPairType = new OperationKeyPair();
+                OperationCertificateFileData certificateFileDataType = new OperationCertificateFileData();
                 certificateFileDataType.setValue(genericCertificate.getCertificatesAsPEM());
-                certificateFileDataType.setSource(FileDataSourceType.VALUE);
+                certificateFileDataType.setSource(OperationCertificateFileData.SourceEnum.VALUE);
                 keyPairType.setCertificate(certificateFileDataType);
 
-                PrivateKeyFileDataType privateKeyFileDataType = new PrivateKeyFileDataType();
+                OperationPrivateKeyFileData privateKeyFileDataType = new OperationPrivateKeyFileData();
                 privateKeyFileDataType.setValue(genericCertificate.getPrivateKeyAsPEM());
-                privateKeyFileDataType.setSource(FileDataSourceType.VALUE);
+                privateKeyFileDataType.setSource(OperationPrivateKeyFileData.SourceEnum.VALUE);
                 keyPairType.setPrivateKey(privateKeyFileDataType);
 
-                add.getSigner().setKeyPair(keyPairType);
+                signer.setKeyPair(keyPairType);
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -198,21 +212,22 @@ public class RestWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
-                assertNotNull(webService.getOperation(), "Operation should have been initialized");
-                webService.getOperation().setConvert(new PdfaType.Convert());
-                webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-                webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
-                webService.getOperation().getConvert().setImageQuality(90);
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
+                assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+                OperationConvertPdfa convertPdfa = new OperationConvertPdfa();
+                webService.getOperationParameters().setConvert(convertPdfa);
+                convertPdfa.setLevel(OperationConvertPdfa.LevelEnum._3B);
+                convertPdfa.setErrorReport(OperationConvertPdfa.ErrorReportEnum.MESSAGE);
+                convertPdfa.setImageQuality(90);
 
                 File zugferdFile = testResources.getResource("integration/files/zugferd21-xrechnung-cii.xml");
-                ZugferdType zugferdType = new ZugferdType();
-                ZugferdFileDataType zugferdFileDataType = new ZugferdFileDataType();
-                zugferdFileDataType.setVersion(ZugferdVersionType.V_21_X_RECHNUNG);
+                OperationZugferd zugferdType = new OperationZugferd();
+                OperationZugferdFileData zugferdFileDataType = new OperationZugferdFileData();
+                zugferdFileDataType.setVersion(OperationZugferdFileData.VersionEnum.V21XRECHNUNG);
                 zugferdFileDataType.setValue(FileUtils.readFileToByteArray(zugferdFile));
-                zugferdFileDataType.setSource(FileDataSourceType.VALUE);
+                zugferdFileDataType.setSource(OperationZugferdFileData.SourceEnum.VALUE);
                 zugferdType.setXmlFile(zugferdFileDataType);
-                webService.getOperation().getConvert().setZugferd(zugferdType);
+                convertPdfa.setZugferd(zugferdType);
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -238,17 +253,18 @@ public class RestWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/ocr.png");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
-                assertNotNull(webService.getOperation(), "Operation should have been initialized");
-                webService.getOperation().setLanguage(OcrLanguageType.ENG);
-                webService.getOperation().setOutputFormat(OcrOutputType.PDF);
-                webService.getOperation().setCheckResolution(false);
-                webService.getOperation().setImageDpi(200);
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
+                assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+                webService.getOperationParameters().setLanguage(OperationOcr.LanguageEnum.ENG);
+                webService.getOperationParameters().setOutputFormat(OperationOcr.OutputFormatEnum.PDF);
+                webService.getOperationParameters().setCheckResolution(false);
+                webService.getOperationParameters().setImageDpi(200);
 
-                webService.getOperation().setPage(new OcrPageType());
-                webService.getOperation().getPage().setHeight(210);
-                webService.getOperation().getPage().setWidth(148);
-                webService.getOperation().getPage().setMetrics(MetricsType.MM);
+                OperationOcrPage page = new OperationOcrPage();
+                webService.getOperationParameters().setPage(page);
+                page.setHeight(210);
+                page.setWidth(148);
+                page.setMetrics(OperationOcrPage.MetricsEnum.MM);
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -274,16 +290,17 @@ public class RestWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
-                assertNotNull(webService.getOperation(), "Operation should have been initialized");
-                webService.getOperation().setAdd(new BarcodeType.Add());
+                assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+                OperationAddBarcode addBarcode = new OperationAddBarcode();
+                webService.getOperationParameters().setAdd(addBarcode);
 
                 // build a desired barcode type
-                QrBarcodeType qrBarcodeType = new QrBarcodeType();
+                OperationQrBarcode qrBarcodeType = new OperationQrBarcode();
 
                 // set the position and the size for the barcode type
-                RectangleType position = new RectangleType();
+                OperationRectangle position = new OperationRectangle();
                 position.setX(2.0f);
                 position.setY(2.0f);
                 position.setHeight(20.0f);
@@ -295,11 +312,12 @@ public class RestWebserviceIntegrationTest {
                 // set the barcode content value
                 qrBarcodeType.setValue("https://www.webpdf.de");
 
-                webService.getOperation().getAdd().getQrcode().add(qrBarcodeType);
+                List<OperationQrBarcode> qrBarcodeList = new ArrayList<>();
+                qrBarcodeList.add(qrBarcodeType);
+                addBarcode.setQrcode(qrBarcodeList);
 
-
-                Ean8BarcodeType ean8BarcodeType = new Ean8BarcodeType();
-                position = new RectangleType();
+                OperationEan8Barcode ean8BarcodeType = new OperationEan8Barcode();
+                position = new OperationRectangle();
                 position.setX(190.0f);
                 position.setY(2.0f);
                 position.setHeight(40.0f);
@@ -310,7 +328,9 @@ public class RestWebserviceIntegrationTest {
                 ean8BarcodeType.setPages("*");
                 ean8BarcodeType.setRotation(90);
 
-                webService.getOperation().getAdd().getEan8().add(ean8BarcodeType);
+                List<OperationEan8Barcode> ean8BarcodeList = new ArrayList<>();
+                ean8BarcodeList.add(ean8BarcodeType);
+                addBarcode.setEan8(ean8BarcodeList);
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -333,21 +353,22 @@ public class RestWebserviceIntegrationTest {
                 UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
 
-                webService.setDocument(new RestWebServiceDocument(null));
+                webService.setSourceDocument(new RestWebServiceDocument(null));
 
                 File fileOut = testResources.getTempFolder().newFile();
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setUrl("https://www.webpdf.de");
+                webService.getOperationParameters().setUrl("https://www.webpdf.de");
 
-                webService.getOperation().setPage(new PageType());
-                webService.getOperation().getPage().setWidth(150);
-                webService.getOperation().getPage().setHeight(200);
-                webService.getOperation().getPage().setTop(0);
-                webService.getOperation().getPage().setLeft(0);
-                webService.getOperation().getPage().setRight(0);
-                webService.getOperation().getPage().setBottom(0);
+                OperationPage page = new OperationPage();
+                webService.getOperationParameters().setPage(page);
+                page.setWidth(150);
+                page.setHeight(200);
+                page.setTop(0);
+                page.setLeft(0);
+                page.setRight(0);
+                page.setBottom(0);
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -371,7 +392,7 @@ public class RestWebserviceIntegrationTest {
                 StreamSource streamSource = new StreamSource(stringReader);
                 session.login();
                 ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session, streamSource);
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
                 File fileOut = testResources.getTempFolder().newFile();
 
                 RestDocument restDocument = webService.process();
@@ -398,17 +419,20 @@ public class RestWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(session.getDocumentManager().uploadDocument(file));
+                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
-                ImageType imageType = new ImageType();
+                OperationBaseToolbox baseToolbox = new OperationBaseToolbox();
+                webService.getOperationParameters().add(baseToolbox);
+
+                OperationToolboxImageImage imageType = new OperationToolboxImageImage();
+                baseToolbox.setImage(imageType);
                 imageType.setPages("1");
 
-                JpegType jpegType = new JpegType();
+                OperationJpeg jpegType = new OperationJpeg();
                 jpegType.setJpegQuality(100);
 
                 imageType.setJpeg(jpegType);
 
-                webService.getOperation().add(imageType);
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                     session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);

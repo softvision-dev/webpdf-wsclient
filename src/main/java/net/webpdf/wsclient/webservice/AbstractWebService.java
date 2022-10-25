@@ -1,9 +1,6 @@
 package net.webpdf.wsclient.webservice;
 
 import net.webpdf.wsclient.session.documents.Document;
-import net.webpdf.wsclient.schema.operation.BillingType;
-import net.webpdf.wsclient.schema.operation.OperationData;
-import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.session.Session;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,32 +14,73 @@ import java.util.Map;
  * ({@link WebServiceType}), using a specific {@link WebServiceProtocol} and expecting a specific {@link Document} type
  * as the result.
  *
- * @param <T_DOCUMENT>       The expected {@link Document} type for the results produced by the webPDF server.
- * @param <T_SESSION>        The expected {@link Session} type for the webservice connection.
- * @param <T_OPERATION_TYPE> The {@link WebServiceType} of the targeted webservice endpoint.
- * @param <T_RESULT>         The result type, that is expected.
+ * @param <T_SESSION>             The expected {@link Session} type for the webservice connection.
+ * @param <T_OPERATION_DATA>      The operation type of the targeted webservice endpoint.
+ * @param <T_OPERATION_PARAMETER> The parameter type of the targeted webservice endpoint.
+ * @param <T_DOCUMENT>            The expected {@link Document} type for the results produced by the webPDF server.
+ * @param <T_BILLING>             The operation´s billing type configuring the server´s billing log entries.
+ * @param <T_PASSWORD>            The operation´s password type, used to configure material for password-protected documents.
  */
-public abstract class AbstractWebService<T_DOCUMENT extends Document, T_SESSION extends Session<T_DOCUMENT>,
-        T_OPERATION_TYPE, T_RESULT> implements WebService<T_DOCUMENT, T_OPERATION_TYPE, T_RESULT> {
+public abstract class AbstractWebService<T_SESSION extends Session<T_DOCUMENT>, T_OPERATION_DATA, T_OPERATION_PARAMETER,
+        T_DOCUMENT extends Document, T_BILLING, T_PASSWORD>
+        implements WebService<T_SESSION, T_OPERATION_DATA, T_OPERATION_PARAMETER, T_DOCUMENT, T_BILLING, T_PASSWORD> {
 
     private final @NotNull WebServiceType webServiceType;
     private final @NotNull Map<String, List<String>> headers = new HashMap<>();
     private final @NotNull T_SESSION session;
-    private final @NotNull OperationData operationData = new OperationData();
     private @Nullable T_DOCUMENT document;
+    private final @NotNull T_OPERATION_DATA operationData;
 
     /**
-     * Creates a webservice interface of the given {@link WebServiceType} for the given {@link Session}.
+     * Creates a webservice interface of the given {@link WebServiceType} for the given {@link T_SESSION}.
      *
      * @param webServiceType The {@link WebServiceType} interface, that shall be created.
-     * @param session        The {@link Session} the webservice interface shall be created for.
+     * @param session        The {@link T_SESSION} the webservice interface shall be created for.
      */
     public AbstractWebService(@NotNull WebServiceType webServiceType, @NotNull T_SESSION session) {
         this.session = session;
         this.webServiceType = webServiceType;
-        this.operationData.setBilling(new BillingType());
-        this.operationData.setPassword(new PdfPasswordType());
-        initOperation(this.operationData);
+        this.operationData = initOperation();
+    }
+
+    /**
+     * Returns the {@link T_SESSION} of the current webservice.
+     *
+     * @return The {@link T_SESSION} of the current webservice.
+     */
+    @Override
+    public @NotNull T_SESSION getSession() {
+        return session;
+    }
+
+    /**
+     * Returns the {@link T_OPERATION_DATA} of the current webservice.
+     *
+     * @return The {@link T_OPERATION_DATA} of the current webservice.
+     */
+    @Override
+    public @NotNull T_OPERATION_DATA getOperationData() {
+        return operationData;
+    }
+
+    /**
+     * Returns the {@link T_DOCUMENT} which contains the source document, that shall be processed.
+     *
+     * @return The {@link T_DOCUMENT} which contains the source document, that shall be processed.
+     */
+    @Override
+    public @Nullable T_DOCUMENT getSourceDocument() {
+        return document;
+    }
+
+    /**
+     * Set the {@link T_DOCUMENT} which contains the source document, that shall be processed.
+     *
+     * @param document The {@link T_DOCUMENT} which contains the source document, that shall be processed.
+     */
+    @Override
+    public void setSourceDocument(@Nullable T_DOCUMENT document) {
+        this.document = document;
     }
 
     /**
@@ -55,15 +93,6 @@ public abstract class AbstractWebService<T_DOCUMENT extends Document, T_SESSION 
     }
 
     /**
-     * Returns the {@link Session} of the current webservice.
-     *
-     * @return The {@link Session} of the current webservice.
-     */
-    protected @NotNull T_SESSION getSession() {
-        return session;
-    }
-
-    /**
      * Returns the headers of the current webservice operation.
      *
      * @return The headers of the current webservice operation.
@@ -73,57 +102,10 @@ public abstract class AbstractWebService<T_DOCUMENT extends Document, T_SESSION 
     }
 
     /**
-     * Returns the {@link Document} which contains the source document, that shall be processed.
+     * Initializes and prepares the {@link T_OPERATION_DATA} of the current webservice.
      *
-     * @return The {@link Document} which contains the source document, that shall be processed.
+     * @return The initialized {@link T_OPERATION_DATA} of the current webservice.
      */
-    @Override
-    public @Nullable T_DOCUMENT getDocument() {
-        return document;
-    }
-
-    /**
-     * Set the {@link Document} which contains the source document, that shall be processed.
-     *
-     * @param document The {@link Document} which contains the source document, that shall be processed.
-     */
-    @Override
-    public void setDocument(@Nullable T_DOCUMENT document) {
-        this.document = document;
-    }
-
-    /**
-     * Returns the {@link OperationData} of the current webservice.
-     *
-     * @return The {@link OperationData} of the current webservice.
-     */
-    public @NotNull OperationData getOperationData() {
-        return operationData;
-    }
-
-    /**
-     * Returns the {@link BillingType} of the current webservice.
-     *
-     * @return the {@link BillingType} of the current webservice.
-     */
-    public @NotNull BillingType getBilling() {
-        return this.operationData.getBilling();
-    }
-
-    /**
-     * Returns the {@link PdfPasswordType} of the current webservice.
-     *
-     * @return the {@link PdfPasswordType} of the current webservice.
-     */
-    public @NotNull PdfPasswordType getPassword() {
-        return this.operationData.getPassword();
-    }
-
-    /**
-     * Initializes and prepares the execution of the current webservice via the given {@link OperationData}.
-     *
-     * @param operation The {@link OperationData} initializing the current webservice.
-     */
-    protected abstract void initOperation(@NotNull OperationData operation);
+    protected abstract @NotNull T_OPERATION_DATA initOperation();
 
 }

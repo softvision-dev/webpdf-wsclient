@@ -6,6 +6,7 @@ import com.microsoft.aad.msal4j.ClientCredentialFactory;
 import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
+import net.webpdf.wsclient.openapi.OperationConvertPdfa;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.config.TestConfig;
 import net.webpdf.wsclient.testsuite.integration.annotations.OAuthTest;
@@ -254,12 +255,13 @@ public class OauthTokenIntegrationTest {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             File fileOut = testResources.getTempFolder().newFile();
 
-            webService.setDocument(session.getDocumentManager().uploadDocument(file));
-            assertNotNull(webService.getOperation(), "Operation should have been initialized");
-            webService.getOperation().setConvert(new PdfaType.Convert());
-            webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-            webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
-            webService.getOperation().getConvert().setImageQuality(90);
+            webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
+            assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+            OperationConvertPdfa pdfa = new OperationConvertPdfa();
+            webService.getOperationParameters().setConvert(pdfa);
+            pdfa.setLevel(OperationConvertPdfa.LevelEnum._3B);
+            pdfa.setErrorReport(OperationConvertPdfa.ErrorReportEnum.MESSAGE);
+            pdfa.setImageQuality(90);
 
             RestDocument restDocument = webService.process();
             assertNotNull(restDocument);
@@ -285,14 +287,15 @@ public class OauthTokenIntegrationTest {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             File fileOut = testResources.getTempFolder().newFile();
 
-            webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+            webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
-            assertNotNull(webService.getOperation(),
+            assertNotNull(webService.getOperationParameters(),
                     "Operation should have been initialized");
-            webService.getOperation().setConvert(new PdfaType.Convert());
-            webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-            webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
-            webService.getOperation().getConvert().setImageQuality(90);
+
+            webService.getOperationParameters().setConvert(new PdfaType.Convert());
+            webService.getOperationParameters().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+            webService.getOperationParameters().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+            webService.getOperationParameters().getConvert().setImageQuality(90);
 
             try (SoapDocument soapDocument = webService.process()) {
                 assertNotNull(soapDocument);

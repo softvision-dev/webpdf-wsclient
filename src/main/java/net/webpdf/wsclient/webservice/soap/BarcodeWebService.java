@@ -1,17 +1,15 @@
 package net.webpdf.wsclient.webservice.soap;
 
+import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.schema.stubs.Barcode;
-import net.webpdf.wsclient.schema.operation.BarcodeType;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import jakarta.activation.DataHandler;
 
 import javax.xml.namespace.QName;
@@ -22,14 +20,17 @@ import jakarta.xml.ws.Service;
  * An instance of {@link BarcodeWebService} wraps a wsclient connection to the webPDF webservice endpoint
  * {@link WebServiceType#BARCODE}, using {@link WebServiceProtocol#SOAP} and expecting a {@link SoapDocument}
  * as the result.
+ *
+ * @param <T_SOAP_DOCUMENT> The expected {@link SoapDocument} type for the documents used by the webPDF server.
  */
 public class BarcodeWebService<T_SOAP_DOCUMENT extends SoapDocument>
-        extends SoapWebService<T_SOAP_DOCUMENT, Barcode, BarcodeType> {
+        extends SoapWebService<Barcode, BarcodeType, T_SOAP_DOCUMENT> {
 
     /**
-     * Creates a {@link BarcodeWebService} for the given {@link SoapSession}
+     * Creates a {@link BarcodeWebService} for the given {@link SoapSession}.
      *
      * @param session The {@link SoapSession} a {@link BarcodeWebService} shall be created for.
+     * @throws ResultException Shall be thrown, upon an execution failure.
      */
     public BarcodeWebService(@NotNull SoapSession<T_SOAP_DOCUMENT> session) throws ResultException {
         super(session, WebServiceType.BARCODE);
@@ -43,18 +44,43 @@ public class BarcodeWebService<T_SOAP_DOCUMENT extends SoapDocument>
      */
     @Override
     protected @Nullable DataHandler processService() throws WebServiceException {
-        if (getDocument() == null) {
+        if (getSourceDocument() == null) {
             return null;
         }
-        return getPort().execute(getOperationData(), getDocument().getSourceDataHandler(),
-                getDocument().isFileSource() || getDocument().getSource() == null ?
-                        null : getDocument().getSource().toString());
+        return getPort().execute(getOperationData(), getSourceDocument().getSourceDataHandler(),
+                getSourceDocument().isFileSource() || getSourceDocument().getSource() == null ?
+                        null : getSourceDocument().getSource().toString());
+    }
+
+    /**
+     * Returns the {@link BarcodeWebService} specific {@link BarcodeType}, which allows setting parameters for
+     * the webservice execution.
+     *
+     * @return The {@link BarcodeType} operation parameters.
+     */
+    @Override
+    public @NotNull BarcodeType getOperationParameters() {
+        return getOperationData().getBarcode();
+    }
+
+    /**
+     * Sets the {@link BarcodeWebService} specific {@link BarcodeType} element, which allows setting parameters for
+     * the webservice execution.
+     *
+     * @param operation Sets the {@link BarcodeType} operation parameters.
+     */
+    @Override
+    public void setOperationParameters(@Nullable BarcodeType operation) {
+        if (operation != null) {
+            getOperationData().setBarcode(operation);
+        }
     }
 
     /**
      * Create a matching {@link Barcode} webservice port for future executions of this {@link SoapWebService}.
      *
      * @return The {@link Barcode} webservice port, that shall be used for executions.
+     * @throws ResultException Shall be thrown, upon an execution failure.
      */
     @Override
     protected @NotNull Barcode provideWSPort() throws ResultException {
@@ -65,37 +91,17 @@ public class BarcodeWebService<T_SOAP_DOCUMENT extends SoapDocument>
     }
 
     /**
-     * Returns the {@link BarcodeWebService} specific {@link BarcodeType}, which allows setting parameters for
-     * the webservice execution.
+     * Initializes and prepares the execution of this {@link BarcodeWebService}.
      *
-     * @return The {@link BarcodeType} operation parameters.
+     * @return The prepared {@link OperationData}.
      */
     @Override
-    public @NotNull BarcodeType getOperation() {
-        return getOperationData().getBarcode();
-    }
-
-    /**
-     * Sets the {@link BarcodeWebService} specific {@link BarcodeType} element, which allows setting parameters for
-     * the webservice execution.
-     *
-     * @param operationData Sets the {@link BarcodeType} operation parameters.
-     */
-    @Override
-    public void setOperation(@Nullable BarcodeType operationData) {
-        if (operationData != null) {
-            getOperationData().setBarcode(operationData);
-        }
-    }
-
-    /**
-     * Initializes and prepares the execution of this {@link BarcodeWebService} via the given {@link OperationData}.
-     *
-     * @param operation The {@link OperationData} initializing the {@link BarcodeWebService}.
-     */
-    @Override
-    protected void initOperation(@NotNull OperationData operation) {
-        getOperationData().setBarcode(new BarcodeType());
+    protected @NotNull OperationData initOperation() {
+        OperationData operationData = new OperationData();
+        operationData.setBilling(new BillingType());
+        operationData.setPassword(new PdfPasswordType());
+        operationData.setBarcode(new BarcodeType());
+        return operationData;
     }
 
 }

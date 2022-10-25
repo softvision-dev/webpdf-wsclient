@@ -53,3 +53,4 @@
     - Adding conditional integration test execution.
     - Removing and simplifying maven test profiles.
 - Adding support for admin endpoint.
+- Introducing OpenAPI based REST webservice calls.

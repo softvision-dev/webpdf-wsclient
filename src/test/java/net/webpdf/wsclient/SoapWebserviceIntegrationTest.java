@@ -41,15 +41,15 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
-                assertNotNull(webService.getOperation(), "Operation should have been initialized");
-                webService.getOperation().setPages("1-5");
-                webService.getOperation().setEmbedFonts(true);
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+                webService.getOperationParameters().setPages("1-5");
+                webService.getOperationParameters().setEmbedFonts(true);
 
-                webService.getOperation().setPdfa(new PdfaType());
-                webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-                webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-                webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+                webService.getOperationParameters().setPdfa(new PdfaType());
+                webService.getOperationParameters().getPdfa().setConvert(new PdfaType.Convert());
+                webService.getOperationParameters().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+                webService.getOperationParameters().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);
@@ -71,7 +71,7 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
                 MergeType mergeType = new MergeType();
                 mergeType.setPage(1);
@@ -88,17 +88,17 @@ public class SoapWebserviceIntegrationTest {
                 } catch (IOException ex) {
                     System.out.println("Unable to add merge file data to params: " + ex.getMessage());
                 }
-                webService.getOperation().add(mergeType);
+                webService.getOperationParameters().add(mergeType);
 
                 // add rotate operation to the toolbox operation list
                 RotateType rotateType = new RotateType();
                 rotateType.setPages("1-5");
                 rotateType.setDegrees(90);
-                webService.getOperation().add(rotateType);
+                webService.getOperationParameters().add(rotateType);
 
                 DeleteType deleteType = new DeleteType();
                 deleteType.setPages("5-8");
-                webService.getOperation().add(deleteType);
+                webService.getOperationParameters().add(deleteType);
 
                 SecurityType securityType = new SecurityType();
                 EncryptType encryptType = new EncryptType();
@@ -106,7 +106,7 @@ public class SoapWebserviceIntegrationTest {
                 password.setOpen("büro");
                 encryptType.setPassword(password);
                 securityType.setEncrypt(encryptType);
-                webService.getOperation().add(securityType);
+                webService.getOperationParameters().add(securityType);
 
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);
@@ -128,15 +128,16 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
                 GenericCertificate genericCertificate = new GenericCertificate("John Doe");
 
-                assertNotNull(webService.getOperation(), "Operation should have been initialized");
+                assertNotNull(webService.getOperationParameters(),
+                        "Operation should have been initialized");
                 SignatureType.Add add = new SignatureType.Add();
-                webService.getOperation().setAdd(add);
+                webService.getOperationParameters().setAdd(add);
                 add.setSigner(new SignatureType.Add.Signer());
 
                 KeyPairType keyPairType = new KeyPairType();
@@ -174,14 +175,14 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setConvert(new PdfaType.Convert());
-                webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-                webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
-                webService.getOperation().getConvert().setImageQuality(90);
+                webService.getOperationParameters().setConvert(new PdfaType.Convert());
+                webService.getOperationParameters().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+                webService.getOperationParameters().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+                webService.getOperationParameters().getConvert().setImageQuality(90);
 
                 webService.getBilling().setUserName("John Doe");
                 webService.getBilling().setApplicationName("webPDF Sample Application");
@@ -207,19 +208,19 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/ocr.png");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setLanguage(OcrLanguageType.ENG);
-                webService.getOperation().setOutputFormat(OcrOutputType.PDF);
-                webService.getOperation().setCheckResolution(false);
-                webService.getOperation().setImageDpi(200);
+                webService.getOperationParameters().setLanguage(OcrLanguageType.ENG);
+                webService.getOperationParameters().setOutputFormat(OcrOutputType.PDF);
+                webService.getOperationParameters().setCheckResolution(false);
+                webService.getOperationParameters().setImageDpi(200);
 
-                webService.getOperation().setPage(new OcrPageType());
-                webService.getOperation().getPage().setHeight(210);
-                webService.getOperation().getPage().setWidth(148);
-                webService.getOperation().getPage().setMetrics(MetricsType.MM);
+                webService.getOperationParameters().setPage(new OcrPageType());
+                webService.getOperationParameters().getPage().setHeight(210);
+                webService.getOperationParameters().getPage().setWidth(148);
+                webService.getOperationParameters().getPage().setMetrics(MetricsType.MM);
 
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);
@@ -241,11 +242,11 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setAdd(new BarcodeType.Add());
+                webService.getOperationParameters().setAdd(new BarcodeType.Add());
 
                 // build a desired barcode type
                 QrBarcodeType qrBarcodeType = new QrBarcodeType();
@@ -263,7 +264,7 @@ public class SoapWebserviceIntegrationTest {
                 // set the barcode content value
                 qrBarcodeType.setValue("https://www.webpdf.de");
 
-                webService.getOperation().getAdd().getQrcode().add(qrBarcodeType);
+                webService.getOperationParameters().getAdd().getQrcode().add(qrBarcodeType);
 
                 // create a second barcode (EAN8)
                 Ean8BarcodeType ean8BarcodeType = new Ean8BarcodeType();
@@ -278,7 +279,7 @@ public class SoapWebserviceIntegrationTest {
                 ean8BarcodeType.setPages("*");
                 ean8BarcodeType.setRotation(90);
 
-                webService.getOperation().getAdd().getEan8().add(ean8BarcodeType);
+                webService.getOperationParameters().getAdd().getEan8().add(ean8BarcodeType);
 
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);
@@ -299,18 +300,18 @@ public class SoapWebserviceIntegrationTest {
 
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(null, fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(null, fileOut));
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setUrl("https://www.webpdf.de");
-                webService.getOperation().setPage(new PageType());
-                webService.getOperation().getPage().setWidth(150);
-                webService.getOperation().getPage().setHeight(200);
-                webService.getOperation().getPage().setTop(0);
-                webService.getOperation().getPage().setLeft(0);
-                webService.getOperation().getPage().setRight(0);
-                webService.getOperation().getPage().setBottom(0);
+                webService.getOperationParameters().setUrl("https://www.webpdf.de");
+                webService.getOperationParameters().setPage(new PageType());
+                webService.getOperationParameters().getPage().setWidth(150);
+                webService.getOperationParameters().getPage().setHeight(200);
+                webService.getOperationParameters().getPage().setTop(0);
+                webService.getOperationParameters().getPage().setLeft(0);
+                webService.getOperationParameters().getPage().setRight(0);
+                webService.getOperationParameters().getPage().setBottom(0);
 
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);
@@ -333,15 +334,15 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
-                assertNotNull(webService.getOperation(), "Operation should have been initialized");
-                webService.getOperation().setPages("1-5");
-                webService.getOperation().setEmbedFonts(true);
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+                webService.getOperationParameters().setPages("1-5");
+                webService.getOperationParameters().setEmbedFonts(true);
 
-                webService.getOperation().setPdfa(new PdfaType());
-                webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-                webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-                webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+                webService.getOperationParameters().setPdfa(new PdfaType());
+                webService.getOperationParameters().getPdfa().setConvert(new PdfaType.Convert());
+                webService.getOperationParameters().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+                webService.getOperationParameters().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);
@@ -364,7 +365,7 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
                 MergeType mergeType = new MergeType();
                 mergeType.setPage(1);
@@ -381,17 +382,17 @@ public class SoapWebserviceIntegrationTest {
                 } catch (IOException ex) {
                     System.out.println("Unable to add merge file data to params: " + ex.getMessage());
                 }
-                webService.getOperation().add(mergeType);
+                webService.getOperationParameters().add(mergeType);
 
                 // add rotate operation to the toolbox operation list
                 RotateType rotateType = new RotateType();
                 rotateType.setPages("1-5");
                 rotateType.setDegrees(90);
-                webService.getOperation().add(rotateType);
+                webService.getOperationParameters().add(rotateType);
 
                 DeleteType deleteType = new DeleteType();
                 deleteType.setPages("5-8");
-                webService.getOperation().add(deleteType);
+                webService.getOperationParameters().add(deleteType);
 
                 SecurityType securityType = new SecurityType();
                 EncryptType encryptType = new EncryptType();
@@ -399,7 +400,7 @@ public class SoapWebserviceIntegrationTest {
                 password.setOpen("büro");
                 encryptType.setPassword(password);
                 securityType.setEncrypt(encryptType);
-                webService.getOperation().add(securityType);
+                webService.getOperationParameters().add(securityType);
 
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);
@@ -422,15 +423,15 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
                 GenericCertificate genericCertificate = new GenericCertificate("John Doe");
 
-                assertNotNull(webService.getOperation(), "Operation should have been initialized");
+                assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 SignatureType.Add add = new SignatureType.Add();
-                webService.getOperation().setAdd(add);
+                webService.getOperationParameters().setAdd(add);
                 add.setSigner(new SignatureType.Add.Signer());
 
                 KeyPairType keyPairType = new KeyPairType();
@@ -467,14 +468,14 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setConvert(new PdfaType.Convert());
-                webService.getOperation().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-                webService.getOperation().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
-                webService.getOperation().getConvert().setImageQuality(90);
+                webService.getOperationParameters().setConvert(new PdfaType.Convert());
+                webService.getOperationParameters().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+                webService.getOperationParameters().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+                webService.getOperationParameters().getConvert().setImageQuality(90);
 
                 webService.getBilling().setUserName("John Doe");
                 webService.getBilling().setApplicationName("webPDF Sample Application");
@@ -501,19 +502,19 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/ocr.png");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setLanguage(OcrLanguageType.ENG);
-                webService.getOperation().setOutputFormat(OcrOutputType.PDF);
-                webService.getOperation().setCheckResolution(false);
-                webService.getOperation().setImageDpi(200);
+                webService.getOperationParameters().setLanguage(OcrLanguageType.ENG);
+                webService.getOperationParameters().setOutputFormat(OcrOutputType.PDF);
+                webService.getOperationParameters().setCheckResolution(false);
+                webService.getOperationParameters().setImageDpi(200);
 
-                webService.getOperation().setPage(new OcrPageType());
-                webService.getOperation().getPage().setHeight(210);
-                webService.getOperation().getPage().setWidth(148);
-                webService.getOperation().getPage().setMetrics(MetricsType.MM);
+                webService.getOperationParameters().setPage(new OcrPageType());
+                webService.getOperationParameters().getPage().setHeight(210);
+                webService.getOperationParameters().getPage().setWidth(148);
+                webService.getOperationParameters().getPage().setMetrics(MetricsType.MM);
 
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);
@@ -536,11 +537,11 @@ public class SoapWebserviceIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setAdd(new BarcodeType.Add());
+                webService.getOperationParameters().setAdd(new BarcodeType.Add());
 
                 // build a desired barcode type
                 QrBarcodeType qrBarcodeType = new QrBarcodeType();
@@ -558,7 +559,7 @@ public class SoapWebserviceIntegrationTest {
                 // set the barcode content value
                 qrBarcodeType.setValue("https://www.webpdf.de");
 
-                webService.getOperation().getAdd().getQrcode().add(qrBarcodeType);
+                webService.getOperationParameters().getAdd().getQrcode().add(qrBarcodeType);
 
                 // create a second barcode (EAN8)
                 Ean8BarcodeType ean8BarcodeType = new Ean8BarcodeType();
@@ -573,7 +574,7 @@ public class SoapWebserviceIntegrationTest {
                 ean8BarcodeType.setPages("*");
                 ean8BarcodeType.setRotation(90);
 
-                webService.getOperation().getAdd().getEan8().add(ean8BarcodeType);
+                webService.getOperationParameters().getAdd().getEan8().add(ean8BarcodeType);
 
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);
@@ -595,18 +596,18 @@ public class SoapWebserviceIntegrationTest {
 
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(null, fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(null, fileOut));
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setUrl("https://www.webpdf.de");
-                webService.getOperation().setPage(new PageType());
-                webService.getOperation().getPage().setWidth(150);
-                webService.getOperation().getPage().setHeight(200);
-                webService.getOperation().getPage().setTop(0);
-                webService.getOperation().getPage().setLeft(0);
-                webService.getOperation().getPage().setRight(0);
-                webService.getOperation().getPage().setBottom(0);
+                webService.getOperationParameters().setUrl("https://www.webpdf.de");
+                webService.getOperationParameters().setPage(new PageType());
+                webService.getOperationParameters().getPage().setWidth(150);
+                webService.getOperationParameters().getPage().setHeight(200);
+                webService.getOperationParameters().getPage().setTop(0);
+                webService.getOperationParameters().getPage().setLeft(0);
+                webService.getOperationParameters().getPage().setRight(0);
+                webService.getOperationParameters().getPage().setBottom(0);
 
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);

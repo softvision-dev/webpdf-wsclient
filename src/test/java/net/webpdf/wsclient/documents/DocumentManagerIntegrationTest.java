@@ -164,7 +164,7 @@ public class DocumentManagerIntegrationTest {
 
                 ConverterRestWebService<RestDocument> webService =
                         WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
-                webService.setDocument(document);
+                webService.setSourceDocument(document);
                 webService.process();
                 historyList = session.getDocumentManager().getDocumentHistory(document.getDocumentId());
                 assertEquals(2, historyList.size(), "history list should contain 2 elements.");

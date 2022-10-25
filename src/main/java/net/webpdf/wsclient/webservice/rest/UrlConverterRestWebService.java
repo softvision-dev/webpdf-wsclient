@@ -1,11 +1,10 @@
 package net.webpdf.wsclient.webservice.rest;
 
+import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
-import net.webpdf.wsclient.schema.operation.OperationData;
-import net.webpdf.wsclient.schema.operation.UrlConverterType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,12 +12,14 @@ import org.jetbrains.annotations.Nullable;
  * An instance of {@link UrlConverterRestWebService} wraps a wsclient connection to the webPDF webservice endpoint
  * {@link WebServiceType#URLCONVERTER}, using {@link WebServiceProtocol#REST} and expecting a
  * {@link RestDocument} as the result.
+ *
+ * @param <T_REST_DOCUMENT> The expected {@link RestDocument} type for the documents used by the webPDF server.
  */
 public class UrlConverterRestWebService<T_REST_DOCUMENT extends RestDocument>
-        extends RestWebService<T_REST_DOCUMENT, UrlConverterType> {
+        extends RestWebService<OperationUrlConverterOperation, OperationUrlConverter, T_REST_DOCUMENT> {
 
     /**
-     * Creates a {@link UrlConverterRestWebService} for the given {@link RestSession}
+     * Creates a {@link UrlConverterRestWebService} for the given {@link RestSession}.
      *
      * @param session The {@link RestSession} a {@link UrlConverterRestWebService} shall be created for.
      */
@@ -27,38 +28,61 @@ public class UrlConverterRestWebService<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
-     * Returns the {@link UrlConverterRestWebService} specific {@link UrlConverterType}, which allows setting parameters
-     * for the webservice execution.
+     * * Returns the {@link UrlConverterRestWebService} specific {@link OperationUrlConverter}, which allows setting
+     * parameters for the webservice execution.
      *
-     * @return The {@link UrlConverterType} operation parameters.
+     * @return The {@link OperationUrlConverter} operation parameters.
      */
     @Override
-    public @NotNull UrlConverterType getOperation() {
+    public @NotNull OperationUrlConverter getOperationParameters() {
         return getOperationData().getUrlconverter();
     }
 
     /**
-     * Sets the {@link UrlConverterRestWebService} specific {@link UrlConverterType} element, which allows setting
+     * Sets the {@link UrlConverterRestWebService} specific {@link OperationUrlConverter} element, which allows setting
      * parameters for the webservice execution.
      *
-     * @param operationData Sets the {@link UrlConverterType} operation parameters.
+     * @param operation Sets the {@link OperationUrlConverter} operation parameters.
      */
     @Override
-    public void setOperation(@Nullable UrlConverterType operationData) {
-        if (operationData != null) {
-            getOperationData().setUrlconverter(operationData);
+    public void setOperationParameters(@Nullable OperationUrlConverter operation) {
+        if (operation != null) {
+            getOperationData().setUrlconverter(operation);
         }
     }
 
     /**
-     * Initializes and prepares the execution of this {@link UrlConverterRestWebService} via the given
-     * {@link OperationData}.
+     * Returns the {@link OperationPdfPassword} of the current webservice.
      *
-     * @param operation The {@link OperationData} initializing the {@link UrlConverterRestWebService}.
+     * @return the {@link OperationPdfPassword} of the current webservice.
      */
     @Override
-    protected void initOperation(@NotNull OperationData operation) {
-        getOperationData().setUrlconverter(new UrlConverterType());
+    public @Nullable OperationPdfPassword getPassword() {
+        return getOperationData().getPassword();
+    }
+
+    /**
+     * Returns the {@link OperationBilling} of the current webservice.
+     *
+     * @return the {@link OperationBilling} of the current webservice.
+     */
+    @Override
+    public @Nullable OperationBilling getBilling() {
+        return getOperationData().getBilling();
+    }
+
+    /**
+     * Initializes and prepares the execution of this {@link UrlConverterRestWebService}.
+     *
+     * @return The prepared {@link OperationUrlConverterOperation}.
+     */
+    @Override
+    protected @NotNull OperationUrlConverterOperation initOperation() {
+        OperationUrlConverterOperation operationData = new OperationUrlConverterOperation();
+        operationData.setBilling(new OperationBilling());
+        operationData.setPassword(new OperationPdfPassword());
+        operationData.setUrlconverter(new OperationUrlConverter());
+        return operationData;
     }
 
 }

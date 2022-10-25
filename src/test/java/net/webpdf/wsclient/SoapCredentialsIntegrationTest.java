@@ -47,16 +47,16 @@ public class SoapCredentialsIntegrationTest {
                 ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.CONVERTER);
 
-                webService.setDocument(soapDocument);
+                webService.setSourceDocument(soapDocument);
 
-                assertNotNull(webService.getOperation(), "Operation should have been initialized");
-                webService.getOperation().setPages("1-5");
-                webService.getOperation().setEmbedFonts(true);
+                assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+                webService.getOperationParameters().setPages("1-5");
+                webService.getOperationParameters().setEmbedFonts(true);
 
-                webService.getOperation().setPdfa(new PdfaType());
-                webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-                webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-                webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+                webService.getOperationParameters().setPdfa(new PdfaType());
+                webService.getOperationParameters().getPdfa().setConvert(new PdfaType.Convert());
+                webService.getOperationParameters().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+                webService.getOperationParameters().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
                 try (SoapDocument resultDocument = webService.process()) {
                     assertNotNull(resultDocument);
@@ -112,7 +112,7 @@ public class SoapCredentialsIntegrationTest {
                 File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                 File fileOut = testResources.getTempFolder().newFile();
 
-                webService.setDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
+                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
 
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);

@@ -1,23 +1,25 @@
 package net.webpdf.wsclient.webservice.rest;
 
+import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
-import net.webpdf.wsclient.schema.operation.OperationData;
-import net.webpdf.wsclient.schema.operation.BaseToolboxType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * An instance of {@link ToolboxRestWebService} wraps a wsclient connection to the webPDF webservice endpoint
  * {@link WebServiceType#TOOLBOX}, using {@link WebServiceProtocol#REST} and expecting a {@link RestDocument}
  * as the result.
+ *
+ * @param <T_REST_DOCUMENT> The expected {@link RestDocument} type for the documents used by the webPDF server.
  */
 public class ToolboxRestWebService<T_REST_DOCUMENT extends RestDocument>
-        extends RestWebService<T_REST_DOCUMENT, List<BaseToolboxType>> {
+        extends RestWebService<OperationToolboxOperation, List<OperationBaseToolbox>, T_REST_DOCUMENT> {
 
     /**
      * Creates a {@link ToolboxRestWebService} for the given {@link RestSession}
@@ -29,38 +31,70 @@ public class ToolboxRestWebService<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
-     * Returns the {@link ToolboxRestWebService} specific {@link BaseToolboxType}, which allows setting parameters for
-     * the webservice execution.
+     * Returns the {@link ToolboxRestWebService} specific {@link OperationBaseToolbox}, which allows setting parameters
+     * for the webservice execution.
      *
-     * @return The {@link BaseToolboxType} operation parameters.
+     * @return The {@link OperationBaseToolbox} operation parameters.
      */
     @Override
-    public @NotNull List<BaseToolboxType> getOperation() {
-        return getOperationData().getToolbox();
+    public @NotNull List<OperationBaseToolbox> getOperationParameters() {
+        List<OperationBaseToolbox> toolbox = getOperationData().getToolbox();
+        if (toolbox == null) {
+            getOperationData().setToolbox(toolbox = new ArrayList<>());
+        }
+
+        return toolbox;
     }
 
     /**
-     * Sets the {@link ToolboxRestWebService} specific {@link BaseToolboxType} element, which allows setting parameters
-     * for the webservice execution.
+     * Sets the {@link ToolboxRestWebService} specific {@link OperationBaseToolbox} element, which allows setting
+     * parameters for the webservice execution.
      *
-     * @param operationData Sets the {@link BaseToolboxType} operation parameters.
+     * @param operation Sets the {@link OperationBaseToolbox} operation parameters.
      */
     @Override
-    public void setOperation(@Nullable List<BaseToolboxType> operationData) {
-        if (operationData != null && !operationData.isEmpty()) {
+    public void setOperationParameters(@Nullable List<OperationBaseToolbox> operation) {
+        if (operation != null && !operation.isEmpty()) {
+            List<OperationBaseToolbox> toolbox = getOperationData().getToolbox();
+            if (toolbox == null) {
+                getOperationData().setToolbox(new ArrayList<>());
+            }
             getOperationData().getToolbox().clear();
-            getOperationData().getToolbox().addAll(operationData);
+            getOperationData().getToolbox().addAll(operation);
         }
     }
 
     /**
-     * Initializes and prepares the execution of this {@link ToolboxRestWebService} via the given {@link OperationData}.
+     * Returns the {@link OperationPdfPassword} of the current webservice.
      *
-     * @param operation The {@link OperationData} initializing the {@link ToolboxRestWebService}.
+     * @return the {@link OperationPdfPassword} of the current webservice.
      */
     @Override
-    protected void initOperation(@NotNull OperationData operation) {
-        //DO NOTHING.
+    public @Nullable OperationPdfPassword getPassword() {
+        return getOperationData().getPassword();
+    }
+
+    /**
+     * Returns the {@link OperationBilling} of the current webservice.
+     *
+     * @return the {@link OperationBilling} of the current webservice.
+     */
+    @Override
+    public @Nullable OperationBilling getBilling() {
+        return getOperationData().getBilling();
+    }
+
+    /**
+     * Initializes and prepares the execution of this {@link ToolboxRestWebService}.
+     *
+     * @return The prepared {@link OperationToolboxOperation}.
+     */
+    @Override
+    protected @NotNull OperationToolboxOperation initOperation() {
+        OperationToolboxOperation operationData = new OperationToolboxOperation();
+        operationData.setBilling(new OperationBilling());
+        operationData.setPassword(new OperationPdfPassword());
+        return operationData;
     }
 
 }

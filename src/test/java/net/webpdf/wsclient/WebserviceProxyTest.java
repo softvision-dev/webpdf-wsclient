@@ -1,12 +1,12 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.openapi.OperationPage;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
-import net.webpdf.wsclient.schema.operation.PageType;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
@@ -54,20 +54,22 @@ public class WebserviceProxyTest {
                 UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
 
-                webService.setDocument(new RestWebServiceDocument(null));
+                webService.setSourceDocument(new RestWebServiceDocument(null));
 
                 File fileOut = testResources.getTempFolder().newFile();
 
-                assertNotNull(webService.getOperation(), "Operation should have been initialized");
-                webService.getOperation().setUrl("https://www.webpdf.de");
+                assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+                webService.getOperationParameters().setUrl("https://www.webpdf.de");
 
-                webService.getOperation().setPage(new PageType());
-                webService.getOperation().getPage().setWidth(150);
-                webService.getOperation().getPage().setHeight(200);
-                webService.getOperation().getPage().setTop(0);
-                webService.getOperation().getPage().setLeft(0);
-                webService.getOperation().getPage().setRight(0);
-                webService.getOperation().getPage().setBottom(0);
+                OperationPage page = new OperationPage();
+                page.setWidth(150);
+                page.setHeight(200);
+                page.setTop(0);
+                page.setLeft(0);
+                page.setRight(0);
+                page.setBottom(0);
+                webService.getOperationParameters().setPage(page);
+
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -99,17 +101,17 @@ public class WebserviceProxyTest {
                     ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                             WebServiceType.CONVERTER);
 
-                    webService.setDocument(soapDocument);
+                    webService.setSourceDocument(soapDocument);
 
-                    assertNotNull(webService.getOperation(),
+                    assertNotNull(webService.getOperationParameters(),
                             "Operation should have been initialized");
-                    webService.getOperation().setPages("1-5");
-                    webService.getOperation().setEmbedFonts(true);
+                    webService.getOperationParameters().setPages("1-5");
+                    webService.getOperationParameters().setEmbedFonts(true);
 
-                    webService.getOperation().setPdfa(new PdfaType());
-                    webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-                    webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-                    webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+                    webService.getOperationParameters().setPdfa(new PdfaType());
+                    webService.getOperationParameters().getPdfa().setConvert(new PdfaType.Convert());
+                    webService.getOperationParameters().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+                    webService.getOperationParameters().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
                     try (SoapDocument resultDocument = webService.process()) {
                         assertNotNull(resultDocument);
@@ -146,17 +148,17 @@ public class WebserviceProxyTest {
                     ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                             WebServiceType.CONVERTER);
 
-                    webService.setDocument(soapDocument);
+                    webService.setSourceDocument(soapDocument);
 
-                    assertNotNull(webService.getOperation(),
+                    assertNotNull(webService.getOperationParameters(),
                             "Operation should have been initialized");
-                    webService.getOperation().setPages("1-5");
-                    webService.getOperation().setEmbedFonts(true);
+                    webService.getOperationParameters().setPages("1-5");
+                    webService.getOperationParameters().setEmbedFonts(true);
 
-                    webService.getOperation().setPdfa(new PdfaType());
-                    webService.getOperation().getPdfa().setConvert(new PdfaType.Convert());
-                    webService.getOperation().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
-                    webService.getOperation().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
+                    webService.getOperationParameters().setPdfa(new PdfaType());
+                    webService.getOperationParameters().getPdfa().setConvert(new PdfaType.Convert());
+                    webService.getOperationParameters().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
+                    webService.getOperationParameters().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
                     try (SoapDocument resultDocument = webService.process()) {
                         assertNotNull(resultDocument);
@@ -187,21 +189,22 @@ public class WebserviceProxyTest {
                 UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
 
-                webService.setDocument(new RestWebServiceDocument(null));
+                webService.setSourceDocument(new RestWebServiceDocument(null));
 
                 File fileOut = testResources.getTempFolder().newFile();
 
-                assertNotNull(webService.getOperation(),
+                assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperation().setUrl("https://www.webpdf.de");
+                webService.getOperationParameters().setUrl("https://www.webpdf.de");
 
-                webService.getOperation().setPage(new PageType());
-                webService.getOperation().getPage().setWidth(150);
-                webService.getOperation().getPage().setHeight(200);
-                webService.getOperation().getPage().setTop(0);
-                webService.getOperation().getPage().setLeft(0);
-                webService.getOperation().getPage().setRight(0);
-                webService.getOperation().getPage().setBottom(0);
+                OperationPage page = new OperationPage();
+                page.setWidth(150);
+                page.setHeight(200);
+                page.setTop(0);
+                page.setLeft(0);
+                page.setRight(0);
+                page.setBottom(0);
+                webService.getOperationParameters().setPage(page);
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
