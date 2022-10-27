@@ -491,8 +491,6 @@ public class RestWebserviceIntegrationTest {
                         "UserInfo should have been initialized.");
                 assertTrue(restSession.getUser().isUser(),
                         "User should be user");
-                assertTrue(restSession.getUser().isAuthenticated(),
-                        "User should be authenticated");
                 assertFalse(restSession.getUser().isAdmin(),
                         "User should not be admin");
                 assertEquals("user", restSession.getUser().getUserName(),
@@ -513,8 +511,6 @@ public class RestWebserviceIntegrationTest {
                         "UserInfo should have been initialized.");
                 assertTrue(restSession.getUser().isUser(),
                         "User should be user");
-                assertTrue(restSession.getUser().isAuthenticated(),
-                        "User should not be authenticated");
                 assertTrue(restSession.getUser().isAdmin(),
                         "User should not be admin");
                 assertEquals("admin", restSession.getUser().getUserName(),

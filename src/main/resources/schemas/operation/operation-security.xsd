@@ -1,180 +1,257 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="SecurityType">
         <xs:annotation>
-            <xs:documentation>The security operation element can be used to encrypt and decrypt documents.</xs:documentation>
+            <xs:documentation>
+                <p>The security operation element can be used to encrypt and decrypt documents.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:choice>
-                    <xs:element name="decrypt" type="tns:DecryptType" minOccurs="0" />
-                    <xs:element name="encrypt" type="tns:EncryptType" minOccurs="0" />
-                    <xs:element name="encryptCertificate" type="tns:EncryptCertificateType" minOccurs="0" />
+                    <xs:element name="decrypt" type="tns:DecryptType" minOccurs="0"/>
+                    <xs:element name="encrypt" type="tns:EncryptType" minOccurs="0"/>
+                    <xs:element name="encryptCertificate" type="tns:EncryptCertificateType" minOccurs="0"/>
                 </xs:choice>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="EncryptType">
         <xs:annotation>
-            <xs:documentation>These parameters can be used to set encryption for a PDF document.</xs:documentation>
+            <xs:documentation>
+                <p>These parameters can be used to set encryption for a PDF document.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:choice>
-            <xs:element name="password" minOccurs="0" maxOccurs="1">
+            <xs:element name="password" minOccurs="0">
                 <xs:annotation>
-                    <xs:documentation>Used to set the password for encryption and the encryption key length.</xs:documentation>
+                    <xs:documentation>
+                        <p>Used to set the password for encryption and the encryption key length.</p>
+                    </xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
                     <xs:attribute name="encryptionKey" default="RC4_128" type="tns:PdfEncryptionKeyType">
                         <xs:annotation>
-                            <xs:documentation>Sets the encryption level for the document.
-- RC4_40 = 40-bit RC4
-- RC4_128 = 128-bit RC4
-- AES_128 = 128-bit AES
-- AES_256 = 256-bit AES
-
-**important:** Please note that the option “256-bit AES” only works if the "Java Cryptography Extension (JCE)" has been enabled with "Unlimited Strength" in the JVM. You can obtain the modified "Policy Files" (along with instructions for installation) from the Oracle website:
-Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 7 Download:
-http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html</xs:documentation>
+                            <xs:documentation>
+                                <p>Sets the encryption level for the document.
+                                    <ul>
+                                        <li>RC4_40 = 40-bit RC4</li>
+                                        <li>RC4_128 = 128-bit RC4</li>
+                                        <li>AES_128 = 128-bit AES</li>
+                                        <li>AES_256 = 256-bit AES</li>
+                                    </ul>
+                                </p>
+                                <p>
+                                    <b>Important:</b>
+                                    Please note that the option "256-bit AES" only works if the "Java Cryptography Extension (JCE)" has been enabled with "Unlimited Strength" in the JVM. You can obtain the modified "Policy Files" (along with instructions for installation) from the Oracle website:
+                                    Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 7 Download:
+                                    http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
+                                </p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                     <xs:attribute name="permission" default="" type="xs:string">
                         <xs:annotation>
-                            <xs:documentation>Used to set the password that will be requested if the file is opened for editing (e.g., when removing pages).  The password is required to enable the individual access permissions and must not be blank if the access permissions are to be used.
+                            <xs:documentation>
+                                <p>Used to set the password that will be requested if the file is opened for editing (e.g., when removing pages). The password is required to enable the individual access permissions and must not be blank if the access permissions are to be used.
 
-**important:** Please note that the password and the associated access permissions will only provide protection if an appropriate display program for PDF documents takes these settings into account.</xs:documentation>
+                                </p>
+                                <p>
+                                    <b>Important:</b>
+                                    Please note that the password and the associated access permissions will only provide protection if an appropriate display program for PDF documents takes these settings into account.
+                                </p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                     <xs:attribute name="open" default="" type="xs:string">
                         <xs:annotation>
-                            <xs:documentation>Used to set the password that will be requested if the PDF document is opened for reading.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to set the password that will be requested if the PDF document is opened for reading.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                 </xs:complexType>
             </xs:element>
         </xs:choice>
-        <xs:attributeGroup ref="tns:securityFlags" />
+        <xs:attributeGroup ref="tns:securityFlags"/>
         <xs:attribute name="contentEncryption" default="encryptEverything" type="tns:PdfContentEncryptionType">
             <xs:annotation>
-                <xs:documentation>Specifies whether certain contents should be treated differently than others during encryption.
-- encryptEverything = All contents of the document are encrypted without distinction (if provided by the standard).
-- exposeMetadata = The document's metadata is left unencrypted to make it discoverable by processing programs. (Has an effect only for 128 bit and 256 bit AES).</xs:documentation>
+                <xs:documentation>
+                    <p>Specifies whether certain contents should be treated differently than others during encryption.
+                        <ul>
+                            <li>encryptEverything = All contents of the document are encrypted without distinction (if provided by the standard).</li>
+                            <li>exposeMetadata = The document's metadata is left unencrypted to make it discoverable by processing programs. (Has an effect only for 128 bit and 256 bit AES).</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="PdfEncryptionKeyType">
         <xs:annotation>
-            <xs:documentation>Sets the encryption level for the document.
-- RC4_40 = 40-bit RC4
-- RC4_128 = 128-bit RC4
-- AES_128 = 128-bit AES
-- AES_256 = 256-bit AES
-
-**important:** Please note that the option “256-bit AES” only works if the "Java Cryptography Extension (JCE)" has been enabled with "Unlimited Strength" in the JVM. You can obtain the modified "Policy Files" (along with instructions for installation) from the Oracle website:
-Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 7 Download:
-http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html</xs:documentation>
+            <xs:documentation>
+                <p>Sets the encryption level for the document.
+                    <ul>
+                        <li>RC4_40 = 40-bit RC4</li>
+                        <li>RC4_128 = 128-bit RC4</li>
+                        <li>AES_128 = 128-bit AES</li>
+                        <li>AES_256 = 256-bit AES</li>
+                    </ul>
+                </p>
+                <p>
+                    <b>Important:</b>
+                    Please note that the option "256-bit AES" only works if the "Java Cryptography Extension (JCE)" has been enabled with "Unlimited Strength" in the JVM. You can obtain the modified "Policy Files" (along with instructions for installation) from the Oracle website:
+                    Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 7 Download:
+                    http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="RC4_40" />
-            <xs:enumeration value="RC4_128" />
-            <xs:enumeration value="AES_128" />
-            <xs:enumeration value="AES_256" />
+            <xs:enumeration value="RC4_40"/>
+            <xs:enumeration value="RC4_128"/>
+            <xs:enumeration value="AES_128"/>
+            <xs:enumeration value="AES_256"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:attributeGroup name="securityFlags">
         <xs:attribute name="canAssemble" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If "true," the document can be rearranged (e.g., pages can be deleted, inserted, and rotated).</xs:documentation>
+                <xs:documentation>
+                    <p>If "true," the document can be rearranged (e.g., pages can be deleted, inserted, and rotated).</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="canExtractContent" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If "true," content can be extracted (copied) from the document.</xs:documentation>
+                <xs:documentation>
+                    <p>If "true," content can be extracted (copied) from the document.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="canExtractForAccessibility" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If "true," content can be extracted (copied) for accessibility purposes.</xs:documentation>
+                <xs:documentation>
+                    <p>If "true," content can be extracted (copied) for accessibility purposes.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="canFillInForm" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If "true," form fields can be filled out and the document can be signed.</xs:documentation>
+                <xs:documentation>
+                    <p>If "true," form fields can be filled out and the document can be signed.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="canModify" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If "true," changes to the document are permitted.</xs:documentation>
+                <xs:documentation>
+                    <p>If "true," changes to the document are permitted.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="canModifyAnnotations" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If "true," comments can be added to the document and deleted from the document.</xs:documentation>
+                <xs:documentation>
+                    <p>If "true," comments can be added to the document and deleted from the document.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="canPrint" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If "true," the document can be printed.</xs:documentation>
+                <xs:documentation>
+                    <p>If "true," the document can be printed.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="canPrintHighRes" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If "true," the document can be printed at high resolution levels.</xs:documentation>
+                <xs:documentation>
+                    <p>If "true," the document can be printed at high resolution levels.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:attributeGroup>
     <xs:complexType name="DecryptType">
         <xs:annotation>
-            <xs:documentation>The document will be decrypted when the decrypt element and the required password element are used.</xs:documentation>
+            <xs:documentation>
+                <p>The document will be decrypted when the decrypt element and the required password element are used.</p>
+            </xs:documentation>
         </xs:annotation>
     </xs:complexType>
     <xs:complexType name="RecipientType">
         <xs:annotation>
-            <xs:documentation>Defines a rights recipient (Recipient) for the document to be encrypted. Recipients are defined on the basis of their rights and a certificate and are identified and distinguished on the basis of the certificate. Only with the associated "PrivateKey" and a certificate listed here can a user subsequently decrypt and open the document again.
-Exactly one certificate is expected for encryption for each rights recipient. However, it is possible to define multiple rights recipients - each with their own certificate.</xs:documentation>
+            <xs:documentation>
+                <p>Defines a rights recipient (Recipient) for the document to be encrypted. Recipients are defined on the basis of their rights and a certificate and are identified and distinguished on the basis of the certificate. Only with the associated "PrivateKey" and a certificate listed here can a user subsequently decrypt and open the document again.
+                    Exactly one certificate is expected for encryption for each rights recipient. However, it is possible to define multiple rights recipients
+                    <ul>
+                        <li>each with their own certificate.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:all>
-            <xs:element name="certificate" type="tns:CertificateFileDataType" />
+            <xs:element name="certificate" type="tns:CertificateFileDataType"/>
         </xs:all>
-        <xs:attributeGroup ref="tns:securityFlags" />
+        <xs:attributeGroup ref="tns:securityFlags"/>
     </xs:complexType>
     <xs:complexType name="EncryptCertificateType">
         <xs:annotation>
-            <xs:documentation>These parameters can be used to set the asymmetric encryption of a PDF document.</xs:documentation>
+            <xs:documentation>
+                <p>These parameters can be used to set the asymmetric encryption of a PDF document.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="recipient" type="tns:RecipientType" maxOccurs="unbounded" />
+            <xs:element name="recipient" type="tns:RecipientType" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="encryptionKey" default="RC4_128" type="tns:PdfEncryptionKeyType">
             <xs:annotation>
-                <xs:documentation>Sets the encryption level for the document.
-- RC4_40 = 40-bit RC4
-- RC4_128 = 128-bit RC4
-- AES_128 = 128-bit AES
-- AES_256 = 256-bit AES
-
-**important:** Please note that the option “256-bit AES” only works if the "Java Cryptography Extension (JCE)" has been enabled with "Unlimited Strength" in the JVM. You can obtain the modified "Policy Files" (along with instructions for installation) from the Oracle website:
-Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 7 Download:
-http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html</xs:documentation>
+                <xs:documentation>
+                    <p>Sets the encryption level for the document.
+                        <ul>
+                            <li>RC4_40 = 40-bit RC4</li>
+                            <li>RC4_128 = 128-bit RC4</li>
+                            <li>AES_128 = 128-bit AES</li>
+                            <li>AES_256 = 256-bit AES</li>
+                        </ul>
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        Please note that the option "256-bit AES" only works if the "Java Cryptography Extension (JCE)" has been enabled with "Unlimited Strength" in the JVM. You can obtain the modified "Policy Files" (along with instructions for installation) from the Oracle website:
+                        Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files 7 Download:
+                        http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
+                    </p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="contentEncryption" default="encryptEverything" type="tns:PdfContentEncryptionType">
             <xs:annotation>
-                <xs:documentation>Specifies whether certain contents should be treated differently than others during encryption.
-- encryptEverything = All contents of the document are encrypted without distinction (if provided by the standard).
-- exposeMetadata = The document's metadata is left unencrypted to make it discoverable by processing programs. (Has an effect only for 128 bit and 256 bit AES).</xs:documentation>
+                <xs:documentation>
+                    <p>Specifies whether certain contents should be treated differently than others during encryption.
+                        <ul>
+                            <li>encryptEverything = All contents of the document are encrypted without distinction (if provided by the standard).</li>
+                            <li>exposeMetadata = The document's metadata is left unencrypted to make it discoverable by processing programs. (Has an effect only for 128 bit and 256 bit AES).</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="PdfContentEncryptionType">
         <xs:annotation>
-            <xs:documentation>Specifies whether certain contents should be treated differently than others during encryption.
-- encryptEverything = All contents of the document are encrypted without distinction (if provided by the standard).
-- exposeMetadata = The document's metadata is left unencrypted to make it discoverable by processing programs. (Has an effect only for 128 bit and 256 bit AES).</xs:documentation>
+            <xs:documentation>
+                <p>Specifies whether certain contents should be treated differently than others during encryption.
+                    <ul>
+                        <li>encryptEverything = All contents of the document are encrypted without distinction (if provided by the standard).</li>
+                        <li>exposeMetadata = The document's metadata is left unencrypted to make it discoverable by processing programs. (Has an effect only for 128 bit and 256 bit AES).</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="encryptEverything" />
-            <xs:enumeration value="exposeMetadata" />
+            <xs:enumeration value="encryptEverything"/>
+            <xs:enumeration value="exposeMetadata"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

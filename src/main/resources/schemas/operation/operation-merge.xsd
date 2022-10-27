@@ -1,61 +1,97 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="MergeType">
         <xs:annotation>
-            <xs:documentation>The merge operation element can be used to merge documents.
-
-**important:** When a "merge" operation is performed, the pages and structural information (such as outlines and tag) will be merged. This can result in name conflicts that can prevent a success. If you would rather like to ignore such conflicts use the matching "ignoreConflicts" parameter.
-
-**important:** Merging documents could also fail because of signatures or a used PDF/A format. As - by definition - altering PDF/A documents and signed documents would result in an invalidation of such documents/signatures.</xs:documentation>
+            <xs:documentation>
+                <p>The merge operation element can be used to merge documents.
+                </p>
+                <p>
+                    <b>Important:</b>
+                    When a "merge" operation is performed, the pages and structural information (such as outlines and tag) will be merged. This can result in name conflicts that can prevent a success. If you would rather like to ignore such conflicts use the matching "ignoreConflicts" parameter.
+                </p>
+                <p>
+                    <b>Important:</b>
+                    Merging documents could also fail because of signatures or a used PDF/A format. As
+                    <ul>
+                        <li>by definition - altering PDF/A documents and signed documents would result in an invalidation of such documents/signatures.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:all>
-                    <xs:element name="data" type="tns:MergeFileDataType" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="data" type="tns:MergeFileDataType"/>
                 </xs:all>
                 <xs:attribute name="mode" default="atTheEnd" type="tns:MergeModeType">
                     <xs:annotation>
-                        <xs:documentation>Defines the mode used to merge the PDF documents. The PDF document passed with the "data" element will be appended to the current PDF document or inserted at a specific point.
-The following modes define the position where the documents will be inserted. Instead of a single base document, the "portfolio" mode always expects a ZIP archive. The elements in this archive will be added, all with identical permissions, to the resulting portfolio (the data element is not required at all for "portfolio”).
-- atTheEnd = At the end of the PDF document
-- atTheBeginning = At the beginning of the PDF document
-- afterPage = After a page (please refer to the "page" attribute) in the PDF document
-- beforePage = Before a page (please refer to the "page" attribute) in the PDF document</xs:documentation>
+                        <xs:documentation>
+                            <p>Defines the mode used to merge the PDF documents. The PDF document passed with the "data" element will be appended to the current PDF document or inserted at a specific point.</p>
+                            <p>The following modes define the position where the documents will be inserted. Instead of a single base document, the "portfolio" mode always expects a ZIP archive. The elements in this archive will be added, all with identical permissions, to the resulting portfolio (the data element is not required at all for "portfolio").
+                                <ul>
+                                    <li>atTheEnd = At the end of the PDF document</li>
+                                    <li>atTheBeginning = At the beginning of the PDF document</li>
+                                    <li>afterPage = After a page (please refer to the "page" attribute) in the PDF document</li>
+                                    <li>beforePage = Before a page (please refer to the "page" attribute) in the PDF document</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
-                        <xs:documentation>Used to define the page number where the PDF document should be inserted.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to define the page number where the PDF document should be inserted.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="sourceIsZip" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this parameter is enabled, a ZIP archive - containing the documents to merge - will be expected as the webservice´s source document. Also - in that case, the "data" parameter is not required. The first element in the ZIP archive will be used as a base document to which all following entries will be appended.
-
-**important:** The usage of this parameter is expected to be used for the "portfolio" mode. All the documents in the ZIP archive will be added to the portfolio receiving identical permission settings.</xs:documentation>
+                        <xs:documentation>
+                            <p>If this parameter is enabled, a ZIP archive
+                                <ul>
+                                    <li>containing the documents to merge - will be expected as the webservice's source document. Also - in that case, the "data" parameter is not required. The first element in the ZIP archive will be used as a base document to which all following entries will be appended.</li>
+                                </ul>
+                                <b>Important:</b>
+                                The usage of this parameter is expected to be used for the "portfolio" mode. All the documents in the ZIP archive will be added to the portfolio receiving identical permission settings.
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="outlineName" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>Used to define the base path that should be used for outline nodes of the source document. This parameter can contain a slash separated path and should ideally end with the name of the document (“A/B/filename"). If this parameter is not set, all outlines will be appended to the root outline node.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to define the base path that should be used for outline nodes of the source document. This parameter can contain a slash separated path and should ideally end with the name of the document ("A/B/filename"). If this parameter is not set, all outlines will be appended to the root outline node.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="resetMetadata" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If you enable this parameter, the source document's metadata will be removed and replaced with default values.</xs:documentation>
+                        <xs:documentation>
+                            <p>If you enable this parameter, the source document's metadata will be removed and replaced with default values.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="removeStaticXFA" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this parameter is enabled, all entries related to static XFA documents and all connected extended permission settings will be removed from the document. Using this parameter it is possible to merge static XFA documents with other documents, which is normally forbidden by default.
-
-**important:** Although this parameter allows the merging of static XFA documents, this will not create a valid static XFA document as a result. All structures qualifying a document as a static XFA document will be removed. The resulting document will contain a pure Acroform and will not be recognized as a XFA form by applications for XFA creation/editing. Also, all extended access- and write permissions will be removed (That normally can expected to be found in a static XFA document).</xs:documentation>
+                        <xs:documentation>
+                            <p>If this parameter is enabled, all entries related to static XFA documents and all connected extended permission settings will be removed from the document. Using this parameter it is possible to merge static XFA documents with other documents, which is normally forbidden by default.
+                            </p>
+                            <p>
+                                <b>Important:</b>
+                                Although this parameter allows the merging of static XFA documents, this will not create a valid static XFA document as a result. All structures qualifying a document as a static XFA document will be removed. The resulting document will contain a pure Acroform and will not be recognized as a XFA form by applications for XFA creation/editing. Also, all extended access
+                                <ul>
+                                    <li>and write permissions will be removed (That normally can expected to be found in a static XFA document).</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -63,73 +99,101 @@ The following modes define the position where the documents will be inserted. In
     </xs:complexType>
     <xs:simpleType name="MergeModeType">
         <xs:annotation>
-            <xs:documentation>Defines the mode used to merge the PDF documents. The PDF document passed with the "data" element will be appended to the current PDF document or inserted at a specific point.
-The following modes define the position where the documents will be inserted. Instead of a single base document, the "portfolio" mode always expects a ZIP archive. The elements in this archive will be added, all with identical permissions, to the resulting portfolio (the data element is not required at all for "portfolio”).
-- atTheEnd = At the end of the PDF document
-- atTheBeginning = At the beginning of the PDF document
-- afterPage = After a page (please refer to the "page" attribute) in the PDF document
-- beforePage = Before a page (please refer to the "page" attribute) in the PDF document</xs:documentation>
+            <xs:documentation>
+                <p>Defines the mode used to merge the PDF documents. The PDF document passed with the "data" element will be appended to the current PDF document or inserted at a specific point.
+                    The following modes define the position where the documents will be inserted. Instead of a single base document, the "portfolio" mode always expects a ZIP archive. The elements in this archive will be added, all with identical permissions, to the resulting portfolio (the data element is not required at all for "portfolio").
+                    <ul>
+                        <li>atTheEnd = At the end of the PDF document</li>
+                        <li>atTheBeginning = At the beginning of the PDF document</li>
+                        <li>afterPage = After a page (please refer to the "page" attribute) in the PDF document</li>
+                        <li>beforePage = Before a page (please refer to the "page" attribute) in the PDF document</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="atTheEnd" />
-            <xs:enumeration value="atTheBeginning" />
-            <xs:enumeration value="afterPage" />
-            <xs:enumeration value="beforePage" />
+            <xs:enumeration value="atTheEnd"/>
+            <xs:enumeration value="atTheBeginning"/>
+            <xs:enumeration value="afterPage"/>
+            <xs:enumeration value="beforePage"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="MergeFileDataType">
         <xs:annotation>
-            <xs:documentation>Contains the BASE64 encoded file that should be inserted or appended. The "format" attribute is used to define whether the file is a single PDF document, a ZIP file containing multiple PDF documents or a list of documents references by ID.
+            <xs:documentation>
+                <p>Contains the BASE64 encoded file that should be inserted or appended. The "format" attribute is used to define whether the file is a single PDF document, a ZIP file containing multiple PDF documents or a list of documents references by ID.
 
-If a ZIP archive is passed as the source document of the web service request, this parameter can be omitted. The parameter "sourceIsZip" must be set to "true" in that case.</xs:documentation>
+                    If a ZIP archive is passed as the source document of the web service request, this parameter can be omitted. The parameter "sourceIsZip" must be set to "true" in that case.
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
                 <xs:attribute name="format" default="pdf">
                     <xs:annotation>
-                        <xs:documentation>Specifies the format used to pass the documents to be used for merging.
-- pdf = A single PDF file
-- zip = It is a ZIP file that contains one or more PDF documents.
-- id = It is a semicolon separated list of document ID's referencing documents already on the server (REST API only).
-
-**important:** The "id" parameter can be used only with REST API. Each document that has been uploaded to the server via REST API has a unique ID. This ID can be used to reference the document. In the content of the "data" element, the list is passed as BASE64 content.
-Example for two documents:
-List of documents: 3bde686a47284a2da3bfce62bd6bb8bd;f5c2b314d0c74fd0878d1f4ca310b0ad
-BASE64 encoded: M2JkZTY4NmE0NzI4NGEyZGEzYmZjZTYyYmQ2YmI4YmQ7ZjVjMmIzMTRkMGM3NGZkMDg3OGQxZjRjYTMxMGIwYWQ=</xs:documentation>
+                        <xs:documentation>
+                            <p>Specifies the format used to pass the documents to be used for merging.
+                                <ul>
+                                    <li>pdf = A single PDF file</li>
+                                    <li>zip = It is a ZIP file that contains one or more PDF documents.</li>
+                                    <li>id = It is a semicolon separated list of document ID's referencing documents already on the server (REST API only).</li>
+                                </ul>
+                            </p>
+                            <p>
+                                <b>Important:</b>
+                                The "id" parameter can be used only with REST API. Each document that has been uploaded to the server via REST API has a unique ID. This ID can be used to reference the document. In the content of the "data" element, the list is passed as BASE64 content.
+                                Example for two documents:
+                                <ul>
+                                    <li>List of documents: 3bde686a47284a2da3bfce62bd6bb8bd;f5c2b314d0c74fd0878d1f4ca310b0ad</li>
+                                    <li>BASE64 encoded: M2JkZTY4NmE0NzI4NGEyZGEzYmZjZTYyYmQ2YmI4YmQ7ZjVjMmIzMTRkMGM3NGZkMDg3OGQxZjRjYTMxMGIwYWQ=</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="tns:FileDataFormatType">
-                            <xs:enumeration value="id" />
-                            <xs:enumeration value="pdf" />
-                            <xs:enumeration value="zip" />
+                            <xs:enumeration value="id"/>
+                            <xs:enumeration value="pdf"/>
+                            <xs:enumeration value="zip"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="outlineName" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>Used to define the base path that should be used for outline nodes of the appended document. This parameter can contain a slash separated path and should ideally end with the name of the document (“A/B/filename"). If this parameter is not set, all outlines will be appended to the root outline node.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to define the base path that should be used for outline nodes of the appended document. This parameter can contain a slash separated path and should ideally end with the name of the document ("A/B/filename"). If this parameter is not set, all outlines will be appended to the root outline node.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attributeGroup ref="tns:FileDataGroup" />
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
     <xs:simpleType name="FileDataFormatType">
         <xs:annotation>
-            <xs:documentation>Specifies the format how to pass the documents to be used for merging.
-- pdf = A single PDF file
-- zip = It is a ZIP file that contains one or more PDF documents.
-- id = It is a semicolon separated list of document ID's referencing documents already on the server (REST API only).
-
-**important:** The "id" parameter can be used only with REST API. Each document that has been uploaded to the server via REST API has a unique ID. This ID can be used to reference the document. In the content of the "data" element, the list is passed as BASE64 content.
-Example for two documents:
-List of documents: 3bde686a47284a2da3bfce62bd6bb8bd;f5c2b314d0c74fd0878d1f4ca310b0ad
-BASE64 encoded: M2JkZTY4NmE0NzI4NGEyZGEzYmZjZTYyYmQ2YmI4YmQ7ZjVjMmIzMTRkMGM3NGZkMDg3OGQxZjRjYTMxMGIwYWQ=</xs:documentation>
+            <xs:documentation>
+                <p>Specifies the format how to pass the documents to be used for merging.
+                    <ul>
+                        <li>pdf = A single PDF file</li>
+                        <li>zip = It is a ZIP file that contains one or more PDF documents.</li>
+                        <li>id = It is a semicolon separated list of document ID's referencing documents already on the server (REST API only).</li>
+                    </ul>
+                </p>
+                <p>
+                    <b>Important:</b>
+                    The "id" parameter can be used only with REST API. Each document that has been uploaded to the server via REST API has a unique ID. This ID can be used to reference the document. In the content of the "data" element, the list is passed as BASE64 content.
+                    Example for two documents:
+                    <ul>
+                        <li>List of documents: 3bde686a47284a2da3bfce62bd6bb8bd;f5c2b314d0c74fd0878d1f4ca310b0ad</li>
+                        <li>BASE64 encoded: M2JkZTY4NmE0NzI4NGEyZGEzYmZjZTYyYmQ2YmI4YmQ7ZjVjMmIzMTRkMGM3NGZkMDg3OGQxZjRjYTMxMGIwYWQ=</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="pdf" />
-            <xs:enumeration value="zip" />
-            <xs:enumeration value="id" />
+            <xs:enumeration value="pdf"/>
+            <xs:enumeration value="zip"/>
+            <xs:enumeration value="id"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

@@ -1,126 +1,165 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="AnnotationType">
         <xs:annotation>
-            <xs:documentation>The annotation operation can be used to remove, edit or add markup annotations of/to a document.</xs:documentation>
+            <xs:documentation>
+                <p>The annotation operation can be used to remove, edit or add markup annotations of/to a document.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:choice>
-                    <xs:element id="annotationAddId" name="add" minOccurs="0" maxOccurs="1">
+                    <xs:element id="annotationAddId" name="add" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>The add element can be used to define one or multiple annotations, that shall be added to the document.</xs:documentation>
+                            <xs:documentation>
+                                <p>The add element can be used to define one or multiple annotations, that shall be added to the document.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType id="annotationChoiceId">
-                            <xs:choice minOccurs="1" maxOccurs="unbounded">
-                                <xs:element name="text" type="tns:TextAnnotationType" />
-                                <xs:element name="markup" type="tns:MarkupAnnotationType" />
-                                <xs:element name="redact" type="tns:RedactAnnotationType" />
-                                <xs:element name="freetext" type="tns:FreeTextAnnotationType" />
-                                <xs:element name="rubberstamp" type="tns:RubberStampAnnotationType" />
-                                <xs:element name="circle" type="tns:CircleAnnotationType" />
-                                <xs:element name="square" type="tns:SquareAnnotationType" />
-                                <xs:element name="line" type="tns:LineAnnotationType" />
+                            <xs:choice maxOccurs="unbounded">
+                                <xs:element name="text" type="tns:TextAnnotationType"/>
+                                <xs:element name="markup" type="tns:MarkupAnnotationType"/>
+                                <xs:element name="redact" type="tns:RedactAnnotationType"/>
+                                <xs:element name="freetext" type="tns:FreeTextAnnotationType"/>
+                                <xs:element name="rubberstamp" type="tns:RubberStampAnnotationType"/>
+                                <xs:element name="circle" type="tns:CircleAnnotationType"/>
+                                <xs:element name="square" type="tns:SquareAnnotationType"/>
+                                <xs:element name="line" type="tns:LineAnnotationType"/>
                             </xs:choice>
                         </xs:complexType>
                     </xs:element>
-                    <xs:element name="remove" minOccurs="0" maxOccurs="1">
+                    <xs:element name="remove" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>Used to select annotations for removal.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to select annotations for removal.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
                             <xs:all>
-                                <xs:element name="selection" minOccurs="1" maxOccurs="1">
+                                <xs:element name="selection">
                                     <xs:annotation>
-                                        <xs:documentation>Selects specific annotations for removal.</xs:documentation>
+                                        <xs:documentation>
+                                            <p>Selects specific annotations for removal.</p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                     <xs:complexType>
                                         <xs:choice minOccurs="0" maxOccurs="unbounded">
-                                            <xs:element name="select" type="tns:SelectionAnnotationType" />
+                                            <xs:element name="select" type="tns:SelectionAnnotationType"/>
                                         </xs:choice>
                                     </xs:complexType>
                                 </xs:element>
                             </xs:all>
                         </xs:complexType>
                     </xs:element>
-                    <xs:element id="annotationEditID" name="edit" minOccurs="0" maxOccurs="1">
+                    <xs:element id="annotationEditID" name="edit" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>Used to change properties of selected, already existing annotations.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to change properties of selected, already existing annotations.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
                             <xs:all>
-                                <xs:element name="selection" minOccurs="1" maxOccurs="1">
+                                <xs:element name="selection">
                                     <xs:annotation>
-                                        <xs:documentation>Selects the annotations, that shall be edited.</xs:documentation>
+                                        <xs:documentation>
+                                            <p>Selects the annotations, that shall be edited.</p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                     <xs:complexType>
                                         <xs:choice minOccurs="0" maxOccurs="unbounded">
-                                            <xs:element name="select" type="tns:SelectionAnnotationType" />
+                                            <xs:element name="select" type="tns:SelectionAnnotationType"/>
                                         </xs:choice>
                                     </xs:complexType>
                                 </xs:element>
-                                <xs:element name="text" type="tns:TextAnnotationType" minOccurs="0" maxOccurs="1" />
-                                <xs:element name="markup" type="tns:MarkupAnnotationType" minOccurs="0" maxOccurs="1" />
-                                <xs:element name="redact" type="tns:RedactAnnotationType" minOccurs="0" maxOccurs="1" />
-                                <xs:element name="freetext" type="tns:FreeTextAnnotationType" minOccurs="0" maxOccurs="1" />
-                                <xs:element name="rubberstamp" type="tns:RubberStampAnnotationType" minOccurs="0" maxOccurs="1" />
-                                <xs:element name="circle" type="tns:CircleAnnotationType" minOccurs="0" maxOccurs="1" />
-                                <xs:element name="square" type="tns:SquareAnnotationType" minOccurs="0" maxOccurs="1" />
-                                <xs:element name="line" type="tns:LineAnnotationType" minOccurs="0" maxOccurs="1" />
+                                <xs:element name="text" type="tns:TextAnnotationType" minOccurs="0"/>
+                                <xs:element name="markup" type="tns:MarkupAnnotationType" minOccurs="0"/>
+                                <xs:element name="redact" type="tns:RedactAnnotationType" minOccurs="0"/>
+                                <xs:element name="freetext" type="tns:FreeTextAnnotationType" minOccurs="0"/>
+                                <xs:element name="rubberstamp" type="tns:RubberStampAnnotationType" minOccurs="0"/>
+                                <xs:element name="circle" type="tns:CircleAnnotationType" minOccurs="0"/>
+                                <xs:element name="square" type="tns:SquareAnnotationType" minOccurs="0"/>
+                                <xs:element name="line" type="tns:LineAnnotationType" minOccurs="0"/>
                             </xs:all>
                         </xs:complexType>
                     </xs:element>
-                    <xs:element name="clear" minOccurs="0" maxOccurs="1">
+                    <xs:element name="clear" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>Used to remove the annotations of the selected pages.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to remove the annotations of the selected pages.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
                             <xs:attribute name="pages" default="" type="xs:string">
                                 <xs:annotation>
-                                    <xs:documentation>Defines which page(s) annotations shall be removed from. The page number can be an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9"). To specify "all pages," use an asterisk ("*").</xs:documentation>
+                                    <xs:documentation>
+                                        <p>Defines which page(s) annotations shall be removed from. The page number can be an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9"). To specify "all pages," use an asterisk ("*").</p>
+                                    </xs:documentation>
                                 </xs:annotation>
                             </xs:attribute>
                             <xs:attribute name="flatten" default="false" type="xs:boolean">
                                 <xs:annotation>
-                                    <xs:documentation>Set to true to flatten annotations of the selected pages.
-
-**important:** flattening means, the interactive annotation objects will be removed and only their visual representation will remain in the page content of the resulting document.</xs:documentation>
+                                    <xs:documentation>
+                                        <p>Set to true to flatten annotations of the selected pages.</p>
+                                        <p>
+                                            <b>Important:</b>
+                                            flattening means, the interactive annotation objects will be removed and only their visual representation will remain in the page content of the resulting document.
+                                        </p>
+                                    </xs:documentation>
                                 </xs:annotation>
                             </xs:attribute>
                         </xs:complexType>
                     </xs:element>
-                    <xs:element name="comment" minOccurs="0" maxOccurs="1">
+                    <xs:element name="comment" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>Used to add/edit comment/replies to and of existing annotations.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to add/edit comment/replies to and of existing annotations.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
-                            <xs:choice minOccurs="0" maxOccurs="1">
+                            <xs:choice minOccurs="0">
                                 <xs:element id="commentAddID" name="add">
                                     <xs:annotation>
-                                        <xs:documentation>Used to add comments to existing annotations.
+                                        <xs:documentation>
+                                            <p>Used to add comments to existing annotations.
 
-**important:** All of the following operations will add a (hidden) TextAnnotation, that serves as a container for the comment/reply.
+                                            </p>
+                                            <p>
+                                                <b>Important:</b>
+                                                All of the following operations will add a (hidden) TextAnnotation, that serves as a container for the comment/reply.
 
-**important:** Comment/Reply annotations themselves may be selected as targets for further replies/comments.</xs:documentation>
+                                            </p>
+                                            <p>
+                                                <b>Important:</b>
+                                                Comment/Reply annotations themselves may be selected as targets for further replies/comments.
+                                            </p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                     <xs:complexType>
-                                        <xs:choice minOccurs="1" maxOccurs="unbounded">
-                                            <xs:element name="replyTo" type="tns:ReplyToAnnotationType" />
-                                            <xs:element name="changeAnnotationState" type="tns:ReplyStateAnnotationType" />
-                                            <xs:element name="markAnnotation" type="tns:MarkedStateAnnotationType" />
+                                        <xs:choice maxOccurs="unbounded">
+                                            <xs:element name="replyTo" type="tns:ReplyToAnnotationType"/>
+                                            <xs:element name="changeAnnotationState"
+                                                        type="tns:ReplyStateAnnotationType"/>
+                                            <xs:element name="markAnnotation" type="tns:MarkedStateAnnotationType"/>
                                         </xs:choice>
                                     </xs:complexType>
                                 </xs:element>
                                 <xs:element id="commentEditID" name="edit">
                                     <xs:annotation>
-                                        <xs:documentation>Used to edit existing comments.
+                                        <xs:documentation>
+                                            <p>Used to edit existing comments.
 
-**important:** You may only change the textual contents of replyTo comments. Comments must always be placed on the same page, as the annotation they reply to. To change their position, move the annotation that is replied to instead.</xs:documentation>
+                                            </p>
+                                            <p>
+                                                <b>Important:</b>
+                                                You may only change the textual contents of replyTo comments. Comments must always be placed on the same page, as the annotation they reply to. To change their position, move the annotation that is replied to instead.
+                                            </p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                     <xs:complexType>
-                                        <xs:choice minOccurs="1" maxOccurs="unbounded">
-                                            <xs:element name="replyTo" type="tns:ReplyToAnnotationEditType" />
+                                        <xs:choice maxOccurs="unbounded">
+                                            <xs:element name="replyTo" type="tns:ReplyToAnnotationEditType"/>
                                         </xs:choice>
                                     </xs:complexType>
                                 </xs:element>
@@ -134,215 +173,293 @@
     <xs:attributeGroup name="FlagsAnnotationGroup">
         <xs:attribute name="locked" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If this value is set to true, the annotation will be locked so that no changes can be made to it.</xs:documentation>
+                <xs:documentation>
+                    <p>If this value is set to true, the annotation will be locked so that no changes can be made to it.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="printable" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If this value is set to true, the annotation will be included when the page is printed out.</xs:documentation>
+                <xs:documentation>
+                    <p>If this value is set to true, the annotation will be included when the page is printed out.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="rotatable" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If this value is set to true, the annotation shall be rotatable according to the displayed page rotation.</xs:documentation>
+                <xs:documentation>
+                    <p>If this value is set to true, the annotation shall be rotatable according to the displayed page rotation.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="viewable" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If this value is set to true, the annotation will be shown on the document’s page.</xs:documentation>
+                <xs:documentation>
+                    <p>If this value is set to true, the annotation will be shown on the document's page.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="writable" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If this value is set to true, it will be possible to change the annotation’s contents later on.</xs:documentation>
+                <xs:documentation>
+                    <p>If this value is set to true, it will be possible to change the annotation's contents later on.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="zoomable" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If this value is set to true, the annotation will adjust its own zoom factor as required for the page in order to always be clearly readable / recognizable.</xs:documentation>
+                <xs:documentation>
+                    <p>If this value is set to true, the annotation will adjust its own zoom factor as required for the page in order to always be clearly readable / recognizable.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="invisible" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If this value is set to true, the annotation will be visible on the page only when printed, and provided it is a PDF standard annotation.</xs:documentation>
+                <xs:documentation>
+                    <p>If this value is set to true, the annotation will be visible on the page only when printed, and provided it is a PDF standard annotation.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="hidden" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>If this value is set to true, the annotation will not be shown on the page and will not be printed either.</xs:documentation>
+                <xs:documentation>
+                    <p>If this value is set to true, the annotation will not be shown on the page and will not be printed either.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:attributeGroup>
     <xs:simpleType name="TextAnnotationIconsType">
         <xs:annotation>
-            <xs:documentation>Used to specify the icon that should be displayed for the note on the page. The following values are available:
-- check = The text annotation approves the content.
-- checkmark = The text annotation adds a gray checkmark to the content.
-- circle = The text annotation is a comment on the circled content.
-- comment = The text annotation is a comment to the marked contents.
-- cross = The text annotation marks the content or crosses it out.
-- crossHair = The text annotation targets the content in the crosshair.
-- insert = The text annotation is suggesting inserting some content.
-- key = The text annotation marks or contains a key content/information.
-- note = The text annotation is a mere note concerning the marked content.
-- help = The text annotation provides helpful information concerning the marked content.
-- newParagraph = The text annotation suggests adding a new Paragraph at a specific point.
-- paragraph = The text annotation is concerning the whole paragraph.
-- rightArrow = The text annotation is concerning the content to the right.
-- rightPointer = The text annotation is concerning the content to the right.
-- star = The text annotation marks content as especially important.
-- upArrow = The text annotation is concerning the content at the top.
-- upLeftArrow = The text annotation is concerning the content at the top left.
-- unnamed = The text annotation shall not provide a predefined name.</xs:documentation>
+            <xs:documentation>
+                <p>Used to specify the icon that should be displayed for the note on the page. The following values are available:
+                    <ul>
+                        <li>check = The text annotation approves the content.</li>
+                        <li>checkmark = The text annotation adds a gray checkmark to the content.</li>
+                        <li>circle = The text annotation is a comment on the circled content.</li>
+                        <li>comment = The text annotation is a comment to the marked contents.</li>
+                        <li>cross = The text annotation marks the content or crosses it out.</li>
+                        <li>crossHair = The text annotation targets the content in the crosshair.</li>
+                        <li>insert = The text annotation is suggesting inserting some content.</li>
+                        <li>key = The text annotation marks or contains a key content/information.</li>
+                        <li>note = The text annotation is a mere note concerning the marked content.</li>
+                        <li>help = The text annotation provides helpful information concerning the marked content.</li>
+                        <li>newParagraph = The text annotation suggests adding a new Paragraph at a specific point.</li>
+                        <li>paragraph = The text annotation is concerning the whole paragraph.</li>
+                        <li>rightArrow = The text annotation is concerning the content to the right.</li>
+                        <li>rightPointer = The text annotation is concerning the content to the right.</li>
+                        <li>star = The text annotation marks content as especially important.</li>
+                        <li>upArrow = The text annotation is concerning the content at the top.</li>
+                        <li>upLeftArrow = The text annotation is concerning the content at the top left.</li>
+                        <li>unnamed = The text annotation shall not provide a predefined name.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="check" />
-            <xs:enumeration value="checkmark" />
-            <xs:enumeration value="circle" />
-            <xs:enumeration value="comment" />
-            <xs:enumeration value="cross" />
-            <xs:enumeration value="crossHair" />
-            <xs:enumeration value="insert" />
-            <xs:enumeration value="key" />
-            <xs:enumeration value="note" />
-            <xs:enumeration value="help" />
-            <xs:enumeration value="newParagraph" />
-            <xs:enumeration value="paragraph" />
-            <xs:enumeration value="rightArrow" />
-            <xs:enumeration value="rightPointer" />
-            <xs:enumeration value="star" />
-            <xs:enumeration value="upArrow" />
-            <xs:enumeration value="upLeftArrow" />
-            <xs:enumeration value="unnamed" />
+            <xs:enumeration value="check"/>
+            <xs:enumeration value="checkmark"/>
+            <xs:enumeration value="circle"/>
+            <xs:enumeration value="comment"/>
+            <xs:enumeration value="cross"/>
+            <xs:enumeration value="crossHair"/>
+            <xs:enumeration value="insert"/>
+            <xs:enumeration value="key"/>
+            <xs:enumeration value="note"/>
+            <xs:enumeration value="help"/>
+            <xs:enumeration value="newParagraph"/>
+            <xs:enumeration value="paragraph"/>
+            <xs:enumeration value="rightArrow"/>
+            <xs:enumeration value="rightPointer"/>
+            <xs:enumeration value="star"/>
+            <xs:enumeration value="upArrow"/>
+            <xs:enumeration value="upLeftArrow"/>
+            <xs:enumeration value="unnamed"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="MarkupsAnnotationType">
         <xs:annotation>
-            <xs:documentation>Used to set the type of markup. The following values are available:
-- highlight = Highlights text
-- underline = Underlines text with a straight line
-- strikeOut = Strikes text through
-- squiggly = Underlines text with a squiggly line</xs:documentation>
+            <xs:documentation>
+                <p>Used to set the type of markup. The following values are available:
+                    <ul>
+                        <li>highlight = Highlights text</li>
+                        <li>underline = Underlines text with a straight line</li>
+                        <li>strikeOut = Strikes text through</li>
+                        <li>squiggly = Underlines text with a squiggly line</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="highlight" />
-            <xs:enumeration value="underline" />
-            <xs:enumeration value="strikeOut" />
-            <xs:enumeration value="squiggly" />
+            <xs:enumeration value="highlight"/>
+            <xs:enumeration value="underline"/>
+            <xs:enumeration value="strikeOut"/>
+            <xs:enumeration value="squiggly"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="BaseAnnotationType">
         <xs:annotation>
-            <xs:documentation>All annotation elements have a number of basic attributes in common. These attributes are described by this base type.</xs:documentation>
+            <xs:documentation>
+                <p>All annotation elements have a number of basic attributes in common. These attributes are described by this base type.</p>
+            </xs:documentation>
         </xs:annotation>
-        <xs:attribute name="creator" default="" type="xs:string" use="optional">
+        <xs:attribute name="creator" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Used to specify the author of the annotation.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to specify the author of the annotation.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="name" default="" type="xs:string" use="optional">
+        <xs:attribute name="name" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Used to specify the name of the annotation.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to specify the name of the annotation.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="subject" default="" type="xs:string" use="optional">
+        <xs:attribute name="subject" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Used to specify the subject of the annotation.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to specify the subject of the annotation.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="contents" default="" type="xs:string" use="optional">
+        <xs:attribute name="contents" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>This value is used to configure the text content of the annotation, with the way in which it is displayed depending heavily on the specific annotation type (for example, in the case of a text note, this would be the text content of the annotation’s popup).</xs:documentation>
+                <xs:documentation>
+                    <p>This value is used to configure the text content of the annotation, with the way in which it is displayed depending heavily on the specific annotation type (for example, in the case of a text note, this would be the text content of the annotation's popup).</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="intents" default="" type="xs:string" use="optional">
+        <xs:attribute name="intents" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Used to set the intention of the annotation.
+                <xs:documentation>
+                    <p>Used to set the intention of the annotation.
 
-**important:** The intention of an annotation can directly influence it´s behaviour and may serve different purposes for different annotation types. Only set this directly, if you know it is necessary and possible to do so.</xs:documentation>
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        The intention of an annotation can directly influence it's behaviour and may serve different purposes for different annotation types. Only set this directly, if you know it is necessary and possible to do so.
+                    </p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="page" default="1">
             <xs:annotation>
-                <xs:documentation>Set the number of the page, the annotation shall be placed on.</xs:documentation>
+                <xs:documentation>
+                    <p>Set the number of the page, the annotation shall be placed on.</p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1" />
+                    <xs:minInclusive value="1"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attributeGroup ref="tns:FlagsAnnotationGroup" />
+        <xs:attributeGroup ref="tns:FlagsAnnotationGroup"/>
         <xs:attribute name="color" default="#4800FF" type="tns:RgbColorType">
             <xs:annotation>
-                <xs:documentation>The annotation color will change the main color of visible annotations. The color needs to be specified as a hexadecimal RGB value with a number sign before it.</xs:documentation>
+                <xs:documentation>
+                    <p>The annotation color will change the main color of visible annotations. The color needs to be specified as a hexadecimal RGB value with a number sign before it.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="opacity" default="100" type="tns:OpacityType">
             <xs:annotation>
-                <xs:documentation>This percentage value is used to set the annotation’s transparency.</xs:documentation>
+                <xs:documentation>
+                    <p>This percentage value is used to set the annotation's transparency.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="TextAnnotationType">
         <xs:annotation>
-            <xs:documentation>An annotation that adds a note icon to a page.</xs:documentation>
+            <xs:documentation>
+                <p>An annotation that adds a note icon to a page.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseAnnotationType">
                 <xs:all>
-                    <xs:element name="position" type="tns:RectangleType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="normalAppearance" type="tns:AppearanceSourceType" minOccurs="0" maxOccurs="1">
+                    <xs:element name="position" type="tns:RectangleType" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>Used to set the data source for the visible appearance of a customized text annotation.
+                            <xs:documentation><p>Used to select the bounds within which the shape shall be positioned.</p></xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="normalAppearance" type="tns:AppearanceSourceType" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>
+                                <p>Used to set the data source for the visible appearance of a customized text annotation.
 
-**important:** If this element is present, this shall always take precedence for the appearance generation.</xs:documentation>
+                                </p>
+                                <p>
+                                    <b>Important:</b>
+                                    If this element is present, this shall always take precedence for the appearance generation.
+                                </p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:element>
                 </xs:all>
                 <xs:attribute name="icon" default="note" type="tns:TextAnnotationIconsType">
                     <xs:annotation>
-                        <xs:documentation>Used to specify the icon that should be displayed for the note on the page. The following values are available:
-- check = The text annotation approves the content.
-- checkmark = The text annotation adds a gray checkmark to the content.
-- circle = The text annotation is a comment on the circled content.
-- comment = The text annotation is a comment to the marked contents.
-- cross = The text annotation marks the content or crosses it out.
-- crossHair = The text annotation targets the content in the crosshair.
-- insert = The text annotation is suggesting inserting some content.
-- key = The text annotation marks or contains a key content/information.
-- note = The text annotation is a mere note concerning the marked content.
-- help = The text annotation provides helpful information concerning the marked content.
-- newParagraph = The text annotation suggests adding a new Paragraph at a specific point.
-- paragraph = The text annotation is concerning the whole paragraph.
-- rightArrow = The text annotation is concerning the content to the right.
-- rightPointer = The text annotation is concerning the content to the right.
-- star = The text annotation marks content as especially important.
-- upArrow = The text annotation is concerning the content at the top.
-- upLeftArrow = The text annotation is concerning the content at the top left.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to specify the icon that should be displayed for the note on the page. The following values are available:
+                                <ul>
+                                    <li>check = The text annotation approves the content.</li>
+                                    <li>checkmark = The text annotation adds a gray checkmark to the content.</li>
+                                    <li>circle = The text annotation is a comment on the circled content.</li>
+                                    <li>comment = The text annotation is a comment to the marked contents.</li>
+                                    <li>cross = The text annotation marks the content or crosses it out.</li>
+                                    <li>crossHair = The text annotation targets the content in the crosshair.</li>
+                                    <li>insert = The text annotation is suggesting inserting some content.</li>
+                                    <li>key = The text annotation marks or contains a key content/information.</li>
+                                    <li>note = The text annotation is a mere note concerning the marked content.</li>
+                                    <li>help = The text annotation provides helpful information concerning the marked content.</li>
+                                    <li>newParagraph = The text annotation suggests adding a new Paragraph at a specific point.</li>
+                                    <li>paragraph = The text annotation is concerning the whole paragraph.</li>
+                                    <li>rightArrow = The text annotation is concerning the content to the right.</li>
+                                    <li>rightPointer = The text annotation is concerning the content to the right.</li>
+                                    <li>star = The text annotation marks content as especially important.</li>
+                                    <li>upArrow = The text annotation is concerning the content at the top.</li>
+                                    <li>upLeftArrow = The text annotation is concerning the content at the top left.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="initialOpen" default="true" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this value is set to "true," the popup for the corresponding "note" annotation will be opened as soon as the corresponding document page is viewed.</xs:documentation>
+                        <xs:documentation>
+                            <p>If this value is set to "true," the popup for the corresponding "note" annotation will be opened as soon as the corresponding document page is viewed.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="appearanceGeneration" default="nonStandard" type="tns:AppearanceGenerationType">
                     <xs:annotation>
-                        <xs:documentation>Determines for which named annotations appearance streams shall be generated.
-
-**important:** Per definition some named annotations are defined as standard names and PDF readers shall provide the means to draw those. For text annotations: comment, insert, key, note, help, newParagraph and paragraph are standard names.
-
-- always = An appearance stream shall be prepared for all created named annotations.
-- never = Don´t provide appearance streams and rely on PDF readers to dynamically generate a proper representation of named annotations.
-- nonStandard = Only provide appearance streams for non standard annotations.</xs:documentation>
+                        <xs:documentation>
+                            <p>Determines for which named annotations appearance streams shall be generated.</p>
+                            <p>
+                                <b>Important:</b>
+                                Per definition some named annotations are defined as standard names and PDF readers shall provide the means to draw those. For text annotations: comment, insert, key, note, help, newParagraph and paragraph are standard names.
+                                <ul>
+                                    <li>always = An appearance stream shall be prepared for all created named annotations.</li>
+                                    <li>never = Don't provide appearance streams and rely on PDF readers to dynamically generate a proper representation of named annotations.</li>
+                                    <li>nonStandard = Only provide appearance streams for non standard annotations.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="customIconName" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>Sets a custom icon name for this annotation.
+                        <xs:documentation>
+                            <p>Sets a custom icon name for this annotation.
 
-**important:** This name shall always take precedence over possibly set standard names. (icon)</xs:documentation>
+                            </p>
+                            <p>
+                                <b>Important:</b>
+                                This name shall always take precedence over possibly set standard names. (icon)
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -350,24 +467,45 @@
     </xs:complexType>
     <xs:complexType name="MarkupAnnotationType">
         <xs:annotation>
-            <xs:documentation>An annotation that adds a text markup to a page.</xs:documentation>
+            <xs:documentation>
+                <p>An annotation that adds a text markup to a page.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseAnnotationType">
-                <xs:choice minOccurs="0" maxOccurs="unbounded">
-                    <xs:element name="pathElement" type="tns:RectangleType">
+                <xs:all>
+                    <xs:element name="position" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>Used to specify the position of the text being marked as a sequence of rectangles that are defined with "pathElement." This element can be used multiple times, with each rectangle marking, for example, a row of text.</xs:documentation>
+                            <xs:documentation><p>Used to define the pathelements in which the annotation shall be positioned.</p></xs:documentation>
                         </xs:annotation>
+                        <xs:complexType>
+                            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                                <xs:element name="pathElement" type="tns:RectangleType">
+                                    <xs:annotation>
+                                        <xs:documentation><p>Used to specify the position of the text being marked as a sequence of rectangles that are defined with "pathElement". This element can be used multiple times, with each rectangle marking, for example, a row of text.</p></xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="quadrilateral" type="tns:QuadrilateralType">
+                                    <xs:annotation>
+                                        <xs:documentation><p>Used to specify the position of the text being marked as a sequence of quadrilaterals that are defined with "quadrilateral". This element can be used multiple times, with each quad marking, for example, a row of text.</p></xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:choice>
+                        </xs:complexType>
                     </xs:element>
-                </xs:choice>
+                </xs:all>
                 <xs:attribute name="markupType" default="highlight" type="tns:MarkupsAnnotationType">
                     <xs:annotation>
-                        <xs:documentation>Used to set the type of markup. The following values are available:
-- highlight = Highlights text
-- underline = Underlines text with a straight line
-- strikeOut = Strikes text through
-- squiggly = Underlines text with a squiggly line</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to set the type of markup. The following values are available:
+                                <ul>
+                                    <li>highlight = Highlights text</li>
+                                    <li>underline = Underlines text with a straight line</li>
+                                    <li>strikeOut = Strikes text through</li>
+                                    <li>squiggly = Underlines text with a squiggly line</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -375,16 +513,38 @@
     </xs:complexType>
     <xs:complexType name="RedactAnnotationType">
         <xs:annotation>
-            <xs:documentation>An annotation that marks page content for redaction.</xs:documentation>
+            <xs:documentation>
+                <p>An annotation that marks page content for redaction.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseAnnotationType">
-                <xs:choice minOccurs="0" maxOccurs="unbounded">
-                    <xs:element name="pathElement" type="tns:RectangleType" />
-                </xs:choice>
+                <xs:all>
+                    <xs:element name="position" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation><p>Used to define the pathelements in which the annotation shall be positioned.</p></xs:documentation>
+                        </xs:annotation>
+                        <xs:complexType>
+                            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                                <xs:element name="pathElement" type="tns:RectangleType">
+                                    <xs:annotation>
+                                        <xs:documentation><p>Used to specify the position of the text being marked as a sequence of rectangles that are defined with "pathElement". This element can be used multiple times, with each rectangle marking, for example, a row of text.</p></xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="quadrilateral" type="tns:QuadrilateralType">
+                                    <xs:annotation>
+                                        <xs:documentation><p>Used to specify the position of the text being marked as a sequence of quadrilaterals that are defined with "quadrilateral". This element can be used multiple times, with each quad marking, for example, a row of text.</p></xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:all>
                 <xs:attribute name="interiorColor" default="#000000" type="tns:RgbColorType">
                     <xs:annotation>
-                        <xs:documentation>The annotation color will change the interior color of visible annotations. The color needs to be specified as a hexadecimal RGB value with a number sign before it.</xs:documentation>
+                        <xs:documentation>
+                            <p>The annotation color will change the interior color of visible annotations. The color needs to be specified as a hexadecimal RGB value with a number sign before it.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -392,20 +552,40 @@
     </xs:complexType>
     <xs:complexType name="FreeTextAnnotationType">
         <xs:annotation>
-            <xs:documentation>An annotation that adds a textual comment directly to a page.</xs:documentation>
+            <xs:documentation>
+                <p>An annotation that adds a textual comment directly to a page.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseAnnotationType">
                 <xs:all>
-                    <xs:element name="font" type="tns:FreeTextFontType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="position" type="tns:RectangleType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="font" type="tns:FreeTextFontType" minOccurs="0"/>
+                    <xs:element name="position" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation><p>Used to select the bounds within which the shape shall be positioned.</p></xs:documentation>
+                        </xs:annotation>
+                        <xs:complexType>
+                            <xs:choice minOccurs="0">
+                                <xs:element name="rectangle" type="tns:RectangleType">
+                                    <xs:annotation>
+                                        <xs:documentation><p>Select an unrotated rectangular position.</p></xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
                 </xs:all>
                 <xs:attribute name="justification" default="leftJustified" type="tns:JustificationType">
                     <xs:annotation>
-                        <xs:documentation>Selects the horizontal justification/alignment/orientation of elements.
-- leftJustified = All elements shall be oriented to the left.
-- centered = All elements shall be placed in the center of the container.
-- rightJustified = All elements shall be oriented to the right.</xs:documentation>
+                        <xs:documentation>
+                            <p>Selects the horizontal justification/alignment/orientation of elements.
+                                <ul>
+                                    <li>leftJustified = All elements shall be oriented to the left.</li>
+                                    <li>centered = All elements shall be placed in the center of the container.</li>
+                                    <li>rightJustified = All elements shall be oriented to the right.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -413,55 +593,94 @@
     </xs:complexType>
     <xs:complexType name="RubberStampAnnotationType">
         <xs:annotation>
-            <xs:documentation>An annotation that either uses an custom image or text as a stamp, or that adds a prepared "named" stamp to the page.</xs:documentation>
+            <xs:documentation>
+                <p>An annotation that either uses an custom image or text as a stamp, or that adds a prepared "named" stamp to the page.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseAnnotationType">
                 <xs:all>
-                    <xs:element name="position" type="tns:RectangleType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="normalAppearance" type="tns:AppearanceSourceType" minOccurs="0" maxOccurs="1">
+                    <xs:element name="position" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>Used to set the data source for the visible appearance of a customized rubberstamp.
+                            <xs:documentation><p>Used to select the bounds within which the shape shall be positioned.</p></xs:documentation>
+                        </xs:annotation>
+                        <xs:complexType>
+                            <xs:choice minOccurs="0">
+                                <xs:element name="rectangle" type="tns:RectangleType">
+                                    <xs:annotation>
+                                        <xs:documentation><p>Select an unrotated rectangular position.</p></xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="normalAppearance" type="tns:AppearanceSourceType" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>
+                                <p>Used to set the data source for the visible appearance of a customized rubberstamp.
 
-**important:** If this element is present, this shall always take precedence for the appearance generation.</xs:documentation>
+                                </p>
+                                <p>
+                                    <b>Important:</b>
+                                    If this element is present, this shall always take precedence for the appearance generation.
+                                </p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:element>
                 </xs:all>
                 <xs:attribute name="icon" default="draft" type="tns:RubberStampIconType">
                     <xs:annotation>
-                        <xs:documentation>The known "named" icon types for rubberstamp annotations:
-- approved = A stamp that marks the stamped context as approved.
-- experimental = A stamp that marks the stamped content to be an experimental state.
-- notApproved = A stamp that disapproves the stamped context.
-- asIs = A stamp that marks the content as is.
-- expired = A stamp that marks the contained information as no longer valid.
-- notForPublicRelease = A stamp that marks something as information for internal use only.
-- confidential = A stamp marking the page as confidential.
-- final = A stamp that indicates, that the current state of the document is final.
-- sold = A stamp that indicates the marked contents to be sold and no longer available.
-- departmental = A stamp that forbids information to be shared to recipient outside of a given department.
-- forComment = Marks the stamped context as a comment.
-- topSecret = Marks the stamped content not to be shared publicly.
-- draft = A stamp marking the content to be a draft and therefore a work in progress.
-- forPublicRelease = Marks the content for public sharing.</xs:documentation>
+                        <xs:documentation>
+                            <p>The known "named" icon types for rubberstamp annotations:
+                                <ul>
+                                    <li>approved = A stamp that marks the stamped context as approved.</li>
+                                    <li>experimental = A stamp that marks the stamped content to be an experimental state.</li>
+                                    <li>notApproved = A stamp that disapproves the stamped context.</li>
+                                    <li>asIs = A stamp that marks the content as is.</li>
+                                    <li>expired = A stamp that marks the contained information as no longer valid.</li>
+                                    <li>notForPublicRelease = A stamp that marks something as information for internal use only.</li>
+                                    <li>confidential = A stamp marking the page as confidential.</li>
+                                    <li>final = A stamp that indicates, that the current state of the document is final.</li>
+                                    <li>sold = A stamp that indicates the marked contents to be sold and no longer available.</li>
+                                    <li>departmental = A stamp that forbids information to be shared to recipient outside of a given department.</li>
+                                    <li>forComment = Marks the stamped context as a comment.</li>
+                                    <li>topSecret = Marks the stamped content not to be shared publicly.</li>
+                                    <li>draft = A stamp marking the content to be a draft and therefore a work in progress.</li>
+                                    <li>forPublicRelease = Marks the content for public sharing.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="appearanceGeneration" default="nonStandard" type="tns:AppearanceGenerationType">
                     <xs:annotation>
-                        <xs:documentation>Determines for which named annotations appearance streams shall be generated.
-
-**important:** Per definition some named annotations are defined as standard names and PDF readers shall provide the means to draw those. For rubberstamp annotations: approved, experimental, notApproved, asIs, expired, notForPublicRelease, confidential, final, sold, departmental, forComment, topSecret, draft and forPublicRelease are standard names.
-
-- always = An appearance stream shall be prepared for all created named annotations.
-- never = Don´t provide appearance streams and rely on PDF readers to dynamically generate a proper representation of named annotations.
-- nonStandard = Only provide appearance streams for non standard annotations.</xs:documentation>
+                        <xs:documentation>
+                            <p>Determines for which named annotations appearance streams shall be generated.</p>
+                            <p>
+                                <b>Important:</b>
+                                Per definition some named annotations are defined as standard names and PDF readers shall provide the means to draw those. For rubberstamp annotations: approved, experimental, notApproved, asIs, expired, notForPublicRelease, confidential, final, sold, departmental, forComment, topSecret, draft and forPublicRelease are standard names.
+                            </p>
+                            <p>
+                                <ul>
+                                    <li>always = An appearance stream shall be prepared for all created named annotations.</li>
+                                    <li>never = Don't provide appearance streams and rely on PDF readers to dynamically generate a proper representation of named annotations.</li>
+                                    <li>nonStandard = Only provide appearance streams for non standard annotations.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="customIconName" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>Sets a custom icon name for this annotation.
+                        <xs:documentation>
+                            <p>Sets a custom icon name for this annotation.
 
-**important:** This name shall always take precedence over possibly set standard names. (icon)</xs:documentation>
+                            </p>
+                            <p>
+                                <b>Important:</b>
+                                This name shall always take precedence over possibly set standard names. (icon)
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -469,49 +688,75 @@
     </xs:complexType>
     <xs:complexType name="CircleAnnotationType">
         <xs:annotation>
-            <xs:documentation>An annotation that draws a circle on a page.</xs:documentation>
+            <xs:documentation>
+                <p>An annotation that draws a circle on a page.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:SimpleShapeAnnotationType" />
+            <xs:extension base="tns:SimpleShapeAnnotationType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SquareAnnotationType">
         <xs:annotation>
-            <xs:documentation>An annotation that draws a rectangle on a page.</xs:documentation>
+            <xs:documentation>
+                <p>An annotation that draws a rectangle on a page.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:SimpleShapeAnnotationType" />
+            <xs:extension base="tns:SimpleShapeAnnotationType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SimpleShapeAnnotationType">
         <xs:annotation>
-            <xs:documentation>A common base type for simple shape (currently circle and square) annotations.</xs:documentation>
+            <xs:documentation>
+                <p>A common base type for simple shape (currently circle and square) annotations.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseAnnotationType">
                 <xs:all>
-                    <xs:element name="position" type="tns:RectangleType" minOccurs="0" maxOccurs="1">
+                    <xs:element name="position" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>Used to select the bounds within which the shape shall be positioned.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to select the bounds within which the shape shall be positioned.</p>
+                            </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType>
+                            <xs:choice minOccurs="0">
+                                <xs:element name="rectangle" type="tns:RectangleType">
+                                    <xs:annotation>
+                                        <xs:documentation><p>Select an unrotated rectangular position.</p></xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:choice>
+                        </xs:complexType>
                     </xs:element>
-                    <xs:element name="border" type="tns:BorderType" minOccurs="0" maxOccurs="1">
+                    <xs:element name="border" type="tns:BorderType" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>Used to define a border for the drawn shape. This shall only then have effect, if the outline of the shape is stroked.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to define a border for the drawn shape. This shall only then have effect, if the outline of the shape is stroked.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:element>
                 </xs:all>
                 <xs:attribute name="interiorColor" default="#000000" type="tns:RgbColorType">
                     <xs:annotation>
-                        <xs:documentation>Used to set the font color. The hereby defined color needs to be specified as a hexadecimal RGB value with a number sign before it.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to set the font color. The hereby defined color needs to be specified as a hexadecimal RGB value with a number sign before it.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="drawMode" default="fillAndStroke" type="tns:DrawModeType">
                     <xs:annotation>
-                        <xs:documentation>Sets the draw mode for a geometrical shape.
-- fill = The shape shall be filled with a given interior color.
-- stroke = The outline of the shape shall be stroked with a given color.
-- fillAndStroke = The shall shall be filled with a given interior color and it´s outline shall be stroked with a given color.</xs:documentation>
+                        <xs:documentation>
+                            <p>Sets the draw mode for a geometrical shape.
+                                <ul>
+                                    <li>fill = The shape shall be filled with a given interior color.</li>
+                                    <li>stroke = The outline of the shape shall be stroked with a given color.</li>
+                                    <li>fillAndStroke = The shall shall be filled with a given interior color and it's outline shall be stroked with a given color.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -519,24 +764,32 @@
     </xs:complexType>
     <xs:complexType name="LineAnnotationType">
         <xs:annotation>
-            <xs:documentation>An annotation that draws a simple line on a page.</xs:documentation>
+            <xs:documentation>
+                <p>An annotation that draws a simple line on a page.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseAnnotationType">
                 <xs:all>
-                    <xs:element name="start" type="tns:PointType" minOccurs="1" maxOccurs="1">
+                    <xs:element name="start" type="tns:PointType">
                         <xs:annotation>
-                            <xs:documentation>Used to select the first point of the line.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to select the first point of the line.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="end" type="tns:PointType" minOccurs="1" maxOccurs="1">
+                    <xs:element name="end" type="tns:PointType">
                         <xs:annotation>
-                            <xs:documentation>Used to select the terminal point of the line.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to select the terminal point of the line.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="border" type="tns:BorderType" minOccurs="0" maxOccurs="1">
+                    <xs:element name="border" type="tns:BorderType" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation>Used to select the "border" (rather "stroke style" in this case) of the line.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to select the "border" (rather "stroke style" in this case) of the line.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:element>
                 </xs:all>
@@ -545,104 +798,129 @@
     </xs:complexType>
     <xs:complexType name="FreeTextFontType">
         <xs:annotation>
-            <xs:documentation>A font definition for textual annotation types.</xs:documentation>
+            <xs:documentation>
+                <p>A font definition for textual annotation types.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="name" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Used to specify the name of the font that should be used for the text output.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to specify the name of the font that should be used for the text output.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="bold" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Used to increase the text output’s weight.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to increase the text output's weight.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="italic" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Used to set the italic font posture for the text output.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to set the italic font posture for the text output.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="size" default="24">
             <xs:annotation>
-                <xs:documentation>Used to set the text size for the text output.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to set the text size for the text output.</p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1" />
-                    <xs:maxInclusive value="1296" />
+                    <xs:minInclusive value="1"/>
+                    <xs:maxInclusive value="1296"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="color" default="#A0A0A0" type="tns:RgbColorType">
             <xs:annotation>
-                <xs:documentation>Used to set the font color. The hereby defined color needs to be specified as a hexadecimal RGB value with a number sign before it.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to set the font color. The hereby defined color needs to be specified as a hexadecimal RGB value with a number sign before it.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="RubberStampIconType">
         <xs:annotation>
-            <xs:documentation>The known "named" icon types for rubberstamp annotations:
-- approved = A stamp that marks the stamped context as approved.
-- experimental = A stamp that marks the stamped content to be an experimental state.
-- notApproved = A stamp that disapproves the stamped context.
-- asIs = A stamp that marks the content as is.
-- expired = A stamp that marks the contained information as no longer valid.
-- notForPublicRelease = A stamp that marks something as information for internal use only.
-- confidential = A stamp marking the page as confidential.
-- final = A stamp that indicates, that the current state of the document is final.
-- sold = A stamp that indicates the marked contents to be sold and no longer available.
-- departmental = A stamp that forbids information to be shared to recipient outside of a given department.
-- forComment = Marks the stamped context as a comment.
-- topSecret = Marks the stamped content not to be shared publicly.
-- draft = A stamp marking the content to be a draft and therefore a work in progress.
-- forPublicRelease = Marks the content for public sharing.
-- unnamed = The rubberstamp shall not provide a predefined name.</xs:documentation>
+            <xs:documentation>
+                <p>The known "named" icon types for rubberstamp annotations:
+                    <ul>
+                        <li>approved = A stamp that marks the stamped context as approved.</li>
+                        <li>experimental = A stamp that marks the stamped content to be an experimental state.</li>
+                        <li>notApproved = A stamp that disapproves the stamped context.</li>
+                        <li>asIs = A stamp that marks the content as is.</li>
+                        <li>expired = A stamp that marks the contained information as no longer valid.</li>
+                        <li>notForPublicRelease = A stamp that marks something as information for internal use only.</li>
+                        <li>confidential = A stamp marking the page as confidential.</li>
+                        <li>final = A stamp that indicates, that the current state of the document is final.</li>
+                        <li>sold = A stamp that indicates the marked contents to be sold and no longer available.</li>
+                        <li>departmental = A stamp that forbids information to be shared to recipient outside of a given department.</li>
+                        <li>forComment = Marks the stamped context as a comment.</li>
+                        <li>topSecret = Marks the stamped content not to be shared publicly.</li>
+                        <li>draft = A stamp marking the content to be a draft and therefore a work in progress.</li>
+                        <li>forPublicRelease = Marks the content for public sharing.</li>
+                        <li>unnamed = The rubberstamp shall not provide a predefined name.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="approved" />
-            <xs:enumeration value="experimental" />
-            <xs:enumeration value="notApproved" />
-            <xs:enumeration value="asIs" />
-            <xs:enumeration value="expired" />
-            <xs:enumeration value="notForPublicRelease" />
-            <xs:enumeration value="confidential" />
-            <xs:enumeration value="final" />
-            <xs:enumeration value="sold" />
-            <xs:enumeration value="departmental" />
-            <xs:enumeration value="forComment" />
-            <xs:enumeration value="topSecret" />
-            <xs:enumeration value="draft" />
-            <xs:enumeration value="forPublicRelease" />
-            <xs:enumeration value="unnamed" />
+            <xs:enumeration value="approved"/>
+            <xs:enumeration value="experimental"/>
+            <xs:enumeration value="notApproved"/>
+            <xs:enumeration value="asIs"/>
+            <xs:enumeration value="expired"/>
+            <xs:enumeration value="notForPublicRelease"/>
+            <xs:enumeration value="confidential"/>
+            <xs:enumeration value="final"/>
+            <xs:enumeration value="sold"/>
+            <xs:enumeration value="departmental"/>
+            <xs:enumeration value="forComment"/>
+            <xs:enumeration value="topSecret"/>
+            <xs:enumeration value="draft"/>
+            <xs:enumeration value="forPublicRelease"/>
+            <xs:enumeration value="unnamed"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="AppearanceFileDataType">
         <xs:annotation>
-            <xs:documentation>Used to define a resource as the source for an annotation´s appearance generation.</xs:documentation>
+            <xs:documentation>
+                <p>Used to define a resource as the source for an annotation's appearance generation.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
-                <xs:attributeGroup ref="tns:FileDataGroup" />
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
     <xs:complexType name="AppearanceType">
         <xs:annotation>
-            <xs:documentation>Selects a definition source for the appearance generation of annotations.</xs:documentation>
+            <xs:documentation>
+                <p>Selects a definition source for the appearance generation of annotations.</p>
+            </xs:documentation>
         </xs:annotation>
     </xs:complexType>
     <xs:complexType name="AppearanceImageType">
         <xs:annotation>
-            <xs:documentation>Used to define an image resource for an annotation´s appearance generation.</xs:documentation>
+            <xs:documentation>
+                <p>Used to define an image resource for an annotation's appearance generation.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:AppearanceType">
                 <xs:all>
-                    <xs:element name="data" type="tns:AppearanceFileDataType" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="data" type="tns:AppearanceFileDataType"/>
                 </xs:all>
                 <xs:attribute name="preserveAspectRatio" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>Specifies whether the aspect ratio should be maintained when scaling the annotation.</xs:documentation>
+                        <xs:documentation>
+                            <p>Specifies whether the aspect ratio should be maintained when scaling the annotation.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -650,26 +928,32 @@
     </xs:complexType>
     <xs:complexType name="AppearancePdfType">
         <xs:annotation>
-            <xs:documentation>Used to define a PDF page as the resource for an annotation´s appearance generation.</xs:documentation>
+            <xs:documentation>
+                <p>Used to define a PDF page as the resource for an annotation's appearance generation.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:AppearanceType">
                 <xs:all>
-                    <xs:element name="data" type="tns:AppearanceFileDataType" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="data" type="tns:AppearanceFileDataType"/>
                 </xs:all>
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
-                        <xs:documentation>The page that shall be used as a visual representation of the annotation.</xs:documentation>
+                        <xs:documentation>
+                            <p>The page that shall be used as a visual representation of the annotation.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="preserveAspectRatio" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>Specifies whether the aspect ratio should be maintained when scaling the annotation.</xs:documentation>
+                        <xs:documentation>
+                            <p>Specifies whether the aspect ratio should be maintained when scaling the annotation.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -677,21 +961,27 @@
     </xs:complexType>
     <xs:complexType name="AppearanceSvgType">
         <xs:annotation>
-            <xs:documentation>Used to define a svg resource for an annotation´s appearance generation.</xs:documentation>
+            <xs:documentation>
+                <p>Used to define a svg resource for an annotation's appearance generation.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:AppearanceType">
                 <xs:all>
-                    <xs:element name="data" type="tns:AppearanceFileDataType" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="data" type="tns:AppearanceFileDataType"/>
                 </xs:all>
                 <xs:attribute name="preserveAspectRatio" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>Specifies whether the aspect ratio should be maintained when scaling the annotation.</xs:documentation>
+                        <xs:documentation>
+                            <p>Specifies whether the aspect ratio should be maintained when scaling the annotation.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="aspectRatioAxis" default="x" type="tns:AxisType">
                     <xs:annotation>
-                        <xs:documentation>Selects the dominant scaling axis, for aspect ratio aware scaling operations of SVGs.</xs:documentation>
+                        <xs:documentation>
+                            <p>Selects the dominant scaling axis, for aspect ratio aware scaling operations of SVGs.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -699,185 +989,253 @@
     </xs:complexType>
     <xs:complexType name="AppearanceSourceType">
         <xs:annotation>
-            <xs:documentation>Used to set the data source for the visible appearance of an annotation.
+            <xs:documentation>
+                <p>Used to set the data source for the visible appearance of an annotation.
 
-**important:** If this element is present, this shall always take precedence for the appearance generation.</xs:documentation>
+                </p>
+                <p>
+                    <b>Important:</b>
+                    If this element is present, this shall always take precedence for the appearance generation.
+                </p>
+            </xs:documentation>
         </xs:annotation>
-        <xs:choice minOccurs="1" maxOccurs="1">
-            <xs:element name="pdf" type="tns:AppearancePdfType" />
-            <xs:element name="image" type="tns:AppearanceImageType" />
-            <xs:element name="svg" type="tns:AppearanceSvgType" />
+        <xs:choice>
+            <xs:element name="pdf" type="tns:AppearancePdfType"/>
+            <xs:element name="image" type="tns:AppearanceImageType"/>
+            <xs:element name="svg" type="tns:AppearanceSvgType"/>
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="BorderType">
         <xs:annotation>
-            <xs:documentation>Defines a border for a rendered geometrical element.</xs:documentation>
+            <xs:documentation>
+                <p>Defines a border for a rendered geometrical element.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="borderWidth" default="1">
             <xs:annotation>
-                <xs:documentation>Defines the border width/strength/thickness.</xs:documentation>
+                <xs:documentation>
+                    <p>Defines the border width/strength/thickness.</p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="borderStyle" default="solid" type="tns:BorderStyleType">
             <xs:annotation>
-                <xs:documentation>Defines the border style.
-- solid = A solid line border.
-- dashed = A dashed border using the given dash and gap length.</xs:documentation>
+                <xs:documentation>
+                    <p>Defines the border style.
+                        <ul>
+                            <li>solid = A solid line border.</li>
+                            <li>dashed = A dashed border using the given dash and gap length.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="dashLength" default="3">
             <xs:annotation>
-                <xs:documentation>The interval length of dashes for a border with a "dashed" style.</xs:documentation>
+                <xs:documentation>
+                    <p>The interval length of dashes for a border with a "dashed" style.</p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1" />
+                    <xs:minInclusive value="1"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="gapLength" default="3">
             <xs:annotation>
-                <xs:documentation>The interval length of gaps for a border with a "dashed" style.</xs:documentation>
+                <xs:documentation>
+                    <p>The interval length of gaps for a border with a "dashed" style.</p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1" />
+                    <xs:minInclusive value="1"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="BorderStyleType">
         <xs:annotation>
-            <xs:documentation>Defines the border style.
-- solid = A solid line border.
-- dashed = A dashed border using the given dash and gap length.</xs:documentation>
+            <xs:documentation>
+                <p>Defines the border style.
+                    <ul>
+                        <li>solid = A solid line border.</li>
+                        <li>dashed = A dashed border using the given dash and gap length.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="solid" />
-            <xs:enumeration value="dashed" />
+            <xs:enumeration value="solid"/>
+            <xs:enumeration value="dashed"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="DrawModeType">
         <xs:annotation>
-            <xs:documentation>Sets the draw mode for a geometrical shape.
-- fill = The shape shall be filled with a given interior color.
-- stroke = The outline of the shape shall be stroked with a given color.
-- fillAndStroke = The shall shall be filled with a given interior color and it´s outline shall be stroked with a given color.</xs:documentation>
+            <xs:documentation>
+                <p>Sets the draw mode for a geometrical shape.
+                    <ul>
+                        <li>fill = The shape shall be filled with a given interior color.</li>
+                        <li>stroke = The outline of the shape shall be stroked with a given color.</li>
+                        <li>fillAndStroke = The shall shall be filled with a given interior color and it's outline shall be stroked with a given color.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="fill" />
-            <xs:enumeration value="stroke" />
-            <xs:enumeration value="fillAndStroke" />
+            <xs:enumeration value="fill"/>
+            <xs:enumeration value="stroke"/>
+            <xs:enumeration value="fillAndStroke"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="ReplyState">
         <xs:annotation>
-            <xs:documentation>Adds a mark for further processing suggestions/instructions to a commenting annotation.
-- accepted = The user agrees with the change.
-- rejected = The user disagrees with the change.
-- cancelled = The change has been cancelled.
-- completed = The change has been completed.
-- none = The user did not set a state.</xs:documentation>
+            <xs:documentation>
+                <p>Adds a mark for further processing suggestions/instructions to a commenting annotation.
+                    <ul>
+                        <li>accepted = The user agrees with the change.</li>
+                        <li>rejected = The user disagrees with the change.</li>
+                        <li>cancelled = The change has been cancelled.</li>
+                        <li>completed = The change has been completed.</li>
+                        <li>none = The user did not set a state.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="accepted" />
-            <xs:enumeration value="rejected" />
-            <xs:enumeration value="cancelled" />
-            <xs:enumeration value="completed" />
-            <xs:enumeration value="none" />
+            <xs:enumeration value="accepted"/>
+            <xs:enumeration value="rejected"/>
+            <xs:enumeration value="cancelled"/>
+            <xs:enumeration value="completed"/>
+            <xs:enumeration value="none"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="SelectionAnnotationType">
         <xs:annotation>
-            <xs:documentation>Defines criteria for the selection of annotations.</xs:documentation>
+            <xs:documentation>
+                <p>Defines criteria for the selection of annotations.</p>
+            </xs:documentation>
         </xs:annotation>
-        <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:choice>
             <xs:element name="objectKey">
                 <xs:annotation>
-                    <xs:documentation>Selects the annotation by object ID.</xs:documentation>
+                    <xs:documentation>
+                        <p>Selects the annotation by object ID.</p>
+                    </xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
                     <xs:attribute name="id" default="" type="xs:string">
                         <xs:annotation>
-                            <xs:documentation>The object id shall be given as a String that may contain either:
-- The numeric object ID itself
-- The object ID followed by the generation number, separated by a space</xs:documentation>
+                            <xs:documentation>
+                                <p>The object id shall be given as a String that may contain either:
+                                    <ul>
+                                        <li>The numeric object ID itself</li>
+                                        <li>The object ID followed by the generation number, separated by a space</li>
+                                    </ul>
+                                </p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                 </xs:complexType>
             </xs:element>
             <xs:element name="position" type="tns:RectangleType">
                 <xs:annotation>
-                    <xs:documentation>Selects all annotations in the given area.</xs:documentation>
+                    <xs:documentation>
+                        <p>Selects all annotations in the given area.</p>
+                    </xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:choice>
         <xs:attribute name="page" default="1">
             <xs:annotation>
-                <xs:documentation>Selects the page by page number, that shall contain the annotation.</xs:documentation>
+                <xs:documentation>
+                    <p>Selects the page by page number, that shall contain the annotation.</p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1" />
+                    <xs:minInclusive value="1"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="BaseReplyType">
         <xs:annotation>
-            <xs:documentation>A common base type for reply annotations.</xs:documentation>
+            <xs:documentation>
+                <p>A common base type for reply annotations.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="replyTo" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Selects the object id of the annotation, that this annotation shall be a reply to.
-
-The object id shall be given as a String that may contain either:
-- The numeric object ID itself
-- The object ID followed by the generation number, separated by a space</xs:documentation>
+                <xs:documentation>
+                    <p>Selects the object id of the annotation, that this annotation shall be a reply to. The object id shall be given as a String that may contain either:
+                        <ul>
+                            <li>The numeric object ID itself</li>
+                            <li>The object ID followed by the generation number, separated by a space</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="creator" default="" type="xs:string" use="optional">
+        <xs:attribute name="creator" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Used to specify the author of the annotation.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to specify the author of the annotation.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="name" default="" type="xs:string" use="optional">
+        <xs:attribute name="name" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Used to specify the name of the annotation.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to specify the name of the annotation.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="subject" default="" type="xs:string" use="optional">
+        <xs:attribute name="subject" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Used to specify the subject of the annotation.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to specify the subject of the annotation.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="page" default="1">
             <xs:annotation>
-                <xs:documentation>Set the number of the page, the annotation shall be placed on.
+                <xs:documentation>
+                    <p>Set the number of the page, the annotation shall be placed on.
 
-**important:** A reply shall always be placed on the same page as it´s target annotation. This is mostly providing a hint where to find the selected annotation.</xs:documentation>
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        A reply shall always be placed on the same page as it's target annotation. This is mostly providing a hint where to find the selected annotation.
+                    </p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1" />
+                    <xs:minInclusive value="1"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ReplyToAnnotationType">
         <xs:annotation>
-            <xs:documentation>An annotation, that represents a textual reply to another annotation.</xs:documentation>
+            <xs:documentation>
+                <p>An annotation, that represents a textual reply to another annotation.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseReplyType">
-                <xs:attribute name="comment" default="" type="xs:string" use="optional">
+                <xs:attribute name="comment" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>This value is used to set the textual comment/reply to display.</xs:documentation>
+                        <xs:documentation>
+                            <p>This value is used to set the textual comment/reply to display.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -885,74 +1243,100 @@ The object id shall be given as a String that may contain either:
     </xs:complexType>
     <xs:complexType name="ReplyToAnnotationEditType">
         <xs:annotation>
-            <xs:documentation>Allows editing the content and properties of a textual reply to another annotation.</xs:documentation>
+            <xs:documentation>
+                <p>Allows editing the content and properties of a textual reply to another annotation.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseReplyEditType">
                 <xs:all>
-                    <xs:element name="objectKey" minOccurs="1" maxOccurs="1">
+                    <xs:element name="objectKey">
                         <xs:annotation>
-                            <xs:documentation>Selects the "reply to" annotation by object ID.</xs:documentation>
+                            <xs:documentation>
+                                <p>Selects the "reply to" annotation by object ID.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
                             <xs:attribute name="id" default="" type="xs:string">
                                 <xs:annotation>
-                                    <xs:documentation>The object id shall be given as a String that may contain either:
-- The numeric object ID itself
-- The object ID followed by the generation number, separated by a space</xs:documentation>
+                                    <xs:documentation>
+                                        <p>The object id shall be given as a String that may contain either:
+                                            <ul>
+                                                <li>The numeric object ID itself</li>
+                                                <li>The object ID followed by the generation number, separated by a space</li>
+                                            </ul>
+                                        </p>
+                                    </xs:documentation>
                                 </xs:annotation>
                             </xs:attribute>
                         </xs:complexType>
                     </xs:element>
                 </xs:all>
-                <xs:attribute name="comment" default="" type="xs:string" use="optional">
+                <xs:attribute name="comment" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>This value is used to set the textual comment/reply to display.</xs:documentation>
+                        <xs:documentation>
+                            <p>This value is used to set the textual comment/reply to display.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="creator" default="" type="xs:string" use="optional">
+                <xs:attribute name="creator" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>Used to specify the author of the annotation.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to specify the author of the annotation.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="name" default="" type="xs:string" use="optional">
+                <xs:attribute name="name" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>Used to specify the name of the annotation.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to specify the name of the annotation.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
-                <xs:attribute name="subject" default="" type="xs:string" use="optional">
+                <xs:attribute name="subject" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>Used to specify the subject of the annotation.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to specify the subject of the annotation.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
-                        <xs:documentation>Selects the page by page number, that shall contain the "reply to" annotation.</xs:documentation>
+                        <xs:documentation>
+                            <p>Selects the page by page number, that shall contain the "reply to" annotation.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="BaseReplyEditType" />
+    <xs:complexType name="BaseReplyEditType"/>
     <xs:complexType name="ReplyStateAnnotationType">
         <xs:annotation>
-            <xs:documentation>An annotation, that provides a "reply state" for a selected annotation.</xs:documentation>
+            <xs:documentation>
+                <p>An annotation, that provides a "reply state" for a selected annotation.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseReplyType">
                 <xs:attribute name="replyState" default="none" type="tns:ReplyState">
                     <xs:annotation>
-                        <xs:documentation>Adds a reply state to the commented annotation.
-- accepted = The user agrees with the change.
-- rejected = The user disagrees with the change.
-- cancelled = The change has been cancelled.
-- completed = The change has been completed.
-- none = The user did not set a state.</xs:documentation>
+                        <xs:documentation>
+                            <p>Adds a reply state to the commented annotation.
+                                <ul>
+                                    <li>accepted = The user agrees with the change.</li>
+                                    <li>rejected = The user disagrees with the change.</li>
+                                    <li>cancelled = The change has been cancelled.</li>
+                                    <li>completed = The change has been completed.</li>
+                                    <li>none = The user did not set a state.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -960,13 +1344,17 @@ The object id shall be given as a String that may contain either:
     </xs:complexType>
     <xs:complexType name="MarkedStateAnnotationType">
         <xs:annotation>
-            <xs:documentation>An annotation, that provides a "marked state" for a selected annotation.</xs:documentation>
+            <xs:documentation>
+                <p>An annotation, that provides a "marked state" for a selected annotation.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseReplyType">
                 <xs:attribute name="markedState" default="true" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>Marks or unmarks the commented annotation.</xs:documentation>
+                        <xs:documentation>
+                            <p>Marks or unmarks the annotated note.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -974,18 +1362,25 @@ The object id shall be given as a String that may contain either:
     </xs:complexType>
     <xs:simpleType name="AppearanceGenerationType">
         <xs:annotation>
-            <xs:documentation>Determines for which named annotations appearance streams shall be generated.
-
-**important:** Per definition some named annotations are defined as standard names and PDF readers shall provide the means to draw those.
-
-- always = An appearance stream shall be prepared for all created named annotations.
-- never = Don´t provide appearance streams and rely on PDF readers to dynamically generate a proper representation of named annotations.
-- nonStandard = Only provide appearance streams for non standard annotations.</xs:documentation>
+            <xs:documentation>
+                <p>Determines for which named annotations appearance streams shall be generated.</p>
+                <p>
+                    <b>Important:</b>
+                    Per definition some named annotations are defined as standard names and PDF readers shall provide the means to draw those.
+                </p>
+                <p>
+                    <ul>
+                        <li>always = An appearance stream shall be prepared for all created named annotations.</li>
+                        <li>never = Don't provide appearance streams and rely on PDF readers to dynamically generate a proper representation of named annotations.</li>
+                        <li>nonStandard = Only provide appearance streams for non-standard annotations.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="Always" />
-            <xs:enumeration value="Never" />
-            <xs:enumeration value="nonStandard" />
+            <xs:enumeration value="Always"/>
+            <xs:enumeration value="Never"/>
+            <xs:enumeration value="nonStandard"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

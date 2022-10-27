@@ -1,44 +1,54 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="OutlineType">
         <xs:annotation>
-            <xs:documentation>The outline operation element can be used to change the outline in the document.</xs:documentation>
+            <xs:documentation>
+                <p>The outline operation element can be used to change the outline in the document.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
-                <xs:choice minOccurs="1" maxOccurs="1">
+                <xs:choice>
                     <xs:element name="add">
                         <xs:annotation>
-                            <xs:documentation>Can be used to add entries to the content structure of a PDF document (its bookmarks/outline).
+                            <xs:documentation>
+                                <p>Can be used to add entries to the content structure of a PDF document (its bookmarks/outline).
 
-The entries need to be specified as a flat list without any nesting.
-The expected tree structure is produced when the paths specified in the "item" elements are resolved. The entries will be generated in line with their order in the "add" element. Parent elements that are specified in the path but are not yet found in the content structure will also be added automatically. Nodes already found in the content structure will be updated with the values contained here.
-The "add" element adds new elements to an existing content structure; it does not create an entirely new structure. Accordingly, it is not necessary to specify the existing entries that should not be edited.
-The element paths are made of the visible names of the entries in the content structure separated with forward slashes (/).
-If the document does not have a content structure yet, it will be generated with the specified content.
+                                    The entries need to be specified as a flat list without any nesting.
+                                    The expected tree structure is produced when the paths specified in the "item" elements are resolved. The entries will be generated in line with their order in the "add" element. Parent elements that are specified in the path but are not yet found in the content structure will also be added automatically. Nodes already found in the content structure will be updated with the values contained here.
+                                    The "add" element adds new elements to an existing content structure; it does not create an entirely new structure. Accordingly, it is not necessary to specify the existing entries that should not be edited.
+                                    The element paths are made of the visible names of the entries in the content structure separated with forward slashes (/).
+                                    If the document does not have a content structure yet, it will be generated with the specified content.
 
-This element can have any number of "item" elements you want.</xs:documentation>
+                                    This element can have any number of "item" elements you want.
+                                </p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
-                            <xs:choice minOccurs="1" maxOccurs="unbounded">
-                                <xs:element name="item" type="tns:ItemType" />
+                            <xs:choice maxOccurs="unbounded">
+                                <xs:element name="item" type="tns:ItemType"/>
                             </xs:choice>
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="remove">
                         <xs:annotation>
-                            <xs:documentation>Selects outline entries for removal.</xs:documentation>
+                            <xs:documentation>
+                                <p>Selects outline entries for removal.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
-                            <xs:choice minOccurs="1" maxOccurs="unbounded">
-                                <xs:element name="item" type="tns:ItemReferenceType" />
+                            <xs:choice maxOccurs="unbounded">
+                                <xs:element name="item" type="tns:ItemReferenceType"/>
                             </xs:choice>
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="clear" type="tns:ClearType">
                         <xs:annotation>
-                            <xs:documentation>Removes the whole outline tree from the document.</xs:documentation>
+                            <xs:documentation>
+                                <p>Removes the whole outline tree from the document.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:element>
                 </xs:choice>
@@ -47,58 +57,76 @@ This element can have any number of "item" elements you want.</xs:documentation>
     </xs:complexType>
     <xs:complexType name="ItemType">
         <xs:annotation>
-            <xs:documentation>Used to specify all the properties you want for a content structure entry that is to be created, including the actions it will trigger.
-An entry can contain any number of the specified subelements you want in the order you want them. All subelements represent a type of action that will be triggered when the entry is clicked on and that will be executed in succession.</xs:documentation>
+            <xs:documentation>
+                <p>Used to specify all the properties you want for a content structure entry that is to be created, including the actions it will trigger.
+                    An entry can contain any number of the specified subelements you want in the order you want them. All subelements represent a type of action that will be triggered when the entry is clicked on and that will be executed in succession.
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ItemReferenceType">
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
-                    <xs:element name="goTo" type="tns:GoToDestinationActionType" />
-                    <xs:element name="launchApplication" type="tns:LaunchApplicationActionType" />
-                    <xs:element name="resolveURI" type="tns:URIActionType" />
-                    <xs:element name="playSound" type="tns:SoundActionType" />
-                    <xs:element name="hideAnnotation" type="tns:HideActionType" />
-                    <xs:element name="executeNamed" type="tns:NamedActionType" />
-                    <xs:element name="submitForm" type="tns:SubmitFormActionType" />
-                    <xs:element name="resetForm" type="tns:ResetFormActionType" />
-                    <xs:element name="importSchema" type="tns:ImportDataActionType" />
-                    <xs:element name="executeJavaScript" type="tns:JavaScriptActionType" />
-                    <xs:element name="setLayerState" type="tns:SetOCGStateActionType" />
-                    <xs:element name="setTransition" type="tns:TransitionActionType" />
-                    <xs:element name="goTo3DView" type="tns:GoTo3DViewActionType" />
-                    <xs:element name="goToThread" type="tns:ThreadActionType" />
+                    <xs:element name="goTo" type="tns:GoToDestinationActionType"/>
+                    <xs:element name="launchApplication" type="tns:LaunchApplicationActionType"/>
+                    <xs:element name="resolveURI" type="tns:URIActionType"/>
+                    <xs:element name="playSound" type="tns:SoundActionType"/>
+                    <xs:element name="hideAnnotation" type="tns:HideActionType"/>
+                    <xs:element name="executeNamed" type="tns:NamedActionType"/>
+                    <xs:element name="submitForm" type="tns:SubmitFormActionType"/>
+                    <xs:element name="resetForm" type="tns:ResetFormActionType"/>
+                    <xs:element name="importSchema" type="tns:ImportDataActionType"/>
+                    <xs:element name="executeJavaScript" type="tns:JavaScriptActionType"/>
+                    <xs:element name="setLayerState" type="tns:SetOCGStateActionType"/>
+                    <xs:element name="setTransition" type="tns:TransitionActionType"/>
+                    <xs:element name="goTo3DView" type="tns:GoTo3DViewActionType"/>
+                    <xs:element name="goToThread" type="tns:ThreadActionType"/>
                 </xs:choice>
                 <xs:attribute name="isOpen" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this value is set to true, the element will already be expanded when the document is opened.</xs:documentation>
+                        <xs:documentation>
+                            <p>If this value is set to true, the element will already be expanded when the document is opened.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="italic" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this value is set to true, the element’s name will be shown in italics.</xs:documentation>
+                        <xs:documentation>
+                            <p>If this value is set to true, the element's name will be shown in italics.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="bold" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this value is set to true, the element’s name will be shown in bold.</xs:documentation>
+                        <xs:documentation>
+                            <p>If this value is set to true, the element's name will be shown in bold.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="color" default="#000000" type="tns:RgbColorType">
                     <xs:annotation>
-                        <xs:documentation>Used to set the colour that will be used to display the element’s name. The hereby defined color needs to be specified as a hexadecimal RGB value with a number sign before it.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to set the colour that will be used to display the element's name. The hereby defined color needs to be specified as a hexadecimal RGB value with a number sign before it.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="pathPosition" default="inplace" type="tns:AddPositionType">
                     <xs:annotation>
-                        <xs:documentation>Selects the position where the entry should be created. The path passed in "path" will be interpreted based on this value.
-- before = An entry will be generated on the same level before the entry that was selected with "path.
-- inplace = The entry selected with "path" will be treated as a parent element and will contain the new generated entry.
-- after = An entry will be generated on the same level after the entry that was selected with "path.</xs:documentation>
+                        <xs:documentation>
+                            <p>Selects the position where the entry should be created. The path passed in "path" will be interpreted based on this value.
+                                <ul>
+                                    <li>before = An entry will be generated on the same level before the entry that was selected with "path.</li>
+                                    <li>inplace = The entry selected with "path" will be treated as a parent element and will contain the new generated entry.</li>
+                                    <li>after = An entry will be generated on the same level after the entry that was selected with "path.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="itemName" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>The name of the new entry in the content structure that should be placed relative to the selected path.</xs:documentation>
+                        <xs:documentation>
+                            <p>The name of the new entry in the content structure that should be placed relative to the selected path.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -106,77 +134,105 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="ItemReferenceType">
         <xs:annotation>
-            <xs:documentation>Used to select an outline item.</xs:documentation>
+            <xs:documentation>
+                <p>Used to select an outline item.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="path" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>The element paths are made of the visible names of the entries in the content structure separated with forward slashes (/), starting with an initial slash.</xs:documentation>
+                <xs:documentation>
+                    <p>The element paths are made of the visible names of the entries in the content structure separated with forward slashes (/), starting with an initial slash.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ClearType">
         <xs:annotation>
-            <xs:documentation>Removes the whole outline tree from the document.</xs:documentation>
+            <xs:documentation>
+                <p>Removes the whole outline tree from the document.</p>
+            </xs:documentation>
         </xs:annotation>
     </xs:complexType>
     <xs:complexType name="DestinationEventType">
         <xs:annotation>
-            <xs:documentation>A common base type for destination events, that shall target some location or content of the document.</xs:documentation>
+            <xs:documentation>
+                <p>A common base type for destination events, that shall target some location or content of the document.</p>
+            </xs:documentation>
         </xs:annotation>
     </xs:complexType>
     <xs:complexType name="ActionEventType">
         <xs:annotation>
-            <xs:documentation>A common base type for action events, that shall be triggered by selecting the outline entry.</xs:documentation>
+            <xs:documentation>
+                <p>A common base type for action events, that shall be triggered by selecting the outline entry.</p>
+            </xs:documentation>
         </xs:annotation>
     </xs:complexType>
     <xs:complexType name="ZoomDestinationType">
         <xs:annotation>
-            <xs:documentation>The zoomPage element is used to specify a location within the document. It will jump to a page in the document, select an area, and set a zoom factor for display.</xs:documentation>
+            <xs:documentation>
+                <p>The zoomPage element is used to specify a location within the document. It will jump to a page in the document, select an area, and set a zoom factor for display.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:DestinationEventType">
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
-                        <xs:documentation>The document page to which the jump will be.</xs:documentation>
+                        <xs:documentation>
+                            <p>The document page to which the jump will be.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="leftOffset" default="0">
                     <xs:annotation>
-                        <xs:documentation>The area’s offset from the left page margin.</xs:documentation>
+                        <xs:documentation>
+                            <p>The area's offset from the left page margin.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:int" />
+                        <xs:restriction base="xs:int"/>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="topOffset" default="0">
                     <xs:annotation>
-                        <xs:documentation>The area’s offset from the top page margin.</xs:documentation>
+                        <xs:documentation>
+                            <p>The area's offset from the top page margin.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:int" />
+                        <xs:restriction base="xs:int"/>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="zoom" default="100">
                     <xs:annotation>
-                        <xs:documentation>Used to set the value for zooming (as a percentage).</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to set the value for zooming (as a percentage).</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="0" />
-                            <xs:maxInclusive value="6400" />
+                            <xs:minInclusive value="0"/>
+                            <xs:maxInclusive value="6400"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="metrics" default="px" type="tns:MetricsType">
                     <xs:annotation>
-                        <xs:documentation>Used to specify the unit in which the maximum dimensions are specified.
-- mm = Millimetres
-- px = Pixels</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to specify the unit in which the maximum dimensions are specified.
+                                <ul>
+                                    <li>pt = Points(1/72 inch)</li>
+                                    <li>pc = Picas(12 points)</li>
+                                    <li>px = Pixels(1/96 inch)</li>
+                                    <li>mm = Millimeters</li>
+                                    <li>in = Inches</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -184,17 +240,21 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="FitPageDestinationType">
         <xs:annotation>
-            <xs:documentation>The fitPage element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure that the entire page area is displayed.</xs:documentation>
+            <xs:documentation>
+                <p>The fitPage element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure that the entire page area is displayed.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:DestinationEventType">
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
-                        <xs:documentation>The document page to which the jump will be.</xs:documentation>
+                        <xs:documentation>
+                            <p>The document page to which the jump will be.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
@@ -203,33 +263,47 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="FitWidthDestinationType">
         <xs:annotation>
-            <xs:documentation>The fitWidth element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure that the entire page width is displayed.</xs:documentation>
+            <xs:documentation>
+                <p>The fitWidth element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure that the entire page width is displayed.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:DestinationEventType">
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
-                        <xs:documentation>The document page to which the jump will be.</xs:documentation>
+                        <xs:documentation>
+                            <p>The document page to which the jump will be.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="topOffset" default="0">
                     <xs:annotation>
-                        <xs:documentation>The area’s offset from the top page margin.</xs:documentation>
+                        <xs:documentation>
+                            <p>The area's offset from the top page margin.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:int" />
+                        <xs:restriction base="xs:int"/>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="metrics" default="px" type="tns:MetricsType">
                     <xs:annotation>
-                        <xs:documentation>Used to specify the unit in which the maximum dimensions are specified.
-- mm = Millimetres
-- px = Pixels</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to specify the unit in which the maximum dimensions are specified.
+                                <ul>
+                                    <li>pt = Points(1/72 inch)</li>
+                                    <li>pc = Picas(12 points)</li>
+                                    <li>px = Pixels(1/96 inch)</li>
+                                    <li>mm = Millimeters</li>
+                                    <li>in = Inches</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -237,33 +311,47 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="FitHeightDestinationType">
         <xs:annotation>
-            <xs:documentation>The fitHeight element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure that the entire page height is displayed.</xs:documentation>
+            <xs:documentation>
+                <p>The fitHeight element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure that the entire page height is displayed.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:DestinationEventType">
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
-                        <xs:documentation>The document page to which the jump will be.</xs:documentation>
+                        <xs:documentation>
+                            <p>The document page to which the jump will be.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="leftOffset" default="0">
                     <xs:annotation>
-                        <xs:documentation>The area’s offset from the left page margin.</xs:documentation>
+                        <xs:documentation>
+                            <p>The area's offset from the left page margin.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:int" />
+                        <xs:restriction base="xs:int"/>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="metrics" default="px" type="tns:MetricsType">
                     <xs:annotation>
-                        <xs:documentation>Used to specify the unit in which the maximum dimensions are specified.
-- mm = Millimetres
-- px = Pixels</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to specify the unit in which the maximum dimensions are specified.
+                                <ul>
+                                    <li>pt = Points(1/72 inch)</li>
+                                    <li>pc = Picas(12 points)</li>
+                                    <li>px = Pixels(1/96 inch)</li>
+                                    <li>mm = Millimeters</li>
+                                    <li>in = Inches</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -271,57 +359,77 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="FitRectangleDestinationType">
         <xs:annotation>
-            <xs:documentation>The fitRectangle element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure, as far as possible, that a rectangle produced by the offsets from the page margins is displayed.</xs:documentation>
+            <xs:documentation>
+                <p>The fitRectangle element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure, as far as possible, that a rectangle produced by the offsets from the page margins is displayed.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:DestinationEventType">
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
-                        <xs:documentation>The document page to which the jump will be.</xs:documentation>
+                        <xs:documentation>
+                            <p>The document page to which the jump will be.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="leftOffset" default="0">
                     <xs:annotation>
-                        <xs:documentation>The area’s offset from the left page margin.</xs:documentation>
+                        <xs:documentation>
+                            <p>The area's offset from the left page margin.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:int" />
+                        <xs:restriction base="xs:int"/>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="bottomOffset" default="0">
                     <xs:annotation>
-                        <xs:documentation>The area’s offset from the bottom page margin.</xs:documentation>
+                        <xs:documentation>
+                            <p>The area's offset from the bottom page margin.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:int" />
+                        <xs:restriction base="xs:int"/>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="rightOffset" default="0">
                     <xs:annotation>
-                        <xs:documentation>The area’s offset from the right page margin.</xs:documentation>
+                        <xs:documentation>
+                            <p>The area's offset from the right page margin.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:int" />
+                        <xs:restriction base="xs:int"/>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="topOffset" default="0">
                     <xs:annotation>
-                        <xs:documentation>The area’s offset from the top page margin.</xs:documentation>
+                        <xs:documentation>
+                            <p>The area's offset from the top page margin.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:int" />
+                        <xs:restriction base="xs:int"/>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="metrics" default="px" type="tns:MetricsType">
                     <xs:annotation>
-                        <xs:documentation>Used to specify the unit in which the maximum dimensions are specified.
-- mm = Millimetres
-- px = Pixels</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to specify the unit in which the maximum dimensions are specified.
+                                <ul>
+                                    <li>pt = Points(1/72 inch)</li>
+                                    <li>pc = Picas(12 points)</li>
+                                    <li>px = Pixels(1/96 inch)</li>
+                                    <li>mm = Millimeters</li>
+                                    <li>in = Inches</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -329,17 +437,21 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="FitBoundingBoxDestinationType">
         <xs:annotation>
-            <xs:documentation>The fitBoundingBox element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure that the entire content area is displayed.</xs:documentation>
+            <xs:documentation>
+                <p>The fitBoundingBox element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure that the entire content area is displayed.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:DestinationEventType">
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
-                        <xs:documentation>The document page to which the jump will be.</xs:documentation>
+                        <xs:documentation>
+                            <p>The document page to which the jump will be.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
@@ -348,33 +460,47 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="FitBoundingBoxWidthDestinationType">
         <xs:annotation>
-            <xs:documentation>The fitBoundingBoxWidth element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure that the entire content area width is displayed.</xs:documentation>
+            <xs:documentation>
+                <p>The fitBoundingBoxWidth element is used to specify a location within the document. It will jump to a page in the document and set a zoom factor that will ensure that the entire content area width is displayed.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:DestinationEventType">
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
-                        <xs:documentation>The document page to which the jump will be.</xs:documentation>
+                        <xs:documentation>
+                            <p>The document page to which the jump will be.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="topOffset" default="0">
                     <xs:annotation>
-                        <xs:documentation>The area’s offset from the top page margin.</xs:documentation>
+                        <xs:documentation>
+                            <p>The area's offset from the top page margin.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:int" />
+                        <xs:restriction base="xs:int"/>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="metrics" default="px" type="tns:MetricsType">
                     <xs:annotation>
-                        <xs:documentation>Used to specify the unit in which the maximum dimensions are specified.
-- mm = Millimetres
-- px = Pixels</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to specify the unit in which the maximum dimensions are specified.
+                                <ul>
+                                    <li>pt = Points(1/72 inch)</li>
+                                    <li>pc = Picas(12 points)</li>
+                                    <li>px = Pixels(1/96 inch)</li>
+                                    <li>mm = Millimeters</li>
+                                    <li>in = Inches</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -382,13 +508,17 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="NamedDestinationType">
         <xs:annotation>
-            <xs:documentation>The goToNamed element is used to specify a location within the document. It will jump to a specified and already defined place in the document (this element can only be used to reference the location, but not to define a new location).</xs:documentation>
+            <xs:documentation>
+                <p>The goToNamed element is used to specify a location within the document. It will jump to a specified and already defined place in the document (this element can only be used to reference the location, but not to define a new location).</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:DestinationEventType">
                 <xs:attribute name="name" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>The name of the location to which the jump will be.</xs:documentation>
+                        <xs:documentation>
+                            <p>The name of the location to which the jump will be.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -396,39 +526,48 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="GoToDestinationActionType">
         <xs:annotation>
-            <xs:documentation>The goTo element jumps to a specific place (destination) in the document. The goTo Element represents a triggerable action. There can only be one single subelement. Each one of the specified subelements represents a known destination in the document that can be jumped to.</xs:documentation>
+            <xs:documentation>
+                <p>The goTo element jumps to a specific place (destination) in the document. The goTo Element represents a triggerable action. There can only be one single subelement. Each one of the specified subelements represents a known destination in the document that can be jumped to.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
-                <xs:choice minOccurs="1" maxOccurs="1">
-                    <xs:element name="zoomPage" type="tns:ZoomDestinationType" />
-                    <xs:element name="fitPage" type="tns:FitPageDestinationType" />
-                    <xs:element name="fitWidth" type="tns:FitWidthDestinationType" />
-                    <xs:element name="fitHeight" type="tns:FitHeightDestinationType" />
-                    <xs:element name="fitRectangle" type="tns:FitRectangleDestinationType" />
-                    <xs:element name="fitBoundingBox" type="tns:FitBoundingBoxDestinationType" />
-                    <xs:element name="fitBoundingBoxWidth" type="tns:FitBoundingBoxWidthDestinationType" />
-                    <xs:element name="goToNamed" type="tns:NamedDestinationType" />
+                <xs:choice>
+                    <xs:element name="zoomPage" type="tns:ZoomDestinationType"/>
+                    <xs:element name="fitPage" type="tns:FitPageDestinationType"/>
+                    <xs:element name="fitWidth" type="tns:FitWidthDestinationType"/>
+                    <xs:element name="fitHeight" type="tns:FitHeightDestinationType"/>
+                    <xs:element name="fitRectangle" type="tns:FitRectangleDestinationType"/>
+                    <xs:element name="fitBoundingBox" type="tns:FitBoundingBoxDestinationType"/>
+                    <xs:element name="fitBoundingBoxWidth" type="tns:FitBoundingBoxWidthDestinationType"/>
+                    <xs:element name="goToNamed" type="tns:NamedDestinationType"/>
                 </xs:choice>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="LaunchApplicationActionType">
         <xs:annotation>
-            <xs:documentation>The launchApplication element will open another application or document when activated. The "applicationPath" subelement is required. "launchParameters" is optional.</xs:documentation>
+            <xs:documentation>
+                <p>The launchApplication element will open another application or document when activated. The "applicationPath" subelement is required. "launchParameters" is optional.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
                 <xs:all>
-                    <xs:element name="applicationPath" type="tns:FileSpecificationType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="launchParameters" type="tns:LaunchParameterType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="applicationPath" type="tns:FileSpecificationType" minOccurs="0"/>
+                    <xs:element name="launchParameters" type="tns:LaunchParameterType" minOccurs="0"/>
                 </xs:all>
                 <xs:attribute name="newWindow" default="userPreferences" type="tns:OpenModeType">
                     <xs:annotation>
-                        <xs:documentation>Used to select the window in which the application / document should be opened.
-- userPreference = Uses the variant that is normal in the reader application or that has been configured by the user.
-- newWindow = Forces the application or document to be opened in a new window.
-- sameWindow = Attempts (if possible) to open the document in the current reader application window.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to select the window in which the application / document should be opened.
+                                <ul>
+                                    <li>userPreference = Uses the variant that is normal in the reader application or that has been configured by the user.</li>
+                                    <li>newWindow = Forces the application or document to be opened in a new window.</li>
+                                    <li>sameWindow = Attempts (if possible) to open the document in the current reader application window.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -436,42 +575,52 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="ThreadActionType">
         <xs:annotation>
-            <xs:documentation>When activated, the goToThread action jumps to a specific thread defined in the document.</xs:documentation>
+            <xs:documentation>
+                <p>When activated, the goToThread action jumps to a specific thread defined in the document.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
                 <xs:attribute name="beadIndex">
                     <xs:annotation>
-                        <xs:documentation>The index of the thread section to which the jump should be. This value is optional and does not need to be specified.</xs:documentation>
+                        <xs:documentation>
+                            <p>The index of the thread section to which the jump should be. This value is optional and does not need to be specified.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="0" />
+                            <xs:minInclusive value="0"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
-                        <xs:documentation>The page number of the page where the thread is found.</xs:documentation>
+                        <xs:documentation>
+                            <p>The page number of the page where the thread is found.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="threadTitle" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>The title of the thread to which the jump should be. This value is an alternative to "threadIndex" and does not have to be set if the latter has been specified.</xs:documentation>
+                        <xs:documentation>
+                            <p>The title of the thread to which the jump should be. This value is an alternative to "threadIndex" and does not have to be set if the latter has been specified.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="threadIndex">
                     <xs:annotation>
-                        <xs:documentation>The index of the thread in the document’s thread directory to which the jump should be. This value is an alternative to "threadTitle" and does not have to be set if the latter has been specified.</xs:documentation>
+                        <xs:documentation>
+                            <p>The index of the thread in the document's thread directory to which the jump should be. This value is an alternative to "threadTitle" and does not have to be set if the latter has been specified.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="0" />
+                            <xs:minInclusive value="0"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
@@ -480,13 +629,17 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="URIActionType">
         <xs:annotation>
-            <xs:documentation>When activated, the resolveURI Element element will open a specified URI in a suitable program.</xs:documentation>
+            <xs:documentation>
+                <p>When activated, the resolveURI element will open a specified URI in a suitable program.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
                 <xs:attribute name="uri" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>A URI that should be resolved and shown in a suitable program.</xs:documentation>
+                        <xs:documentation>
+                            <p>A URI that should be resolved and shown in a suitable program.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -494,80 +647,103 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="SoundActionType">
         <xs:annotation>
-            <xs:documentation>When activated, the playSound Element plays the specified audio data.</xs:documentation>
+            <xs:documentation>
+                <p>When activated, the playSound Element plays the specified audio data.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
                 <xs:all>
-                    <xs:element name="sound" type="xs:base64Binary" minOccurs="1" maxOccurs="1">
+                    <xs:element name="sound" type="xs:base64Binary">
                         <xs:annotation>
-                            <xs:documentation>The audio file that should be played. The file must be encoded as a BASE64 value. The passed file must be completely independent and contain all the information and data required to play it. The AIFF, AIFF-C, RIFF (*.wav), snd(*.au) audio formats are supported, for example.</xs:documentation>
+                            <xs:documentation>
+                                <p>The audio file that should be played. The file must be encoded as a BASE64 value. The passed file must be completely independent and contain all the information and data required to play it. The AIFF, AIFF-C, RIFF (*.wav), snd(*.au) audio formats are supported, for example.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:element>
                 </xs:all>
                 <xs:attribute name="volume" default="100">
                     <xs:annotation>
-                        <xs:documentation>A floating-point number between 100 and -100 that configures the volume for audio playback (as a percentage).</xs:documentation>
+                        <xs:documentation>
+                            <p>A floating-point number between 100 and -100 that configures the volume for audio playback (as a percentage).</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="-100" />
-                            <xs:maxInclusive value="100" />
+                            <xs:minInclusive value="-100"/>
+                            <xs:maxInclusive value="100"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="synchronous" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this value is set to true, the reader program must guarantee that the audio track will be plated in a completely synchronized manner without any interruptions and, accordingly, suppress any user interaction (except for cancelling the audio) while the audio is playing.</xs:documentation>
+                        <xs:documentation>
+                            <p>If this value is set to true, the reader program must guarantee that the audio track will be plated in a completely synchronized manner without any interruptions and, accordingly, suppress any user interaction (except for cancelling the audio) while the audio is playing.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="repeat" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this value is set to true, the audio track should be repeated endlessly.</xs:documentation>
+                        <xs:documentation>
+                            <p>If this value is set to true, the audio track should be repeated endlessly.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="mix" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this value is set to true, it will be possible to play the audio track at the same time as other audio tracks. If it is set to false instead, any audio tracks that were already playing will be stopped previously.</xs:documentation>
+                        <xs:documentation>
+                            <p>If this value is set to true, it will be possible to play the audio track at the same time as other audio tracks. If it is set to false instead, any audio tracks that were already playing will be stopped previously.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="samplingRate" default="8000">
                     <xs:annotation>
-                        <xs:documentation>The Sample Rate in Samples per Second.</xs:documentation>
+                        <xs:documentation>
+                            <p>The Sample Rate in Samples per Second.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:float">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="soundChannels" default="1">
                     <xs:annotation>
-                        <xs:documentation>The number of audio channels.</xs:documentation>
+                        <xs:documentation>
+                            <p>The number of audio channels.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="sampleSize" default="8">
                     <xs:annotation>
-                        <xs:documentation>The number of bits per sample per audio channel.</xs:documentation>
+                        <xs:documentation>
+                            <p>The number of bits per sample per audio channel.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="encoding" default="Raw" type="tns:AudioEncodingType">
                     <xs:annotation>
-                        <xs:documentation>The encoding of the audio file. Possible values are:
-- Raw
-- Signed
-- muLaw
-- ALaw</xs:documentation>
+                        <xs:documentation>
+                            <p>The encoding of the audio file. Possible values are:
+                                <ul>
+                                    <li>Raw</li>
+                                    <li>Signed</li>
+                                    <li>muLaw</li>
+                                    <li>ALaw</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -575,16 +751,21 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="HideActionType">
         <xs:annotation>
-            <xs:documentation>When activated, the hide element will show or hide the selected annotations.</xs:documentation>
+            <xs:documentation>
+                <p>When activated, the hide element will show or hide the selected annotations.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
                 <xs:choice>
-                    <xs:element name="annotation" type="tns:AnnotationSelectionType" minOccurs="1" maxOccurs="unbounded" />
+                    <xs:element name="annotation" type="tns:AnnotationSelectionType"
+                                maxOccurs="unbounded"/>
                 </xs:choice>
                 <xs:attribute name="hide" default="true" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>Used to define whether the selected annotations should be hidden or shown.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to define whether the selected annotations should be hidden or shown.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -592,18 +773,26 @@ An entry can contain any number of the specified subelements you want in the ord
     </xs:complexType>
     <xs:complexType name="NamedActionType">
         <xs:annotation>
-            <xs:documentation>The executeNamed action executes a prepared action that is known to the reader application with a specific name. There are certain standard actions that should be known to any reader application. However, an application can have other defined names as well.
-The actions’ execution and what it does are defined exclusively by the reader application, meaning that the resulting behaviour can vary completely from one application to another.</xs:documentation>
+            <xs:documentation>
+                <p>The executeNamed action executes a prepared action that is known to the reader application with a specific name. There are certain standard actions that should be known to any reader application. However, an application can have other defined names as well.
+                    The actions' execution and what it does are defined exclusively by the reader application, meaning that the resulting behaviour can vary completely from one application to another.
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
                 <xs:attribute name="namedOperation" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>The name of the action that should be run. The following are standard names that any reader application should know:
-- NextPage = Jumps to the next page
-- PrevPage = Jumps to the previous page
-- FirstPage = Jump to the first page
-- LastPage = Jump to the last page</xs:documentation>
+                        <xs:documentation>
+                            <p>The name of the action that should be run. The following are standard names that any reader application should know:
+                                <ul>
+                                    <li>NextPage = Jumps to the next page</li>
+                                    <li>PrevPage = Jumps to the previous page</li>
+                                    <li>FirstPage = Jump to the first page</li>
+                                    <li>LastPage = Jump to the last page</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -611,25 +800,34 @@ The actions’ execution and what it does are defined exclusively by the reader 
     </xs:complexType>
     <xs:complexType name="SetOCGStateActionType">
         <xs:annotation>
-            <xs:documentation>setLayerState switches the visibility of the selected document layers to the desired value.</xs:documentation>
+            <xs:documentation>
+                <p>setLayerState switches the visibility of the selected document layers to the desired value.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
-                <xs:choice minOccurs="1" maxOccurs="unbounded">
+                <xs:choice maxOccurs="unbounded">
                     <xs:element name="layerState">
                         <xs:annotation>
-                            <xs:documentation>The LayerState element switches the visibility of the selected document layers to the desired value.</xs:documentation>
+                            <xs:documentation>
+                                <p>The LayerState element switches the visibility of the selected document layers to the desired value.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
-                            <xs:choice minOccurs="1" maxOccurs="unbounded">
-                                <xs:element name="referencedLayer" type="tns:OCGSelectionType" />
+                            <xs:choice maxOccurs="unbounded">
+                                <xs:element name="referencedLayer" type="tns:OCGSelectionType"/>
                             </xs:choice>
                             <xs:attribute name="state" default="ON" type="tns:OCGStateType">
                                 <xs:annotation>
-                                    <xs:documentation>The status change that should be carried out upon activation.
-- ON = The layer(s) will be shown.
-- OFF = The layer(s) will be hidden.
-- Toggle = The layer visibility will be switched.</xs:documentation>
+                                    <xs:documentation>
+                                        <p>The status change that should be carried out upon activation.
+                                            <ul>
+                                                <li>ON = The layer(s) will be shown.</li>
+                                                <li>OFF = The layer(s) will be hidden.</li>
+                                                <li>Toggle = The layer visibility will be switched.</li>
+                                            </ul>
+                                        </p>
+                                    </xs:documentation>
                                 </xs:annotation>
                             </xs:attribute>
                         </xs:complexType>
@@ -637,7 +835,9 @@ The actions’ execution and what it does are defined exclusively by the reader 
                 </xs:choice>
                 <xs:attribute name="preserveRadioButtonRelation" default="true" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>When set to true, connected radio button states shall be preserved.</xs:documentation>
+                        <xs:documentation>
+                            <p>When set to true, connected radio button states shall be preserved.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -645,81 +845,105 @@ The actions’ execution and what it does are defined exclusively by the reader 
     </xs:complexType>
     <xs:complexType name="TransitionActionType">
         <xs:annotation>
-            <xs:documentation>The setTransition action shows the changes that result from the actions with the use of the defined transition animation.</xs:documentation>
+            <xs:documentation>
+                <p>The setTransition action shows the changes that result from the actions with the use of the defined transition animation.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
                 <xs:attribute name="scaling" default="100">
                     <xs:annotation>
-                        <xs:documentation>Used to set the value for zooming (as a percentage).</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to set the value for zooming (as a percentage).</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="0" />
+                            <xs:minInclusive value="0"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="effectDimensionHorizontal" default="true" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>Option for the split and blinds animation styles – used to define the axis along which the effect should happen. true corresponds to the horizontal axis; false to the vertical one.</xs:documentation>
+                        <xs:documentation>
+                            <p>Option for the split and blinds animation styles - used to define the axis along which the effect should happen. true corresponds to the horizontal axis; false to the vertical one.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="motionInward" default="true" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>Option for the split, box, and fly animation styles – defines whether the animation direction will be from the edges of the page towards the centre (true) or from the centre towards the edges (false).</xs:documentation>
+                        <xs:documentation>
+                            <p>Option for the split, box, and fly animation styles - defines whether the animation direction will be from the edges of the page towards the centre (true) or from the centre towards the edges (false).</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="flyAreaOpaque" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>Option for the "fly" animation style – used to define whether the page background for the page that flies in should be transparent initially.</xs:documentation>
+                        <xs:documentation>
+                            <p>Option for the "fly" animation style - used to define whether the page background for the page that flies in should be transparent initially.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="flyScale" default="100">
                     <xs:annotation>
-                        <xs:documentation>Option for the "fly" animation style – used to define the starting scale for the page that flies in. The page will smoothly be scaled from this starting scale all the way to the size of the page being displayed  (defined as a percentage).</xs:documentation>
+                        <xs:documentation>
+                            <p>Option for the "fly" animation style - used to define the starting scale for the page that flies in. The page will smoothly be scaled from this starting scale all the way to the size of the page being displayed (defined as a percentage).</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="0" />
-                            <xs:maxInclusive value="6400" />
+                            <xs:minInclusive value="0"/>
+                            <xs:maxInclusive value="6400"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="direction" default="leftToRight" type="tns:OutlineTransitionDirectionType">
                     <xs:annotation>
-                        <xs:documentation>The direction of the transition animation (provided that it can be applied to the animation).
-- leftToRight = From left to right
-- bottomToTop = From bottom to top
-- rightToLeft = From right to left
-- topToBottom = From top to bottom
-- topLeftToBottomRight = From top left to bottom right
-- none = Use the default value for the animation</xs:documentation>
+                        <xs:documentation>
+                            <p>The direction of the transition animation (provided that it can be applied to the animation).
+                                <ul>
+                                    <li>leftToRight = From left to right</li>
+                                    <li>bottomToTop = From bottom to top</li>
+                                    <li>rightToLeft = From right to left</li>
+                                    <li>topToBottom = From top to bottom</li>
+                                    <li>topLeftToBottomRight = From top left to bottom right</li>
+                                    <li>none = Use the default value for the animation</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="style" default="none" type="tns:OutlineTransitionStyleType">
                     <xs:annotation>
-                        <xs:documentation>The style of transition animation.
-- blinds = Crossfades
-- box = Crossfades in a rectangular pattern
-- cover = Covers
-- dissolve = Dissolves
-- fade = Fades
-- fly = Page flies in
-- glitter = Page dissolves and is replaced
-- push = Page is pushed out
-- split = Splits page
-- uncover = Uncovers page
-- wipe = Wipes page
-- none = No special effect</xs:documentation>
+                        <xs:documentation>
+                            <p>The style of transition animation.
+                                <ul>
+                                    <li>blinds = Crossfades</li>
+                                    <li>box = Crossfades in a rectangular pattern</li>
+                                    <li>cover = Covers</li>
+                                    <li>dissolve = Dissolves</li>
+                                    <li>fade = Fades</li>
+                                    <li>fly = Page flies in</li>
+                                    <li>glitter = Page dissolves and is replaced</li>
+                                    <li>push = Page is pushed out</li>
+                                    <li>split = Splits page</li>
+                                    <li>uncover = Uncovers page</li>
+                                    <li>wipe = Wipes page</li>
+                                    <li>none = No special effect</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="duration" default="1">
                     <xs:annotation>
-                        <xs:documentation>The page transition animation’s duration, in seconds. Make sure to avoid excessively high values, as certain reader programs will force the entire animation to be displayed without any option for interrupting it. Moreover, an excessively long animation can result in display and execution errors in the reader program. Values under 10 seconds are recommended.</xs:documentation>
+                        <xs:documentation>
+                            <p>The page transition animation's duration, in seconds. Make sure to avoid excessively high values, as certain reader programs will force the entire animation to be displayed without any option for interrupting it. Moreover, an excessively long animation can result in display and execution errors in the reader program. Values under 10 seconds are recommended.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:float">
-                            <xs:minInclusive value="0" />
+                            <xs:minInclusive value="0"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
@@ -728,13 +952,17 @@ The actions’ execution and what it does are defined exclusively by the reader 
     </xs:complexType>
     <xs:complexType name="JavaScriptActionType">
         <xs:annotation>
-            <xs:documentation>The executeJavaScript action runs passed JavaScript code.</xs:documentation>
+            <xs:documentation>
+                <p>The executeJavaScript action runs passed JavaScript code.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
                 <xs:attribute name="jsAction" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>A string that contains all the required JavaScript statements. References to libraries and external definitions will be valid as long as they are supported by the PDF standard and the reader application provides the corresponding interfaces.</xs:documentation>
+                        <xs:documentation>
+                            <p>A string that contains all the required JavaScript statements. References to libraries and external definitions will be valid as long as they are supported by the PDF standard and the reader application provides the corresponding interfaces.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -742,36 +970,47 @@ The actions’ execution and what it does are defined exclusively by the reader 
     </xs:complexType>
     <xs:complexType name="GoTo3DViewActionType">
         <xs:annotation>
-            <xs:documentation>When activated, the goTo3DView action will jump to a specific view of a 3D object (a 3D annotation).</xs:documentation>
+            <xs:documentation>
+                <p>When activated, the goTo3DView action will jump to a specific view of a 3D object (a 3D annotation).</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
                 <xs:all>
-                    <xs:element name="annotation" type="tns:AnnotationSelectionType" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="annotation" type="tns:AnnotationSelectionType"/>
                 </xs:all>
                 <xs:attribute name="index">
                     <xs:annotation>
-                        <xs:documentation>The index for the 3D annotation view. This value is an alternative to "name" and "relative" and does not have to be set if either one of these values are specified.</xs:documentation>
+                        <xs:documentation>
+                            <p>The index for the 3D annotation view. This value is an alternative to "name" and "relative" and does not have to be set if either one of these values are specified.</p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="0" />
+                            <xs:minInclusive value="0"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="name" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>The name of the 3D annotation view. This value is an alternative to "index" and "relative" and does not have to be set if either one of these values are specified.</xs:documentation>
+                        <xs:documentation>
+                            <p>The name of the 3D annotation view. This value is an alternative to "index" and "relative" and does not have to be set if either one of these values are specified.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="relative" default="Default" type="tns:RelativeThreeDViewOperationType">
                     <xs:annotation>
-                        <xs:documentation>A view of the 3D annotation that has been defined relative to the currently visualized view. This value is an alternative to "name" and "index" and does not have to be set if either one of these values are specified.
-- First = The first view of the 3D annotation.
-- Last = The last view of the 3D annotation.
-- Next = The next view of the 3D annotation.
-- Previous = The previous view of the 3D annotation.
-- Default = The default view of the 3D annotation.</xs:documentation>
+                        <xs:documentation>
+                            <p>A view of the 3D annotation that has been defined relative to the currently visualized view. This value is an alternative to "name" and "index" and does not have to be set if either one of these values are specified.
+                                <ul>
+                                    <li>First = The first view of the 3D annotation.</li>
+                                    <li>Last = The last view of the 3D annotation.</li>
+                                    <li>Next = The next view of the 3D annotation.</li>
+                                    <li>Previous = The previous view of the 3D annotation.</li>
+                                    <li>Default = The default view of the 3D annotation.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -779,81 +1018,111 @@ The actions’ execution and what it does are defined exclusively by the reader 
     </xs:complexType>
     <xs:complexType name="SubmitFormActionType">
         <xs:annotation>
-            <xs:documentation>When activated, the submitForm action will send the names and values of all selected form fields to the specified URL (Uniform Resource Locator). You can use the "field" element as many times as necessary.</xs:documentation>
+            <xs:documentation>
+                <p>When activated, the submitForm action will send the names and values of all selected form fields to the specified URL (Uniform Resource Locator). You can use the "field" element as many times as necessary.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
-                <xs:choice minOccurs="1" maxOccurs="unbounded">
-                    <xs:element name="field" type="tns:FormFieldSelectionType" />
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="field" type="tns:FormFieldSelectionType"/>
                 </xs:choice>
                 <xs:attribute name="url" default="" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>The URL to which the data should be transmitted.</xs:documentation>
+                        <xs:documentation>
+                            <p>The URL to which the data should be transmitted.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="exclude" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If true, then all form fields except the selected ones should be exported. If false, only the selected ones will be.</xs:documentation>
+                        <xs:documentation>
+                            <p>If true, then all form fields except the selected ones should be exported. If false, only the selected ones will be.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="includeNoValueFields" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If true, form fields that have not yet been filled out / that do not contain a value will be exported as well.</xs:documentation>
+                        <xs:documentation>
+                            <p>If true, form fields that have not yet been filled out / that do not contain a value will be exported as well.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="exportFormat" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>This value is only relevant if "submitPDF" and "xfdf" are not set. If this value is set to true, the data will be exported as an HTML form; otherwise, it will be exported in fdf (Forms Data Format) format.</xs:documentation>
+                        <xs:documentation>
+                            <p>This value is only relevant if "submitPDF" and "xfdf" are not set. If this value is set to true, the data will be exported as an HTML form; otherwise, it will be exported in fdf (Forms Data Format) format.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="getMethod" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>This value is only relevant if "exportFormat" is set and used. In this case, this value determines whether the names and values will be transmitted with GET (true) or HTTP POST (false) requests.</xs:documentation>
+                        <xs:documentation>
+                            <p>This value is only relevant if "exportFormat" is set and used. In this case, this value determines whether the names and values will be transmitted with GET (true) or HTTP POST (false) requests.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="submitCoordinates" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>This value is only relevant if "exportFormat" is set and used. In this case, this value determines whether the position of the mouse click that triggered the export should also be part of the export.</xs:documentation>
+                        <xs:documentation>
+                            <p>This value is only relevant if "exportFormat" is set and used. In this case, this value determines whether the position of the mouse click that triggered the export should also be part of the export.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="xfdf" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>This value is only relevant if "submitPDF" is not set. In this case, this value determines whether the data should be transmitted in XFDF format.</xs:documentation>
+                        <xs:documentation>
+                            <p>This value is only relevant if "submitPDF" is not set. In this case, this value determines whether the data should be transmitted in XFDF format.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="includeAppendSaves" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>This value is only relevant if the data should be transmitted in FDF format. In this case, this value determines whether the transmitted data will reproduce all incremental changes in the form data.</xs:documentation>
+                        <xs:documentation>
+                            <p>This value is only relevant if the data should be transmitted in FDF format. In this case, this value determines whether the transmitted data will reproduce all incremental changes in the form data.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="includeAnnotations" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>This value is only relevant if the data should be transmitted in FDF format. In this case, this value determines whether the set mark-up annotations should be included in the transmitted data.</xs:documentation>
+                        <xs:documentation>
+                            <p>This value is only relevant if the data should be transmitted in FDF format. In this case, this value determines whether the set mark-up annotations should be included in the transmitted data.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="submitPDF" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this value is set to true, the data will be transmitted as a PDF file.</xs:documentation>
+                        <xs:documentation>
+                            <p>If this value is set to true, the data will be transmitted as a PDF file.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="canonicalFormat" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this value is set to true, all dates and times will be transmitted in a canonical standard format whenever possible.</xs:documentation>
+                        <xs:documentation>
+                            <p>If this value is set to true, all dates and times will be transmitted in a canonical standard format whenever possible.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="excludeNonUserAnnotations" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>This value is only relevant if the data should be transmitted in FDF format and "includeAnnotations" is set. In this case, this value determines whether the transmitted data should exclusively contain the annotations set by the user filling out the information (true) or whether it should contain all annotations instead (false).</xs:documentation>
+                        <xs:documentation>
+                            <p>This value is only relevant if the data should be transmitted in FDF format and "includeAnnotations" is set. In this case, this value determines whether the transmitted data should exclusively contain the annotations set by the user filling out the information (true) or whether it should contain all annotations instead (false).</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="excludeFDFSourceOrTargetFile" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>This value is only relevant if the data should be transmitted in FDF format. In this case, this value determines whether the URL to which the data is being transmitted should be included in the export.</xs:documentation>
+                        <xs:documentation>
+                            <p>This value is only relevant if the data should be transmitted in FDF format. In this case, this value determines whether the URL to which the data is being transmitted should be included in the export.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="embedForm" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>This value is only relevant if the data should be transmitted in FDF format. In this case, this value determines whether the PDF file that contains the form should be integrated into the transmitted data.</xs:documentation>
+                        <xs:documentation>
+                            <p>This value is only relevant if the data should be transmitted in FDF format. In this case, this value determines whether the PDF file that contains the form should be integrated into the transmitted data.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -861,16 +1130,20 @@ The actions’ execution and what it does are defined exclusively by the reader 
     </xs:complexType>
     <xs:complexType name="ResetFormActionType">
         <xs:annotation>
-            <xs:documentation>The resetForm action action clears the values in all selected form fields. You can use the "field" element as many times as necessary.</xs:documentation>
+            <xs:documentation>
+                <p>The resetForm action clears the values in all selected form fields. You can use the "field" element as many times as necessary.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
-                <xs:choice minOccurs="1" maxOccurs="unbounded">
-                    <xs:element name="field" type="tns:FormFieldSelectionType" />
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="field" type="tns:FormFieldSelectionType"/>
                 </xs:choice>
                 <xs:attribute name="exclude" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If true, then all form fields except the selected ones should be exported. If false, only the selected ones will be.</xs:documentation>
+                        <xs:documentation>
+                            <p>If true, then all form fields except the selected ones should be exported. If false, only the selected ones will be.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -878,63 +1151,86 @@ The actions’ execution and what it does are defined exclusively by the reader 
     </xs:complexType>
     <xs:complexType name="ImportDataActionType">
         <xs:annotation>
-            <xs:documentation>The importSchema action replaces the values in all form fields with the values in a matching form file.</xs:documentation>
+            <xs:documentation>
+                <p>The importSchema action replaces the values in all form fields with the values in a matching form file.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ActionEventType">
                 <xs:all>
-                    <xs:element name="file" type="tns:FileSpecificationType" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="file" type="tns:FileSpecificationType"/>
                 </xs:all>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="FileSpecificationType">
         <xs:annotation>
-            <xs:documentation>Used to specify the location and additional parameters for running an application or opening a document.</xs:documentation>
+            <xs:documentation>
+                <p>Used to specify the location and additional parameters for running an application or opening a document.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="volatileFile" default="false" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>This value should be set to true if the selected document will be subject to changes continuously and the reader application should be forced to continuously reload the document instead of caching it.</xs:documentation>
+                <xs:documentation>
+                    <p>This value should be set to true if the selected document will be subject to changes continuously and the reader application should be forced to continuously reload the document instead of caching it.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="description" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>A description of the application that should be opened.</xs:documentation>
+                <xs:documentation>
+                    <p>A description of the application that should be opened.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="resourceURL" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>The path or URL for the application / document. Use forward slashes as path separators. It is potentially possible to use platform-specific characters, but this is not recommended. If you do end up using platform-specific characters anyway, they must be preceded by a backslash (‘\’).</xs:documentation>
+                <xs:documentation>
+                    <p>The path or URL for the application / document. Use forward slashes as path separators. It is potentially possible to use platform-specific characters, but this is not recommended. If you do end up using platform-specific characters anyway, they must be preceded by a backslash (‘\').</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="LaunchParameterType">
         <xs:annotation>
-            <xs:documentation>Used to specify additional arguments for running an application and selecting the file in a platform-specific way (as of this writing, operating systems other than Microsoft Windows are not supported when it comes to passing these arguments).</xs:documentation>
+            <xs:documentation>
+                <p>Used to specify additional arguments for running an application and selecting the file in a platform-specific way (as of this writing, operating systems other than Microsoft Windows are not supported when it comes to passing these arguments).</p>
+            </xs:documentation>
         </xs:annotation>
-        <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:choice>
             <xs:element name="windows">
                 <xs:complexType>
                     <xs:attribute name="fileName" default="" type="xs:string">
                         <xs:annotation>
-                            <xs:documentation>A Windows filename using the standard Windows path syntax. If there is a backslash in the specified path, it must be escaped by preceding it with another backslash.</xs:documentation>
+                            <xs:documentation>
+                                <p>A Windows filename using the standard Windows path syntax. If there is a backslash in the specified path, it must be escaped by preceding it with another backslash.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                     <xs:attribute name="directory" default="" type="xs:string">
                         <xs:annotation>
-                            <xs:documentation>Used to specify the basic path, using standard DOS syntax, from which navigation will take place.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to specify the basic path, using standard DOS syntax, from which navigation will take place.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                     <xs:attribute name="operation" default="open" type="tns:ApplicationOperationType">
                         <xs:annotation>
-                            <xs:documentation>Used to specify the standard operation that should be carried out with the specified document.
-- open = Open the document.
-- print = Print the document.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to specify the standard operation that should be carried out with the specified document.
+                                    <ul>
+                                        <li>open = Open the document.</li>
+                                        <li>print = Print the document.</li>
+                                    </ul>
+                                </p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                     <xs:attribute name="arguments" default="" type="xs:string">
                         <xs:annotation>
-                            <xs:documentation>The arguments that should be passed to the application when making a call.</xs:documentation>
+                            <xs:documentation>
+                                <p>The arguments that should be passed to the application when making a call.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                 </xs:complexType>
@@ -943,178 +1239,229 @@ The actions’ execution and what it does are defined exclusively by the reader 
     </xs:complexType>
     <xs:complexType name="AnnotationSelectionType">
         <xs:annotation>
-            <xs:documentation>The annotation element can be used to select document annotations that should be modified. The name of the relevant "annotations" container will depend on the definition context. The container can contain 0 to n "annotation" elements.</xs:documentation>
+            <xs:documentation>
+                <p>The annotation element can be used to select document annotations that should be modified. The name of the relevant "annotations" container will depend on the definition context. The container can contain 0 to n "annotation" elements.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="page" default="1">
             <xs:annotation>
-                <xs:documentation>The page number of the page where the annotation is found.</xs:documentation>
+                <xs:documentation>
+                    <p>The page number of the page where the annotation is found.</p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1" />
+                    <xs:minInclusive value="1"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="index">
             <xs:annotation>
-                <xs:documentation>The index for the annotation in the page’s annotation directory. This value is an alternative to the annotation name and does not have to be set if an annotation name is specified.</xs:documentation>
+                <xs:documentation>
+                    <p>The index for the annotation in the page's annotation directory. This value is an alternative to the annotation name and does not have to be set if an annotation name is specified.</p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="name" type="xs:string">
             <xs:annotation>
-                <xs:documentation>The name of the annotation in the page’s annotation directory. This value is an alternative to the annotation index and does not have to be set if an annotation index is specified.</xs:documentation>
+                <xs:documentation>
+                    <p>The name of the annotation in the page's annotation directory. This value is an alternative to the annotation index and does not have to be set if an annotation index is specified.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="OCGSelectionType">
         <xs:annotation>
-            <xs:documentation>A "layerState" element can contain 1 to n "referencedLayer" elements that activate one document layer each.</xs:documentation>
+            <xs:documentation>
+                <p>A "layerState" element can contain 1 to n "referencedLayer" elements that activate one document layer each.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="name" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>The name of the layer that should be activated.</xs:documentation>
+                <xs:documentation>
+                    <p>The name of the layer that should be activated.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="FormFieldSelectionType">
         <xs:annotation>
-            <xs:documentation>Selects a form field.</xs:documentation>
+            <xs:documentation>
+                <p>Selects a form field.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="name" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>The name of the selected form field.</xs:documentation>
+                <xs:documentation>
+                    <p>The name of the selected form field.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="AudioEncodingType">
         <xs:annotation>
-            <xs:documentation>The encoding of the audio file. Possible values are:
-- Raw
-- Signed
-- muLaw
-- ALaw</xs:documentation>
+            <xs:documentation>
+                <p>The encoding of the audio file. Possible values are:
+                    <ul>
+                        <li>Raw</li>
+                        <li>Signed</li>
+                        <li>muLaw</li>
+                        <li>ALaw</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="Raw" />
-            <xs:enumeration value="Signed" />
-            <xs:enumeration value="muLaw" />
-            <xs:enumeration value="ALaw" />
+            <xs:enumeration value="Raw"/>
+            <xs:enumeration value="Signed"/>
+            <xs:enumeration value="muLaw"/>
+            <xs:enumeration value="ALaw"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="OutlineTransitionStyleType">
         <xs:annotation>
-            <xs:documentation>The style of transition animation.
-- blinds = Crossfades
-- box = Crossfades in a rectangular pattern
-- cover = Covers
-- dissolve = Dissolves
-- fade = Fades
-- fly = Page flies in
-- glitter = Page dissolves and is replaced
-- push = Page is pushed out
-- split = Splits page
-- uncover = Uncovers page
-- wipe = Wipes page
-- none = No special effect</xs:documentation>
+            <xs:documentation>
+                <p>The style of transition animation.
+                    <ul>
+                        <li>blinds = Crossfades</li>
+                        <li>box = Crossfades in a rectangular pattern</li>
+                        <li>cover = Covers</li>
+                        <li>dissolve = Dissolves</li>
+                        <li>fade = Fades</li>
+                        <li>fly = Page flies in</li>
+                        <li>glitter = Page dissolves and is replaced</li>
+                        <li>push = Page is pushed out</li>
+                        <li>split = Splits page</li>
+                        <li>uncover = Uncovers page</li>
+                        <li>wipe = Wipes page</li>
+                        <li>none = No special effect</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="blinds" />
-            <xs:enumeration value="box" />
-            <xs:enumeration value="cover" />
-            <xs:enumeration value="dissolve" />
-            <xs:enumeration value="fade" />
-            <xs:enumeration value="fly" />
-            <xs:enumeration value="glitter" />
-            <xs:enumeration value="push" />
-            <xs:enumeration value="split" />
-            <xs:enumeration value="uncover" />
-            <xs:enumeration value="wipe" />
-            <xs:enumeration value="none" />
+            <xs:enumeration value="blinds"/>
+            <xs:enumeration value="box"/>
+            <xs:enumeration value="cover"/>
+            <xs:enumeration value="dissolve"/>
+            <xs:enumeration value="fade"/>
+            <xs:enumeration value="fly"/>
+            <xs:enumeration value="glitter"/>
+            <xs:enumeration value="push"/>
+            <xs:enumeration value="split"/>
+            <xs:enumeration value="uncover"/>
+            <xs:enumeration value="wipe"/>
+            <xs:enumeration value="none"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="OutlineTransitionDirectionType">
         <xs:annotation>
-            <xs:documentation>The direction of the transition animation (provided that it can be applied to the animation).
-- leftToRight = From left to right
-- bottomToTop = From bottom to top
-- rightToLeft = From right to left
-- topToBottom = From top to bottom
-- topLeftToBottomRight = From top left to bottom right
-- none = Use the default value for the animation</xs:documentation>
+            <xs:documentation>
+                <p>The direction of the transition animation (provided that it can be applied to the animation).
+                    <ul>
+                        <li>leftToRight = From left to right</li>
+                        <li>bottomToTop = From bottom to top</li>
+                        <li>rightToLeft = From right to left</li>
+                        <li>topToBottom = From top to bottom</li>
+                        <li>topLeftToBottomRight = From top left to bottom right</li>
+                        <li>none = Use the default value for the animation</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="leftToRight" />
-            <xs:enumeration value="bottomToTop" />
-            <xs:enumeration value="rightToLeft" />
-            <xs:enumeration value="topToBottom" />
-            <xs:enumeration value="topLeftToBottomRight" />
-            <xs:enumeration value="none" />
+            <xs:enumeration value="leftToRight"/>
+            <xs:enumeration value="bottomToTop"/>
+            <xs:enumeration value="rightToLeft"/>
+            <xs:enumeration value="topToBottom"/>
+            <xs:enumeration value="topLeftToBottomRight"/>
+            <xs:enumeration value="none"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="OpenModeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="userPreferences" />
-            <xs:enumeration value="newWindow" />
-            <xs:enumeration value="sameWindow" />
+            <xs:enumeration value="userPreferences"/>
+            <xs:enumeration value="newWindow"/>
+            <xs:enumeration value="sameWindow"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="RelativeThreeDViewOperationType">
         <xs:annotation>
-            <xs:documentation>A view of the 3D annotation that has been defined relative to the currently visualized view. This value is an alternative to "name" and "index" and does not have to be set if either one of these values are specified.
-- First = The first view of the 3D annotation.
-- Last = The last view of the 3D annotation.
-- Next = The next view of the 3D annotation.
-- Previous = The previous view of the 3D annotation.
-- Default = The default view of the 3D annotation.</xs:documentation>
+            <xs:documentation>
+                <p>A view of the 3D annotation that has been defined relative to the currently visualized view. This value is an alternative to "name" and "index" and does not have to be set if either one of these values are specified.
+                    <ul>
+                        <li>First = The first view of the 3D annotation.</li>
+                        <li>Last = The last view of the 3D annotation.</li>
+                        <li>Next = The next view of the 3D annotation.</li>
+                        <li>Previous = The previous view of the 3D annotation.</li>
+                        <li>Default = The default view of the 3D annotation.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="First" />
-            <xs:enumeration value="Last" />
-            <xs:enumeration value="Next" />
-            <xs:enumeration value="Previous" />
-            <xs:enumeration value="Default" />
+            <xs:enumeration value="First"/>
+            <xs:enumeration value="Last"/>
+            <xs:enumeration value="Next"/>
+            <xs:enumeration value="Previous"/>
+            <xs:enumeration value="Default"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="OCGStateType">
         <xs:annotation>
-            <xs:documentation>The status change that should be carried out upon activation.
-- ON = The layer(s) will be shown.
-- OFF = The layer(s) will be hidden.
-- Toggle = The layer visibility will be switched.</xs:documentation>
+            <xs:documentation>
+                <p>The status change that should be carried out upon activation.
+                    <ul>
+                        <li>ON = The layer(s) will be shown.</li>
+                        <li>OFF = The layer(s) will be hidden.</li>
+                        <li>Toggle = The layer visibility will be switched.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="ON" />
-            <xs:enumeration value="OFF" />
-            <xs:enumeration value="Toggle" />
+            <xs:enumeration value="ON"/>
+            <xs:enumeration value="OFF"/>
+            <xs:enumeration value="Toggle"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="ApplicationOperationType">
         <xs:annotation>
-            <xs:documentation>Used to specify the standard operation that should be carried out with the specified document.
-- open = Open the document.
-- print = Print the document.</xs:documentation>
+            <xs:documentation>
+                <p>Used to specify the standard operation that should be carried out with the specified document.
+                    <ul>
+                        <li>open = Open the document.</li>
+                        <li>print = Print the document.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="open" />
-            <xs:enumeration value="print" />
+            <xs:enumeration value="open"/>
+            <xs:enumeration value="print"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="AddPositionType">
         <xs:annotation>
-            <xs:documentation>Selects the position where the entry should be created. The path passed in "path" will be interpreted based on this value.
-- before = An entry will be generated on the same level before the entry that was selected with "path.
-- inplace = The entry selected with "path" will be treated as a parent element and will contain the new generated entry.
-- after = An entry will be generated on the same level after the entry that was selected with "path.</xs:documentation>
+            <xs:documentation>
+                <p>Selects the position where the entry should be created. The path passed in "path" will be interpreted based on this value.
+                    <ul>
+                        <li>before = An entry will be generated on the same level before the entry that was selected with "path.</li>
+                        <li>inplace = The entry selected with "path" will be treated as a parent element and will contain the new generated entry.</li>
+                        <li>after = An entry will be generated on the same level after the entry that was selected with "path.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="before" />
-            <xs:enumeration value="inplace" />
-            <xs:enumeration value="after" />
+            <xs:enumeration value="before"/>
+            <xs:enumeration value="inplace"/>
+            <xs:enumeration value="after"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

@@ -1,110 +1,160 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="SignatureType">
         <xs:annotation>
-            <xs:documentation>The "Signature" web service can be used to digitally sign documents.</xs:documentation>
+            <xs:documentation>
+                <p>The "Signature" web service can be used to digitally sign documents or to remove all signatures from a PDF documents.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:choice>
             <xs:element id="signatureAddId" name="add">
                 <xs:annotation>
-                    <xs:documentation>Used to add a new signature to the PDF document.</xs:documentation>
+                    <xs:documentation>
+                        <p>Used to add a new signature to the PDF document.</p>
+                    </xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
                     <xs:all>
-                        <xs:element name="appearance" minOccurs="0" maxOccurs="1">
+                        <xs:element name="appearance" minOccurs="0">
                             <xs:annotation>
-                                <xs:documentation>Used to define the signature’s visual appearance.</xs:documentation>
+                                <xs:documentation>
+                                    <p>Used to define the signature's visual appearance.</p>
+                                </xs:documentation>
                             </xs:annotation>
                             <xs:complexType>
                                 <xs:all>
-                                    <xs:element name="position" type="tns:SignaturePositionType" minOccurs="0" maxOccurs="1" />
-                                    <xs:element name="image" type="tns:SignatureImageType" minOccurs="0" maxOccurs="1" />
-                                    <xs:element name="identifierElements" type="tns:SignatureIdentifierType" minOccurs="0" maxOccurs="1" />
+                                    <xs:element name="position" type="tns:SignaturePositionType" minOccurs="0"/>
+                                    <xs:element name="image" type="tns:SignatureImageType" minOccurs="0"/>
+                                    <xs:element name="identifierElements" type="tns:SignatureIdentifierType"
+                                                minOccurs="0"/>
                                 </xs:all>
                                 <xs:attribute name="name" default="" type="xs:string">
                                     <xs:annotation>
-                                        <xs:documentation>Name that will be displayed in the signature’s left-hand side area. If no value is specified, the name of the signer is displayed in this area (CN name part from the certificate) if `showCommonName` is enabled.</xs:documentation>
+                                        <xs:documentation>
+                                            <p>Name that will be displayed in the signature's left-hand side area. If no value is specified, the name of the signer is displayed in this area (CN name part from the certificate) if <code>showCommonName</code> is enabled.
+                                            </p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                 </xs:attribute>
                                 <xs:attribute name="identifier" default="" type="xs:string">
                                     <xs:annotation>
-                                        <xs:documentation>Text that should be displayed in the signature’s right-hand side text field. If a value is not specified, the field will display the name of the signatory and the name parts of the certificate (please refer to `&lt;identifierElements&gt;` further below).</xs:documentation>
+                                        <xs:documentation>
+                                            <p>Text that should be displayed in the signature's right-hand side text field. If a value is not specified, the field will display the name of the signatory and the name parts of the certificate (please refer to <code>&lt;identifierElements&gt;</code> further below).
+                                            </p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                 </xs:attribute>
                                 <xs:attribute name="page" default="1">
                                     <xs:annotation>
-                                        <xs:documentation>Defines the page on which the signature is to be displayed.</xs:documentation>
+                                        <xs:documentation>
+                                            <p>Defines the page on which the signature is to be displayed.</p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                     <xs:simpleType>
                                         <xs:restriction base="xs:int">
-                                            <xs:minInclusive value="1" />
+                                            <xs:minInclusive value="1"/>
                                         </xs:restriction>
                                     </xs:simpleType>
                                 </xs:attribute>
                                 <xs:attribute name="showCommonName" default="true" type="xs:boolean">
                                     <xs:annotation>
-                                        <xs:documentation>Displays or hides the certificate name (CN) of the certificate in the signature’s left-hand side area. A set `name` always has priority over the setting of this option.</xs:documentation>
+                                        <xs:documentation>
+                                            <p>Displays or hides the certificate name (CN) of the certificate in the signature's left-hand side area. A set <code>name</code> always has priority over the setting of this option.
+                                            </p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                 </xs:attribute>
                             </xs:complexType>
                         </xs:element>
-                        <xs:element name="signer" minOccurs="0" maxOccurs="1">
+                        <xs:element name="signer" minOccurs="0">
                             <xs:annotation>
-                                <xs:documentation>Contains a key pair (`&lt;keyPair&gt;`) consisting of the certificate (with public key) and the private key that identifies the signer (`&lt;signer&gt;`) who performs the signature. The certificate and the signer's private key must be passed as a PEM file in `&lt;certificate&gt;` and `&lt;privateKey&gt;` respectively. 
-The element is optional. If no `&lt;keyPair&gt;` (consisting of the certificate and the private key) is passed directly, then a certificate must be selected via `&lt;keyName&gt;`, which is loaded from the server's global keystore.</xs:documentation>
+                                <xs:documentation>
+                                    <p>Contains a key pair (<code>&lt;keyPair&gt;</code>) consisting of the certificate (with public key) and the private key that identifies the signer (<code>&lt;signer&gt;</code>) who performs the signature. The certificate and the signer's private key must be passed as a PEM file in <code>&lt;certificate&gt;</code> and <code>&lt;privateKey&gt;</code> respectively.
+                                        The element is optional. If no <code>&lt;keyPair&gt;</code> (consisting of the certificate and the private key) is passed directly, then a certificate must be selected via <code>&lt;keyName&gt;</code>, which is loaded from the server's global keystore.
+                                    </p>
+                                </xs:documentation>
                             </xs:annotation>
                             <xs:complexType>
                                 <xs:all>
-                                    <xs:element name="keyPair" type="tns:KeyPairType" />
+                                    <xs:element name="keyPair" type="tns:KeyPairType"/>
                                 </xs:all>
                             </xs:complexType>
                         </xs:element>
                     </xs:all>
-                    <xs:attributeGroup ref="tns:SignatureInfoGroup" />
+                    <xs:attributeGroup ref="tns:SignatureInfoGroup"/>
                     <xs:attribute name="certificationLevel" default="noChanges" type="tns:CertificationLevelType">
                         <xs:annotation>
-                            <xs:documentation>This parameter defines the level of the signature.
-- none = Sign, but do not certify, the document, i.e., additional signatures and changes will be allowed.
-- noChanges = Certify the document and do not allow any additional changes anymore.
-- formFillingAndSignatures = Certify the document, but allow for fields to be filled out.
-- formFillingAndSignaturesAndAnnotations = Certify the document, but allow for fields to be filled out and annotations to be added.</xs:documentation>
+                            <xs:documentation>
+                                <p>This parameter defines the level of the signature.
+                                    <ul>
+                                        <li>none = Sign, but do not certify, the document, i.e., additional signatures and changes will be allowed.</li>
+                                        <li>noChanges = Certify the document and do not allow any additional changes anymore.</li>
+                                        <li>formFillingAndSignatures = Certify the document, but allow for fields to be filled out.</li>
+                                        <li>formFillingAndSignaturesAndAnnotations = Certify the document, but allow for fields to be filled out and annotations to be added.</li>
+                                    </ul>
+                                </p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                     <xs:attribute name="fieldName" default="Signature1" type="xs:string">
                         <xs:annotation>
-                            <xs:documentation>Defines the name of the field (in the document) in which the signature will be saved. If a field name that is not unique is declared, then a unique name will be automatically created.</xs:documentation>
+                            <xs:documentation>
+                                <p>Defines the name of the field (in the document) in which the signature will be saved. If a field name that is not unique is declared, then a unique name will be automatically created.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                     <xs:attribute name="keyName" default="" type="xs:string">
                         <xs:annotation>
-                            <xs:documentation>Defines the name of the key (alias) that is to be used to sign the document. This option overwrites the server's configuration setting. Additional information can be found in the "Keystore" chapter.</xs:documentation>
+                            <xs:documentation>
+                                <p>Defines the name of the key (alias) that is to be used to sign the document. This option overwrites the server's configuration setting. Additional information can be found in the "Keystore" chapter.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                     <xs:attribute name="keyPassword" default="" type="xs:string">
                         <xs:annotation>
-                            <xs:documentation>Used to define the password required in order to access the private key with "keyName." This option overwrites the server's configuration setting. Additional information can be found in the "Keystore" chapter.</xs:documentation>
+                            <xs:documentation>
+                                <p>Used to define the password required in order to access the private key with "keyName." This option overwrites the server's configuration setting. Additional information can be found in the "Keystore" chapter.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                     <xs:attribute name="appendSignature" default="false" type="xs:boolean">
                         <xs:annotation>
-                            <xs:documentation>**deprecated:** Usage of this parameter is discouraged, as it is no longer in use.</xs:documentation>
+                            <xs:documentation>
+                                <p>
+                                    <b>Deprecated:</b>
+                                    Usage of this parameter is discouraged, as it is no longer in use.
+                                </p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                 </xs:complexType>
             </xs:element>
             <xs:element name="clear">
                 <xs:annotation>
-                    <xs:documentation>Used to remove all existing signatures from the PDF document.
+                    <xs:documentation>
+                        <p>Used to remove all existing signatures from the PDF document.
 
-**important:** Be aware, that this will also remove probably set passwords and encryption from the document.</xs:documentation>
+                        </p>
+                        <p>
+                            <b>Important:</b>
+                            Be aware, that this will also remove probably set passwords and encryption from the document.
+                        </p>
+                    </xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
                     <xs:attribute name="flatten" default="false" type="xs:boolean">
                         <xs:annotation>
-                            <xs:documentation>When set to "true", this will render all visible signatures to the page content.
+                            <xs:documentation>
+                                <p>When set to "true", this will render all visible signatures to the page content.
 
-**important:** The actual signatures will still be removed! The hereby generated visual representation is not verifyable or binding and can not serve/does not count as a valid digital signature.</xs:documentation>
+                                </p>
+                                <p>
+                                    <b>Important:</b>
+                                    The actual signatures will still be removed! The hereby generated visual representation is not verifyable or binding and can not serve/does not count as a valid digital signature.
+                                </p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                 </xs:complexType>
@@ -114,176 +164,237 @@ The element is optional. If no `&lt;keyPair&gt;` (consisting of the certificate 
     <xs:attributeGroup name="SignatureInfoGroup">
         <xs:attribute name="location" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Specifies the location of the signature.</xs:documentation>
+                <xs:documentation>
+                    <p>Specifies the location of the signature.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="contact" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Specifies the name of the person signing the document.</xs:documentation>
+                <xs:documentation>
+                    <p>Specifies the name of the person signing the document.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="reason" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Specifies the reason why the document is being signed.</xs:documentation>
+                <xs:documentation>
+                    <p>Specifies the reason why the document is being signed.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:attributeGroup>
     <xs:simpleType name="CertificationLevelType">
         <xs:annotation>
-            <xs:documentation>This parameter defines the level of the signature.
-- none = Sign, but do not certify, the document, i.e., additional signatures and changes will be allowed.
-- noChanges = Certify the document and do not allow any additional changes anymore.
-- formFillingAndSignatures = Certify the document, but allow for fields to be filled out.
-- formFillingAndSignaturesAndAnnotations = Certify the document, but allow for fields to be filled out and annotations to be added.</xs:documentation>
+            <xs:documentation>
+                <p>This parameter defines the level of the signature.
+                    <ul>
+                        <li>none = Sign, but do not certify, the document, i.e., additional signatures and changes will be allowed.</li>
+                        <li>noChanges = Certify the document and do not allow any additional changes anymore.</li>
+                        <li>formFillingAndSignatures = Certify the document, but allow for fields to be filled out.</li>
+                        <li>formFillingAndSignaturesAndAnnotations = Certify the document, but allow for fields to be filled out and annotations to be added.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="none" />
-            <xs:enumeration value="noChanges" />
-            <xs:enumeration value="formFillingAndSignatures" />
-            <xs:enumeration value="formFillingAndSignaturesAndAnnotations" />
+            <xs:enumeration value="none"/>
+            <xs:enumeration value="noChanges"/>
+            <xs:enumeration value="formFillingAndSignatures"/>
+            <xs:enumeration value="formFillingAndSignaturesAndAnnotations"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="SignaturePositionType">
         <xs:annotation>
-            <xs:documentation>Used to define the position of the visual signature.</xs:documentation>
+            <xs:documentation>
+                <p>Used to define the position of the visual signature.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="width" default="50">
             <xs:annotation>
-                <xs:documentation>The signature field’s width</xs:documentation>
+                <xs:documentation>
+                    <p>The signature field's width</p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="height" default="10">
             <xs:annotation>
-                <xs:documentation>The signature field’s height</xs:documentation>
+                <xs:documentation>
+                    <p>The signature field's height</p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attributeGroup ref="tns:PointGroup" />
+        <xs:attributeGroup ref="tns:PointGroup"/>
     </xs:complexType>
     <xs:complexType name="SignatureImageType">
         <xs:annotation>
-            <xs:documentation>Used to define an image, for the visual signature, that will be drawn in the signature’s background. The image itself is passed with `&lt;data&gt;`.</xs:documentation>
+            <xs:documentation>
+                <p>Used to define an image, for the visual signature, that will be drawn in the signature's background. The image itself is passed with <code>&lt;data&gt;</code>.
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:all>
-            <xs:element name="data" type="tns:SignatureFileDataType" minOccurs="1" maxOccurs="1" />
+            <xs:element name="data" type="tns:SignatureFileDataType"/>
         </xs:all>
         <xs:attribute name="opacity" default="50">
             <xs:annotation>
-                <xs:documentation>Opacity of image as a percentage value between 0 and 100.</xs:documentation>
+                <xs:documentation>
+                    <p>Opacity of image as a percentage value between 0 and 100.</p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0" />
-                    <xs:maxInclusive value="100" />
+                    <xs:minInclusive value="0"/>
+                    <xs:maxInclusive value="100"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="position" default="center">
             <xs:annotation>
-                <xs:documentation>Position of image within signature field:
-- center = Centred
-- left = Left
-- right = Right</xs:documentation>
+                <xs:documentation>
+                    <p>Position of image within signature field:
+                        <ul>
+                            <li>center = Centred</li>
+                            <li>left = Left</li>
+                            <li>right = Right</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="tns:SignatureImagePositionType">
-                    <xs:enumeration value="center" />
-                    <xs:enumeration value="left" />
-                    <xs:enumeration value="right" />
+                    <xs:enumeration value="center"/>
+                    <xs:enumeration value="left"/>
+                    <xs:enumeration value="right"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="SignatureIdentifierType">
         <xs:annotation>
-            <xs:documentation>Used to define the elements that are part of the visual signature.</xs:documentation>
+            <xs:documentation>
+                <p>Used to define the elements that are part of the visual signature.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="showSignedBy" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Displays or hides the text `Digitally signed by`. Can be overridden by the value of `textSignedBy`.</xs:documentation>
+                <xs:documentation>
+                    <p>Displays or hides the text <code>Digitally signed by</code>. Can be overridden by the value of <code>textSignedBy</code>.
+                    </p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="showName" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Displays or hides the signature `name`.
-(If `name` has not been set, the common name (CN) part of the certificate is displayed instead.)</xs:documentation>
+                <xs:documentation>
+                    <p>Displays or hides the signature <code>name</code>.
+                        (If <code>name</code> has not been set, the common name (CN) part of the certificate is displayed instead.)
+                    </p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="showCommonName" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Displays or hides the common name (CN) part of the certificate.</xs:documentation>
+                <xs:documentation>
+                    <p>Displays or hides the common name (CN) part of the certificate.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="showOrganisationUnit" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Displays or hides the certificate owner's suborganization/department (OU).</xs:documentation>
+                <xs:documentation>
+                    <p>Displays or hides the certificate owner's suborganization/department (OU).</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="showOrganisationName" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Displays or hides the certificate holder's organization/company (O).</xs:documentation>
+                <xs:documentation>
+                    <p>Displays or hides the certificate holder's organization/company (O).</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="showLocal" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Displays or hides the location/city (L) where the certificate holder is located.</xs:documentation>
+                <xs:documentation>
+                    <p>Displays or hides the location/city (L) where the certificate holder is located.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="showState" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Displays or hides the state (S) in which the certificate holder is located.</xs:documentation>
+                <xs:documentation>
+                    <p>Displays or hides the state (S) in which the certificate holder is located.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="showCountry" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Displays or hides the (ISO valid) country code (C) of the country in which the certificate holder is located.</xs:documentation>
+                <xs:documentation>
+                    <p>Displays or hides the (ISO valid) country code (C) of the country in which the certificate holder is located.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="showMail" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Displays or hides the email address (E) at which the certificate holder can be contacted.</xs:documentation>
+                <xs:documentation>
+                    <p>Displays or hides the email address (E) at which the certificate holder can be contacted.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="showDate" default="true" type="xs:boolean">
             <xs:annotation>
-                <xs:documentation>Displays or hides the signature time.</xs:documentation>
+                <xs:documentation>
+                    <p>Displays or hides the signature time.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="textSignedBy" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Text that is displayed when the `showSignedBy` option is enabled. If not set, then the text `Digitally signed by` is used as default.</xs:documentation>
+                <xs:documentation>
+                    <p>Text that is displayed when the <code>showSignedBy</code> option is enabled. If not set, then the text <code>Digitally signed by</code> is used as default.
+                    </p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="SignatureImagePositionType">
         <xs:annotation>
-            <xs:documentation>Position of image within signature field:
-- center = Centred
-- left = Left
-- right = Right</xs:documentation>
+            <xs:documentation>
+                <p>Position of image within signature field:
+                    <ul>
+                        <li>center = Centred</li>
+                        <li>left = Left</li>
+                        <li>right = Right</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="center" />
-            <xs:enumeration value="left" />
-            <xs:enumeration value="right" />
+            <xs:enumeration value="center"/>
+            <xs:enumeration value="left"/>
+            <xs:enumeration value="right"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="SignatureFileDataType">
         <xs:annotation>
-            <xs:documentation>An image that will be placed in the field’s background. The data will be passed in Base64. In order to ensure that the image will have the best possible appearance, it should be transparent (e.g., PNG).</xs:documentation>
+            <xs:documentation>
+                <p>An image that will be placed in the field's background. The data will be passed in Base64. In order to ensure that the image will have the best possible appearance, it should be transparent (e.g., PNG).</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
-                <xs:attributeGroup ref="tns:FileDataGroup" />
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>

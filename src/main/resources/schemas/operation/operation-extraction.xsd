@@ -1,84 +1,116 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="ExtractionType">
         <xs:annotation>
-            <xs:documentation>The extraction operation element can be used to extract various contents.
-
-**tip:** The format of the document generated with the "extraction" operation is described by the http://schema.webpdf.de/1.0/extraction/text.xsd schema for `&lt;text&gt;`, `&lt;links&gt;`, `&lt;words&gt;`, and `&lt;paragraphs&gt;` and by the http://schema.webpdf.de/1.0/extraction/info.xsd schema for `&lt;info&gt;`.</xs:documentation>
+            <xs:documentation>
+                <p>The extraction operation element can be used to extract various contents.</p>
+                <p>
+                    <b>Tip:</b>
+                    The format of the document generated with the "extraction" operation is described by
+                    the <a href="http://schema.webpdf.de/1.0/extraction/text.xsd">"text.xsd"
+                </a> schema for <code>&lt;text&gt;</code>, <code>&lt;links&gt;</code>,
+                    <code>&lt;words&gt;</code>, and <code>&lt;paragraphs&gt;</code> and by the <a
+                        href="http://schema.webpdf.de/1.0/extraction/info.xsd">info.xsd
+                </a> schema for <code>&lt;info&gt;</code>.
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:choice>
-                    <xs:element name="text" type="tns:ExtractionTextType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="links" type="tns:ExtractionLinksType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="words" type="tns:ExtractionWordsType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="info" type="tns:ExtractionInfoType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="paragraphs" type="tns:ExtractionParagraphsType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="images" type="tns:ExtractionImagesType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="text" type="tns:ExtractionTextType" minOccurs="0"/>
+                    <xs:element name="links" type="tns:ExtractionLinksType" minOccurs="0"/>
+                    <xs:element name="words" type="tns:ExtractionWordsType" minOccurs="0"/>
+                    <xs:element name="info" type="tns:ExtractionInfoType" minOccurs="0"/>
+                    <xs:element name="paragraphs" type="tns:ExtractionParagraphsType" minOccurs="0"/>
+                    <xs:element name="images" type="tns:ExtractionImagesType" minOccurs="0"/>
                 </xs:choice>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="BaseExtractionType">
         <xs:annotation>
-            <xs:documentation>General attributes for the content elements.</xs:documentation>
+            <xs:documentation>
+                <p>General attributes for the content elements.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="fileFormat" default="xml">
             <xs:annotation>
-                <xs:documentation>Used to define the output format for the PDF document text contents being extracted.
-- text = Text document
-- xml = XML document
-- json = JSON data structure</xs:documentation>
+                <xs:documentation>
+                    <p>Used to define the output format for the PDF document text contents being extracted.
+                        <ul>
+                            <li>text = Text document</li>
+                            <li>xml = XML document</li>
+                            <li>json = JSON data structure</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="tns:ExtractionFileFormatType">
-                    <xs:enumeration value="json" />
-                    <xs:enumeration value="text" />
-                    <xs:enumeration value="xml" />
+                    <xs:enumeration value="json"/>
+                    <xs:enumeration value="text"/>
+                    <xs:enumeration value="xml"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="pages" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Used to define which page(s) should be used for the extraction mode. The page number can be either an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9"). A blank value or "*" selects all pages of the PDF document.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to define which page(s) should be used for the extraction mode. The page number can be either an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9"). A blank value or "*" selects all pages of the PDF document.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ExtractionTextType">
         <xs:annotation>
-            <xs:documentation>Extract the PDF document’s text content.
-Generates an ASCII text, XML, or JSON file that will be returned as a result when the web service is called and that will contain all texts in the PDF document.</xs:documentation>
+            <xs:documentation>
+                <p>Extract the PDF document's text content.</p>
+                <p>Generates an ASCII text, XML, or JSON file that will be returned as a result when the web service is called and that will contain all texts in the PDF document.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:BaseExtractionType" />
+            <xs:extension base="tns:BaseExtractionType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="ExtractionLinksType">
         <xs:annotation>
-            <xs:documentation>Extract links from the the PDF document
-Generates an ASCII text, XML, or JSON file that will be returned as a result when the web service is called and that will contain all selected supported links in the PDF document. Every link is written to a separate line in the ASCII file.</xs:documentation>
+            <xs:documentation>
+                <p>Extract links from thePDF document</p>
+                <p>Generates an ASCII text, XML, or JSON file that will be returned as a result when the web service is called and that will contain all selected supported links in the PDF document. Every link is written to a separate line in the ASCII file.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseExtractionType">
                 <xs:all>
-                    <xs:element name="text" minOccurs="0" maxOccurs="1">
+                    <xs:element name="text" minOccurs="0">
                         <xs:complexType>
                             <xs:attribute name="fromText" default="false" type="xs:boolean">
                                 <xs:annotation>
-                                    <xs:documentation>Advanced mode for extracting links When using this mode, links will not be extracted from annotations, but will instead be extracted directly from the text. This means that links that are not found in standard mode can be found with this advanced mode, provided that they are present in the form of text.</xs:documentation>
+                                    <xs:documentation>
+                                        <p>Advanced mode for extracting links When using this mode, links will not be extracted from annotations, but will instead be extracted directly from the text. This means that links that are not found in standard mode can be found with this advanced mode, provided that they are present in the form of text.</p>
+                                    </xs:documentation>
                                 </xs:annotation>
                             </xs:attribute>
                             <xs:attribute name="protocol" default="" type="xs:string">
                                 <xs:annotation>
-                                    <xs:documentation>Provides the option of filtering the links being extracted by protocol. If multiple protocols are specified, they need to be separated with commas (e.g., "http,https,ftp"). The following values are valid: "http","https","ftp", "telnet","mailto", "file", "nntp", and "notes".</xs:documentation>
+                                    <xs:documentation>
+                                        <p>Provides the option of filtering the links being extracted by protocol. If multiple protocols are specified, they need to be separated with commas (e.g., "http,https,ftp"). The following values are valid: "http","https","ftp", "telnet","mailto", "file", "nntp", and "notes".</p>
+                                    </xs:documentation>
                                 </xs:annotation>
                             </xs:attribute>
                             <xs:attribute name="withoutProtocol" default="true" type="xs:boolean">
                                 <xs:annotation>
-                                    <xs:documentation>When enabled, incomplete URLs from which the protocol information is missing will be extracted as well when extracting links from text. This would apply to the following examples, for instance:
-- "www.webpdf.de" - There is no protocol information. If the option is enabled and "http" links are searched for, the link will be extracted.
-- "ftp.softvision.de" - There is no protocol information here either. If the option is enabled and "ftp" links are searched for, the link will be extracted.</xs:documentation>
+                                    <xs:documentation>
+                                        <p>When enabled, incomplete URLs from which the protocol information is missing will be extracted as well when extracting links from text. This would apply to the following examples, for instance:
+                                            <ul>
+                                                <li>"www.webpdf.de" - There is no protocol information. If the option is enabled and "http" links are searched for, the link will be extracted.</li>
+                                                <li>"ftp.softvision.de" - There is no protocol information here either. If the option is enabled and "ftp" links are searched for, the link will be extracted.</li>
+                                            </ul>
+                                        </p>
+                                    </xs:documentation>
                                 </xs:annotation>
                             </xs:attribute>
                         </xs:complexType>
@@ -89,33 +121,43 @@ Generates an ASCII text, XML, or JSON file that will be returned as a result whe
     </xs:complexType>
     <xs:complexType name="ExtractionInfoType">
         <xs:annotation>
-            <xs:documentation>Extract general and structure information about the PDF document
-Generates an XML or JSON file that will be returned as a result when the web service is called. This file will contain information about the PDF document such as the corresponding security settings, PDF properties, or PDF/A status.</xs:documentation>
+            <xs:documentation>
+                <p>Extract general and structure information about the PDF document</p>
+                <p>Generates an XML or JSON file that will be returned as a result when the web service is called. This file will contain information about the PDF document such as the corresponding security settings, PDF properties, or PDF/A status.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:BaseExtractionType" />
+            <xs:extension base="tns:BaseExtractionType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="ExtractionWordsType">
         <xs:annotation>
-            <xs:documentation>Extract all the words from the PDF document, with page and position information.
-Generates an ASCII text, XML, or JSON file that will be returned as a result when the web service is called. For each found word, the file will contain the page number and the X-axis and Y-axis coordinates of the word. When the TEXT output format is selected, only the word´s text will be output, separated with line breaks.</xs:documentation>
+            <xs:documentation>
+                <p>Extract all the words from the PDF document, with page and position information.</p>
+                <p>Generates an ASCII text, XML, or JSON file that will be returned as a result when the web service is called. For each found word, the file will contain the page number and the X-axis and Y-axis coordinates of the word. When the TEXT output format is selected, only the word's text will be output, separated with line breaks.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseExtractionType">
                 <xs:attribute name="removePunctuation" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>Used to specify whether punctuation marks should be included in the export or whether they should be explicitly removed.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to specify whether punctuation marks should be included in the export or whether they should be explicitly removed.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="delimitAfterPunctuation" default="true" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>If this attribute is set to true, a new word will be started after each punctuation mark.</xs:documentation>
+                        <xs:documentation>
+                            <p>If this attribute is set to true, a new word will be started after each punctuation mark.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="extendedSequenceCharacters" default="false" type="xs:boolean">
                     <xs:annotation>
-                        <xs:documentation>This attribute specifies whether quotation marks and apostrophes should be handled the same way as brackets (such as parentheses and square brackets), i.e., whether they should be placed before the word they enclose.</xs:documentation>
+                        <xs:documentation>
+                            <p>This attribute specifies whether quotation marks and apostrophes should be handled the same way as brackets (such as parentheses and square brackets), i.e., whether they should be placed before the word they enclose.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
             </xs:extension>
@@ -123,47 +165,68 @@ Generates an ASCII text, XML, or JSON file that will be returned as a result whe
     </xs:complexType>
     <xs:complexType name="ExtractionParagraphsType">
         <xs:annotation>
-            <xs:documentation>Extract text content of the PDF document, separated by paragraphs
-Generates an ASCII text, XML, or JSON file that will be returned as a result when the web service is called and that will contain all texts in the PDF document separated by paragraphs. 
-In order for this to work, the paragraphs must be found in the PDF as elements. A purely visual separation will not work!</xs:documentation>
+            <xs:documentation>
+                <p>Extract text content of the PDF document, separated by paragraphs</p>
+                <p>Generates an ASCII text, XML, or JSON file that will be returned as a result when the web service is called and that will contain all texts in the PDF document separated by paragraphs.</p>
+                <p>In order for this to work, the paragraphs must be found in the PDF as elements. A purely visual separation will not work!</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:BaseExtractionType" />
+            <xs:extension base="tns:BaseExtractionType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="ExtractionImagesType">
         <xs:annotation>
-            <xs:documentation>Extract the PDF document’s image contents
-Generates a ZIP file that is returned as a result when the web service is called. This file will contain all the images contained at the page level in a freely selectable page range.
-
-**important:** The images mode can only be used to extract raster graphics (bitmap images). The extraction vector graphics, as well as the rendering of vector graphics based on vectorial drawing paths, is not supported.
-
-**important:** Due to licensing reasons, the images mode currently only supports the extraction of basic JPEG2000 images that conform to the part-1 core coding system definition in ISO/IEC 15444-1.
-
-**important:** It cannot be guaranteed that an image will be exported in its original source format, as the image may have already been converted when embedded in the PDF (this depends on whether the source format was supported by the PDF standard and on the application that was used to embed the image).</xs:documentation>
+            <xs:documentation>
+                <p>Extract the PDF document's image contents</p>
+                <p>Generates a ZIP file that is returned as a result when the web service is called. This file will contain all the images contained at the page level in a freely selectable page range.</p>
+                <p>
+                    <p>
+                        <b>Important:</b>
+                        The images mode can only be used to extract raster graphics (bitmap images). The extraction vector graphics, as well as the rendering of vector graphics based on vectorial drawing paths, is not supported.
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        Due to licensing reasons, the images mode currently only supports the extraction of basic JPEG2000 images that conform to the part-1 core coding system definition in ISO/IEC 15444-1.
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        It cannot be guaranteed that an image will be exported in its original source format, as the image may have already been converted when embedded in the PDF (this depends on whether the source format was supported by the PDF standard and on the application that was used to embed the image).
+                    </p>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:ResourceExtractionType">
                 <xs:attribute name="fileNameTemplate" default="file[%d]" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>Used to set the template for the image files in the returned ZIP file. "file[%d]", for example, would result in a "file[1].png" entry for a PNG image.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to set the template for the image files in the returned ZIP file. "file[%d]", for example, would result in a "file[1].png" entry for a PNG image.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="folderNameTemplate" default="page[%d]" type="xs:string">
                     <xs:annotation>
-                        <xs:documentation>Used to set the template for the page folders in the returned ZIP file. "page[%d]", for example, would result in a folder called "page[1]" for page 1, etc.</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to set the template for the page folders in the returned ZIP file. "page[%d]", for example, would result in a folder called "page[1]" for page 1, etc.</p>
+                        </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
                 <xs:attribute name="fallbackFormat" default="png">
                     <xs:annotation>
-                        <xs:documentation>Used to specify the format that should be used as the fallback format if extracting an image would result in a format that is not supported.
-- png = PNG file
-- jpeg = JPEG file</xs:documentation>
+                        <xs:documentation>
+                            <p>Used to specify the format that should be used as the fallback format if extracting an image would result in a format that is not supported.
+                                <ul>
+                                    <li>png = PNG file</li>
+                                    <li>jpeg = JPEG file</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="tns:ExtractionImageFormat">
-                            <xs:enumeration value="jpeg" />
-                            <xs:enumeration value="png" />
+                            <xs:enumeration value="jpeg"/>
+                            <xs:enumeration value="png"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
@@ -172,48 +235,67 @@ Generates a ZIP file that is returned as a result when the web service is called
     </xs:complexType>
     <xs:simpleType name="ExtractionFileFormatType">
         <xs:annotation>
-            <xs:documentation>Used to define the output format for the PDF document text contents being extracted.
-- text = Text document
-- xml = XML document
-- json = JSON data structure</xs:documentation>
+            <xs:documentation>
+                <p>Used to define the output format for the PDF document text contents being extracted.
+                    <ul>
+                        <li>text = Text document</li>
+                        <li>xml = XML document</li>
+                        <li>json = JSON data structure</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="text" />
-            <xs:enumeration value="xml" />
-            <xs:enumeration value="json" />
-            <xs:enumeration value="zip" />
+            <xs:enumeration value="text"/>
+            <xs:enumeration value="xml"/>
+            <xs:enumeration value="json"/>
+            <xs:enumeration value="zip"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="ResourceExtractionType">
         <xs:annotation>
-            <xs:documentation>Defines the format to which resources shall be extracted.</xs:documentation>
+            <xs:documentation>
+                <p>Defines the format to which resources shall be extracted.</p>
+            </xs:documentation>
         </xs:annotation>
         <xs:attribute name="fileFormat" default="zip">
             <xs:annotation>
-                <xs:documentation>Used to define the output format for the PDF document images being extracted.
-- zip = ZIP archive</xs:documentation>
+                <xs:documentation>
+                    <p>Used to define the output format for the PDF document images being extracted.
+                        <ul>
+                            <li>zip = ZIP archive</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="tns:ExtractionFileFormatType">
-                    <xs:enumeration value="zip" />
+                    <xs:enumeration value="zip"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="pages" default="" type="xs:string">
             <xs:annotation>
-                <xs:documentation>Used to define which page(s) should be used for the images mode. The page number can be an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9"). A blank value or "*" selects all pages of the PDF document.</xs:documentation>
+                <xs:documentation>
+                    <p>Used to define which page(s) should be used for the image's mode. The page number can be an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9"). A blank value or "*" selects all pages of the PDF document.</p>
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="ExtractionImageFormat">
         <xs:annotation>
-            <xs:documentation>Used to specify the format that should be used as the fallback format if extracting an image would result in a format that is not supported.
-- png = PNG file
-- jpeg = JPEG file</xs:documentation>
+            <xs:documentation>
+                <p>Used to specify the format that should be used as the fallback format if extracting an image would result in a format that is not supported.
+                    <ul>
+                        <li>png = PNG file</li>
+                        <li>jpeg = JPEG file</li>
+                    </ul>
+                </p>
+            </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="png" />
-            <xs:enumeration value="jpeg" />
+            <xs:enumeration value="png"/>
+            <xs:enumeration value="jpeg"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

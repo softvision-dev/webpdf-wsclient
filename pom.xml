@@ -84,10 +84,7 @@
         <glassfish.webservices.rt.version>3.0.3</glassfish.webservices.rt.version>
         <glassfish.jaxb.xjc.version>4.0.1</glassfish.jaxb.xjc.version>
         <jakarta.xml.bind.api>4.0.0</jakarta.xml.bind.api>
-        <swagger.annotations.version>1.6.8</swagger.annotations.version>
-        <swagger.core.jakarata.annotations.version>2.2.4</swagger.core.jakarata.annotations.version>
-        <javax.annotations.version>1.3.2</javax.annotations.version>
-        <findbugs.jsr305.version>3.0.2</findbugs.jsr305.version>
+        <swagger.core.jakarta.annotations.version>2.2.4</swagger.core.jakarta.annotations.version>
         <jaxb2.basics.version>0.12.1-SNAPSHOT</jaxb2.basics.version>
         <jaxb2.basics.annotate.version>1.1.0</jaxb2.basics.annotate.version>
         <jackson.core.annotations.version>2.13.4</jackson.core.annotations.version>
@@ -263,25 +260,12 @@
             <version>${jakarta.xml.bind.api}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/io.swagger/swagger-annotations -->
+        <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations-jakarta -->
         <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.annotations.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api -->
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>${javax.annotations.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>${findbugs.jsr305.version}</version>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
+            <version>${swagger.core.jakarta.annotations.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Test dependencies -->
@@ -325,7 +309,6 @@
             <version>${bouncycastle.bcmail.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -346,6 +329,7 @@
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/openapi/openapi.json</inputSpec>
                             <output>${project.build.directory}/generated-sources/openapi</output>
+                            <templateDirectory>${project.basedir}/src/main/resources/openapi/templates</templateDirectory>
                             <generatorName>java</generatorName>
                             <library>apache-httpclient</library>
                             <skipValidateSpec>false</skipValidateSpec>
@@ -380,24 +364,28 @@
                         <artifactId>jaxb-xjc</artifactId>
                         <version>${glassfish.jaxb.xjc.version}</version>
                     </dependency>
+
                     <!-- https://github.com/highsource/jaxb2-basics -->
                     <dependency>
                         <groupId>org.jvnet.jaxb2_commons</groupId>
                         <artifactId>jaxb2-basics</artifactId>
                         <version>${jaxb2.basics.version}</version>
                     </dependency>
+
                     <!-- https://mvnrepository.com/artifact/org.jvnet.jaxb2_commons/jaxb2-basics-annotate -->
                     <dependency>
                         <groupId>org.jvnet.jaxb2_commons</groupId>
                         <artifactId>jaxb2-basics-annotate</artifactId>
                         <version>${jaxb2.basics.annotate.version}</version>
                     </dependency>
+
                     <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations-jakarta -->
                     <dependency>
                         <groupId>io.swagger.core.v3</groupId>
                         <artifactId>swagger-annotations-jakarta</artifactId>
-                        <version>${swagger.core.jakarata.annotations.version}</version>
+                        <version>${swagger.core.jakarta.annotations.version}</version>
                     </dependency>
+
                     <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
                     <dependency>
                         <groupId>com.fasterxml.jackson.core</groupId>

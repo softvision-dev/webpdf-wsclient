@@ -2221,14 +2221,11 @@
         },
         "properties" : {
           "checkType" : {
-            "$ref" : "#/components/schemas/Admin_LogCheckMode"
+            "type" : "string",
+            "default" : ""
           }
         },
         "required" : [ "checkType" ]
-      },
-      "Admin_LogCheckMode" : {
-        "type" : "string",
-        "default" : ""
       },
       "Admin_LogConfiguration" : {
         "type" : "object",
@@ -2603,14 +2600,11 @@
         },
         "properties" : {
           "checkType" : {
-            "$ref" : "#/components/schemas/Admin_UserCheckMode"
+            "type" : "string",
+            "default" : ""
           }
         },
         "required" : [ "checkType" ]
-      },
-      "Admin_UserCheckMode" : {
-        "type" : "string",
-        "default" : ""
       },
       "Admin_UserConfiguration" : {
         "type" : "object",
@@ -3805,12 +3799,6 @@
             "description" : "true = An administration user",
             "readOnly" : true
           },
-          "isAuthenticated" : {
-            "type" : "boolean",
-            "default" : false,
-            "description" : "true = User is authenticated",
-            "readOnly" : true
-          },
           "isUser" : {
             "type" : "boolean",
             "default" : true,
@@ -3843,7 +3831,7 @@
             "readOnly" : true
           }
         },
-        "required" : [ "isAdmin", "isAuthenticated", "isUser", "roles", "uniqueId", "userLimits", "userName" ]
+        "required" : [ "isAdmin", "isUser", "roles", "uniqueId", "userLimits", "userName" ]
       },
       "Auth_UserLimits" : {
         "type" : "object",
@@ -15436,6 +15424,11 @@
             "default" : "",
             "description" : "Base folder for all session data (e.g. files and file history)."
           },
+          "sessionId" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "Session ID of the session that requested the session table."
+          },
           "sessionList" : {
             "type" : "array",
             "description" : "List of all sessions and detailed information about each session.",
@@ -15462,6 +15455,10 @@
         "type" : "object",
         "description" : "Stores detailed information about a single session entry in the session table.",
         "properties" : {
+          "admin" : {
+            "type" : "boolean",
+            "default" : false
+          },
           "fileCount" : {
             "type" : "integer",
             "format" : "int64",
@@ -15485,11 +15482,21 @@
             "default" : 0,
             "description" : "Total size in bytes of all history files stored in the session, except the active file entry."
           },
+          "isAdmin" : {
+            "type" : "boolean",
+            "default" : false,
+            "description" : "Set if the user has administrator rights."
+          },
           "lastAccess" : {
             "type" : "integer",
             "format" : "int64",
             "default" : 0,
             "description" : "UTC time of the last access to the session."
+          },
+          "providerId" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "The ID of the external credential provider used to create the session. Empty if local provider was used."
           },
           "sessionExpiration" : {
             "type" : "integer",
@@ -15505,20 +15512,10 @@
           "sessionState" : {
             "$ref" : "#/components/schemas/Session_State"
           },
-          "userAuthenticated" : {
-            "type" : "boolean",
-            "default" : false,
-            "description" : "True if the user is authenticated, otherwise an anonymous user."
-          },
           "userName" : {
             "type" : "string",
             "default" : "",
             "description" : "Username of the authenticated user or empty if unknown or it is an anonymous session."
-          },
-          "userRoles" : {
-            "type" : "string",
-            "default" : "",
-            "description" : "Semicolon delimited list of the user's roles."
           }
         },
         "readOnly" : true
