@@ -37,10 +37,28 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.13.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.13.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations:2.13.4" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.xml.bind:jakarta.xml.bind-api:3.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.activation:jakarta.activation:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: jakarta.activation:jakarta.activation-api:2.1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.glassfish.metro:webservices-rt:3.0.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.glassfish.metro:webservices-api:3.0.3" level="project" />
-    <orderEntry type="library" name="Maven: jakarta.xml.bind:jakarta.xml.bind-api:4.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.xml.ws:jaxws-rt:4.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-impl:4.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-core:4.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.ha:ha-api:3.1.13" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.external:management-api:3.2.3" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.gmbal:gmbal-api-only:4.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.jvnet.staxex:stax-ex:2.1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.xml.stream.buffer:streambuffer:2.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jvnet.mimepull:mimepull:1.10.0" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.xml.fastinfoset:FastInfoset:2.1.0" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.mail:jakarta.mail-api:2.1.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.eclipse.angus:angus-activation:1.0.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.eclipse.angus:angus-mail:1.0.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.sun.xml.messaging.saaj:saaj-impl:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.woodstox:stax2-api:4.2.1" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.xml.ws:jakarta.xml.ws-api:4.0.0" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.xml.soap:jakarta.xml.soap-api:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.annotation:jakarta.annotation-api:2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.woodstox:woodstox-core:6.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.swagger.core.v3:swagger-annotations-jakarta:2.2.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-params:5.9.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-api:5.9.1" level="project" />

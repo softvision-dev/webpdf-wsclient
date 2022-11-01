@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.schema.stubs;
 
+import jakarta.xml.ws.*;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.schema.operation.ObjectFactory;
 import net.webpdf.wsclient.schema.operation.OperationData;
@@ -11,10 +12,6 @@ import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.xml.bind.annotation.XmlSeeAlso;
-import jakarta.xml.ws.Action;
-import jakarta.xml.ws.FaultAction;
-import jakarta.xml.ws.RequestWrapper;
-import jakarta.xml.ws.ResponseWrapper;
 
 /**
  * <p>

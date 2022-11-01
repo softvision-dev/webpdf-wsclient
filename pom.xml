@@ -81,9 +81,9 @@
         <jackson.core.databind.version>2.13.4.2</jackson.core.databind.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <jackson.core.annotations.version>2.13.4</jackson.core.annotations.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
         <jackson.module.xmlbind.annotations.version>2.13.4</jackson.module.xmlbind.annotations.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jakarta-xmlbind-annotations -->
-        <glassfish.webservices.rt.version>3.0.3</glassfish.webservices.rt.version> <!-- https://mvnrepository.com/artifact/org.glassfish.metro/webservices-rt -->
+        <jax-ws-rt.version>4.0.0</jax-ws-rt.version> <!-- https://mvnrepository.com/artifact/com.sun.xml.ws/jaxws-rt -->
+        <fasterxml-woodstox.version>6.4.0</fasterxml-woodstox.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.woodstox/woodstox-core -->
         <glassfish.jaxb.xjc.version>4.0.1</glassfish.jaxb.xjc.version> <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-xjc -->
-        <jakarta.xml.bind.api>4.0.0</jakarta.xml.bind.api> <!-- https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api -->
         <swagger.core.jakarta.annotations.version>2.2.4</swagger.core.jakarta.annotations.version> <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations-jakarta -->
         <jaxb2.basics.version>0.12.1-SNAPSHOT</jaxb2.basics.version> <!-- https://github.com/highsource/jaxb2-basics -->
         <jaxb2.basics.annotate.version>1.1.0</jaxb2.basics.annotate.version> <!-- https://mvnrepository.com/artifact/org.jvnet.jaxb2_commons/jaxb2-basics-annotate -->
@@ -247,19 +247,18 @@
             <version>${jackson.module.xmlbind.annotations.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.glassfish.metro/webservices-rt -->
+        <!-- https://mvnrepository.com/artifact/com.sun.xml.ws/jaxws-rt -->
         <dependency>
-            <groupId>org.glassfish.metro</groupId>
-            <artifactId>webservices-rt</artifactId>
-            <version>${glassfish.webservices.rt.version}</version>
-            <scope>provided</scope>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>${jax-ws-rt.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.woodstox/woodstox-core -->
         <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>${jakarta.xml.bind.api}</version>
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
+            <version>${fasterxml-woodstox.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations-jakarta -->
