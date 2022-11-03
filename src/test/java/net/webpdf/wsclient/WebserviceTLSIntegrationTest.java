@@ -36,8 +36,8 @@ public class WebserviceTLSIntegrationTest {
     public TestServer testServer = new TestServer();
 
     private void testSoapSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
-        TLSContext tlsContext = TLSContext.createDefault();
-        tlsContext.setAllowSelfSigned(selfSigned);
+        TLSContext tlsContext = new TLSContext()
+                .setAllowSelfSigned(selfSigned);
         if (keystoreFile != null) {
             tlsContext.setTrustStore(keystoreFile, "");
         }
@@ -105,8 +105,8 @@ public class WebserviceTLSIntegrationTest {
 
     private void testRestSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
 
-        TLSContext tlsContext = TLSContext.createDefault();
-        tlsContext.setAllowSelfSigned(selfSigned);
+        TLSContext tlsContext = new TLSContext()
+                .setAllowSelfSigned(selfSigned);
         if (keystoreFile != null) {
             tlsContext.setTrustStore(keystoreFile, "");
         }

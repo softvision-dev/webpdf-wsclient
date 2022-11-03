@@ -127,9 +127,9 @@ public class WebserviceProxyTest {
     @ProxyTest
     public void testSOAPProxyHTTPS() {
         assertDoesNotThrow(() -> {
-            TLSContext tlsContext = TLSContext.createDefault();
-            tlsContext.setAllowSelfSigned(true);
-            tlsContext.setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
+            TLSContext tlsContext = new TLSContext()
+                    .setAllowSelfSigned(true)
+                    .setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
                     WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL,
@@ -173,9 +173,9 @@ public class WebserviceProxyTest {
     @ProxyTest
     public void testRESTProxyHTTPS() {
         assertDoesNotThrow(() -> {
-            TLSContext tlsContext = TLSContext.createDefault();
-            tlsContext.setAllowSelfSigned(true);
-            tlsContext.setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
+            TLSContext tlsContext = new TLSContext()
+                    .setAllowSelfSigned(true)
+                    .setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL,

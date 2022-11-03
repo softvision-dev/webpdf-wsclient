@@ -38,19 +38,9 @@ public class TLSContext {
     private @NotNull TLSProtocol tlsProtocol = TLSProtocol.TLSV1_2;
 
     /**
-     * Prepares a fresh the {@link TLSContext} for a HTTPS connection.
+     * Prepares a fresh the {@link TLSContext} for an HTTPS connection.
      */
-    private TLSContext() {
-    }
-
-    /**
-     * Static factory method, to prepare a fresh {@link TLSContext} for a HTTPS connection. The instance shall be
-     * initialized with default values.
-     *
-     * @return A fresh {@link TLSContext} for a HTTPS connection
-     */
-    public static @NotNull TLSContext createDefault() {
-        return new TLSContext();
+    public TLSContext() {
     }
 
     /**
@@ -99,9 +89,11 @@ public class TLSContext {
      * When set to {@code true} self-signed {@link X509Certificate}s will be accepted.
      *
      * @param allowSelfSigned Set to {@code true} to allow the usage of self-signed {@link X509Certificate}s.
+     * @return The {@link TLSContext} itself.
      */
-    public void setAllowSelfSigned(boolean allowSelfSigned) {
+    public @NotNull TLSContext setAllowSelfSigned(boolean allowSelfSigned) {
         this.allowSelfSigned = allowSelfSigned;
+        return this;
     }
 
     /**
@@ -110,10 +102,23 @@ public class TLSContext {
      *
      * @param trustStore         Selects the {@link X509Certificate} truststore file
      * @param trustStorePassword Selects a possibly necessary password for the truststore file.
+     * @return The {@link TLSContext} itself.
      */
-    public void setTrustStore(@Nullable File trustStore, @Nullable String trustStorePassword) {
+    public @NotNull TLSContext setTrustStore(@Nullable File trustStore, @Nullable String trustStorePassword) {
         this.trustStore = trustStore;
         this.trustStorePassword = trustStorePassword;
+        return this;
+    }
+
+    /**
+     * Selects the {@link TLSProtocol}, that shall be used.
+     *
+     * @param tlsProtocol The {@link TLSProtocol}, that shall be used.
+     * @return The {@link TLSContext} itself.
+     */
+    public @NotNull TLSContext setTLSProtocol(@NotNull TLSProtocol tlsProtocol) {
+        this.tlsProtocol = tlsProtocol;
+        return this;
     }
 
     /**
@@ -134,15 +139,6 @@ public class TLSContext {
             initSSLContext();
         }
         return sslContext;
-    }
-
-    /**
-     * Selects the {@link TLSProtocol}, that shall be used.
-     *
-     * @param tlsProtocol The {@link TLSProtocol}, that shall be used.
-     */
-    public void setTLSProtocol(@NotNull TLSProtocol tlsProtocol) {
-        this.tlsProtocol = tlsProtocol;
     }
 
 }
