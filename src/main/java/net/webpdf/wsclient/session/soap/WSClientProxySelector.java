@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.session.soap;
 
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

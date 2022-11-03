@@ -8,13 +8,13 @@ import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
-import org.apache.http.NameValuePair;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.net.URIBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +33,7 @@ import java.util.List;
  */
 public abstract class AbstractSession<T_DOCUMENT extends Document> implements Session<T_DOCUMENT> {
 
-    private final @NotNull CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+    private final @NotNull BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
     private final @NotNull DataFormat dataFormat;
     private final @NotNull String basePath;
     private final @NotNull WebServiceProtocol webServiceProtocol;
@@ -222,7 +222,7 @@ public abstract class AbstractSession<T_DOCUMENT extends Document> implements Se
             }
         }
 
-        this.credentials = new UsernamePasswordCredentials(name, password);
+        this.credentials = new UsernamePasswordCredentials(name, password.toCharArray());
     }
 
     /**

@@ -18,7 +18,7 @@ import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.soap.ConverterWebService;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.stream.StreamSource;

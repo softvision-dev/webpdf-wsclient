@@ -1,8 +1,8 @@
 package net.webpdf.wsclient.session.credentials;
 
 import net.webpdf.wsclient.session.credentials.token.Token;
-import org.apache.http.auth.BasicUserPrincipal;
-import org.apache.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.BasicUserPrincipal;
+import org.apache.hc.client5.http.auth.Credentials;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -44,7 +44,7 @@ public class TokenCredentials<T extends Token> implements Credentials, Serializa
      * @return The password matching the {@link Principal}.
      */
     @Override
-    public String getPassword() {
+    public char[] getPassword() {
         return null;
     }
 

@@ -7,7 +7,7 @@ import net.webpdf.wsclient.session.rest.documents.manager.RestWebServiceDocument
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
-import org.apache.http.client.config.RequestConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +25,6 @@ import java.net.URL;
  */
 @SuppressWarnings("unused")
 public class RestWebServiceSession extends AbstractRestSession<RestWebServiceDocument> {
-
 
     /**
      * Creates a new {@link RestWebServiceSession} instance providing connection information, authorization objects and

@@ -10,7 +10,7 @@ import net.webpdf.wsclient.session.credentials.token.TokenProvider;
 import net.webpdf.wsclient.schema.beans.User;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

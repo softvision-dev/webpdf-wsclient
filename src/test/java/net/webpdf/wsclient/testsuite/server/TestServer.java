@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.testsuite.server;
 
 import net.webpdf.wsclient.testsuite.config.TestConfig;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.File;
@@ -97,8 +97,8 @@ public final class TestServer {
         return TestConfig.getInstance().getServerConfig().getLocalUser();
     }
 
-    public String getLocalPassword() {
-        return TestConfig.getInstance().getServerConfig().getLocalPassword();
+    public char[] getLocalPassword() {
+        return TestConfig.getInstance().getServerConfig().getLocalPassword().toCharArray();
     }
 
     public File getDemoKeystoreFile(File keystoreFile) throws Exception {

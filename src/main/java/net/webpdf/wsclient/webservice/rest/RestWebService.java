@@ -15,13 +15,14 @@ import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.tools.SerializeHelper;
-import org.apache.commons.codec.Charsets;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 
 /**
@@ -86,17 +87,13 @@ public abstract class RestWebService<T_OPERATION_DATA, T_OPERATION_PARAMETER, T_
      */
     private @NotNull HttpEntity getWebServiceOptions() throws ResultException {
         try {
-            StringEntity stringEntity = new StringEntity(
+            return new StringEntity(
                     getSession().getDataFormat() == DataFormat.XML ?
                             SerializeHelper.toXML(getOperationData(), getOperationData().getClass()) :
                             SerializeHelper.toJSON(getOperationData()),
-                    Charsets.UTF_8);
-
-            if (getSession().getDataFormat() != null) {
-                stringEntity.setContentType(getSession().getDataFormat().getMimeType());
-            }
-            return stringEntity;
-
+                    getSession().getDataFormat() != null ?
+                            ContentType.create(getSession().getDataFormat().getMimeType(), StandardCharsets.UTF_8) :
+                            null);
         } catch (IOException | UnsupportedCharsetException ex) {
             throw new ResultException(Result.build(Error.TO_XML_JSON, ex));
         }

@@ -12,11 +12,11 @@ import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import net.webpdf.wsclient.testsuite.server.TestServer;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -48,7 +48,7 @@ public class HttpRestRequestIntegrationTest {
                 assertNotNull(httpRestRequest,
                         "HttpRestRequest should have been build.");
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+                builder.setMode(HttpMultipartMode.LEGACY);
                 builder.addBinaryBody("filedata", file,
                         ContentType.DEFAULT_BINARY, file.getName());
                 HttpEntity entity = builder.build();
@@ -84,7 +84,7 @@ public class HttpRestRequestIntegrationTest {
                     try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL))) {
                         UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
-                                "invalid", "invalid");
+                                "invalid", "invalid".toCharArray());
                         session.setCredentials(userCredentials);
                         session.login();
                     }
@@ -123,7 +123,7 @@ public class HttpRestRequestIntegrationTest {
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest, "HttpRestRequest should have been build.");
                         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+                        builder.setMode(HttpMultipartMode.LEGACY);
                         builder.addBinaryBody("filedata", file, ContentType.DEFAULT_BINARY,
                                 file.getName());
                         HttpEntity entity = builder.build();
@@ -147,7 +147,7 @@ public class HttpRestRequestIntegrationTest {
                         assertNotNull(httpRestRequest,
                                 "HttpRestRequest should have been build.");
                         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+                        builder.setMode(HttpMultipartMode.LEGACY);
                         builder.addBinaryBody("filedata", file, ContentType.DEFAULT_BINARY,
                                 file.getName());
                         HttpEntity entity = builder.build();
@@ -173,7 +173,7 @@ public class HttpRestRequestIntegrationTest {
                         assertNotNull(httpRestRequest,
                                 "HttpRestRequest should have been build.");
                         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+                        builder.setMode(HttpMultipartMode.LEGACY);
                         builder.addBinaryBody("filedata", file, ContentType.DEFAULT_BINARY,
                                 file.getName());
                         HttpEntity entity = builder.build();

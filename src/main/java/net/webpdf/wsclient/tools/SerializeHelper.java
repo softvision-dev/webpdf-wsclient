@@ -8,8 +8,9 @@ import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.DataFormat;
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xml.sax.SAXException;
@@ -80,7 +81,7 @@ public class SerializeHelper {
                 StreamSource streamSource = new StreamSource(stringReader);
                 return fromXML(streamSource, type);
             }
-        } catch (IOException ex) {
+        } catch (IOException | ParseException ex) {
             throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA, ex));
         }
     }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.schema.extraction.info.DocumentType;
 import net.webpdf.wsclient.session.Session;
-import org.apache.http.HttpEntity;
+import org.apache.hc.core5.http.HttpEntity;
 import org.jetbrains.annotations.Nullable;
 
 import jakarta.xml.bind.annotation.XmlElement;

@@ -11,16 +11,15 @@ import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
-import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -210,7 +209,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
             throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
         }
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        builder.setMode(HttpMultipartMode.LEGACY);
         builder.setCharset(StandardCharsets.UTF_8);
         builder.addBinaryBody("filedata", IOUtils.toByteArray(data),
                 ContentType.DEFAULT_BINARY, fileName);
@@ -455,18 +454,13 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
             if (parameter == null) {
                 throw new ResultException(Result.build(Error.NO_OPERATION_DATA));
             }
-
-            StringEntity stringEntity = new StringEntity(
-                    this.session.getDataFormat() == DataFormat.XML
-                            ? SerializeHelper.toXML(parameter, parameter.getClass())
-                            : SerializeHelper.toJSON(parameter),
-                    Charsets.UTF_8);
-
-            if (this.session.getDataFormat() != null) {
-                stringEntity.setContentType(this.session.getDataFormat().getMimeType());
-            }
-            return stringEntity;
-
+            return new StringEntity(
+                            this.session.getDataFormat() == DataFormat.XML
+                                    ? SerializeHelper.toXML(parameter, parameter.getClass())
+                                    : SerializeHelper.toJSON(parameter),
+                    this.session.getDataFormat() != null ?
+                            ContentType.create(this.session.getDataFormat().getMimeType(), StandardCharsets.UTF_8) :
+                            null);
         } catch (IOException | UnsupportedCharsetException ex) {
             throw new ResultException(Result.build(Error.TO_XML_JSON, ex));
         }

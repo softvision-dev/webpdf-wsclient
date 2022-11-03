@@ -19,7 +19,7 @@ import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.webservice.AbstractWebService;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
-import org.apache.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 
@@ -189,8 +188,8 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
             } else {
                 String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(
                         (getSession().getCredentials().getUserPrincipal().getName()
-                                + ":" + getSession().getCredentials().getPassword())
-                                .getBytes(StandardCharsets.ISO_8859_1));
+                                + ":" + new String(getSession().getCredentials().getPassword()))
+                                .getBytes());
                 getHeaders().put(HttpHeaders.AUTHORIZATION, Collections.singletonList(basicAuth));
             }
 
@@ -202,7 +201,7 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
                     requestContext.put(BindingProvider.USERNAME_PROPERTY,
                             getSession().getCredentials().getUserPrincipal().getName());
                     requestContext.put(BindingProvider.PASSWORD_PROPERTY,
-                            getSession().getCredentials().getPassword());
+                            new String(getSession().getCredentials().getPassword()));
                 }
             }
         }

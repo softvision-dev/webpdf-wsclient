@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.session.rest;
 
+import net.webpdf.wsclient.session.connection.http.execchain.HttpAuthorizationProvider;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
@@ -17,11 +18,19 @@ import net.webpdf.wsclient.session.AbstractSession;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.session.credentials.token.TokenProvider;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.ChainElement;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.LayeredConnectionSocketFactory;
+import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.config.Registry;
+import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,11 +76,20 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
         super(url, WebServiceProtocol.REST, tlsContext);
 
         RequestConfig clientConfig = RequestConfig.custom().setAuthenticationEnabled(true).build();
-        this.httpClientBuilder = HttpClients.custom()
+        HttpAuthorizationProvider authorizationProvider = new HttpAuthorizationProvider(this);
+        httpClientBuilder = HttpClients.custom()
                 .setDefaultRequestConfig(clientConfig)
-                .setDefaultCredentialsProvider(getCredentialsProvider());
+                .setDefaultCredentialsProvider(getCredentialsProvider())
+                .addExecInterceptorAfter(ChainElement.REDIRECT.name(),
+                        authorizationProvider.getExecChainHandlerName(), authorizationProvider);
         if (getTlsContext() != null) {
-            httpClientBuilder.setSSLContext(getTlsContext().getSslContext());
+            LayeredConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
+                    getTlsContext().getSslContext(), (hostname, session) -> true);
+            Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                    .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                    .register("https", sslSocketFactory)
+                    .build();
+            httpClientBuilder.setConnectionManager(new PoolingHttpClientConnectionManager(registry));
         }
     }
 

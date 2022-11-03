@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.session.connection.proxy;
 
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 import org.jetbrains.annotations.NotNull;
 
 /**

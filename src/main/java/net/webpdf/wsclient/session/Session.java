@@ -5,8 +5,8 @@ import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
-import org.apache.http.NameValuePair;
-import org.apache.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.core5.http.NameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

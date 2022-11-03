@@ -3,8 +3,8 @@ package net.webpdf.wsclient.session.connection.https;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
-import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

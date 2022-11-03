@@ -5,8 +5,9 @@ import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.*;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.FileEntity;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.FileEntity;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.stream.StreamSource;
@@ -80,7 +81,7 @@ public class SerializeHelperTest {
     @Test
     public void testFromXMLHttpEntity() {
         assertDoesNotThrow(() -> {
-            HttpEntity entity = new FileEntity(testResources.getResource("convert.xml"));
+            HttpEntity entity = new FileEntity(testResources.getResource("convert.xml"), ContentType.APPLICATION_XML);
             OperationData operationData = SerializeHelper.fromXML(entity, OperationData.class);
             ConverterType converterType = operationData.getConverter();
             assertNotNull(converterType,
@@ -105,7 +106,7 @@ public class SerializeHelperTest {
     @Test
     public void testFromJSONHttpEntity() {
         assertDoesNotThrow(() -> {
-            HttpEntity entity = new FileEntity(testResources.getResource("convert.json"));
+            HttpEntity entity = new FileEntity(testResources.getResource("convert.json"), ContentType.APPLICATION_JSON);
             OperationData operationData = SerializeHelper.fromJSON(entity, OperationData.class);
             ConverterType converterType = operationData.getConverter();
             assertNotNull(converterType,
@@ -130,7 +131,7 @@ public class SerializeHelperTest {
     @Test
     public void testInvalidEntities() {
         try {
-            HttpEntity entity = new FileEntity(testResources.getResource("convert.json"));
+            HttpEntity entity = new FileEntity(testResources.getResource("convert.json"), ContentType.APPLICATION_JSON);
             SerializeHelper.fromXML(entity, OperationData.class);
             fail("ResultException expected");
         } catch (ResultException ex) {
@@ -139,7 +140,7 @@ public class SerializeHelperTest {
         }
 
         try {
-            HttpEntity entity = new FileEntity(testResources.getResource("convert.xml"));
+            HttpEntity entity = new FileEntity(testResources.getResource("convert.xml"), ContentType.APPLICATION_XML);
             SerializeHelper.fromJSON(entity, OperationData.class);
             fail("ResultException expected");
         } catch (ResultException ex) {
@@ -173,7 +174,7 @@ public class SerializeHelperTest {
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
         try {
-            SerializeHelper.fromXML(new FileEntity(new File("")), null);
+            SerializeHelper.fromXML(new FileEntity(new File(""), ContentType.APPLICATION_XML), null);
             fail("ResultException expected");
         } catch (ResultException ex) {
             assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
@@ -203,7 +204,7 @@ public class SerializeHelperTest {
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         }
         try {
-            SerializeHelper.fromJSON(new FileEntity(new File("")), null);
+            SerializeHelper.fromJSON(new FileEntity(new File(""), ContentType.APPLICATION_JSON), null);
             fail("ResultException expected");
         } catch (ResultException ex) {
             assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),

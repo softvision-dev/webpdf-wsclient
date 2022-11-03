@@ -4,7 +4,7 @@ import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
-import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.junit.jupiter.api.Test;
 
 import java.net.URL;
@@ -35,12 +35,12 @@ public class RestSessionTest {
                         "WebserviceProtocol should have been REST.");
                 assertNull(restSession.getCredentials(),
                         "Credentials should not have been initialized.");
-                restSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd"));
+                restSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd".toCharArray()));
                 assertNotNull(restSession.getCredentials(),
                         "Credentials should have been set.");
                 assertEquals("usr", restSession.getCredentials().getUserPrincipal().getName(),
                         "Credentials should define usr for authentication.");
-                assertEquals("pwd", restSession.getCredentials().getPassword(),
+                assertEquals("pwd", new String(restSession.getCredentials().getPassword()),
                         "Credentials should define pwd as the authentication password.");
 
                 assertEquals(SOME_URL + "/rest/sub", restSession.getURI("sub").toString(),
@@ -71,14 +71,14 @@ public class RestSessionTest {
                         "Credentials should have been initialized.");
                 assertEquals("username", restSession.getCredentials().getUserPrincipal().getName(),
                         "Credentials should define username for authentication.");
-                assertEquals("password", restSession.getCredentials().getPassword(),
+                assertEquals("password", new String(restSession.getCredentials().getPassword()),
                         "Credentials should define password as the authentication password.");
-                restSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd"));
+                restSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd".toCharArray()));
                 assertNotNull(restSession.getCredentials(),
                         "Credentials should have been set.");
                 assertEquals("usr", restSession.getCredentials().getUserPrincipal().getName(),
                         "Credentials should define usr for authentication.");
-                assertEquals("pwd", restSession.getCredentials().getPassword(),
+                assertEquals("pwd", new String(restSession.getCredentials().getPassword()),
                         "Credentials should define pwd as the authentication password.");
                 assertEquals(SOME_URL + "/rest/sub", restSession.getURI("sub").toString(),
                         "URI subpath should have been created.");

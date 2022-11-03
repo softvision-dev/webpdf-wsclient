@@ -2,7 +2,7 @@ package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.session.soap.SoapWebServiceSession;
-import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.junit.jupiter.api.Test;
 
 import java.net.URL;
@@ -37,10 +37,10 @@ public class SoapSessionTest {
                         "WebserviceProtocol should have been SOAP.");
                 assertNull(soapSession.getCredentials(),
                         "Credentials should not have been initialized.");
-                soapSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd"));
+                soapSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd".toCharArray()));
                 assertEquals("usr", soapSession.getCredentials().getUserPrincipal().getName(),
                         "Credentials should define usr for authentication.");
-                assertEquals("pwd", soapSession.getCredentials().getPassword(),
+                assertEquals("pwd", new String(soapSession.getCredentials().getPassword()),
                         "Credentials should define pwd as the authentication password.");
 
                 assertEquals(SOME_URL + "/soap/sub", soapSession.getURI("sub").toString(),
@@ -73,12 +73,12 @@ public class SoapSessionTest {
                 assertNotNull(soapSession.getCredentials());
                 assertEquals("username", soapSession.getCredentials().getUserPrincipal().getName(),
                         "Credentials should define username for authentication.");
-                assertEquals("password", soapSession.getCredentials().getPassword(),
+                assertEquals("password", new String(soapSession.getCredentials().getPassword()),
                         "Credentials should define password as the authentication password.");
-                soapSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd"));
+                soapSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd".toCharArray()));
                 assertEquals("usr", soapSession.getCredentials().getUserPrincipal().getName(),
                         "Credentials should define usr for authentication.");
-                assertEquals("pwd", soapSession.getCredentials().getPassword(),
+                assertEquals("pwd", new String(soapSession.getCredentials().getPassword()),
                         "Credentials should define pwd as the authentication password.");
 
                 assertEquals(SOME_URL + "/soap/sub", soapSession.getURI("sub").toString(),

@@ -7,20 +7,17 @@ import net.webpdf.wsclient.schema.beans.Failure;
 import net.webpdf.wsclient.schema.stubs.FaultInfo;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
 import net.webpdf.wsclient.session.DataFormat;
+import net.webpdf.wsclient.session.connection.http.execchain.HttpAuthorizationProvider;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.*;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.*;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import jakarta.xml.bind.DatatypeConverter;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
@@ -118,47 +115,32 @@ public class HttpRestRequest {
             uri = this.session.getURI("");
         }
 
-        RequestBuilder requestBuilder;
-
         switch (httpMethod) {
             case GET:
-                requestBuilder = RequestBuilder.get(uri);
+                httpUriRequest = new HttpGet(uri);
                 break;
             case POST:
-                requestBuilder = RequestBuilder.post(uri);
+                httpUriRequest = new HttpPost(uri);
                 break;
             case DELETE:
-                requestBuilder = RequestBuilder.delete(uri);
+                httpUriRequest = new HttpDelete(uri);
                 break;
             case PUT:
-                requestBuilder = RequestBuilder.put(uri);
+                httpUriRequest = new HttpPut(uri);
                 break;
             default:
                 throw new ResultException(Result.build(Error.UNKNOWN_HTTP_METHOD));
         }
 
-        requestBuilder.addHeader(HttpHeaders.ACCEPT, this.acceptHeader);
-        requestBuilder.setCharset(StandardCharsets.UTF_8);
-
-        if (this.session.getToken() != null && !this.session.getToken().getToken().isEmpty()) {
-            requestBuilder.addHeader(HttpHeaders.AUTHORIZATION, "Bearer" +
-                    this.session.getToken().getToken());
-        } else if (this.session.getCredentials() != null) {
-            String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(
-                    (this.session.getCredentials().getUserPrincipal().getName()
-                            + ":" + this.session.getCredentials().getPassword())
-                            .getBytes(StandardCharsets.ISO_8859_1));
-            requestBuilder.addHeader(HttpHeaders.AUTHORIZATION, basicAuth);
+        httpUriRequest.addHeader(HttpHeaders.ACCEPT, this.acceptHeader);
+        Header authorizationHeader = new HttpAuthorizationProvider(this.session).provideAuthorizationHeader();
+        if (authorizationHeader != null) {
+            httpUriRequest.addHeader(authorizationHeader);
         }
-
-        requestBuilder.addHeader(HttpHeaders.ACCEPT, this.acceptHeader);
-        requestBuilder.setCharset(StandardCharsets.UTF_8);
 
         if (httpEntity != null) {
-            requestBuilder.setEntity(httpEntity);
+            httpUriRequest.setEntity(httpEntity);
         }
-
-        httpUriRequest = requestBuilder.build();
 
         return this;
     }
@@ -180,11 +162,11 @@ public class HttpRestRequest {
      * @see ResultException
      * @see Result#getException()
      */
-    private void checkResponse(@NotNull HttpResponse httpResponse) throws ResultException {
+    private void checkResponse(@NotNull CloseableHttpResponse httpResponse) throws ResultException {
 
         // any error?
-        StatusLine statusLine = httpResponse.getStatusLine();
-        if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+        int code = httpResponse.getCode();
+        if (code == HttpStatus.SC_OK) {
             return;
         }
 
@@ -197,9 +179,9 @@ public class HttpRestRequest {
         String responseOutput;
 
         // is this a webPDF server response or a general server error?
-        Header header = httpEntity.getContentType();
-        if (header != null && (header.getValue().equals(DataFormat.XML.getMimeType())
-                || header.getValue().equals(DataFormat.JSON.getMimeType()))) {
+        String contentType = httpEntity.getContentType();
+        if (contentType != null && (contentType.equals(DataFormat.XML.getMimeType())
+                || contentType.equals(DataFormat.JSON.getMimeType()))) {
 
             Failure exceptionBean = DataFormat.XML.equals(this.dataFormat)
                     ? SerializeHelper.fromXML(httpEntity, Failure.class)
@@ -220,14 +202,14 @@ public class HttpRestRequest {
         } else {
             try {
                 responseOutput = EntityUtils.toString(httpEntity, StandardCharsets.UTF_8);
-            } catch (IOException ex) {
+            } catch (ParseException | IOException ex) {
                 throw new ResultException(Result.build(Error.HTTP_CUSTOM_ERROR, ex));
             }
         }
 
         // throw the extracted error message
         throw new ResultException(Result.build(Error.HTTP_CUSTOM_ERROR).appendMessage(
-                statusLine.getStatusCode() + " " + statusLine.getReasonPhrase() + "\n" + responseOutput));
+                code + " " + httpResponse.getReasonPhrase() + "\n" + responseOutput));
     }
 
     /**
@@ -254,13 +236,13 @@ public class HttpRestRequest {
      * ({@link HttpEntity}) to an instance of the given type.
      * </p>
      * <p>
-     * The resulting intermediate {@link HttpResponse} shall be checked via {@link #checkResponse(HttpResponse)}.
+     * The resulting intermediate {@link HttpResponse} shall be checked via {@link #checkResponse(CloseableHttpResponse)}}.
      * </p>
      *
      * @param type The type to translate the data transfer object {@link HttpEntity} to.
      * @return The resulting data transfer object {@link HttpEntity} translated to an instance of the given type.
      * @throws ResultException Shall be thrown, should the {@link HttpResponse} not be readable or should it´s
-     *                         validation via {@link #checkResponse(HttpResponse)} fail.
+     *                         validation via {@link #checkResponse(CloseableHttpResponse)} fail.
      */
     public <T> @Nullable T executeRequest(@Nullable Class<T> type) throws ResultException {
 
@@ -270,7 +252,8 @@ public class HttpRestRequest {
 
             HttpEntity httpEntity = closeableHttpResponse.getEntity();
 
-            ContentType contentType = ContentType.getOrDefault(httpEntity);
+            ContentType contentType = httpEntity.getContentType() == null ? ContentType.DEFAULT_TEXT :
+                    ContentType.create(httpEntity.getContentType(), StandardCharsets.UTF_8);
             String mimeType = contentType.getMimeType();
             Charset charset = contentType.getCharset() != null ? contentType.getCharset() : StandardCharsets.UTF_8;
 
@@ -290,7 +273,7 @@ public class HttpRestRequest {
             }
         } catch (ResultException ex) {
             throw ex;
-        } catch (IOException ex) {
+        } catch (IOException | ParseException ex) {
             throw new ResultException(Result.build(Error.HTTP_IO_ERROR, ex));
         }
     }

@@ -9,7 +9,7 @@ import net.webpdf.wsclient.session.credentials.token.Token;
 import net.webpdf.wsclient.session.credentials.token.TokenProvider;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
-import org.apache.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.Credentials;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
