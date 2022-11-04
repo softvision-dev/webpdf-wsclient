@@ -7,7 +7,6 @@ import net.webpdf.wsclient.schema.beans.Failure;
 import net.webpdf.wsclient.schema.stubs.FaultInfo;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
 import net.webpdf.wsclient.session.DataFormat;
-import net.webpdf.wsclient.session.connection.http.execchain.HttpAuthorizationProvider;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
 import org.apache.commons.lang3.StringUtils;

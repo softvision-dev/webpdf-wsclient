@@ -91,6 +91,15 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
     void downloadDocument(@NotNull String documentId, @Nullable OutputStream outputStream) throws ResultException;
 
     /**
+     * Downloads the {@link RestDocument} and writes it to the given {@link OutputStream}.
+     *
+     * @param document   The {@link RestDocument} to download.
+     * @param outputStream The {@link OutputStream} to write the downloaded {@link RestDocument} to.
+     * @throws ResultException Shall be thrown, should the download have failed.
+     */
+    void downloadDocument(@Nullable RestDocument document, @Nullable OutputStream outputStream) throws ResultException;
+
+    /**
      * Uploads the given {@link File} to the webPDF server, adds it to this {@link DocumentManager} and returns the
      * resulting {@link RestDocument} handle.
      *

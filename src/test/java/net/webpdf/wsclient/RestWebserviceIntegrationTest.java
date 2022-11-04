@@ -30,7 +30,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.webpdf.wsclient.testsuite.io.TestResources.getDocumentID;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RestWebserviceIntegrationTest {
@@ -72,7 +71,7 @@ public class RestWebserviceIntegrationTest {
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
+                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
                 }
                 assertNotNull(restDocument,
                         "REST document could not be downloaded.");
@@ -143,7 +142,7 @@ public class RestWebserviceIntegrationTest {
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
+                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -190,7 +189,7 @@ public class RestWebserviceIntegrationTest {
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
+                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -231,7 +230,7 @@ public class RestWebserviceIntegrationTest {
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
+                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -268,7 +267,7 @@ public class RestWebserviceIntegrationTest {
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
+                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -334,7 +333,7 @@ public class RestWebserviceIntegrationTest {
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
+                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -372,7 +371,7 @@ public class RestWebserviceIntegrationTest {
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
+                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -397,7 +396,7 @@ public class RestWebserviceIntegrationTest {
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
+                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -435,7 +434,7 @@ public class RestWebserviceIntegrationTest {
 
                 RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
+                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
 

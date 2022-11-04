@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.session.connection.http.execchain;
+package net.webpdf.wsclient.session.connection.http;
 
 import jakarta.xml.bind.DatatypeConverter;
 import net.webpdf.wsclient.session.rest.RestSession;

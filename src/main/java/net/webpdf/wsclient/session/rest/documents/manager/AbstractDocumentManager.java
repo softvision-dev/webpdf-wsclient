@@ -163,7 +163,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @param outputStream The {@link OutputStream} to write the downloaded {@link RestDocument} to.
      * @throws ResultException Shall be thrown, should the download have failed.
      */
-    public void downloadDocument(@NotNull String documentId, @Nullable OutputStream outputStream)
+    public void downloadDocument(@Nullable String documentId, @Nullable OutputStream outputStream)
             throws ResultException {
         if (!containsDocument(documentId)) {
             throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
@@ -173,6 +173,19 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
                 .setAcceptHeader("application/octet-stream")
                 .buildRequest(HttpMethod.GET, "documents/" + documentId, null)
                 .executeRequest(outputStream);
+    }
+
+    /**
+     * Downloads the {@link RestDocument} and writes it to the given {@link OutputStream}.
+     *
+     * @param document     The {@link RestDocument} to download.
+     * @param outputStream The {@link OutputStream} to write the downloaded {@link RestDocument} to.
+     * @throws ResultException Shall be thrown, should the download have failed.
+     */
+    @Override
+    public void downloadDocument(@Nullable RestDocument document, @Nullable OutputStream outputStream)
+            throws ResultException {
+        downloadDocument(document != null ? document.getDocumentId() : null, outputStream);
     }
 
     /**
@@ -455,9 +468,9 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
                 throw new ResultException(Result.build(Error.NO_OPERATION_DATA));
             }
             return new StringEntity(
-                            this.session.getDataFormat() == DataFormat.XML
-                                    ? SerializeHelper.toXML(parameter, parameter.getClass())
-                                    : SerializeHelper.toJSON(parameter),
+                    this.session.getDataFormat() == DataFormat.XML
+                            ? SerializeHelper.toXML(parameter, parameter.getClass())
+                            : SerializeHelper.toJSON(parameter),
                     this.session.getDataFormat() != null ?
                             ContentType.create(this.session.getDataFormat().getMimeType(), StandardCharsets.UTF_8) :
                             null);

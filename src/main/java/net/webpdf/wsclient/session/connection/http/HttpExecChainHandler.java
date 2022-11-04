@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.session.connection.http.execchain;
+package net.webpdf.wsclient.session.connection.http;
 
 import org.apache.hc.client5.http.classic.ExecChain;
 import org.apache.hc.client5.http.classic.ExecChainHandler;
@@ -19,4 +19,5 @@ public interface HttpExecChainHandler extends ExecChainHandler {
      * @return A name for the {@link HttpExecChainHandler} in the context of a {@link ExecChain}.
      */
     @NotNull String getExecChainHandlerName();
+
 }

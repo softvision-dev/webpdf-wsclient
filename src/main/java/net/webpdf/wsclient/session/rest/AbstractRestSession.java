@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.session.rest;
 
-import net.webpdf.wsclient.session.connection.http.execchain.HttpAuthorizationProvider;
+import net.webpdf.wsclient.session.connection.http.HttpAuthorizationProvider;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
