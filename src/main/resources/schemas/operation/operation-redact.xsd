@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
-           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd"/>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="RedactType">
         <xs:annotation>
             <xs:documentation>
@@ -11,8 +10,8 @@
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:all>
-                    <xs:element name="sanitize" type="tns:SanitizeType" minOccurs="0"/>
-                    <xs:element name="blacken" type="tns:BlackenType" minOccurs="0"/>
+                    <xs:element name="sanitize" type="tns:SanitizeType" minOccurs="0" />
+                    <xs:element name="blacken" type="tns:BlackenType" minOccurs="0" />
                 </xs:all>
             </xs:extension>
         </xs:complexContent>
@@ -24,14 +23,15 @@
             </xs:documentation>
         </xs:annotation>
         <xs:all>
-            <xs:element name="metadata" type="tns:SanitizeMetadataType" minOccurs="0"/>
-            <xs:element name="layers" type="tns:SanitizeLayersType" minOccurs="0"/>
-            <xs:element name="tags" type="tns:SanitizeTagsType" minOccurs="0"/>
-            <xs:element name="outlines" type="tns:SanitizeOutlinesType" minOccurs="0"/>
-            <xs:element name="attachments" type="tns:SanitizeAttachmentsType" minOccurs="0"/>
-            <xs:element name="forms" type="tns:SanitizeFormsType" minOccurs="0"/>
-            <xs:element name="annotations" type="tns:SanitizeAnnotationsType" minOccurs="0"/>
-            <xs:element name="pages" type="tns:SanitizePagesType" minOccurs="0"/>
+            <xs:element name="metadata" type="tns:SanitizeMetadataType" minOccurs="0" />
+            <xs:element name="layers" type="tns:SanitizeLayersType" minOccurs="0" />
+            <xs:element name="tags" type="tns:SanitizeTagsType" minOccurs="0" />
+            <xs:element name="outlines" type="tns:SanitizeOutlinesType" minOccurs="0" />
+            <xs:element name="attachments" type="tns:SanitizeAttachmentsType" minOccurs="0" />
+            <xs:element name="forms" type="tns:SanitizeFormsType" minOccurs="0" />
+            <xs:element name="annotations" type="tns:SanitizeAnnotationsType" minOccurs="0" />
+            <xs:element name="pages" type="tns:SanitizePagesType" minOccurs="0" />
+            <xs:element name="actions" type="tns:SanitizeActionsType" minOccurs="0" maxOccurs="1" />
         </xs:all>
     </xs:complexType>
     <xs:complexType name="SanitizeOptionsType">
@@ -55,7 +55,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:SanitizeOptionsType"/>
+            <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeLayersType">
@@ -65,7 +65,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:SanitizeOptionsType"/>
+            <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeTagsType">
@@ -75,7 +75,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:SanitizeOptionsType"/>
+            <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeOutlinesType">
@@ -85,7 +85,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:SanitizeOptionsType"/>
+            <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeAttachmentsType">
@@ -95,7 +95,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:SanitizeOptionsType"/>
+            <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeFormsType">
@@ -105,7 +105,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:SanitizeOptionsType"/>
+            <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeAnnotationsType">
@@ -115,7 +115,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:SanitizeOptionsType"/>
+            <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizePagesType">
@@ -133,7 +133,7 @@
                         </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="tns:DpiType"/>
+                        <xs:restriction base="tns:DpiType" />
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="pages" default="*" type="xs:string">
@@ -160,8 +160,8 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:maxInclusive value="100"/>
-                    <xs:minInclusive value="0"/>
+                    <xs:maxInclusive value="100" />
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -193,5 +193,15 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="SanitizeActionsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this element is set, all actions shall be removed from the document - including specifically links and javascript triggers, elements and definitions. This will severely impair the functionality of interactive features such as: Annotations, forms, outlines, etc.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:SanitizeOptionsType" />
+        </xs:complexContent>
     </xs:complexType>
 </xs:schema>

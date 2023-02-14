@@ -843,6 +843,13 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="isRichText" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>When set to true, the field contains rich text formatted content.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="SignatureType">
         <xs:annotation>

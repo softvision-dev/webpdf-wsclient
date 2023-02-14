@@ -1315,6 +1315,52 @@
         "tags" : [ "documents" ]
       }
     },
+    "/documents/{documentId}/info/{details}" : {
+      "get" : {
+        "description" : "Returns information about the document selected by `documentId` in the document storage.",
+        "operationId" : "getDocumentInfoDetails",
+        "parameters" : [ {
+          "description" : "The unique `documentId` of the document in the server´s **document storage**.",
+          "in" : "path",
+          "name" : "documentId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Detailed information for the document referenced by the unique `documentId` in the server´s **document storage**.",
+          "in" : "path",
+          "name" : "details",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Document_InfoType"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Document_Info"
+                }
+              }
+            },
+            "description" : "A document with the given `documentId` was found and the requested detail information is returned."
+          },
+          "400" : {
+            "$ref" : "#/components/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/components/responses/401Unauthorized"
+          }
+        },
+        "security" : [ {
+          "BearerAuth" : [ ]
+        } ],
+        "summary" : "Provides detailed information about an uploaded document",
+        "tags" : [ "documents" ]
+      }
+    },
     "/documents/{documentId}/security/password" : {
       "put" : {
         "description" : "Updates the security information of a selected document in the server´s **document storage**, using the contained `PdfPasswordType` as the body request parameter and returns the updated document information. You can use this to set access passwords or other security information for a document.\n\n* The `DocumentFile` shall select the updated document via the contained `documentId`.\n* To select the document use the `documentId` returned, when uploading the document to the server´s **document storage**, or select a `documentId` of one of the documents returned by `GET /documents/list`.",
@@ -2115,6 +2161,16 @@
         "type" : "object",
         "description" : "Provides information about the used Java virtual machine and it´sexecution context.",
         "properties" : {
+          "container" : {
+            "$ref" : "#/components/schemas/Admin_JavaStatusContainer"
+          },
+          "gc" : {
+            "type" : "array",
+            "description" : "The list of GC used and their execution values.",
+            "items" : {
+              "$ref" : "#/components/schemas/Admin_JavaStatusGC"
+            }
+          },
           "javaName" : {
             "type" : "string",
             "default" : "",
@@ -2160,10 +2216,60 @@
             "default" : "",
             "description" : "The operating system´s architecture."
           },
+          "osDistro" : {
+            "$ref" : "#/components/schemas/Admin_JavaStatusOsDistro"
+          },
           "osName" : {
             "type" : "string",
             "default" : "",
             "description" : "The name of the operating system, the server is running on."
+          }
+        },
+        "readOnly" : true
+      },
+      "Admin_JavaStatusContainer" : {
+        "type" : "object",
+        "description" : "Information about the container plattform.",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "default" : ""
+          }
+        },
+        "readOnly" : true
+      },
+      "Admin_JavaStatusGC" : {
+        "type" : "object",
+        "description" : "A single GC entry with the execution values.",
+        "properties" : {
+          "collectionCount" : {
+            "type" : "integer",
+            "format" : "int64",
+            "default" : 0
+          },
+          "collectionTime" : {
+            "type" : "integer",
+            "format" : "int64",
+            "default" : 0
+          },
+          "name" : {
+            "type" : "string",
+            "default" : ""
+          }
+        },
+        "readOnly" : true
+      },
+      "Admin_JavaStatusOsDistro" : {
+        "type" : "object",
+        "description" : "Information about the OS distribution.",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "default" : ""
+          },
+          "version" : {
+            "type" : "string",
+            "default" : ""
           }
         },
         "readOnly" : true
@@ -3995,6 +4101,100 @@
         },
         "required" : [ "id" ]
       },
+      "Document_Info" : {
+        "type" : "object",
+        "description" : "Provides various information for the underlying document",
+        "discriminator" : {
+          "mapping" : {
+            "form" : "#/components/schemas/Document_InfoForm"
+          },
+          "propertyName" : "infoType"
+        },
+        "properties" : {
+          "infoType" : {
+            "$ref" : "#/components/schemas/Document_InfoType"
+          }
+        },
+        "required" : [ "infoType" ]
+      },
+      "Document_InfoForm" : {
+        "type" : "object",
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/Document_Info"
+        } ],
+        "description" : "Provides form information for the PDF document",
+        "properties" : {
+          "acroFormFields" : {
+            "type" : "array",
+            "description" : "All AcroForms fields with fully qualified name and, if XFA form, mapping to XFA template and XFA data.",
+            "items" : {
+              "$ref" : "#/components/schemas/Document_InfoFormField"
+            },
+            "readOnly" : true
+          },
+          "error" : {
+            "$ref" : "#/components/schemas/Webservice_Exception"
+          },
+          "value" : {
+            "type" : "string",
+            "format" : "byte",
+            "description" : "Requested content (BASE64 encoded)",
+            "readOnly" : true
+          }
+        },
+        "required" : [ "infoType" ]
+      },
+      "Document_InfoFormField" : {
+        "type" : "object",
+        "description" : "Provides field information for a single field in the form of the PDF document",
+        "properties" : {
+          "dataXPath" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "XPath to the entry in the XML data structure used for importing and exporting data to the form.",
+            "readOnly" : true
+          },
+          "fullyQualifiedName" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "Fully qualified field name",
+            "readOnly" : true
+          },
+          "xfaField" : {
+            "$ref" : "#/components/schemas/Document_InfoFormXfaField"
+          }
+        },
+        "readOnly" : true
+      },
+      "Document_InfoFormXfaField" : {
+        "type" : "object",
+        "description" : "Additional field information for a XFA field",
+        "properties" : {
+          "match" : {
+            "$ref" : "#/components/schemas/Document_InfoFormXfaMatch"
+          },
+          "name" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "Name of the field in the XML data structure for the XFA field.",
+            "readOnly" : true
+          }
+        },
+        "readOnly" : true
+      },
+      "Document_InfoFormXfaMatch" : {
+        "type" : "string",
+        "default" : "once",
+        "description" : "Type of match for an XFA field that describes how the XML data for the field should be referenced.",
+        "enum" : [ "once", "global", "reference" ],
+        "readOnly" : true
+      },
+      "Document_InfoType" : {
+        "type" : "string",
+        "default" : "form",
+        "description" : "Selects the type of information to be returned for the document",
+        "enum" : [ "form" ]
+      },
       "Document_Password" : {
         "type" : "object",
         "description" : "Contains password information if it is a PDF document",
@@ -4665,6 +4865,11 @@
             "type" : "string",
             "default" : "",
             "description" : "The fully qualified name of the form field."
+          },
+          "isRichText" : {
+            "type" : "boolean",
+            "default" : false,
+            "description" : "When set to true, the field contains rich text formatted content."
           },
           "mappingName" : {
             "type" : "string",
@@ -7347,7 +7552,7 @@
             "$ref" : "#/components/schemas/Operation_OfficeBridge"
           },
           "page" : {
-            "$ref" : "#/components/schemas/Operation_Page"
+            "$ref" : "#/components/schemas/Operation_ConverterPage"
           },
           "pages" : {
             "type" : "string",
@@ -7379,6 +7584,54 @@
           },
           "transform" : {
             "$ref" : "#/components/schemas/Operation_ConverterTransform"
+          }
+        }
+      },
+      "Operation_ConverterFooter" : {
+        "type" : "object",
+        "description" : "Defines the content that will be used as a footer. The content is passed in BASE64 encoded and contains HTML and (embedded) CSS code to position and format the footer.\n\nThe footer can contain the variables `${html.pageNumber}` (page number), `${html.totalPages}` (total number of pages) and `${html.title}` (HTML head meta tag `<title>`).\n\n**Important:**The footer is not used for all file format conversions. The footer is not supported for file formats that already contain their own footer definition, such as Office formats. The footer defined here works only for HTML-based formats such as HTML files, emails, or template-based conversions (e.g. text formats).\n\nExample:\n\n```html                    \n<p>\n  <span style=\"font-size: 12px\">Page ${html.pageNumber} of ${html.totalPages} pages</span>\n</p>\n```",
+        "properties" : {
+          "source" : {
+            "type" : "string",
+            "default" : "value",
+            "description" : "Selects the data source for the hereby expressed resource. Possible values are:\n\n*   value = The element's value shall contain the BASE64 encoded data.\n*   uri = The data shall be located at the given uri.",
+            "enum" : [ "value", "uri" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "Operation_FileDataSource"
+            }
+          },
+          "uri" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "The uri the data shall be located at. (This shall only have effect, if the \"source\" is \"uri\".)"
+          },
+          "value" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        }
+      },
+      "Operation_ConverterHeader" : {
+        "type" : "object",
+        "description" : "Defines the content that will be used as a header. The content is passed in BASE64 encoded and contains HTML and (embedded) CSS code to position and format the header.\n\nThe header can contain the variables `${html.pageNumber}` (page number), `${html.totalPages}` (total number of pages) and `${html.title}` (HTML head meta tag `<title>`).\n\n**Important:**The header is not used for all file format conversions. The header is not supported for file formats that already contain their own header definition, such as Office formats. The header defined here works only for HTML-based formats such as HTML files, emails, or template-based conversions (e.g. text formats).\n\nExample:\n\n```html                    \n<p>\n  <span style=\"font-size: 12px\">Page ${html.pageNumber} of ${html.totalPages} pages</span>\n</p>\n```",
+        "properties" : {
+          "source" : {
+            "type" : "string",
+            "default" : "value",
+            "description" : "Selects the data source for the hereby expressed resource. Possible values are:\n\n*   value = The element's value shall contain the BASE64 encoded data.\n*   uri = The data shall be located at the given uri.",
+            "enum" : [ "value", "uri" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "Operation_FileDataSource"
+            }
+          },
+          "uri" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "The uri the data shall be located at. (This shall only have effect, if the \"source\" is \"uri\".)"
+          },
+          "value" : {
+            "type" : "string",
+            "format" : "byte"
           }
         }
       },
@@ -7490,6 +7743,63 @@
         },
         "required" : [ "converter" ]
       },
+      "Operation_ConverterPage" : {
+        "type" : "object",
+        "description" : "Sets the page size, margins, and headers and footers for the converted document in the PDF document.\n\n**Important:** The settings may override the default values for a format that itself has page settings. In addition, not all settings can be applied to all formats (see, for example, the description of headers and footers).",
+        "properties" : {
+          "bottom" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "description" : "Bottom margin settings."
+          },
+          "footer" : {
+            "$ref" : "#/components/schemas/Operation_ConverterFooter"
+          },
+          "header" : {
+            "$ref" : "#/components/schemas/Operation_ConverterHeader"
+          },
+          "height" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 297,
+            "description" : "Page height."
+          },
+          "left" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "description" : "Left margin settings."
+          },
+          "metrics" : {
+            "type" : "string",
+            "default" : "mm",
+            "description" : "Unit for the X-axis/Y-axis position and signature field height and width arguments:\n\n*   pt = Points(1/72 inch)\n*   pc = Picas(12 points)\n*   px = Pixels(1/96 inch)\n*   mm = Millimeters\n*   in = Inches",
+            "enum" : [ "pt", "pc", "px", "mm", "in" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "Operation_Metrics"
+            }
+          },
+          "right" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "description" : "Right margin settings."
+          },
+          "top" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "description" : "Top margin settings."
+          },
+          "width" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 210,
+            "description" : "Page width."
+          }
+        }
+      },
       "Operation_ConverterReport" : {
         "type" : "object",
         "description" : "Can be used to enable expanded error reporting for text-based documents (e.g., Word).",
@@ -7525,7 +7835,7 @@
             "type" : "string",
             "default" : "",
             "description" : "An ISO 639-1-compliant language code consisting of 2 letters. If there is one, a localized template will be selected using the language selected here. If not defined, the language in which webPDF is run will be used.",
-            "pattern" : "[a-z]{2}"
+            "pattern" : "system|[a-z]{2}"
           }
         }
       },
@@ -8902,8 +9212,7 @@
           "svgFormat" : {
             "$ref" : "#/components/schemas/Operation_SvgFormat"
           }
-        },
-        "required" : [ "svgFormat" ]
+        }
       },
       "Operation_HttpBasicAuth" : {
         "type" : "object",
@@ -9951,57 +10260,6 @@
           }
         }
       },
-      "Operation_Page" : {
-        "type" : "object",
-        "description" : "Used to define a page format for an operation.",
-        "properties" : {
-          "bottom" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 20,
-            "description" : "Bottom margin settings."
-          },
-          "height" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 297,
-            "description" : "Page height."
-          },
-          "left" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 20,
-            "description" : "Left margin settings."
-          },
-          "metrics" : {
-            "type" : "string",
-            "default" : "mm",
-            "description" : "Unit for the X-axis/Y-axis position and signature field height and width arguments:\n\n*   pt = Points(1/72 inch)\n*   pc = Picas(12 points)\n*   px = Pixels(1/96 inch)\n*   mm = Millimeters\n*   in = Inches",
-            "enum" : [ "pt", "pc", "px", "mm", "in" ],
-            "x-webpdf-codegen" : {
-              "enumName" : "Operation_Metrics"
-            }
-          },
-          "right" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 20,
-            "description" : "Right margin settings."
-          },
-          "top" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 20,
-            "description" : "Top margin settings."
-          },
-          "width" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 210,
-            "description" : "Page width."
-          }
-        }
-      },
       "Operation_PageInterval" : {
         "type" : "object",
         "description" : "Used to define the document page range to which new elements should be added. Can be used to define a fixed interval from one page to another page.",
@@ -10241,6 +10499,21 @@
           }
         },
         "required" : [ "pdfa" ]
+      },
+      "Operation_PdfaSettings" : {
+        "type" : "object",
+        "description" : "The `pdfa` element allows to make settings for automatic handling of PDF/A documents. Editing a PDF/A document will most likely render it invalid, thus the web service operation checks whether it´s execution is valid for a given PDF/A document according to these settings.",
+        "properties" : {
+          "pdfaEditProfile" : {
+            "type" : "string",
+            "default" : "removePdfaMetadata",
+            "description" : "Defines the profile whose rules web services have to check before they can come to execution. These profiles define a set of rules concerning the validity of PDF/A documents. A web service whose execution for a given PDF/A document would violate the rule set selected here should instead abort with an appropriate error code.\n\n*   generalEditRestrictions = All changes to PDF/A documents are prohibited.\n*   removePdfaMetadata = All changes to PDF/A documents are allowed, but the PDF/A state of the document is revoked. (By removing the PDF/A metadata.)\n*   noEditRestrictions = All changes to PDF/A documents are allowed, without touching the PDF/A state of the document. (Risking the invalidation of the document.)",
+            "enum" : [ "generalEditRestrictions", "removePdfaMetadata", "noEditRestrictions" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "Operation_PdfaEditProfile"
+            }
+          }
+        }
       },
       "Operation_Png" : {
         "type" : "object",
@@ -11304,6 +11577,9 @@
         "type" : "object",
         "description" : "Simplifies document structures, deletes metadata, and flattens page contents in order to remove confidential information that could be hidden in the document structure. Subelements can be used to exempt specific content from this operation or to configure how it will be handled in greater detail. If a subelement is not passed, the represented function will be considered to be enabled and configured with the corresponding default values.",
         "properties" : {
+          "actions" : {
+            "$ref" : "#/components/schemas/Operation_SanitizeActions"
+          },
           "annotations" : {
             "$ref" : "#/components/schemas/Operation_SanitizeAnnotations"
           },
@@ -11327,6 +11603,17 @@
           },
           "tags" : {
             "$ref" : "#/components/schemas/Operation_SanitizeTags"
+          }
+        }
+      },
+      "Operation_SanitizeActions" : {
+        "type" : "object",
+        "description" : "If this element is set, all actions shall be removed from the document - including specifically links and javascript triggers, elements and definitions. This will severely impair the functionality of interactive features such as: Annotations, forms, outlines, etc.",
+        "properties" : {
+          "enabled" : {
+            "type" : "boolean",
+            "default" : true,
+            "description" : "If set to \"false\", this sanitize operation shall not be applied."
           }
         }
       },
@@ -11603,6 +11890,9 @@
         "properties" : {
           "compress" : {
             "$ref" : "#/components/schemas/Operation_CompressSettings"
+          },
+          "pdfa" : {
+            "$ref" : "#/components/schemas/Operation_PdfaSettings"
           },
           "signature" : {
             "$ref" : "#/components/schemas/Operation_SignatureSettings"
@@ -12156,6 +12446,15 @@
             "maximum" : 9600,
             "minimum" : 0
           },
+          "graphicsStateMode" : {
+            "type" : "string",
+            "default" : "centralize",
+            "description" : "Selects the SVG syntax used for formatting graphics states.\n\n*   verbose = Writes verbose graphics states and groups and always prefers direct path definitions.\n*   centralize = Writes compact graphics states and groups and centralizes formatting instructions, also utilizes the \"use\" syntax to prepare and reference indirect paths. (May not be readable by some SVG viewers.)",
+            "enum" : [ "verbose", "centralize" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "Operation_SvgGraphicsStateMode"
+            }
+          },
           "height" : {
             "type" : "integer",
             "format" : "int32",
@@ -12170,6 +12469,15 @@
             "enum" : [ "pt", "pc", "px", "mm", "in" ],
             "x-webpdf-codegen" : {
               "enumName" : "Operation_Metrics"
+            }
+          },
+          "pathDrawMode" : {
+            "type" : "string",
+            "default" : "compact",
+            "description" : "Selects the SVG syntax used for formatting paths.\n\n*   verbose = Writes verbose paths, containing a human readable complete and simple syntax.\n*   compress = Compresses path draw instructions, by applying the EBNF (Extended Backus Naur Form).",
+            "enum" : [ "verbose", "compact" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "Operation_SvgPathDrawMode"
             }
           },
           "width" : {
@@ -12192,6 +12500,24 @@
             "description" : "Selects the number of decimal places for numeric values of contained SVGs.\n\n**Important:** The number of decimal places directly influences the size of the resulting file. (should SVGs be contained.) However: Higher values will result in a better SVG quality.",
             "maximum" : 10,
             "minimum" : 0
+          },
+          "graphicsStateMode" : {
+            "type" : "string",
+            "default" : "centralize",
+            "description" : "Selects the SVG syntax used for formatting graphics states.\n\n*   verbose = Writes verbose graphics states and groups and always prefers direct path definitions.\n*   centralize = Writes compact graphics states and groups and centralizes formatting instructions, also utilizes the \"use\" syntax to prepare and reference indirect paths. (May not be readable by some SVG viewers.)",
+            "enum" : [ "verbose", "centralize" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "Operation_SvgGraphicsStateMode"
+            }
+          },
+          "pathDrawMode" : {
+            "type" : "string",
+            "default" : "compact",
+            "description" : "Selects the SVG syntax used for formatting paths.\n\n*   verbose = Writes verbose paths, containing a human readable complete and simple syntax.\n*   compress = Compresses path draw instructions, by applying the EBNF (Extended Backus Naur Form).",
+            "enum" : [ "verbose", "compact" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "Operation_SvgPathDrawMode"
+            }
           }
         }
       },
@@ -13623,7 +13949,7 @@
             "$ref" : "#/components/schemas/Operation_HttpBasicAuth"
           },
           "page" : {
-            "$ref" : "#/components/schemas/Operation_Page"
+            "$ref" : "#/components/schemas/Operation_UrlConverterPage"
           },
           "proxy" : {
             "$ref" : "#/components/schemas/Operation_HttpProxy"
@@ -13632,6 +13958,54 @@
             "type" : "string",
             "default" : "",
             "description" : "The URL for the resource to be converted."
+          }
+        }
+      },
+      "Operation_UrlConverterFooter" : {
+        "type" : "object",
+        "description" : "Defines the content that will be used as a footer. The content is passed in BASE64 encoded and contains HTML and (embedded) CSS code to position and format the footer.\n\nThe footer can contain the variables `${html.pageNumber}` (page number), `${html.totalPages}` (total number of pages) and `${html.title}` (HTML head meta tag `<title>`).\n\n**Important:**The footer is not used for all file format conversions. The footer is not supported for file formats that already contain their own footer definition, such as Office formats. The footer defined here works only for HTML-based formats such as HTML files, emails, or template-based conversions (e.g. text formats).\n\nExample:\n\n```html                    \n<p>\n  <span style=\"font-size: 12px\">Page ${html.pageNumber} of ${html.totalPages} pages</span>\n</p>\n```",
+        "properties" : {
+          "source" : {
+            "type" : "string",
+            "default" : "value",
+            "description" : "Selects the data source for the hereby expressed resource. Possible values are:\n\n*   value = The element's value shall contain the BASE64 encoded data.\n*   uri = The data shall be located at the given uri.",
+            "enum" : [ "value", "uri" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "Operation_FileDataSource"
+            }
+          },
+          "uri" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "The uri the data shall be located at. (This shall only have effect, if the \"source\" is \"uri\".)"
+          },
+          "value" : {
+            "type" : "string",
+            "format" : "byte"
+          }
+        }
+      },
+      "Operation_UrlConverterHeader" : {
+        "type" : "object",
+        "description" : "Defines the content that will be used as a header. The content is passed in BASE64 encoded and contains HTML and (embedded) CSS code to position and format the header.\n\nThe header can contain the variables `${html.pageNumber}` (page number), `${html.totalPages}` (total number of pages) and `${html.title}` (HTML head meta tag `<title>`).\n\n**Important:**The header is not used for all file format conversions. The header is not supported for file formats that already contain their own header definition, such as Office formats. The header defined here works only for HTML-based formats such as HTML files, emails, or template-based conversions (e.g. text formats).\n\nExample:\n\n```html                    \n<p>\n  <span style=\"font-size: 12px\">Page ${html.pageNumber} of ${html.totalPages} pages</span>\n</p>\n```",
+        "properties" : {
+          "source" : {
+            "type" : "string",
+            "default" : "value",
+            "description" : "Selects the data source for the hereby expressed resource. Possible values are:\n\n*   value = The element's value shall contain the BASE64 encoded data.\n*   uri = The data shall be located at the given uri.",
+            "enum" : [ "value", "uri" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "Operation_FileDataSource"
+            }
+          },
+          "uri" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "The uri the data shall be located at. (This shall only have effect, if the \"source\" is \"uri\".)"
+          },
+          "value" : {
+            "type" : "string",
+            "format" : "byte"
           }
         }
       },
@@ -13652,6 +14026,63 @@
           }
         },
         "required" : [ "urlconverter" ]
+      },
+      "Operation_UrlConverterPage" : {
+        "type" : "object",
+        "description" : "Sets the page size, margins, and headers and footers for the converted document in the PDF document.\n\n**Important:** The settings may override the default values for a format that itself has page settings. In addition, not all settings can be applied to all formats (see, for example, the description of headers and footers).",
+        "properties" : {
+          "bottom" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "description" : "Bottom margin settings."
+          },
+          "footer" : {
+            "$ref" : "#/components/schemas/Operation_UrlConverterFooter"
+          },
+          "header" : {
+            "$ref" : "#/components/schemas/Operation_UrlConverterHeader"
+          },
+          "height" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 297,
+            "description" : "Page height."
+          },
+          "left" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "description" : "Left margin settings."
+          },
+          "metrics" : {
+            "type" : "string",
+            "default" : "mm",
+            "description" : "Unit for the X-axis/Y-axis position and signature field height and width arguments:\n\n*   pt = Points(1/72 inch)\n*   pc = Picas(12 points)\n*   px = Pixels(1/96 inch)\n*   mm = Millimeters\n*   in = Inches",
+            "enum" : [ "pt", "pc", "px", "mm", "in" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "Operation_Metrics"
+            }
+          },
+          "right" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "description" : "Right margin settings."
+          },
+          "top" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "description" : "Top margin settings."
+          },
+          "width" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 210,
+            "description" : "Page width."
+          }
+        }
       },
       "Operation_ViewerPreferences" : {
         "type" : "object",
@@ -14430,6 +14861,7 @@
       },
       "Portal_Information" : {
         "type" : "object",
+        "description" : "Provides information for building and controlling the portal page.",
         "properties" : {
           "environment" : {
             "$ref" : "#/components/schemas/Portal_Environment"
@@ -14525,20 +14957,38 @@
       },
       "Portal_UserInterface" : {
         "type" : "object",
+        "description" : "Provides information for the user interface of the portal page.",
         "properties" : {
           "limits" : {
             "$ref" : "#/components/schemas/ApplicationConfig_PortalUserInterfaceLimits"
           },
+          "resources" : {
+            "$ref" : "#/components/schemas/Portal_UserInterfaceResources"
+          },
           "tooltips" : {
             "$ref" : "#/components/schemas/ApplicationConfig_PortalUserInterfaceTooltips"
+          }
+        },
+        "readOnly" : true
+      },
+      "Portal_UserInterfaceResources" : {
+        "type" : "object",
+        "description" : "Provides information about the (file) resources used in the portal page user interface.",
+        "properties" : {
+          "backgroundFileName" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "The file name used for the background file in the portal. If it is empty, the default background is used, otherwise a custom background was uploaded and saved under the specified name."
           },
-          "useCustomLogo" : {
-            "type" : "boolean",
-            "default" : false
+          "logoFileName" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "The file name used for the logo file in the portal. If it is empty, the default logo is used, otherwise a custom logo was uploaded and saved under the specified name."
           },
-          "useCustomTheme" : {
-            "type" : "boolean",
-            "default" : false
+          "themeFileName" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "The file name used for the CSS file to customize the theme in the portal. If it is empty, no customized theme is used, otherwise a custom CSS file was uploaded and saved under the specified name."
           }
         },
         "readOnly" : true
@@ -15167,7 +15617,7 @@
       },
       "ServerConfig_TruststoreServer" : {
         "type" : "object",
-        "description" : "Defines the access information for the server's truststore, which contains all third-party certificates that the server should trust.",
+        "description" : "Defines the access information for the server's truststore, which contains all third-party certificates that the server should trust. This applies to connections that the server establishes to external servers, such as HTTP SSL connections or LDAPS connections.",
         "properties" : {
           "file" : {
             "type" : "string",
@@ -15278,6 +15728,15 @@
         "type" : "object",
         "description" : "Defines an LDAP dictionary or Active Directory as user source.",
         "properties" : {
+          "certificatesTrustMode" : {
+            "type" : "string",
+            "default" : "validate",
+            "description" : "Specifies the mode of handling the certificates presented by the LDAP server during connection establishment.\n\n*   validate = Only certificates that can be verified as publicly valid are classified as trusted. It may be necessary to place the certificate or the issuer's certificate in the server's truststore. Self-signed certificates (e.g. from an own certificate authority) are excluded if they cannot be verified via a configured truststore.\n*   acceptAll = All certificates are classified as trusted, including expired, unverifiable, invalid or self-signed certificates.",
+            "enum" : [ "validate", "acceptAll" ],
+            "x-webpdf-codegen" : {
+              "enumName" : "ServerConfig_UserLdapCertificatesTrustMode"
+            }
+          },
           "connectionName" : {
             "type" : "string",
             "default" : "",
@@ -15292,6 +15751,11 @@
             "type" : "string",
             "default" : "",
             "description" : "The URL used to connect to the LDAP server. (e.g. \"ldap://server.example.com:389/\".)"
+          },
+          "followReferral" : {
+            "type" : "boolean",
+            "default" : false,
+            "description" : "When set to true, all LDAP requests that respond with references are followed. The same schema and credentials are used for the referred request."
           },
           "roleBase" : {
             "type" : "string",

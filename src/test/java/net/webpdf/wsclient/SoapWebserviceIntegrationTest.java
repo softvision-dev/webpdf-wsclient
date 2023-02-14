@@ -305,7 +305,7 @@ public class SoapWebserviceIntegrationTest {
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
                 webService.getOperationParameters().setUrl("https://www.webpdf.de");
-                webService.getOperationParameters().setPage(new PageType());
+                webService.getOperationParameters().setPage(new UrlConverterPageType());
                 webService.getOperationParameters().getPage().setWidth(150);
                 webService.getOperationParameters().getPage().setHeight(200);
                 webService.getOperationParameters().getPage().setTop(0);
@@ -601,7 +601,7 @@ public class SoapWebserviceIntegrationTest {
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
                 webService.getOperationParameters().setUrl("https://www.webpdf.de");
-                webService.getOperationParameters().setPage(new PageType());
+                webService.getOperationParameters().setPage(new UrlConverterPageType());
                 webService.getOperationParameters().getPage().setWidth(150);
                 webService.getOperationParameters().getPage().setHeight(200);
                 webService.getOperationParameters().getPage().setTop(0);

@@ -360,7 +360,7 @@ public class RestWebserviceIntegrationTest {
                         "Operation should have been initialized");
                 webService.getOperationParameters().setUrl("https://www.webpdf.de");
 
-                OperationPage page = new OperationPage();
+                OperationUrlConverterPage page = new OperationUrlConverterPage();
                 webService.getOperationParameters().setPage(page);
                 page.setWidth(150);
                 page.setHeight(200);

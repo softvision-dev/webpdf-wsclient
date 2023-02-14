@@ -11,7 +11,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:all>
-            <xs:element name="page" type="tns:PageType" minOccurs="0"/>
+            <xs:element name="page" type="tns:ConverterPageType" minOccurs="0"/>
             <xs:element name="pdfa" type="tns:PdfaType" minOccurs="0"/>
             <xs:element name="signature" type="tns:SignatureType" minOccurs="0"/>
             <xs:element name="html" type="tns:ConverterHtmlType" minOccurs="0"/>
@@ -858,6 +858,86 @@
 ]]>
                 </pre>
                 <p>For more information regarding the use of the templates, please refer to the chapter "Server Conversion - Templates" document.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="ConverterPageType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Sets the page size, margins, and headers and footers for the converted document in the PDF document.</p>
+                <p>
+                    <b>Important:</b>
+                    The settings may override the default values for a format that itself has page settings.
+                    In addition, not all settings can be applied to all formats (see, for example, the description of headers and footers).
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:PageType">
+                <xs:all>
+                    <xs:element name="header" type="tns:ConverterHeaderType" minOccurs="0"/>
+                    <xs:element name="footer" type="tns:ConverterFooterType" minOccurs="0"/>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ConverterHeaderType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines the content that will be used as a header. The content is passed in BASE64 encoded and contains
+                    HTML and (embedded) CSS code to position and format the header.
+                </p>
+                <p>The header can contain the variables <code>${html.pageNumber}</code> (page number), <code>${html.totalPages}</code> (total number of pages)
+                    and <code>${html.title}</code> (HTML head meta tag <code>&lt;title&gt;</code>).
+                </p>
+                <p>
+                    <b>Important:</b>The header is not used for all file format conversions. The header is not supported for file formats that
+                    already contain their own header definition, such as Office formats. The header defined here works only for HTML-based
+                    formats such as HTML files, emails, or template-based conversions (e.g. text formats).
+                </p>
+                <p>Example:</p>
+                <pre class="language-html">
+                    <![CDATA[
+<p>
+  <span style="font-size: 12px">Page ${html.pageNumber} of ${html.totalPages} pages</span>
+</p>
+]]>
+                </pre>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="ConverterFooterType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines the content that will be used as a footer. The content is passed in BASE64 encoded and contains
+                    HTML and (embedded) CSS code to position and format the footer.
+                </p>
+                <p>The footer can contain the variables <code>${html.pageNumber}</code> (page number), <code>${html.totalPages}</code> (total number of pages)
+                    and <code>${html.title}</code> (HTML head meta tag <code>&lt;title&gt;</code>).
+                </p>
+                <p>
+                    <b>Important:</b>The footer is not used for all file format conversions. The footer is not supported for file formats that
+                    already contain their own footer definition, such as Office formats. The footer defined here works only for HTML-based
+                    formats such as HTML files, emails, or template-based conversions (e.g. text formats).
+                </p>
+                <p>Example:</p>
+                <pre class="language-html">
+                    <![CDATA[
+<p>
+  <span style="font-size: 12px">Page ${html.pageNumber} of ${html.totalPages} pages</span>
+</p>
+]]>
+                </pre>
             </xs:documentation>
         </xs:annotation>
         <xs:simpleContent>

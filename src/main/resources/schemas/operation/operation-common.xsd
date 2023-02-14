@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-compress.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-compress.xsd"/>
     <xs:complexType name="BillingType">
         <xs:annotation>
             <xs:documentation>
-                <p>The <code>billing</code> element can be used to affect the values that are written to the server's statistics logs (called "billing logs") for the web service call.</p>
+                <p>The <code>billing</code> element can be used to affect the values that are written to the server's statistics logs (called "billing logs") for the web service call.
+                </p>
             </xs:documentation>
         </xs:annotation>
         <xs:attribute name="customerCode" default="" type="xs:string">
@@ -48,7 +50,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:all>
-            <xs:element name="keyPair" type="tns:KeyPairType" minOccurs="0" />
+            <xs:element name="keyPair" type="tns:KeyPairType" minOccurs="0"/>
         </xs:all>
         <xs:attribute name="permission" default="" type="xs:string">
             <xs:annotation>
@@ -149,7 +151,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -161,7 +163,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -202,7 +204,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -214,11 +216,11 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attributeGroup ref="tns:PointGroup" />
+        <xs:attributeGroup ref="tns:PointGroup"/>
     </xs:attributeGroup>
     <xs:attributeGroup name="DimensionsGroup">
         <xs:attribute name="width" default="0">
@@ -229,7 +231,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -241,7 +243,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -288,11 +290,11 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="pt" />
-            <xs:enumeration value="pc" />
-            <xs:enumeration value="px" />
-            <xs:enumeration value="mm" />
-            <xs:enumeration value="in" />
+            <xs:enumeration value="pt"/>
+            <xs:enumeration value="pc"/>
+            <xs:enumeration value="px"/>
+            <xs:enumeration value="mm"/>
+            <xs:enumeration value="in"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="CoordinatesType">
@@ -307,8 +309,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="pdf" />
-            <xs:enumeration value="user" />
+            <xs:enumeration value="pdf"/>
+            <xs:enumeration value="user"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="PointType">
@@ -317,7 +319,7 @@
                 <p>Used to select a point.</p>
             </xs:documentation>
         </xs:annotation>
-        <xs:attributeGroup ref="tns:PointGroup" />
+        <xs:attributeGroup ref="tns:PointGroup"/>
     </xs:complexType>
     <xs:complexType name="RectangleType">
         <xs:annotation>
@@ -325,7 +327,7 @@
                 <p>Used to select a rectangle.</p>
             </xs:documentation>
         </xs:annotation>
-        <xs:attributeGroup ref="tns:RectangleGroup" />
+        <xs:attributeGroup ref="tns:RectangleGroup"/>
     </xs:complexType>
     <xs:complexType name="PaddedRectangleType">
         <xs:annotation>
@@ -333,17 +335,19 @@
                 <p>Used to select a rectangle and define a padding for it's contents.</p>
             </xs:documentation>
         </xs:annotation>
-        <xs:attributeGroup ref="tns:DimensionsGroup" />
-        <xs:attributeGroup ref="tns:PaddingGroup" />
+        <xs:attributeGroup ref="tns:DimensionsGroup"/>
+        <xs:attributeGroup ref="tns:PaddingGroup"/>
     </xs:complexType>
     <xs:simpleType name="LanguageType">
         <xs:annotation>
             <xs:documentation>
-                <p>An ISO 639-1-compliant language code consisting of 2 letters. If there is one, a localized template will be selected using the language selected here. If not defined, the language in which the server is running is used.</p>
+                <p>An ISO 639-1-compliant language code consisting of 2 letters. If there is one, a localized template will be
+                    selected using the language selected here. If not defined, the language in which the server is running is used.
+                </p>
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:token">
-            <xs:pattern value="[a-z]{2}" />
+            <xs:pattern value="system|[a-z]{2}"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="RgbColorType">
@@ -353,7 +357,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:token">
-            <xs:pattern value="#[0-9a-fA-F]{6}" />
+            <xs:pattern value="#[0-9a-fA-F]{6}"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="BaseToolboxType">
@@ -370,8 +374,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:int">
-            <xs:minInclusive value="0" />
-            <xs:maxInclusive value="9600" />
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="9600"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="OpacityType">
@@ -381,8 +385,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:int">
-            <xs:minInclusive value="0" />
-            <xs:maxInclusive value="100" />
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="100"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:attributeGroup name="FileDataGroup">
@@ -399,7 +403,7 @@
                 </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
-                <xs:restriction base="tns:FileDataSourceType" />
+                <xs:restriction base="tns:FileDataSourceType"/>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="uri" default="" type="xs:anyURI">
@@ -423,8 +427,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="value" />
-            <xs:enumeration value="uri" />
+            <xs:enumeration value="value"/>
+            <xs:enumeration value="uri"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="ImageOptimizationType">
@@ -477,7 +481,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0.0" />
+                    <xs:minInclusive value="0.0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -504,7 +508,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0.0" />
+                    <xs:minInclusive value="0.0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -531,8 +535,8 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="-100" />
-                    <xs:maxInclusive value="100" />
+                    <xs:minInclusive value="-100"/>
+                    <xs:maxInclusive value="100"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -559,7 +563,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -586,7 +590,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0.0" />
+                    <xs:minInclusive value="0.0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -613,7 +617,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -633,11 +637,11 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="off" />
-            <xs:enumeration value="value" />
-            <xs:enumeration value="low" />
-            <xs:enumeration value="medium" />
-            <xs:enumeration value="high" />
+            <xs:enumeration value="off"/>
+            <xs:enumeration value="value"/>
+            <xs:enumeration value="low"/>
+            <xs:enumeration value="medium"/>
+            <xs:enumeration value="high"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="KeyPairType">
@@ -651,8 +655,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:all>
-            <xs:element name="privateKey" type="tns:PrivateKeyFileDataType" default="" />
-            <xs:element name="certificate" type="tns:CertificateFileDataType" default="" />
+            <xs:element name="privateKey" type="tns:PrivateKeyFileDataType" default=""/>
+            <xs:element name="certificate" type="tns:CertificateFileDataType" default=""/>
         </xs:all>
     </xs:complexType>
     <xs:complexType name="CertificateFileDataType">
@@ -666,7 +670,7 @@
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attributeGroup ref="tns:FileDataGroup" />
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -681,7 +685,7 @@
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attributeGroup ref="tns:FileDataGroup" />
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
                 <xs:attribute name="password" default="" type="xs:string">
                     <xs:annotation>
                         <xs:documentation>
@@ -737,9 +741,9 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="left" />
-                    <xs:enumeration value="center" />
-                    <xs:enumeration value="right" />
+                    <xs:enumeration value="left"/>
+                    <xs:enumeration value="center"/>
+                    <xs:enumeration value="right"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -757,9 +761,9 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="top" />
-                    <xs:enumeration value="center" />
-                    <xs:enumeration value="bottom" />
+                    <xs:enumeration value="top"/>
+                    <xs:enumeration value="center"/>
+                    <xs:enumeration value="bottom"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -774,19 +778,21 @@
             <xs:element name="signature" type="tns:SignatureSettingsType" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>
-                        <p>The <code>signature</code> element allows to make settings for automatic handling of digital signatures. The web service operation checks whether its execution is valid for a given signed document according to the settings or whether invalidation of the existing signatures is allowed. Thus, the settings allow for intentional invalidation of signatures.</p>
+                        <p>The <code>signature</code> element allows to make settings for automatic handling of digital signatures. The web service operation checks whether it´s execution is valid for a given signed document according to the settings or whether invalidation of the existing signatures is allowed. Thus, the settings allow for intentional invalidation of signatures.
+                        </p>
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="compress" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>
-                        <p>The <code>compress</code> element can be used to automatically compress the contents of the PDF document when saving it. Whenever the web service operation saves the PDF document, it should try to compress it according to the settings specified here. Document compression can also be triggered specifically via the 'compress' web service instead.</p>
+                        <p>The <code>compress</code> element can be used to automatically compress the contents of the PDF document when saving it. Whenever the web service operation saves the PDF document, it should try to compress it according to the settings specified here. Document compression can also be triggered specifically via the 'compress' web service instead.
+                        </p>
                     </xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
                     <xs:all>
-                        <xs:element name="compressObjects" type="tns:CompressObjectsType" minOccurs="0" />
+                        <xs:element name="compressObjects" type="tns:CompressObjectsType" minOccurs="0"/>
                     </xs:all>
                     <xs:attribute name="compressProfile" default="never" type="tns:CompressProfileType">
                         <xs:annotation>
@@ -802,6 +808,15 @@
                         </xs:annotation>
                     </xs:attribute>
                 </xs:complexType>
+            </xs:element>
+            <xs:element name="pdfa" type="tns:PdfaSettingsType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>
+                            The <code>pdfa</code> element allows to make settings for automatic handling of PDF/A documents. The web service operation checks whether it´s execution is valid for a given PDF/A document according to the settings.
+                        </p>
+                    </xs:documentation>
+                </xs:annotation>
             </xs:element>
         </xs:all>
     </xs:complexType>
@@ -819,15 +834,16 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="adobeRestrictions" />
-            <xs:enumeration value="generalEditRestrictions" />
-            <xs:enumeration value="noEditRestrictions" />
+            <xs:enumeration value="adobeRestrictions"/>
+            <xs:enumeration value="generalEditRestrictions"/>
+            <xs:enumeration value="noEditRestrictions"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="SignatureSettingsType">
         <xs:annotation>
             <xs:documentation>
-                <p>The <code>signature</code> element allows to set settings for automatic signature handling and verification. All web services prioritize checking whether their execution is valid for a given signed document - according to these settings - or would risk invalidation of the existing signatures. (This is also defining profiles, that would allow signature invalidation).</p>
+                <p>The <code>signature</code> element allows to set settings for automatic signature handling and verification. All web services prioritize checking whether their execution is valid for a given signed document - according to these settings - or would risk invalidation of the existing signatures. (This is also defining profiles, that would allow signature invalidation).
+                </p>
             </xs:documentation>
         </xs:annotation>
         <xs:attribute name="signatureEditProfile" default="adobeRestrictions" type="tns:SignatureEditProfileType">
@@ -844,6 +860,47 @@
                     <p>
                         <b>Important:</b>
                         You can find further explanations of these profiles in the chapter "Signature Validation".
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="PdfaEditProfileType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+                    Defines the profile whose rules web services have to check before they can come to execution. These profiles define a set of rules concerning the validity of PDF/A documents. A web service whose execution for a given PDF/A document would violate the rule set selected here should instead abort with an appropriate error code.
+                    <ul>
+                        <li>generalEditRestrictions = All changes to PDF/A documents are prohibited.</li>
+                        <li>removePdfaMetadata = All changes to PDF/A documents are allowed, but the PDF/A state of the document is revoked. (By removing the PDF/A metadata.)</li>
+                        <li>noEditRestrictions = All changes to PDF/A documents are allowed, without touching the PDF/A state of the document. (Risking the invalidation of the document.)</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="generalEditRestrictions"/>
+            <xs:enumeration value="removePdfaMetadata"/>
+            <xs:enumeration value="noEditRestrictions"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="PdfaSettingsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+                    The <code>pdfa</code> element allows to make settings for automatic handling of PDF/A documents. Editing a PDF/A document will most likely render it invalid, thus the web service operation checks whether it´s execution is valid for a given PDF/A document according to these settings.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="pdfaEditProfile" default="removePdfaMetadata" type="tns:PdfaEditProfileType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Defines the profile whose rules web services have to check before they can come to execution. These profiles define a set of rules concerning the validity of PDF/A documents. A web service whose execution for a given PDF/A document would violate the rule set selected here should instead abort with an appropriate error code.
+                        <ul>
+                            <li>generalEditRestrictions = All changes to PDF/A documents are prohibited.</li>
+                            <li>removePdfaMetadata = All changes to PDF/A documents are allowed, but the PDF/A state of the document is revoked. (By removing the PDF/A metadata.)</li>
+                            <li>noEditRestrictions = All changes to PDF/A documents are allowed, without touching the PDF/A state of the document. (Risking the invalidation of the document.)</li>
+                        </ul>
                     </p>
                 </xs:documentation>
             </xs:annotation>
@@ -886,9 +943,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="always" />
-            <xs:enumeration value="never" />
-            <xs:enumeration value="recompress" />
+            <xs:enumeration value="always"/>
+            <xs:enumeration value="never"/>
+            <xs:enumeration value="recompress"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="JustificationType">
@@ -904,9 +961,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="leftJustified" />
-            <xs:enumeration value="centered" />
-            <xs:enumeration value="rightJustified" />
+            <xs:enumeration value="leftJustified"/>
+            <xs:enumeration value="centered"/>
+            <xs:enumeration value="rightJustified"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="AxisType">
@@ -916,8 +973,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="x" />
-            <xs:enumeration value="y" />
+            <xs:enumeration value="x"/>
+            <xs:enumeration value="y"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="QuadrilateralType">
@@ -925,9 +982,13 @@
             <xs:documentation>
                 <p>Selects a rectangular area via it's 4 determining corner points.</p>
                 <p>
-                    <b>important:</b> The quadrilateral's points shall be defined in the clockwise order: top-left, top-right, bottom-right, bottom-left</p>
+                    <b>important:</b>
+                    The quadrilateral's points shall be defined in the clockwise order: top-left, top-right, bottom-right, bottom-left
+                </p>
                 <p>
-                    <b>important:</b> Even though the PDF standard defines algorithms, that can handle self intersecting and overlapping quadrilaterals, such should be avoided to prevent unexpected results.</p>
+                    <b>important:</b>
+                    Even though the PDF standard defines algorithms, that can handle self intersecting and overlapping quadrilaterals, such should be avoided to prevent unexpected results.
+                </p>
             </xs:documentation>
         </xs:annotation>
         <xs:choice minOccurs="4" maxOccurs="4">
@@ -940,4 +1001,38 @@
             </xs:element>
         </xs:choice>
     </xs:complexType>
+    <xs:simpleType name="SvgGraphicsStateModeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+                    Selects the SVG syntax used for formatting graphics states.
+                    <ul>
+                        <li>verbose = Writes verbose graphics states and groups and always prefers direct path definitions.</li>
+                        <li>centralize = Writes compact graphics states and groups and centralizes formatting instructions, also utilizes the "use" syntax to prepare and reference indirect paths. (May not be readable by some SVG viewers.)</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="verbose"/>
+            <xs:enumeration value="centralize"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="SvgPathDrawModeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+                    Selects the SVG syntax used for formatting paths.
+                    <ul>
+                        <li>verbose = Writes verbose paths, containing a human readable complete and simple syntax.</li>
+                        <li>compress = Compresses path draw instructions, by applying the EBNF (Extended Backus Naur Form).</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="verbose"/>
+            <xs:enumeration value="compact"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

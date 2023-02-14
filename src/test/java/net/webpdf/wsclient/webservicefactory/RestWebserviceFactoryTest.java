@@ -288,7 +288,7 @@ public class RestWebserviceFactoryTest {
 
             assertNotNull(webService.getOperationParameters().getPage(),
                     "Page element should have been created.");
-            assertEquals(OperationPage.MetricsEnum.MM,
+            assertEquals(OperationUrlConverterPage.MetricsEnum.MM,
                     webService.getOperationParameters().getPage().getMetrics(),
                     "Value of metrics attribute is unexpected.");
             assertEquals(1, webService.getOperationParameters().getPage().getHeight(),

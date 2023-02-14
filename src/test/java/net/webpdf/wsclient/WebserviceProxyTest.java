@@ -1,6 +1,6 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.openapi.OperationPage;
+import net.webpdf.wsclient.openapi.OperationUrlConverterPage;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
@@ -61,7 +61,7 @@ public class WebserviceProxyTest {
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 webService.getOperationParameters().setUrl("https://www.webpdf.de");
 
-                OperationPage page = new OperationPage();
+                OperationUrlConverterPage page = new OperationUrlConverterPage();
                 page.setWidth(150);
                 page.setHeight(200);
                 page.setTop(0);
@@ -197,7 +197,7 @@ public class WebserviceProxyTest {
                         "Operation should have been initialized");
                 webService.getOperationParameters().setUrl("https://www.webpdf.de");
 
-                OperationPage page = new OperationPage();
+                OperationUrlConverterPage page = new OperationUrlConverterPage();
                 page.setWidth(150);
                 page.setHeight(200);
                 page.setTop(0);

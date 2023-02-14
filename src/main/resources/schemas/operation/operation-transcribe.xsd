@@ -65,7 +65,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:all>
-            <xs:element name="svgFormat" type="tns:SvgFormatType">
+            <xs:element name="svgFormat" type="tns:SvgFormatType" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>
                         <p>Selects parameters for the creation of SVGs, possibly contained in resulting documents.</p>
@@ -169,6 +169,44 @@
                 <xs:restriction base="xs:int">
                     <xs:minInclusive value="0" />
                     <xs:maxInclusive value="10" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="graphicsStateMode" default="centralize">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        Selects the SVG syntax used for formatting graphics states.
+                        <ul>
+                            <li>verbose = Writes verbose graphics states and groups and always prefers direct path definitions.</li>
+                            <li>compact = Writes compact graphics states and groups and centralizes formatting instructions, also utilizes the "use" syntax to prepare and reference indirect paths. (May not be readable by some SVG viewers.)</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="tns:SvgGraphicsStateModeType">
+                    <xs:enumeration value="verbose" />
+                    <xs:enumeration value="centralize" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="pathDrawMode" default="compact">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        Selects the SVG syntax used for formatting graphics states.
+                        <ul>
+                            <li>verbose = Writes verbose paths, containing a human readable complete and simple syntax.</li>
+                            <li>compress = Compresses path draw instructions, by applying the EBNF (Extended Backus Naur Form).</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="tns:SvgPathDrawModeType">
+                    <xs:enumeration value="verbose" />
+                    <xs:enumeration value="compact" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
