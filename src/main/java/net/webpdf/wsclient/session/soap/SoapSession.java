@@ -16,7 +16,7 @@ import java.io.IOException;
  * a webPDF server.
  * </p>
  *
- * @param <T_SOAP_DOCUMENT>> The {@link SoapDocument} type used by this {@link SoapSession}.
+ * @param <T_SOAP_DOCUMENT> The {@link SoapDocument} type used by this {@link SoapSession}.
  */
 public interface SoapSession<T_SOAP_DOCUMENT extends SoapDocument> extends Session<T_SOAP_DOCUMENT> {
 

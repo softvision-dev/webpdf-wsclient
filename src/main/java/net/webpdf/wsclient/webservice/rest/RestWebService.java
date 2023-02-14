@@ -36,7 +36,7 @@ import java.nio.charset.UnsupportedCharsetException;
  */
 public abstract class RestWebService<T_OPERATION_DATA, T_OPERATION_PARAMETER, T_REST_DOCUMENT extends RestDocument>
         extends AbstractWebService<RestSession<T_REST_DOCUMENT>, T_OPERATION_DATA, T_OPERATION_PARAMETER,
-        T_REST_DOCUMENT, OperationBilling, OperationPdfPassword> {
+        T_REST_DOCUMENT, OperationBilling, OperationPdfPassword, OperationSettings> {
 
     /**
      * Creates a webservice interface of the given {@link WebServiceType} for the given {@link RestSession}.

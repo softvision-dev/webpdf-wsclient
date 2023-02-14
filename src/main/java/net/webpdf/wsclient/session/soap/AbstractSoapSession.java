@@ -23,7 +23,7 @@ import java.net.URL;
  * with a webPDF server.
  * </p>
  *
- * @param <T_SOAP_DOCUMENT>> The {@link SoapDocument} type used by this {@link SoapSession}.
+ * @param <T_SOAP_DOCUMENT> The {@link SoapDocument} type used by this {@link SoapSession}.
  */
 public abstract class AbstractSoapSession<T_SOAP_DOCUMENT extends SoapDocument>
         extends AbstractSession<T_SOAP_DOCUMENT> implements SoapSession<T_SOAP_DOCUMENT> {

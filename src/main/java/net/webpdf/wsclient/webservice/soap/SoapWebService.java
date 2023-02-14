@@ -11,6 +11,7 @@ import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.BillingType;
 import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;
+import net.webpdf.wsclient.schema.operation.SettingsType;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.credentials.TokenCredentials;
@@ -42,7 +43,7 @@ import java.util.Map;
  */
 public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOAP_DOCUMENT extends SoapDocument>
         extends AbstractWebService<SoapSession<T_SOAP_DOCUMENT>, OperationData, T_OPERATION_PARAMETER, T_SOAP_DOCUMENT,
-        BillingType, PdfPasswordType> {
+        BillingType, PdfPasswordType, SettingsType> {
 
     private static final String SSL_SOCKET_FACTORY = "com.sun.xml.ws.transport.https.client.SSLSocketFactory";
     private final @NotNull MTOMFeature feature = new MTOMFeature();
@@ -113,6 +114,16 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
     @Override
     public @NotNull BillingType getBilling() {
         return getOperationData().getBilling();
+    }
+
+    /**
+     * Returns the {@link SettingsType} of the current webservice.
+     *
+     * @return the {@link SettingsType} of the current webservice.
+     */
+    @Override
+    public @Nullable SettingsType getSettings() {
+        return getOperationData().getSettings();
     }
 
     /**

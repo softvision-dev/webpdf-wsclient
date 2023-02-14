@@ -72,6 +72,16 @@ public class SignatureRestWebService<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
+     * Returns the {@link OperationSettings} of the current webservice.
+     *
+     * @return the {@link OperationSettings} of the current webservice.
+     */
+    @Override
+    public @Nullable OperationSettings getSettings() {
+        return getOperationData().getSettings();
+    }
+
+    /**
      * Initializes and prepares the execution of this {@link SignatureRestWebService}.
      *
      * @return The prepared {@link OperationSignatureOperation}.
@@ -81,6 +91,7 @@ public class SignatureRestWebService<T_REST_DOCUMENT extends RestDocument>
         OperationSignatureOperation operationData = new OperationSignatureOperation();
         operationData.setBilling(new OperationBilling());
         operationData.setPassword(new OperationPdfPassword());
+        operationData.setSettings(new OperationSettings());
         operationData.setSignature(new OperationSignature());
         return operationData;
     }

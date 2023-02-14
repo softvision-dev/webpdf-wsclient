@@ -3,10 +3,7 @@ package net.webpdf.wsclient.webservice.soap;
 import jakarta.activation.DataHandler;
 import jakarta.xml.ws.Service;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.operation.BillingType;
-import net.webpdf.wsclient.schema.operation.OperationData;
-import net.webpdf.wsclient.schema.operation.PdfPasswordType;
-import net.webpdf.wsclient.schema.operation.SignatureType;
+import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.schema.stubs.Signature;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
 import net.webpdf.wsclient.session.soap.SoapSession;
@@ -102,6 +99,7 @@ public class SignatureWebService<T_SOAP_DOCUMENT extends SoapDocument>
         OperationData operationData = new OperationData();
         operationData.setBilling(new BillingType());
         operationData.setPassword(new PdfPasswordType());
+        operationData.setSettings(new SettingsType());
         operationData.setSignature(new SignatureType());
         return operationData;
     }

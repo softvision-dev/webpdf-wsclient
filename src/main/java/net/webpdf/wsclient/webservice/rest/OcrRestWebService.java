@@ -72,6 +72,16 @@ public class OcrRestWebService<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
+     * Returns the {@link OperationSettings} of the current webservice.
+     *
+     * @return the {@link OperationSettings} of the current webservice.
+     */
+    @Override
+    public @Nullable OperationSettings getSettings() {
+        return getOperationData().getSettings();
+    }
+
+    /**
      * Initializes and prepares the execution of this {@link OcrRestWebService}.
      *
      * @return The prepared {@link OperationOcrOperation}.
@@ -81,6 +91,7 @@ public class OcrRestWebService<T_REST_DOCUMENT extends RestDocument>
         OperationOcrOperation operationData = new OperationOcrOperation();
         operationData.setBilling(new OperationBilling());
         operationData.setPassword(new OperationPdfPassword());
+        operationData.setSettings(new OperationSettings());
         operationData.setOcr(new OperationOcr());
         return operationData;
     }

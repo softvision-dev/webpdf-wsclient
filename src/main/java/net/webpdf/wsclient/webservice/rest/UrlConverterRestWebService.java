@@ -72,6 +72,16 @@ public class UrlConverterRestWebService<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
+     * Returns the {@link OperationSettings} of the current webservice.
+     *
+     * @return the {@link OperationSettings} of the current webservice.
+     */
+    @Override
+    public @Nullable OperationSettings getSettings() {
+        return getOperationData().getSettings();
+    }
+
+    /**
      * Initializes and prepares the execution of this {@link UrlConverterRestWebService}.
      *
      * @return The prepared {@link OperationUrlConverterOperation}.
@@ -81,6 +91,7 @@ public class UrlConverterRestWebService<T_REST_DOCUMENT extends RestDocument>
         OperationUrlConverterOperation operationData = new OperationUrlConverterOperation();
         operationData.setBilling(new OperationBilling());
         operationData.setPassword(new OperationPdfPassword());
+        operationData.setSettings(new OperationSettings());
         operationData.setUrlconverter(new OperationUrlConverter());
         return operationData;
     }

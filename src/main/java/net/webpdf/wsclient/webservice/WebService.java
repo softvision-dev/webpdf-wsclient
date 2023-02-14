@@ -16,10 +16,13 @@ import org.jetbrains.annotations.Nullable;
  * @param <T_OPERATION_PARAMETER> The parameter type of the targeted webservice endpoint.
  * @param <T_DOCUMENT>            The expected {@link Document} type for the results produced by the webPDF server.
  * @param <T_BILLING>             The operation´s billing type configuring the server´s billing log entries.
- * @param <T_PASSWORD>            The operation´s password type, used to configure material for password-protected documents.
+ * @param <T_PASSWORD>            The operation´s password type, used to configure material for password-protected
+ *                                documents.
+ * @param <T_SETTINGS>            The operation´s additional settings type, used to configure webservice independent
+ *                                options and parameters.
  */
 public interface WebService<T_SESSION extends Session<T_DOCUMENT>, T_OPERATION_DATA, T_OPERATION_PARAMETER,
-        T_DOCUMENT extends Document, T_BILLING, T_PASSWORD> {
+        T_DOCUMENT extends Document, T_BILLING, T_PASSWORD, T_SETTINGS> {
 
     /**
      * Returns the {@link T_SESSION} of the current webservice.
@@ -86,5 +89,12 @@ public interface WebService<T_SESSION extends Session<T_DOCUMENT>, T_OPERATION_D
      * @return the {@link T_BILLING} of the current webservice.
      */
     @Nullable T_BILLING getBilling();
+
+    /**
+     * Returns the {@link T_SETTINGS} of the current webservice.
+     *
+     * @return the {@link T_SETTINGS} of the current webservice.
+     */
+    @Nullable T_SETTINGS getSettings();
 
 }

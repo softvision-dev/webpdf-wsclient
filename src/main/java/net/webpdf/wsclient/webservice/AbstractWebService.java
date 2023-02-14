@@ -19,11 +19,15 @@ import java.util.Map;
  * @param <T_OPERATION_PARAMETER> The parameter type of the targeted webservice endpoint.
  * @param <T_DOCUMENT>            The expected {@link Document} type for the results produced by the webPDF server.
  * @param <T_BILLING>             The operation´s billing type configuring the server´s billing log entries.
- * @param <T_PASSWORD>            The operation´s password type, used to configure material for password-protected documents.
+ * @param <T_PASSWORD>            The operation´s password type, used to configure material for password-protected
+ *                                documents.
+ * @param <T_SETTINGS>            The operation´s additional settings type, used to configure webservice independent
+ *                                options and parameters.
  */
 public abstract class AbstractWebService<T_SESSION extends Session<T_DOCUMENT>, T_OPERATION_DATA, T_OPERATION_PARAMETER,
-        T_DOCUMENT extends Document, T_BILLING, T_PASSWORD>
-        implements WebService<T_SESSION, T_OPERATION_DATA, T_OPERATION_PARAMETER, T_DOCUMENT, T_BILLING, T_PASSWORD> {
+        T_DOCUMENT extends Document, T_BILLING, T_PASSWORD, T_SETTINGS>
+        implements WebService<T_SESSION, T_OPERATION_DATA, T_OPERATION_PARAMETER, T_DOCUMENT, T_BILLING, T_PASSWORD,
+        T_SETTINGS> {
 
     private final @NotNull WebServiceType webServiceType;
     private final @NotNull Map<String, List<String>> headers = new HashMap<>();

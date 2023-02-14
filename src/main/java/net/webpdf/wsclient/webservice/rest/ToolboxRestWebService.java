@@ -85,6 +85,16 @@ public class ToolboxRestWebService<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
+     * Returns the {@link OperationSettings} of the current webservice.
+     *
+     * @return the {@link OperationSettings} of the current webservice.
+     */
+    @Override
+    public @Nullable OperationSettings getSettings() {
+        return getOperationData().getSettings();
+    }
+
+    /**
      * Initializes and prepares the execution of this {@link ToolboxRestWebService}.
      *
      * @return The prepared {@link OperationToolboxOperation}.
@@ -94,6 +104,7 @@ public class ToolboxRestWebService<T_REST_DOCUMENT extends RestDocument>
         OperationToolboxOperation operationData = new OperationToolboxOperation();
         operationData.setBilling(new OperationBilling());
         operationData.setPassword(new OperationPdfPassword());
+        operationData.setSettings(new OperationSettings());
         return operationData;
     }
 

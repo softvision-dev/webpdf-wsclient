@@ -45,7 +45,7 @@ public final class WebServiceFactory {
      * @throws ResultException Shall be thrown, if the {@link WebService} creation failed.
      */
     @SuppressWarnings("unchecked")
-    public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?>>
+    public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?, ?>>
     @NotNull T_WEBSERVICE createInstance(
             @NotNull Session<T_DOCUMENT> session, @NotNull WebServiceType webServiceType) throws ResultException {
         switch (session.getWebServiceProtocol()) {
@@ -177,7 +177,7 @@ public final class WebServiceFactory {
      * @throws ResultException Shall be thrown, if the {@link WebService} creation failed.
      */
     @SuppressWarnings("unchecked")
-    public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?>>
+    public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?, ?>>
     @NotNull T_WEBSERVICE createInstance(
             @Nullable Session<T_DOCUMENT> session, @Nullable StreamSource streamSource) throws ResultException {
         if (session == null) {
@@ -292,7 +292,7 @@ public final class WebServiceFactory {
      * @throws ResultException Shall be thrown, if the {@link SoapWebService} creation failed.
      */
     @SuppressWarnings("unchecked")
-    private static <T_DOCUMENT extends SoapDocument, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?>>
+    private static <T_DOCUMENT extends SoapDocument, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?, ?>>
     @NotNull T_WEBSERVICE createSoapInstance(
             @NotNull SoapSession<T_DOCUMENT> session, @NotNull WebServiceType webServiceType,
             @Nullable OperationData operationData) throws ResultException {
