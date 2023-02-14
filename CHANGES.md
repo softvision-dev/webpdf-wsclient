@@ -1,6 +1,6 @@
 # 1.0.0 (10.01.2019)
 
-- Support for JDK 7 and higher.
+- Requires JDK 7 and higher.
 - Initial release, supporting webPDF 7 xsd based parameterization for SOAP and REST Webservice calls.
 - Supports the following webPDF 7 webservices:
     - Barcode webservice
@@ -18,7 +18,7 @@
 
 # 2.0.0 (04.09.2019)
 
-- Support for JDK 8 and higher (JDK 7 is no longer supported).
+- Requires JDK 8 and higher (JDK 7 is no longer supported).
 - Library and implementation adaptations and updates for JDK 8 and webPDF 8.
     - The webservice interfaces have been updated to support new webPDF 8 features.
     - JSON support of enumeration values has been improved. Enumeration values can/must now be set, using proper
@@ -37,7 +37,7 @@
 
 # 9.0.0 (13.06.2022)
 
-- Support for JDK 11 and higher.
+- Requires JDK 11 and higher.
 - Library and implementation adaptations and updates for JDK 11 and webPDF 9.
     - The webservice interfaces have been updated to support new webPDF 9 features.
 - Raised version number to 9.0.0 to synchronize the wsclient and webPDF server version numbers.
