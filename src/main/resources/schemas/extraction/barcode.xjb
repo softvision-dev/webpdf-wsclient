@@ -37,16 +37,4 @@
         </jaxb:bindings>
     </jaxb:bindings>
 
-    <jaxb:bindings schemaLocation="text.xsd" node="/xs:schema">
-
-        <jaxb:schemaBindings>
-            <jaxb:package name="net.webpdf.parameter.schema.extraction.text"/>
-        </jaxb:schemaBindings>
-
-        <jaxb:bindings node="//xs:element[@name='texts']">
-            <jaxb:class name="TextsType"/>
-            <jaxb:property name="TextsType"/>
-        </jaxb:bindings>
-    </jaxb:bindings>
-
 </jaxb:bindings>

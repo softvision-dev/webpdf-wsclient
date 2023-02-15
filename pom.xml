@@ -456,7 +456,7 @@
                                 <source>src/main/resources/schemas/extraction/barcode.xsd</source>
                             </sources>
                             <xjbSources>
-                                <xjbSource>>src/main/resources/schemas/extraction/extraction.xjb</xjbSource>
+                                <xjbSource>src/main/resources/schemas/extraction/barcode.xjb</xjbSource>
                             </xjbSources>
                             <arguments>
                                 <argument>-Xannotate</argument>
@@ -485,7 +485,7 @@
                                 <source>src/main/resources/schemas/extraction/text.xsd</source>
                             </sources>
                             <xjbSources>
-                                <xjbSource>>src/main/resources/schemas/extraction/extraction.xjb</xjbSource>
+                                <xjbSource>src/main/resources/schemas/extraction/text.xjb</xjbSource>
                             </xjbSources>
                             <arguments>
                                 <argument>-Xannotate</argument>
