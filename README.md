@@ -10,7 +10,7 @@ The library implements the required stubs and session management in ready-to-use
 
 ## Download
 
-> **Note:** The version 2.0.2 requires at least webPDF server version **8.0.0.2229**
+> **Note:** The version 2.0.3 requires at least webPDF server version **8.0.0.2229**
 
 You can use this library, by adding this dependency to your project:
 ```
@@ -18,7 +18,7 @@ You can use this library, by adding this dependency to your project:
 <dependency>
     <groupId>net.webpdf</groupId>
     <artifactId>webpdf-wsclient</artifactId>
-    <version>2.0.2</version>
+    <version>2.0.3</version>
 </dependency>
 ```
 
