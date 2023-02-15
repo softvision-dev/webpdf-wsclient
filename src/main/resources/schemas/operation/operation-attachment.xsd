@@ -1,31 +1,64 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="AttachmentType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The attachment operation element can be used to add, remove, and extract file attachments to and from the PDF document.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:choice>
                     <xs:element id="attachmentAddId" name="add">
+                        <xs:annotation>
+                            <xs:documentation>
+                                <p>Used to add an attachment to the document.</p>
+                            </xs:documentation>
+                        </xs:annotation>
                         <xs:complexType>
-                            <xs:choice minOccurs="1" maxOccurs="unbounded">
-                                <xs:element name="file" type="tns:FileAttachmentType" />
+                            <xs:choice maxOccurs="unbounded">
+                                <xs:element name="file" type="tns:FileAttachmentType"/>
                             </xs:choice>
                         </xs:complexType>
                     </xs:element>
                     <xs:element id="attachmentRemoveId" name="remove">
+                        <xs:annotation>
+                            <xs:documentation>
+                                <p>Used to remove one or more attachments from the document.</p>
+                            </xs:documentation>
+                        </xs:annotation>
                         <xs:complexType>
-                            <xs:choice minOccurs="1" maxOccurs="unbounded">
-                                <xs:element name="selection" type="tns:SelectionAttachmentType" />
+                            <xs:choice maxOccurs="unbounded">
+                                <xs:element name="selection" type="tns:SelectionAttachmentType"/>
                             </xs:choice>
                         </xs:complexType>
                     </xs:element>
                     <xs:element id="attachmentExtractId" name="extract">
+                        <xs:annotation>
+                            <xs:documentation>
+                                <p>Used to extract one or more attachments from the document. If more than one file is defined with selection, the result is returned in the form of a ZIP document.</p>
+                            </xs:documentation>
+                        </xs:annotation>
                         <xs:complexType>
-                            <xs:choice minOccurs="1" maxOccurs="unbounded">
-                                <xs:element name="selection" type="tns:SelectionAttachmentType" />
+                            <xs:choice maxOccurs="unbounded">
+                                <xs:element name="selection" type="tns:SelectionAttachmentType"/>
                             </xs:choice>
-                            <xs:attribute name="folderNameTemplate" default="page[%d]" type="xs:string" />
-                            <xs:attribute name="singleFileAsZip" default="true" type="xs:boolean" />
+                            <xs:attribute name="folderNameTemplate" default="page[%d]" type="xs:string">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        <p>Used to set the template for the page folders in the returned ZIP file. "page[%d]", for example, would result in a folder called "page1" for page 1, etc.</p>
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                            <xs:attribute name="singleFileAsZip" default="true" type="xs:boolean">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        <p>The returned attachments will be combined to a common ZIP file, even if the selection is resulting in a single attachment to be selected. You can change this behaviour by setting this option to "false". In that case, this will expect to select a single attachment, that can be returned "as is".</p>
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
                         </xs:complexType>
                     </xs:element>
                 </xs:choice>
@@ -33,73 +66,221 @@
         </xs:complexContent>
     </xs:complexType>
     <xs:simpleType name="ContextType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Level to which the selection applies.
+                    <ul>
+                        <li>all = All levels</li>
+                        <li>document = Document level only</li>
+                        <li>page = Page level only</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="page" />
-            <xs:enumeration value="document" />
-            <xs:enumeration value="all" />
+            <xs:enumeration value="page"/>
+            <xs:enumeration value="document"/>
+            <xs:enumeration value="all"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="SelectionAttachmentType">
-        <xs:attribute name="pages" default="" type="xs:string" use="optional" />
-        <xs:attribute name="fileMask" default="" type="xs:string" use="optional" />
-        <xs:attribute name="context" default="all" type="tns:ContextType" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to set an area from which attachments that meet the selection rules will be removed. You can use multiple selection elements.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="pages" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Page range to which the selection applies.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fileMask" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Filters by file name for the selection. "*.xls", for example, would result in all XLS attachments in the selection area being removed. Meanwhile, "xyz.json" would result in attachments named "xyz.json" being removed from the selection area.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="context" default="all" type="tns:ContextType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Level to which the selection applies.
+                        <ul>
+                            <li>all = All levels</li>
+                            <li>document = Document level only</li>
+                            <li>page = Page level only</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="FileAttachmentType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to define an individual file attachment that should be added to the PDF document. This element can be used multiple times if you want to add multiple files.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:all>
-            <xs:element name="data" type="tns:AttachmentFileDataType" minOccurs="1" maxOccurs="1" />
-            <xs:element name="annotation" type="tns:FileAnnotationType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="data" type="tns:AttachmentFileDataType"/>
+            <xs:element name="annotation" type="tns:FileAnnotationType" minOccurs="0"/>
         </xs:all>
-        <xs:attribute name="fileName" type="xs:string" use="required" />
-        <xs:attribute name="mimeType" default="" type="xs:string" />
-        <xs:attribute name="creator" default="" type="xs:string" />
+        <xs:attribute name="fileName" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to define the name under which the attachment in the document will be created.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mimeType" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Can be used to set an optional MIME data type for the attachment. If you leave this value blank, the "application/octet-stream" MIME data type will be used.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="creator" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Can be used to set an author for the attachment. If you leave this value blank, the currently active system user will be used.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="FileAnnotationType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to define the annotation element that should be linked to the file attachment.
+                </p>
+                <p>
+                    <b>Important:</b>
+                    If an "annotation element" is not defined for the "file element," the attachment will be stored at the document level.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:all>
-            <xs:element name="point" type="tns:PointType" />
+            <xs:element name="point" type="tns:PointType"/>
         </xs:all>
-        <xs:attributeGroup ref="tns:fileAnnotationGroup" />
-        <xs:attribute name="opacity" default="100" type="tns:OpacityType" />
-        <xs:attribute name="color" default="#4800FF" type="tns:RgbColorType" />
-        <xs:attribute name="width" default="0" use="optional">
+        <xs:attributeGroup ref="tns:fileAnnotationGroup"/>
+        <xs:attribute name="opacity" default="100" type="tns:OpacityType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to set the opacity for the attachment's icon. A percent value between 0 and 100 is allowed, whereby 0 equals the minimum opacity. The higher the value, the more the content of the PDF document will be covered over.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="color" default="#4800FF" type="tns:RgbColorType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The annotation colour will change the main colour of the attachment's icon. The colour needs to be specified as a hexadecimal RGB value with a number sign before it.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="width" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is positive, the annotation will be generated with a fixed width corresponding to the value instead of using the dimensions of the specified icon.</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="height" default="0" use="optional">
+        <xs:attribute name="height" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is positive, the annotation will be generated with a fixed height corresponding to the value instead of using the dimensions of the specified icon.</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
     <xs:attributeGroup name="fileAnnotationGroup">
         <xs:attribute name="page" default="1">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to define the page on which the annotation will be generated, i.e., the page where the attachment will be stored.</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1" />
+                    <xs:minInclusive value="1"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="lockedPosition" default="true" type="xs:boolean" />
-        <xs:attribute name="popupText" default="" type="xs:string" />
-        <xs:attribute name="icon" default="paperclip" type="tns:IconsType" />
+        <xs:attribute name="lockedPosition" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set to "true", the person viewing the document will not be allowed to move the icon for the file attached at the page level.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="popupText" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The text that should be displayed in the pop-up for the annotation.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="icon" default="paperclip" type="tns:IconsType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If an attachment is embedded at the page level, this option can be used to specify the icon that should be used to show it:</p>
+                    <p>The value you use here will define which icon will be used, as well as the basic dimensions for the annotation generated in the PDF.
+                        If you use the "None" icon type, a predefined icon will not be used. Instead, this option will only use the dimensions specified in "width" and "height" to generate an annotation with a transparent selection box at the specified position.
+                        <ul>
+                            <li>graph = Diagram</li>
+                            <li>paperclip = Paper clip</li>
+                            <li>pushPin = Thumb tack</li>
+                            <li>tag = Tag</li>
+                            <li>none = Rectangular selection box</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:attributeGroup>
     <xs:simpleType name="IconsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If an attachment is embedded at the page level, this option can be used to specify the icon that should be used to show it:</p>
+                <p>The value you use here will define which icon will be used, as well as the basic dimensions for the annotation generated in the PDF.
+                    If you use the "None" icon type, a predefined icon will not be used. Instead, this option will only use the dimensions specified in "width" and "height" to generate an annotation with a transparent selection box at the specified position.
+                    <ul>
+                        <li>graph = Diagram</li>
+                        <li>paperclip = Paper clip</li>
+                        <li>pushPin = Thumb tack</li>
+                        <li>tag = Tag</li>
+                        <li>none = Rectangular selection box</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="graph" />
-            <xs:enumeration value="paperclip" />
-            <xs:enumeration value="pushPin" />
-            <xs:enumeration value="tag" />
-            <xs:enumeration value="none" />
+            <xs:enumeration value="graph"/>
+            <xs:enumeration value="paperclip"/>
+            <xs:enumeration value="pushPin"/>
+            <xs:enumeration value="tag"/>
+            <xs:enumeration value="none"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="AttachmentFileDataType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Contains the file to be attached in "Base64 encoded" format.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
-                <xs:attributeGroup ref="tns:FileDataGroup" />
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>

@@ -1,5 +1,7 @@
 package net.webpdf.wsclient.exception;
 
+import jakarta.xml.ws.WebServiceException;
+import net.webpdf.wsclient.schema.stubs.FaultInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,22 +10,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An operation result with an error code (Error), an error message and an optional exception.
+ * <p>
+ * An instance of {@link Result} will be encountered in case the wsclient failed.<br>
+ * It shall describe a wsclient failure, by providing an {@link Error}, an error message and an optional exception
+ * describing the issue.<br>
+ * It shall describe a webPDF server failure state, by wrapping a {@link WebServiceException} - see below.
+ * </p>
+ * <p>
+ * <b>Important:</b> The hereby contained {@link Error} codes should not be confused with the webPDF server error codes,
+ * those shall be contained in a {@link FaultInfo} instance instead.
+ * </p>
+ * <p>
+ * <b>Important:</b> Should this {@link Result} represent a webPDF server failure state, the method
+ * {@link #getException()} shall return a {@link WebServiceException}, which shall contain the matching
+ * {@link FaultInfo}.
+ * </p>
+ *
+ * @see Error
+ * @see FaultInfo
  */
 public final class Result {
 
-    @NotNull
-    private Error error;
-    @Nullable
-    private Exception exception;
-    @NotNull
-    private List<String> messages = new ArrayList<>();
-    private int exitCode;
+    private final @NotNull Error error;
+    private final @Nullable Exception exception;
+    private final @NotNull List<String> messages = new ArrayList<>();
+    private final int exitCode;
 
     /**
-     * Creates a webservice execution result, for further processing of failures during webservice calls.
+     * Creates a wsclient execution {@link Result}, for further processing of failures during webservice calls.
      *
-     * @param error     The error, that has occurred.
+     * @param error     The {@link Error}, that has occurred.
      * @param exitCode  The exitcode of the Result.
      * @param exception The exception, that caused the failure.
      */
@@ -34,91 +50,97 @@ public final class Result {
     }
 
     /**
-     * Builds a new instance of an operation result
+     * This convenience method instantiates a {@link Result} instance, matching and wrapping the given {@link Error}.
      *
-     * @param error wrapped error code
-     * @return new result instance
+     * @param error The {@link Error}, that shall be wrapped.
+     * @return The resulting {@link Result} instance.
      */
-    public static Result build(@NotNull Error error) {
+    public static @NotNull Result build(@NotNull Error error) {
         return new Result(error, 0, null);
     }
 
     /**
-     * Builds a new instance of an operation result
+     * This convenience method instantiates a {@link Result} instance, matching and wrapping the given {@link Error}.
+     * <p>
      *
-     * @param error    wrapped error code
-     * @param exitCode wrapped exit code
-     * @return new result instance
+     * @param error    The {@link Error}, that shall be wrapped.
+     * @param exitCode The numeric exitcode resulting from the wsclient operation.
+     * @return The resulting {@link Result} instance.
      */
-    public static Result build(@NotNull Error error, int exitCode) {
+    public static @NotNull Result build(@NotNull Error error, int exitCode) {
         return new Result(error, exitCode, null);
     }
 
     /**
-     * Creates a new instance of an operation result
+     * This convenience method instantiates a {@link Result} instance, matching and wrapping the given {@link Error}.
      *
-     * @param error     wrapped error code
-     * @param exception wrapped exception
-     * @return new result instance
+     * @param error     The {@link Error}, that shall be wrapped.
+     * @param exception The {@link Exception}, that occurred during the wsclient execution and shall be attached to the
+     *                  {@link Result}.
+     * @return The resulting {@link Result} instance.
      */
-    public static Result build(@NotNull Error error, @Nullable Exception exception) {
+    public static @NotNull Result build(@NotNull Error error, @Nullable Exception exception) {
         return new Result(error, 0, exception);
     }
 
     /**
-     * Is this result an error?
+     * Returns {@code true}, if the {@link Result} is representing a failure state. ({@code false} otherwise.)
      *
-     * @return true = is an error result
+     * @return {@code true}, if the {@link Result} is representing a failure state. ({@code false} otherwise.)
      */
     public boolean isError() {
         return !Error.NONE.equals(this.error);
     }
 
     /**
-     * Is this an result for a successful operation?
+     * Returns {@code true}, if the {@link Result} is representing a success state. ({@code false} otherwise.)
      *
-     * @return true = successful operation result
+     * @return {@code true}, if the {@link Result} is representing a success state. ({@code false} otherwise.)
      */
     boolean isSuccess() {
         return Error.NONE.equals(this.error);
     }
 
     /**
-     * Compares the current error with a given error
+     * Returns {@code true}, if this {@link Result} is representing the same failure state, as the given {@link Error}.
+     * ({@code false} otherwise.)
      *
-     * @param error error code to compare with
-     * @return true = the error equals with the given error
+     * @param error The {@link Error} to compare this {@link Result with.}
+     * @return {@code true}, if this {@link Result} is representing the same failure state, as the given {@link Error}.
+     * ({@code false} otherwise.)
      */
     boolean equalsError(@Nullable Error error) {
         return this.error.equals(error);
     }
 
     /**
-     * Gets the error of the result
+     * Returns the wsclient execution {@link Error} represented by this {@link Result}.
      *
-     * @return error
+     * @return The wsclient execution {@link Error} represented by this {@link Result}.
      */
-    @NotNull
-    public Error getError() {
+    public @NotNull Error getError() {
         return this.error;
     }
 
     /**
-     * Gets the error code of the result
+     * Returns the numeric error code represented by this {@link Result}.
      *
-     * @return error code
+     * @return The numeric error code represented by this {@link Result}.
+     * @see Error#getCode()
+     * @see #getError()
      */
     public int getCode() {
         return this.error.getCode();
     }
 
     /**
-     * Gets the error message of the result
+     * Returns a message describing the {@link Error} represented by this {@link Result}.
      *
-     * @return error message
+     * @return A message describing the {@link Error} represented by this {@link Result}.
+     * @see Error#getMessage()
+     * @see #getError()
      */
-    @NotNull
-    public String getMessage() {
+    public @NotNull String getMessage() {
 
         String errorMessage = this.error.getMessage();
         String detailMessage = StringUtils.join(this.messages, "\n");
@@ -135,23 +157,27 @@ public final class Result {
     }
 
     /**
-     * Returns the exception behind the result
+     * <p>
+     * Returns the (optional) {@link Exception}, that may have been attached to this {@link Result}.
+     * </p>
+     * <p>
+     * <b>Important:</b> Should this method return a {@link WebServiceException} this {@link Result} represents a webPDF
+     * server failure.
+     * </p>
      *
-     * @return exception
+     * @return The (optional) {@link Exception}, that may have been attached to this {@link Result}.
      */
-    @Nullable
-    public Exception getException() {
+    public @Nullable Exception getException() {
         return this.exception;
     }
 
     /**
-     * Adds an additional error message text
+     * Appends the given text to the end of the message describing this {@link Result}.
      *
-     * @param message additional message
-     * @return the result object
+     * @param message The text to append to the end of the message describing this {@link Result}.
+     * @return The {@link Result} instance itself.
      */
-    @NotNull
-    public Result addMessage(@Nullable String message) {
+    public @NotNull Result appendMessage(@Nullable String message) {
         if (message != null && !message.isEmpty()) {
             this.messages.add(StringUtils.capitalize(message));
         }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:include schemaLocation="operation-pdfa.xsd" />
     <xs:include schemaLocation="operation-signature.xsd" />
@@ -26,39 +26,46 @@
     <xs:include schemaLocation="operation-outline.xsd" />
     <xs:include schemaLocation="operation-redact.xsd" />
     <xs:include schemaLocation="operation-portfolio.xsd" />
+    <xs:include schemaLocation="operation-scale.xsd" />
+    <xs:include schemaLocation="operation-compress.xsd" />
+    <xs:include schemaLocation="operation-transcribe.xsd" />
     <xs:element id="operationId" name="operation">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="billing" type="BillingType" minOccurs="0" maxOccurs="1" />
-                <xs:element name="password" type="PdfPasswordType" minOccurs="0" maxOccurs="1" />
+                <xs:element name="billing" type="tns:BillingType" minOccurs="0" />
+                <xs:element name="password" type="tns:PdfPasswordType" minOccurs="0" />
+                <xs:element name="settings" type="tns:SettingsType" minOccurs="0" />
                 <xs:choice>
-                    <xs:element name="barcode" type="BarcodeType" />
-                    <xs:element name="converter" type="ConverterType" />
-                    <xs:element name="ocr" type="OcrType" />
-                    <xs:element name="pdfa" type="PdfaType" />
-                    <xs:element name="signature" type="SignatureType" />
+                    <xs:element name="barcode" type="tns:BarcodeType" />
+                    <xs:element name="converter" type="tns:ConverterType" />
+                    <xs:element name="ocr" type="tns:OcrType" />
+                    <xs:element name="pdfa" type="tns:PdfaType" />
+                    <xs:element name="signature" type="tns:SignatureType" />
                     <xs:choice id="toolboxId" maxOccurs="unbounded">
-                        <xs:element name="annotation" type="AnnotationType" />
-                        <xs:element name="attachment" type="AttachmentType" />
-                        <xs:element name="delete" type="DeleteType" />
-                        <xs:element name="description" type="DescriptionType" />
-                        <xs:element name="extraction" type="ExtractionType" />
-                        <xs:element name="forms" type="FormsType" />
-                        <xs:element name="image" type="ImageType" />
-                        <xs:element name="merge" type="MergeType" />
-                        <xs:element name="options" type="OptionsType" />
-                        <xs:element name="print" type="PrintType" />
-                        <xs:element name="rotate" type="RotateType" />
-                        <xs:element name="security" type="SecurityType" />
-                        <xs:element name="split" type="SplitType" />
-                        <xs:element name="watermark" type="WatermarkType" />
-                        <xs:element name="xmp" type="XmpType" />
-                        <xs:element name="move" type="MoveType" />
-                        <xs:element name="outline" type="OutlineType" />
-                        <xs:element name="redact" type="RedactType" />
-                        <xs:element name="portfolio" type="PortfolioType" />
+                        <xs:element name="annotation" type="tns:AnnotationType" />
+                        <xs:element name="attachment" type="tns:AttachmentType" />
+                        <xs:element name="delete" type="tns:DeleteType" />
+                        <xs:element name="description" type="tns:DescriptionType" />
+                        <xs:element name="extraction" type="tns:ExtractionType" />
+                        <xs:element name="forms" type="tns:FormsType" />
+                        <xs:element name="image" type="tns:ImageType" />
+                        <xs:element name="merge" type="tns:MergeType" />
+                        <xs:element name="options" type="tns:OptionsType" />
+                        <xs:element name="print" type="tns:PrintType" />
+                        <xs:element name="rotate" type="tns:RotateType" />
+                        <xs:element name="security" type="tns:SecurityType" />
+                        <xs:element name="split" type="tns:SplitType" />
+                        <xs:element name="watermark" type="tns:WatermarkType" />
+                        <xs:element name="xmp" type="tns:XmpType" />
+                        <xs:element name="move" type="tns:MoveType" />
+                        <xs:element name="outline" type="tns:OutlineType" />
+                        <xs:element name="redact" type="tns:RedactType" />
+                        <xs:element name="portfolio" type="tns:PortfolioType" />
+                        <xs:element name="scale" type="tns:ScaleType" />
+                        <xs:element name="compress" type="tns:CompressType" />
+                        <xs:element name="transcribe" type="tns:TranscribeType" />
                     </xs:choice>
-                    <xs:element name="urlconverter" type="UrlConverterType" />
+                    <xs:element name="urlconverter" type="tns:UrlConverterType" />
                 </xs:choice>
             </xs:sequence>
         </xs:complexType>

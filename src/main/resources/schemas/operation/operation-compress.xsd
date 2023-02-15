@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
+    <xs:complexType name="CompressType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The compress operation element can be used to reduce the document size by compression. This modifies the document, so note that this can lead to the invalidation of existing signatures and archive formats. The compression can also be provided by the execution settings basically web service independent for the storage of documents.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:choice>
+                    <xs:element name="compressObjects" type="tns:CompressObjectsType" minOccurs="0"/>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CompressObjectsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Combines object definitions of the document into so-called "object streams" and compresses them. This operation is recommended especially for larger documents with many objects. The size of contained resources (such as graphics and fonts) cannot be reduced in this way.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="objectStreamSize" default="200">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Specifies the number of objects that may be combined into one stream. The higher the number, the higher the expected effect (assuming that the document contains a large number of objects). On the other hand, very large object streams can have a negative effect on the loading and display speed of the document in readers. For values beyond 500 objects, it is recommended to perform a manual check whether the document can still be displayed without problems.</p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="1"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+</xs:schema>

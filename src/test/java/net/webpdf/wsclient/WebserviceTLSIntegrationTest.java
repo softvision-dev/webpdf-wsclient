@@ -1,52 +1,57 @@
 package net.webpdf.wsclient;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import net.webpdf.wsclient.documents.RestDocument;
-import net.webpdf.wsclient.documents.SoapDocument;
+import jakarta.xml.ws.WebServiceException;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
+import net.webpdf.wsclient.session.soap.documents.SoapDocument;
+import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.https.TLSContext;
-import net.webpdf.wsclient.session.RestSession;
+import net.webpdf.wsclient.session.connection.https.TLSContext;
+import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.testsuite.TestResources;
-import net.webpdf.wsclient.testsuite.TestServer;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import net.webpdf.wsclient.testsuite.server.ServerProtocol;
+import net.webpdf.wsclient.testsuite.server.ServerType;
+import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.TestServer;
+import net.webpdf.wsclient.testsuite.integration.annotations.TLSTest;
+import net.webpdf.wsclient.webservice.WebServiceFactory;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.webservice.WebServiceType;
+import net.webpdf.wsclient.webservice.rest.ConverterRestWebService;
+import net.webpdf.wsclient.webservice.soap.ConverterWebService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
-import javax.xml.ws.WebServiceException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
 
-import static org.junit.Assert.*;
+import static net.webpdf.wsclient.testsuite.io.TestResources.getDocumentID;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(JUnitParamsRunner.class)
 public class WebserviceTLSIntegrationTest {
     private final TestResources testResources = new TestResources(WebserviceTLSIntegrationTest.class);
     private final File keystoreFile = testResources.getResource("integration/files/ks.jks");
-    @Rule
     public TestServer testServer = new TestServer();
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     private void testSoapSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
-        TLSContext tlsContext = TLSContext.createDefault();
-        tlsContext.setAllowSelfSigned(selfSigned);
+        TLSContext tlsContext = new TLSContext()
+                .setAllowSelfSigned(selfSigned);
         if (keystoreFile != null) {
             tlsContext.setTrustStore(keystoreFile, "");
         }
 
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, url, tlsContext)) {
-            ConverterWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, url,
+                tlsContext)) {
+            ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
+                    WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-            File fileOut = temporaryFolder.newFile();
+            File fileOut = testResources.getTempFolder().newFile();
 
-            try (SoapDocument soapDocument = new SoapDocument(file.toURI(), fileOut)) {
-                webService.setDocument(soapDocument);
+            try (SoapDocument soapDocument = new SoapWebServiceDocument(file.toURI(), fileOut)) {
+                webService.setSourceDocument(soapDocument);
 
                 try (SoapDocument soapDocument2 = webService.process()) {
                     assertNotNull(soapDocument2);
@@ -57,86 +62,105 @@ public class WebserviceTLSIntegrationTest {
     }
 
     @Test
-    public void testSoapSSL() throws Exception {
-        testSoapSSL(testServer.getServer(TestServer.ServerType.PUBLIC,
-            TestServer.ServerProtocol.HTTPS, false),
-            testServer.getDemoKeystoreFile(keystoreFile), false);
+    @TLSTest
+    public void testSoapSSL() {
+        assertDoesNotThrow(() -> testSoapSSL(testServer.getServer(ServerType.PUBLIC,
+                        ServerProtocol.HTTPS, false),
+                testServer.getDemoKeystoreFile(keystoreFile), false));
     }
 
     @Test
-    public void testSoapSSLSelfSigned() throws Exception {
-        testSoapSSL(testServer.getServer(TestServer.ServerType.LOCAL,
-            TestServer.ServerProtocol.HTTPS, false), null, true);
-    }
-
-    @Test(expected = WebServiceException.class)
-    public void testSoapSSLWrongKeystore() throws Exception {
-        testSoapSSL(testServer.getServer(TestServer.ServerType.LOCAL,
-            TestServer.ServerProtocol.HTTPS, false),
-            testServer.getDemoKeystoreFile(keystoreFile), false);
+    @TLSTest
+    public void testSoapSSLSelfSigned() {
+        assertDoesNotThrow(() -> testSoapSSL(testServer.getServer(ServerType.LOCAL,
+                ServerProtocol.HTTPS, false), null, true));
     }
 
     @Test
-    public void testSoapSSLCACertsFallback() throws Exception {
-        testSoapSSL(testServer.getServer(
-            TestServer.ServerType.PUBLIC, TestServer.ServerProtocol.HTTPS, false),
-            null, false);
+    @TLSTest
+    public void testSoapSSLWrongKeystore() {
+        assertThrows(WebServiceException.class,
+                () -> testSoapSSL(testServer.getServer(ServerType.LOCAL,
+                                ServerProtocol.HTTPS, false),
+                        testServer.getDemoKeystoreFile(keystoreFile), false));
     }
 
-    @Test(expected = WebServiceException.class)
-    public void testSoapSSLProtocolFailure() throws Exception {
-        testSoapSSL(testServer.getServer(TestServer.ServerType.PUBLIC, TestServer.ServerProtocol.HTTP, false),
-            testServer.getDemoKeystoreFile(keystoreFile), false);
+    @Test
+    @TLSTest
+    public void testSoapSSLCACertsFallback() {
+        assertDoesNotThrow(() -> testSoapSSL(testServer.getServer(
+                        ServerType.PUBLIC, ServerProtocol.HTTPS,
+                        false),
+                null, false));
+    }
+
+    @Test
+    @TLSTest
+    public void testSoapSSLProtocolFailure() {
+        assertThrows(WebServiceException.class, () ->
+                testSoapSSL(testServer.getServer(ServerType.PUBLIC,
+                                ServerProtocol.HTTP, false),
+                        testServer.getDemoKeystoreFile(keystoreFile), false));
     }
 
     private void testRestSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
-        TLSContext tlsContext = TLSContext.createDefault();
-        tlsContext.setAllowSelfSigned(selfSigned);
+
+        TLSContext tlsContext = new TLSContext()
+                .setAllowSelfSigned(selfSigned);
         if (keystoreFile != null) {
             tlsContext.setTrustStore(keystoreFile, "");
         }
 
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, url, tlsContext)) {
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST, url, tlsContext)) {
 
             session.login();
 
-            ConverterRestWebService webService = WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
+            ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
+                    WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-            File fileOut = temporaryFolder.newFile();
+            File fileOut = testResources.getTempFolder().newFile();
 
-            webService.setDocument(session.getDocumentManager().uploadDocument(file));
+            webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
 
             RestDocument restDocument = webService.process();
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
             }
             assertTrue(fileOut.exists());
         }
     }
 
-    @Test
-    @Parameters({
-        "PUBLIC|HTTPS|0|true|false",
-        "PUBLIC|HTTP|-34|true|false",
-        "PUBLIC|HTTPS|0|false|false",
-        "PUBLIC|HTTPS|0|false|true",
-        "LOCAL|HTTPS|0|false|true",
-        "LOCAL|HTTPS|-31|true|false",
-        "LOCAL|HTTPS|0|true|true"
+    @ParameterizedTest
+    @TLSTest
+    @CsvSource(delimiter = '|', value = {
+            "PUBLIC|HTTPS|0|true|false",
+            "PUBLIC|HTTP|-34|true|false",
+            "PUBLIC|HTTPS|0|false|false",
+            "PUBLIC|HTTPS|0|false|true",
+            "LOCAL|HTTPS|0|false|true",
+            "LOCAL|HTTPS|-31|true|false",
+            "LOCAL|HTTPS|0|true|true"
     })
-    public void testRestSSL(String type, String protocol, int expectedErrorCode, boolean setKeystoreFile, boolean selfSigned) throws Exception {
+    public void testRestSSL(String type, String protocol, int expectedErrorCode, boolean setKeystoreFile,
+            boolean selfSigned) {
+        assertDoesNotThrow(() -> {
+            ServerType serverType = ServerType.valueOf(type);
+            ServerProtocol serverProtocol = ServerProtocol.valueOf(protocol);
 
-        TestServer.ServerType serverType = TestServer.ServerType.valueOf(type);
-        TestServer.ServerProtocol serverProtocol = TestServer.ServerProtocol.valueOf(protocol);
-
-        try {
-            URL url = testServer.getServer(serverType, serverProtocol, false);
-            File keystoreFile = setKeystoreFile ? testServer.getDemoKeystoreFile(this.keystoreFile) : null;
-            testRestSSL(url, keystoreFile, selfSigned);
-            assertEquals(String.format("Found %d but %d has been expected.", 0, expectedErrorCode), 0, expectedErrorCode);
-        } catch (ResultException ex) {
-            assertEquals(String.format("Found %d but %d has been expected.", ex.getResult().getCode(), expectedErrorCode), expectedErrorCode, ex.getResult().getCode());
-        }
+            try {
+                URL url = testServer.getServer(serverType, serverProtocol, false);
+                File keystoreFile = setKeystoreFile ? testServer.getDemoKeystoreFile(this.keystoreFile) : null;
+                testRestSSL(url, keystoreFile, selfSigned);
+                assertEquals(0, expectedErrorCode,
+                        String.format("Found %d but %d has been expected.", 0, expectedErrorCode));
+            } catch (ResultException ex) {
+                assertEquals(expectedErrorCode, ex.getResult().getCode(),
+                        String.format("Found %d but %d has been expected.", ex.getResult().getCode(),
+                                expectedErrorCode));
+            }
+        });
     }
+
 }

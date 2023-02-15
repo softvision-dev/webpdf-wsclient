@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.webpdf</groupId>
     <artifactId>webpdf-wsclient</artifactId>
-    <version>2.0.2</version>
+    <version>9.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>webPDF - Web service client library</name>
     <description>webPDF client library for using the SOAP and REST web services</description>
@@ -35,6 +35,7 @@
             </roles>
             <timezone>Europe/Berlin</timezone>
         </developer>
+
         <developer>
             <id>cap</id>
             <name>Christian Appl</name>
@@ -49,13 +50,51 @@
     </developers>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <server.local.url>http://localhost</server.local.url>
         <server.local.user>admin</server.local.user>
         <server.local.password>admin</server.local.password>
         <server.public.url>https://portal.webpdf.de</server.public.url>
+
+        <!-- DEPENDENCY VERSIONS -->
+        <jetbrains.annotations.version>24.0.0</jetbrains.annotations.version> <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+        <httpcomponents.httpclient.version>5.2.1</httpcomponents.httpclient.version> <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
+        <commons.io.version>2.11.0</commons.io.version> <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <commons.lang.version>3.12.0</commons.lang.version> <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <jackson.core.databind.version>2.14.2</jackson.core.databind.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <jackson.core.annotations.version>2.14.2</jackson.core.annotations.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+        <jackson.module.xmlbind.annotations.version>2.14.2</jackson.module.xmlbind.annotations.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jakarta-xmlbind-annotations -->
+        <jax-ws-rt.version>4.0.1</jax-ws-rt.version> <!-- https://mvnrepository.com/artifact/com.sun.xml.ws/jaxws-rt -->
+        <fasterxml-woodstox.version>6.5.0</fasterxml-woodstox.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.woodstox/woodstox-core -->
+        <swagger.core.jakarta.annotations.version>2.2.8</swagger.core.jakarta.annotations.version> <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations-jakarta -->
+
+        <!-- PLUGIN VERSIONS -->
+        <nexus.staging.plugin.version>1.6.13</nexus.staging.plugin.version> <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
+        <openapi.generator.maven.plugin.version>6.3.0</openapi.generator.maven.plugin.version> <!-- https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin -->
+        <jaxb.maven.plugin.version>3.1.0-SNAPSHOT</jaxb.maven.plugin.version> <!-- https://mvnrepository.com/artifact/com.evolvedbinary.maven.mojohaus/jaxb-maven-plugin -->
+        <buildnumber.maven.plugin.version>3.0.0</buildnumber.maven.plugin.version> <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/buildnumber-maven-plugin -->
+        <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+        <maven.source.plugin.version>3.2.1</maven.source.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
+        <maven.javadoc.plugin.version>3.4.1</maven.javadoc.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+        <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
+        <maven.dependency.plugin.version>3.5.0</maven.dependency.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
+        <maven.release.plugin.version>3.0.0-M7</maven.release.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
+        <maven.surefire.plugin.version>3.0.0-M9</maven.surefire.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+        <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+
+        <!-- PLUGIN-ONLY DEPENDENCY VERSIONS -->
+        <glassfish.jaxb.xjc.version>4.0.2</glassfish.jaxb.xjc.version> <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-xjc -->
+        <jaxb2.basics.version>0.12.1-SNAPSHOT</jaxb2.basics.version> <!-- https://github.com/highsource/jaxb2-basics -->
+        <jaxb2.basics.annotate.version>1.1.0</jaxb2.basics.annotate.version> <!-- https://mvnrepository.com/artifact/org.jvnet.jaxb2_commons/jaxb2-basics-annotate -->
+
+        <!-- TEST DEPENDENCY VERSIONS -->
+        <junit.jupiter.params.version>5.9.2</junit.jupiter.params.version> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
+        <junit.jupiter.engine.version>5.9.2</junit.jupiter.engine.version> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+        <microsoft.azure.msal4j.version>1.13.4</microsoft.azure.msal4j.version> <!-- https://mvnrepository.com/artifact/com.microsoft.azure/msal4j -->
+        <auth0.version>1.44.2</auth0.version> <!-- https://mvnrepository.com/artifact/com.auth0/auth0 -->
+        <bouncycastle.bcmail.version>1.72</bouncycastle.bcmail.version> <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcmail-jdk18on -->
     </properties>
 
     <profiles>
@@ -66,75 +105,15 @@
             </activation>
             <build>
                 <plugins>
+                    <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.0.0-M5</version>
+                        <version>${maven.surefire.plugin.version}</version>
                         <configuration>
                             <additionalClasspathElements>
                                 <additionalClasspathElement>${basedir}/src/main/resources</additionalClasspathElement>
                             </additionalClasspathElements>
-                            <systemPropertyVariables>
-                                <server.local.url>${server.local.url}</server.local.url>
-                                <server.local.user>${server.local.user}</server.local.user>
-                                <server.local.password>${server.local.password}</server.local.password>
-                                <server.public.url>${server.public.url}</server.public.url>
-                            </systemPropertyVariables>
-                            <excludes>
-                                <exclude>**/*IntegrationTest.java</exclude>
-                                <exclude>**/*ProxyTest.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>integration</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.0.0-M5</version>
-                        <configuration>
-                            <additionalClasspathElements>
-                                <additionalClasspathElement>${basedir}/src/main/resources</additionalClasspathElement>
-                            </additionalClasspathElements>
-                            <systemPropertyVariables>
-                                <server.local.url>${server.local.url}</server.local.url>
-                                <server.local.user>${server.local.user}</server.local.user>
-                                <server.local.password>${server.local.password}</server.local.password>
-                                <server.public.url>${server.public.url}</server.public.url>
-                            </systemPropertyVariables>
-                            <excludes>
-                                <exclude>**/*ProxyTest.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>proxy</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.0.0-M5</version>
-                        <configuration>
-                            <additionalClasspathElements>
-                                <additionalClasspathElement>${basedir}/src/main/resources</additionalClasspathElement>
-                            </additionalClasspathElements>
-                            <systemPropertyVariables>
-                                <server.local.url>${server.local.url}</server.local.url>
-                                <server.local.user>${server.local.user}</server.local.user>
-                                <server.local.password>${server.local.password}</server.local.password>
-                                <server.public.url>${server.public.url}</server.public.url>
-                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -145,10 +124,11 @@
             <id>sonatype-oss-release</id>
             <build>
                 <plugins>
+                    <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
+                        <version>${maven.gpg.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -165,10 +145,12 @@
                             </execution>
                         </executions>
                     </plugin>
+
+                    <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.8</version>
+                        <version>${nexus.staging.plugin.version}</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>oss-sonatype-repo</serverId>
@@ -200,6 +182,7 @@
             <name>Sonatype Nexus Snapshots Repository</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+
         <repository>
             <id>sonatype-nexus-staging</id>
             <name>Sonatype Nexus Release Repository</name>
@@ -212,30 +195,21 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.0.0</version>
+            <version>${jetbrains.annotations.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.5.13</version>
-            <scope>compile</scope>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpcomponents.httpclient.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
+            <version>${commons.io.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -243,48 +217,93 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
+            <version>${commons.lang.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.1</version>
+            <version>${jackson.core.databind.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jaxb-annotations -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.core.annotations.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jakarta-xmlbind-annotations -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-jaxb-annotations</artifactId>
-            <version>2.13.1</version>
-        </dependency>
-
-        <!-- Test dependencies -->
-
-        <!-- https://mvnrepository.com/artifact/junit/junit -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/pl.pragmatists/JUnitParams -->
-        <dependency>
-            <groupId>pl.pragmatists</groupId>
-            <artifactId>JUnitParams</artifactId>
-            <version>1.1.1</version>
-            <scope>test</scope>
+            <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
+            <version>${jackson.module.xmlbind.annotations.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.sun.xml.ws/jaxws-rt -->
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
-            <version>2.3.5</version>
+            <version>${jax-ws-rt.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.woodstox/woodstox-core -->
+        <dependency>
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
+            <version>${fasterxml-woodstox.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations-jakarta -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
+            <version>${swagger.core.jakarta.annotations.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Test dependencies -->
+
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.jupiter.params.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.engine.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.microsoft.azure/msal4j -->
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>msal4j</artifactId>
+            <version>${microsoft.azure.msal4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.auth0/auth0 -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>auth0</artifactId>
+            <version>${auth0.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcmail-jdk15on -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcmail-jdk18on</artifactId>
+            <version>${bouncycastle.bcmail.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -292,19 +311,211 @@
         <directory>build</directory>
 
         <plugins>
+            <!-- https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi.generator.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/openapi.json</inputSpec>
+                            <output>${project.build.directory}/generated-sources/openapi</output>
+                            <templateDirectory>${project.basedir}/src/main/resources/openapi/templates</templateDirectory>
+                            <generatorName>java</generatorName>
+                            <library>apache-httpclient</library>
+                            <skipValidateSpec>false</skipValidateSpec>
+                            <strictSpec>true</strictSpec>
+                            <modelPackage>net.webpdf.wsclient.openapi</modelPackage>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <generateApis>false</generateApis>
+                            <generateApiTests>false</generateApiTests>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateModelTests>false</generateModelTests>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <enablePostProcessFile>false</enablePostProcessFile>
+                            <configOptions>
+                                <delegatePattern>true</delegatePattern>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- https://github.com/evolvedbinary/mojohaus-jaxb-maven-plugin/ -->
+            <!-- https://mvnrepository.com/artifact/com.evolvedbinary.maven.mojohaus/jaxb-maven-plugin -->
+            <plugin>
+                <groupId>com.evolvedbinary.maven.mojohaus</groupId>
+                <artifactId>jaxb-maven-plugin</artifactId>
+                <version>${jaxb.maven.plugin.version}</version>
+                <dependencies>
+                    <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-xjc -->
+                    <dependency>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>jaxb-xjc</artifactId>
+                        <version>${glassfish.jaxb.xjc.version}</version>
+                    </dependency>
+
+                    <!-- https://github.com/highsource/jaxb2-basics -->
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics</artifactId>
+                        <version>${jaxb2.basics.version}</version>
+                    </dependency>
+
+                    <!-- https://mvnrepository.com/artifact/org.jvnet.jaxb2_commons/jaxb2-basics-annotate -->
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics-annotate</artifactId>
+                        <version>${jaxb2.basics.annotate.version}</version>
+                    </dependency>
+
+                    <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations-jakarta -->
+                    <dependency>
+                        <groupId>io.swagger.core.v3</groupId>
+                        <artifactId>swagger-annotations-jakarta</artifactId>
+                        <version>${swagger.core.jakarta.annotations.version}</version>
+                    </dependency>
+
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>operation-schema</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <verbose>false</verbose>
+                            <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
+                            <extension>true</extension>
+                            <locale>en</locale>
+                            <sources>
+                                <source>src/main/resources/schemas/operation/operation.xsd</source>
+                            </sources>
+                            <xjbSources>
+                                <xjbSource>src/main/resources/schemas/operation/operation.xjb</xjbSource>
+                            </xjbSources>
+                            <arguments>
+                                <argument>-Xannotate</argument>
+                                <argument>-Xinheritance</argument>
+                                <argument>-Xsimplify</argument>
+                            </arguments>
+                            <outputDirectory>${project.build.directory}/generated-sources/xjc-operation
+                            </outputDirectory>
+                            <packageName>net.webpdf.wsclient.schema.operation</packageName>
+                        </configuration>
+                    </execution>
+
+                    <!-- extraction schema (info/metadata) -->
+                    <execution>
+                        <id>info-schema</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <verbose>false</verbose>
+                            <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
+                            <extension>true</extension>
+                            <locale>en</locale>
+                            <sources>
+                                <source>src/main/resources/schemas/extraction/info.xsd</source>
+                            </sources>
+                            <xjbSources>
+                                <xjbSource>src/main/resources/schemas/extraction/info.xjb</xjbSource>
+                            </xjbSources>
+                            <arguments>
+                                <argument>-Xannotate</argument>
+                                <argument>-Xinheritance</argument>
+                                <argument>-Xsimplify</argument>
+                            </arguments>
+                            <outputDirectory>${project.build.directory}/generated-sources/xjc-extraction-info
+                            </outputDirectory>
+                            <packageName>net.webpdf.wsclient.schema.extraction.info</packageName>
+                        </configuration>
+                    </execution>
+
+                    <!-- extraction schema (barcode) -->
+                    <execution>
+                        <id>barcode-schema</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <verbose>false</verbose>
+                            <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
+                            <extension>true</extension>
+                            <locale>en</locale>
+                            <sources>
+                                <source>src/main/resources/schemas/extraction/barcode.xsd</source>
+                            </sources>
+                            <xjbSources>
+                                <xjbSource>src/main/resources/schemas/extraction/barcode.xjb</xjbSource>
+                            </xjbSources>
+                            <arguments>
+                                <argument>-Xannotate</argument>
+                                <argument>-Xinheritance</argument>
+                                <argument>-Xsimplify</argument>
+                            </arguments>
+                            <outputDirectory>${project.build.directory}/generated-sources/xjc-extraction-barcode
+                            </outputDirectory>
+                            <packageName>net.webpdf.wsclient.schema.extraction.barcode</packageName>
+                        </configuration>
+                    </execution>
+
+                    <!-- extraction schema (text) -->
+                    <execution>
+                        <id>text-schema</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <verbose>false</verbose>
+                            <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
+                            <extension>true</extension>
+                            <locale>en</locale>
+                            <sources>
+                                <source>src/main/resources/schemas/extraction/text.xsd</source>
+                            </sources>
+                            <xjbSources>
+                                <xjbSource>src/main/resources/schemas/extraction/text.xjb</xjbSource>
+                            </xjbSources>
+                            <arguments>
+                                <argument>-Xannotate</argument>
+                                <argument>-Xinheritance</argument>
+                                <argument>-Xsimplify</argument>
+                            </arguments>
+                            <outputDirectory>${project.build.directory}/generated-sources/xjc-extraction-text
+                            </outputDirectory>
+                            <packageName>net.webpdf.wsclient.schema.extraction.text</packageName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>${maven.source.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -314,10 +525,12 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>${maven.javadoc.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-java-docs</id>
@@ -331,10 +544,12 @@
                     <failOnError>true</failOnError>
                 </configuration>
             </plugin>
+
+            <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/buildnumber-maven-plugin -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.4</version>
+                <version>${buildnumber.maven.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -350,10 +565,12 @@
                     <shortRevisionLength>7</shortRevisionLength>
                 </configuration>
             </plugin>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>${maven.jar.plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
@@ -368,10 +585,12 @@
                     </archive>
                 </configuration>
             </plugin>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>${maven.dependency.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -385,82 +604,11 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
-            </plugin>
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.14.0</version>
-                <configuration>
-                    <verbose>false</verbose>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.jvnet.jaxb2_commons</groupId>
-                            <artifactId>jaxb2-basics</artifactId>
-                            <version>1.11.1</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.jvnet.jaxb2_commons</groupId>
-                            <artifactId>jaxb2-basics-annotate</artifactId>
-                            <version>1.1.0</version>
-                        </plugin>
-                        <dependency>
-                            <groupId>com.fasterxml.jackson.core</groupId>
-                            <artifactId>jackson-databind</artifactId>
-                            <version>2.11.3</version>
-                        </dependency>
-                    </plugins>
-                    <extension>true</extension>
-                    <args>
-                        <arg>-Xannotate</arg>
-                        <arg>-Xsimplify</arg>
-                        <arg>-Xinheritance</arg>
-                    </args>
-                    <noFileHeader>true</noFileHeader>
-                    <locale>en</locale>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>operation-schema</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <generateDirectory>${project.build.directory}/generated-sources/xjc-operation</generateDirectory>
-                            <schemaDirectory>src/main/resources/schemas/operation</schemaDirectory>
-                            <schemaIncludes>
-                                <include>operation.xsd</include>
-                            </schemaIncludes>
-                            <bindingDirectory>src/main/resources/schemas/operation</bindingDirectory>
-                            <bindingIncludes>
-                                <include>operation.xjb</include>
-                            </bindingIncludes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>extraction-schema</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <generateDirectory>${project.build.directory}/generated-sources/xjc-extraction</generateDirectory>
-                            <schemaDirectory>src/main/resources/schemas/extraction</schemaDirectory>
-                            <schemaIncludes>
-                                <include>barcode.xsd</include>
-                                <include>text.xsd</include>
-                                <include>info.xsd</include>
-                            </schemaIncludes>
-                            <bindingDirectory>src/main/resources/schemas/extraction</bindingDirectory>
-                            <bindingIncludes>
-                                <include>extraction.xjb</include>
-                            </bindingIncludes>
-                        </configuration>
-                    </execution>
-                </executions>
+                <version>${maven.release.plugin.version}</version>
             </plugin>
         </plugins>
 
@@ -475,6 +623,7 @@
                     <include>CHANGES</include>
                 </includes>
             </resource>
+
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
                 <targetPath>.</targetPath>
@@ -484,7 +633,6 @@
                 </includes>
             </resource>
         </resources>
-
     </build>
 
 </project>

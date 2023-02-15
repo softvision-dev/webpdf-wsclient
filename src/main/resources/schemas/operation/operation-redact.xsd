@@ -2,79 +2,162 @@
 <xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="RedactType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>You can use the redact operation element to redact the contents of a document and remove metadata.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:all>
-                    <xs:element name="sanitize" type="tns:SanitizeType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="blacken" type="tns:BlackenType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="sanitize" type="tns:SanitizeType" minOccurs="0" />
+                    <xs:element name="blacken" type="tns:BlackenType" minOccurs="0" />
                 </xs:all>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Simplifies document structures, deletes metadata, and flattens page contents in order to remove confidential information that could be hidden in the document structure. Subelements can be used to exempt specific content from this operation or to configure how it will be handled in greater detail. If a subelement is not passed, the represented function will be considered to be enabled and configured with the corresponding default values.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:all>
-            <xs:element name="metadata" type="tns:SanitizeMetadataType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="layers" type="tns:SanitizeLayersType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="tags" type="tns:SanitizeTagsType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="outlines" type="tns:SanitizeOutlinesType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="attachments" type="tns:SanitizeAttachmentsType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="forms" type="tns:SanitizeFormsType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="annotations" type="tns:SanitizeAnnotationsType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="pages" type="tns:SanitizePagesType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="metadata" type="tns:SanitizeMetadataType" minOccurs="0" />
+            <xs:element name="layers" type="tns:SanitizeLayersType" minOccurs="0" />
+            <xs:element name="tags" type="tns:SanitizeTagsType" minOccurs="0" />
+            <xs:element name="outlines" type="tns:SanitizeOutlinesType" minOccurs="0" />
+            <xs:element name="attachments" type="tns:SanitizeAttachmentsType" minOccurs="0" />
+            <xs:element name="forms" type="tns:SanitizeFormsType" minOccurs="0" />
+            <xs:element name="annotations" type="tns:SanitizeAnnotationsType" minOccurs="0" />
+            <xs:element name="pages" type="tns:SanitizePagesType" minOccurs="0" />
+            <xs:element name="actions" type="tns:SanitizeActionsType" minOccurs="0" maxOccurs="1" />
         </xs:all>
     </xs:complexType>
     <xs:complexType name="SanitizeOptionsType">
-        <xs:attribute name="enabled" default="true" type="xs:boolean" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>A common base type for all sanitize operations.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="enabled" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If set to "false", this sanitize operation shall not be applied.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="SanitizeMetadataType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this function is enabled, info structures and XMP metadata will be removed from the document.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeLayersType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this function is enabled, all layers will be removed from the document.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeTagsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this function is enabled, all tags will be removed from the document.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeOutlinesType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this function is enabled, the outline will be removed from the document.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeAttachmentsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this function is enabled, all attachments will be removed from the document.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeFormsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this function is enabled, all the forms in the document will be flattened. (the appearance and the values entered will remain visible in the document, but will no longer be editable).</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizeAnnotationsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this function is enabled, all comments and annotations will be removed from the document.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:SanitizeOptionsType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SanitizePagesType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this function is enabled, all the selected pages in the document will be flattened. When this is done, an image of the visible contents in the corresponding page will be generated and will be used to replace all the page contents. This will remove any complex content that may be hiding confidential data.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:SanitizeOptionsType">
                 <xs:attribute name="dpi" default="72">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to specify the resolution for the image being generated. Higher resolutions will result in lower quality loss, but may also result in significantly larger document sizes.</p>
+                        </xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="tns:DpiType" />
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="pages" default="*" type="xs:string" />
+                <xs:attribute name="pages" default="*" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Defines which page(s) should be flattened. The page number can be an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9"). To specify "all pages," use an asterisk ("*").</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="BlackenType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this element is set, all redact annotations placed in the document will be converted into actual content redactions. Content obscured by such an annotation will be irretrievably removed from the page content.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:attribute name="collisionRatio" default="30">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Specifies a percentage value by which a letter must be obscured at least to be considered blackened and thus removed.</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
                     <xs:maxInclusive value="100" />
@@ -82,9 +165,43 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="redactTexts" default="true" type="xs:boolean" />
-        <xs:attribute name="redactImages" default="true" type="xs:boolean" />
-        <xs:attribute name="redactAnnotations" default="true" type="xs:boolean" />
-        <xs:attribute name="redactPaths" default="true" type="xs:boolean" />
+        <xs:attribute name="redactTexts" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set to "true", all texts are blackened letter by letter.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="redactImages" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set to true, all blackened image data will be removed. For images, the entire image is not removed, but the obscured area is replaced by the redaction.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="redactAnnotations" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set to "true", all blackened annotations will be removed. Annotations are removed completely even if they are only truncated.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="redactPaths" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set to true, all blackened character paths are removed. The paths are adjusted so that the blackened section is removed from the path construction.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="SanitizeActionsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this element is set, all actions shall be removed from the document - including specifically links and javascript triggers, elements and definitions. This will severely impair the functionality of interactive features such as: Annotations, forms, outlines, etc.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:SanitizeOptionsType" />
+        </xs:complexContent>
     </xs:complexType>
 </xs:schema>

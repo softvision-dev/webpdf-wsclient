@@ -2,12 +2,23 @@ package net.webpdf.wsclient.schema.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import net.webpdf.wsclient.session.documents.Document;
+import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
+import net.webpdf.wsclient.session.rest.RestSession;
 import org.jetbrains.annotations.Nullable;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
+/**
+ * An instance of {@link HistoryEntry} is intended to wrap and simplify information about a previous state of a given
+ * {@link Document}, it shall provide an ID for that history entry, allowing to revert to that state of the linked
+ * document.<br>
+ * Such {@link HistoryEntry} objects can be received via and are managed by a {@link RestSession}´s
+ * {@link DocumentManager}.
+ */
 @SuppressWarnings("unused")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -17,12 +28,9 @@ public class HistoryEntry implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int id;
     private boolean active;
-    @Nullable
-    private String fileName;
-    @Nullable
-    private String operation;
-    @Nullable
-    private String dateTime;
+    private @Nullable String fileName;
+    private @Nullable String operation;
+    private @Nullable String dateTime;
 
     /**
      * Returns the ID of the history entry.
@@ -54,9 +62,9 @@ public class HistoryEntry implements Serializable {
     }
 
     /**
-     * When set to true, the history entry is currently active.
+     * When set to {@code true}, the history entry is currently active.
      *
-     * @param active True, if the history entry is currently active.
+     * @param active {@code true}, if the history entry is currently active.
      */
     public void setActive(boolean active) {
         this.active = active;
@@ -68,8 +76,7 @@ public class HistoryEntry implements Serializable {
      * @return The name of the file, that has been changed.
      */
     @XmlElement
-    @Nullable
-    public String getFileName() {
+    public @Nullable String getFileName() {
         return fileName;
     }
 
@@ -88,8 +95,7 @@ public class HistoryEntry implements Serializable {
      * @return The name of the operation, that has been executed.
      */
     @XmlElement
-    @Nullable
-    public String getOperation() {
+    public @Nullable String getOperation() {
         return operation;
     }
 
@@ -108,8 +114,7 @@ public class HistoryEntry implements Serializable {
      * @return The timestamp of the history entry.
      */
     @XmlElement
-    @Nullable
-    public String getDateTime() {
+    public @Nullable String getDateTime() {
         return dateTime;
     }
 
@@ -121,4 +126,5 @@ public class HistoryEntry implements Serializable {
     public void setDateTime(@Nullable String dateTime) {
         this.dateTime = dateTime;
     }
+
 }

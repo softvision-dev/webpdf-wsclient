@@ -13,12 +13,10 @@
     </wsp:Policy>
     <types>
         <xsd:schema>
-            <xsd:import namespace="http://schema.webpdf.de/1.0/soap/urlconverter"
-                        schemaLocation="http://localhost:8080/webPDF/soap/urlconverter?xsd=1"/>
+            <xsd:import namespace="http://schema.webpdf.de/1.0/soap/urlconverter"/>
         </xsd:schema>
         <xsd:schema>
-            <xsd:import namespace="http://schema.webpdf.de/1.0/operation"
-                        schemaLocation="http://localhost:8080/webPDF/soap/urlconverter?xsd=2"/>
+            <xsd:import namespace="http://schema.webpdf.de/1.0/operation"/>
         </xsd:schema>
     </types>
     <message name="execute">
@@ -57,8 +55,6 @@
         </operation>
     </binding>
     <service name="URLConverterService">
-        <port name="URLConverterPort" binding="tns:URLConverterPortBinding">
-            <soap12:address location="http://localhost:8080/webPDF/soap/urlconverter"/>
-        </port>
+        <port name="URLConverterPort" binding="tns:URLConverterPortBinding"/>
     </service>
 </definitions>

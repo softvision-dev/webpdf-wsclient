@@ -1,55 +1,224 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="PortfolioType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The portfolio operation element can be used to merge documents into a portfolio, as well as to remove or extract documents from it.
+
+                </p>
+                <p>
+                    <b>Important:</b>
+                    If an empty document or document with a page with no content is passed as the source document, a default portfolio base document will be generated automatically.
+
+                </p>
+                <p>
+                    <b>Important:</b>
+                    This web service allows for a portfolio document to be used as the source document.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:choice>
-                    <xs:element name="add" type="tns:PortfolioAddType" />
-                    <xs:element name="remove" type="tns:PortfolioRemoveType" />
-                    <xs:element name="extract" type="tns:PortfolioExtractType" />
+                    <xs:element name="add" type="tns:PortfolioAddType"/>
+                    <xs:element name="remove" type="tns:PortfolioRemoveType"/>
+                    <xs:element name="extract" type="tns:PortfolioExtractType"/>
                 </xs:choice>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="PortfolioFileType">
-        <xs:all minOccurs="1" maxOccurs="1">
-            <xs:element name="data" type="tns:PortfolioFileDataType" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to define an individual document that should be added to the portfolio. This element can be used multiple times if you want to add multiple documents.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="data" type="tns:PortfolioFileDataType"/>
         </xs:all>
-        <xs:attribute name="path" default="" type="xs:string" />
-        <xs:attribute name="fileName" default="" type="xs:string" />
-        <xs:attribute name="mimeType" default="" type="xs:string" />
-        <xs:attribute name="creator" default="" type="xs:string" />
+        <xs:attribute name="path" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Defines the path/folder where the document is stored in the portfolio.
+
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        A portfolio path is defined by the "/" separated nested folder names.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fileName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Defines the name under which the document is stored in the portfolio.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mimeType" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The MIME type of the portfolio entry.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="creator" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The creator of the portfolio entry.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="PortfolioFolderType">
-        <xs:attribute name="path" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to define an individual folder that should be added to the portfolio. This element can be used multiple times if you want to add multiple folders.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="path" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to define the path/folder where the document will be stored in the portfolio.
+
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        A portfolio path is defined by the "/" separated nested folder names.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="PortfolioRemoveType">
-        <xs:choice minOccurs="1" maxOccurs="unbounded">
-            <xs:element name="selection" type="tns:PortfolioSelectionType" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Removes one or more documents from the portfolio.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="selection" type="tns:PortfolioSelectionType"/>
         </xs:choice>
+        <xs:attribute name="initialDocumentPath" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Defines the path/folder where the initially shown document is stored in the portfolio.
+
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        The "path" and "fileName" parameters follow and implement the glob selection patterns for files and paths. Which is: A portfolio path is defined by "/" separated nested folder names.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="initialFileName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Select the name of the initially shown document.
+
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        The "path" and "fileName" parameters follow and implement the glob selection patterns for files and paths. Which is: A portfolio path is defined by "/" separated nested folder names.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="PortfolioExtractType">
-        <xs:choice minOccurs="1" maxOccurs="unbounded">
-            <xs:element name="selection" type="tns:PortfolioSelectionType" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Extracts one or more documents from the portfolio. The result will be returned as a ZIP document. The ZIP document will not only contain the extracted files, but will also reproduce the folder structure in which the documents were found.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="selection" type="tns:PortfolioSelectionType"/>
         </xs:choice>
-        <xs:attribute name="singleFileAsZip" default="true" type="xs:boolean" />
+        <xs:attribute name="singleFileAsZip" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The returned attachments will be generated as a ZIP file even if selection is used to select only one single file. You can change this behaviour by setting this option to "false". In this case, the file will not be zipped, and will instead be returned directly as is. However, this will only work if selection has been used to select one file and one file only.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType id="portfolioAddChoiceId" name="PortfolioAddType">
-        <xs:choice minOccurs="1" maxOccurs="unbounded">
-            <xs:element name="file" type="tns:PortfolioFileType" />
-            <xs:element name="folder" type="tns:PortfolioFolderType" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Adds a document to the portfolio.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="file" type="tns:PortfolioFileType"/>
+            <xs:element name="folder" type="tns:PortfolioFolderType"/>
         </xs:choice>
+        <xs:attribute name="initialDocumentPath" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Defines the path/folder where the initially shown document is stored in the portfolio.
+
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        The "path" and "fileName" parameters follow and implement the glob selection patterns for files and paths. Which is: A portfolio path is defined by "/" separated nested folder names.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="initialFileName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Select the name of the initially shown document.
+
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        The "path" and "fileName" parameters follow and implement the glob selection patterns for files and paths. Which is: A portfolio path is defined by "/" separated nested folder names.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="PortfolioFileDataType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Contains the file to be attached in "Base64 encoded" format.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
-                <xs:attributeGroup ref="tns:FileDataGroup" />
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
     <xs:complexType name="PortfolioSelectionType">
-        <xs:attribute name="path" default="" type="xs:string" />
-        <xs:attribute name="fileName" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to select documents that match the selection rules and that should be processed (extracted / deleted) accordingly. You can use multiple selection elements.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="path" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Filters by path for the selection. "a/b/*", for example, would result in all a/b subfolders being searched for matching documents. Whether a document will be considered a match will also depend on the "fileName" parameter. If the "fileName" parameter is not set, this parameter can be used to select the path instead (for extraction / deletion)</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="fileName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Filters by file name for the selection. "*.xls", for example, would result in all XLS documents being selected. Meanwhile, "xyz.json" would result in attachments named "xyz.json" being selected (for extraction / deletion).
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        The "path" and "fileName" parameters follow and implement the glob selection patterns for files and paths.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 </xs:schema>

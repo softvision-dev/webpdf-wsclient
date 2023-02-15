@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
+    <xs:complexType name="TranscribeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The transcribe operation element can be used to convert a PDF document into other document formats. Errors and inaccuracies can always occur during such conversions, so the endpoint allows a report to be generated to detect and evaluate possible transfer errors both in the event of an error and in the event of a success.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:BaseToolboxType">
+                <xs:choice>
+                    <xs:element name="html" type="tns:HtmlTranscribeType" />
+                </xs:choice>
+                <xs:attribute name="errorReport" default="none" type="tns:TranscribeErrorReportType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>This parameter determines if and in which form the XML report for a failed conversion is returned.
+                                <ul>
+                                    <li>none = XML report is not returned</li>
+                                    <li>message = XML report will be delivered as part of the error message</li>
+                                    <li>file = XML report is saved to file</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="successReport" default="none" type="tns:TranscribeSuccessReportType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>This parameter determines if and in which form the XML report for a successful conversion is returned.
+                                <ul>
+                                    <li>none = XML report is not returned</li>
+                                    <li>linked = XML report is appended to the end of the target document.</li>
+                                    <li>zip = target document and XML report are packed together in a ZIP archive.</li>
+                                </ul>
+                            </p>
+                            <p>
+                                <b>Important:</b>
+                                The format of the document created at "errorReport" and "successReport" is described via the http://schema.webpdf.de/1.0/report/transcribe.xsd schema.
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="failureLevel" default="error" type="tns:FailureType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>This parameter determines at which error level the conversion should fail, you can use this parameter to automatically reject also results with lower precision as failure
+                                <ul>
+                                    <li>warning = Documents for which warnings occur will also cause the conversion to fail.</li>
+                                    <li>missingContent = Documents for which not all content could be converted correctly will also be considered as failures.</li>
+                                    <li>error = Only if a conversion of the document did not lead to any meaningful result document, this is evaluated as failure, even if contents should be missing.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="HtmlTranscribeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Converts the given document into a HTML representation.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="svgFormat" type="tns:SvgFormatType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>Selects parameters for the creation of SVGs, possibly contained in resulting documents.</p>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="pages" default="1" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Specifies which page(s) to convert. The page number can be either a single page, a range of pages or a list (separated by commas) (e.g. "1,5-6,9"). The specification of all pages is done with "*".</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="dpi" default="72">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>This parameter sets the DPI resolution of the document. The larger the value, the larger the X/Y resolution of the document's pages and generated raster graphics. Also, as the DPI resolution increases, so does the byte size of the document.</p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="tns:DpiType" />
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="TranscribeSuccessReportType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>This parameter determines if and in which form the XML report for a successful conversion is returned.
+                    <ul>
+                        <li>none = XML report is not returned</li>
+                        <li>linked = XML report is appended to the end of the target document.</li>
+                        <li>zip = target document and XML report are packed together in a ZIP archive.</li>
+                    </ul>
+                </p>
+                <p>
+                    <b>Important:</b>
+                    The format of the document created at "errorReport" and "successReport" is described via the http://schema.webpdf.de/1.0/report/transcribe.xsd schema.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="zip" />
+            <xs:enumeration value="linked" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TranscribeErrorReportType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>This parameter determines if and in which form the XML report for a failed conversion is returned.
+                    <ul>
+                        <li>none = XML report is not returned</li>
+                        <li>message = XML report will be delivered as part of the error message</li>
+                        <li>file = XML report is saved to file</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none" />
+            <xs:enumeration value="file" />
+            <xs:enumeration value="message" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="FailureType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>This parameter determines at which error level the conversion should fail, you can use this parameter to automatically reject also results with lower precision as failure
+                    <ul>
+                        <li>warning = Documents for which warnings occur will also cause the conversion to fail.</li>
+                        <li>missingContent = Documents for which not all content could be converted correctly will also be considered as failures.</li>
+                        <li>error = Only if a conversion of the document did not lead to any meaningful result document, this is evaluated as failure, even if contents should be missing.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="warning" />
+            <xs:enumeration value="missingContent" />
+            <xs:enumeration value="error" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="SvgFormatType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Selects parameters for the creation of SVGs, possibly contained in resulting documents.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="decimalPrecision" default="2">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Selects the number of decimal places for numeric values of contained SVGs.</p>
+                    <p>
+                        <b>Important:</b>
+                        The number of decimal places directly influences the size of the resulting file. (should SVGs be contained.) However: Higher values will result in a better SVG quality.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:int">
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="10" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="graphicsStateMode" default="centralize">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        Selects the SVG syntax used for formatting graphics states.
+                        <ul>
+                            <li>verbose = Writes verbose graphics states and groups and always prefers direct path definitions.</li>
+                            <li>compact = Writes compact graphics states and groups and centralizes formatting instructions, also utilizes the "use" syntax to prepare and reference indirect paths. (May not be readable by some SVG viewers.)</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="tns:SvgGraphicsStateModeType">
+                    <xs:enumeration value="verbose" />
+                    <xs:enumeration value="centralize" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="pathDrawMode" default="compact">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        Selects the SVG syntax used for formatting graphics states.
+                        <ul>
+                            <li>verbose = Writes verbose paths, containing a human readable complete and simple syntax.</li>
+                            <li>compress = Compresses path draw instructions, by applying the EBNF (Extended Backus Naur Form).</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="tns:SvgPathDrawModeType">
+                    <xs:enumeration value="verbose" />
+                    <xs:enumeration value="compact" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+</xs:schema>

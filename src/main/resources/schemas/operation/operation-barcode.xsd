@@ -1,233 +1,619 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="BarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The "Barcode" web service can be used to generate and recognize barcodes in PDF documents.
+                    The <code>&lt;add&gt;</code> element is used to add barcodes, while the <code>&lt;detect&gt;</code> element is used to read existing barcodes.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:choice>
             <xs:element id="barcodeAddId" name="add">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>Used to add a new barcode to the document.</p>
+                    </xs:documentation>
+                </xs:annotation>
                 <xs:complexType id="barcodeChoiceId">
-                    <xs:choice minOccurs="1" maxOccurs="unbounded">
-                        <xs:element name="aztec" type="tns:AztecBarcodeType" />
-                        <xs:element name="codabar" type="tns:CodabarBarcodeType" />
-                        <xs:element name="code128" type="tns:Code128BarcodeType" />
-                        <xs:element name="code39" type="tns:Code39BarcodeType" />
-                        <xs:element name="datamatrix" type="tns:DataMatrixBarcodeType" />
-                        <xs:element name="ean13" type="tns:Ean13BarcodeType" />
-                        <xs:element name="ean8" type="tns:Ean8BarcodeType" />
-                        <xs:element name="itf" type="tns:ItfBarcodeType" />
-                        <xs:element name="pdf417" type="tns:Pdf417BarcodeType" />
-                        <xs:element name="qrcode" type="tns:QrBarcodeType" />
-                        <xs:element name="upca" type="tns:UpcaBarcodeType" />
-                        <xs:element name="qrcode-swiss-payment" type="tns:QrSwissPaymentBarcodeType" />
+                    <xs:choice maxOccurs="unbounded">
+                        <xs:element name="aztec" type="tns:AztecBarcodeType"/>
+                        <xs:element name="codabar" type="tns:CodabarBarcodeType"/>
+                        <xs:element name="code128" type="tns:Code128BarcodeType"/>
+                        <xs:element name="code39" type="tns:Code39BarcodeType"/>
+                        <xs:element name="datamatrix" type="tns:DataMatrixBarcodeType"/>
+                        <xs:element name="ean13" type="tns:Ean13BarcodeType"/>
+                        <xs:element name="ean8" type="tns:Ean8BarcodeType"/>
+                        <xs:element name="itf" type="tns:ItfBarcodeType"/>
+                        <xs:element name="pdf417" type="tns:Pdf417BarcodeType"/>
+                        <xs:element name="qrcode" type="tns:QrBarcodeType"/>
+                        <xs:element name="upca" type="tns:UpcaBarcodeType"/>
+                        <xs:element name="qrswiss" type="tns:QrSwissPaymentBarcodeType"/>
                     </xs:choice>
-                    <xs:attribute name="outputFormat" default="pdf" type="tns:BarcodeCreateOutputFormatType" />
+                    <xs:attribute name="outputFormat" default="pdf" type="tns:BarcodeCreateOutputFormatType">
+                        <xs:annotation>
+                            <xs:documentation>
+                                <p>Defines the output format for the barcode generation. The resulting document will be created by this webservice, where selected image formats will completly ignore a possibly given PDF source document and will only contain the barcode image.
+                                </p>
+                                <p>
+                                    <b>Important:</b>
+                                    This parameter is for internal use only. Please only set this value to anything other than "pdf", if you are really sure that you need to do so.
+                                </p>
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
             <xs:element id="barcodeDetectId" name="detect">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>This operation is used to define the barcode recognition parameters. The system will attempt to find barcodes inside the area defined with <code>&lt;scanArea&gt;</code>. The recognition process itself is controlled with <code>&lt;selection&gt;</code>.
+                        </p>
+                    </xs:documentation>
+                </xs:annotation>
                 <xs:complexType>
-                    <xs:choice minOccurs="1" maxOccurs="unbounded">
-                        <xs:element name="selection" type="tns:BarcodeSelectionType" />
+                    <xs:choice maxOccurs="unbounded">
+                        <xs:element name="selection" type="tns:BarcodeSelectionType"/>
                     </xs:choice>
-                    <xs:attribute name="outputFormat" default="json" type="tns:BarcodeDetectOutputFormatType" use="optional" />
-                    <xs:attribute name="inputFormat" default="pdf" type="tns:BarcodeDetectInputFormatType" use="optional" />
+                    <xs:attribute name="outputFormat" default="json" type="tns:BarcodeDetectOutputFormatType">
+                        <xs:annotation>
+                            <xs:documentation>
+                                <p>Used to select the format in which the recognition results should be returned.
+                                    <ul>
+                                        <li>json = JSON</li>
+                                        <li>xml = XML</li>
+                                    </ul>
+                                </p>
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="inputFormat" default="pdf" type="tns:BarcodeDetectInputFormatType">
+                        <xs:annotation>
+                            <xs:documentation>
+                                <p>Used to select the format of the file with the contents that will be scanned for barcodes.
+                                    <ul>
+                                        <li>pdf = PDF document</li>
+                                        <li>img = Image document (JPG, PNG, TIF)</li>
+                                    </ul>
+                                </p>
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="BaseBarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>All barcode elements have a number of basic attributes in common. These attributes are described via this base type.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:all>
-            <xs:element name="position" type="tns:RectangleType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="position" type="tns:RectangleType" minOccurs="0"/>
         </xs:all>
-        <xs:attribute name="charset" default="utf-8" type="xs:string" use="optional" />
-        <xs:attribute name="value" type="xs:string" use="required" />
-        <xs:attribute name="rotation" default="0" use="optional">
+        <xs:attribute name="charset" default="utf-8" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to specify the character set in which the barcode contents should be stored.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="value" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Contains the value that should be encoded in the barcode. Depending on the selected barcode format, there may be specific criteria for the data structure. For a description, please refer to the chapter "Barcodes"</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="rotation" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to specify the barcode's rotation in 90-degree increments. When there is a value that falls under a full 90-degree increment, the next higher increment will be automatically selected.</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0" />
-                    <xs:maxExclusive value="360" />
+                    <xs:minInclusive value="0"/>
+                    <xs:maxExclusive value="360"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="margin" default="0" use="optional">
+        <xs:attribute name="margin" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to specify the width of the empty frame that should be generated around the barcode. This shall use the same metrics as the position - if no position is present, the default (mm) shall be assumed.</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="pages" default="">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The page range for generating barcodes. Individual pages or a range of pages can be defined here. If the text is empty, the entire file will be exported (e.g.: "1-10" or "1,2,5-10")</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
-                <xs:restriction base="xs:string" />
+                <xs:restriction base="xs:string"/>
             </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="BarcodeSelectionType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>This section is used to control the recognition process and configure settings that apply only to specific barcode types.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:all>
-            <xs:element name="scanArea" type="tns:RectangleType" />
+            <xs:element name="scanArea" type="tns:RectangleType"/>
         </xs:all>
-        <xs:attribute name="pages" default="" type="xs:string" use="optional" />
-        <xs:attribute name="resolution" default="200" use="optional">
+        <xs:attribute name="pages" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The page range within which barcodes should be scanned. Individual pages or a range of pages can be defined here. If the text is empty, the entire file will be exported (e.g.: "1-10" or "1,2,5-10")</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="resolution" default="200">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to select the resolution for the recognition operation. Depending on the barcode's format and quality, higher or lower values may yield better results (in any case, higher values will slow down processing).</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1" />
+                    <xs:minInclusive value="1"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="pureBarcode" default="false" type="xs:boolean" use="optional" />
-        <xs:attribute name="gs1" default="false" type="xs:boolean" use="optional" />
-        <xs:attribute name="tryHarder" default="true" type="xs:boolean" use="optional" />
-        <xs:attribute name="allowedLengths" default="" type="xs:string" use="optional" />
-        <xs:attribute name="barcode39CheckDigit" default="false" type="xs:boolean" use="optional" />
-        <xs:attribute name="codabarStartEndDigits" default="false" type="xs:boolean" use="optional" />
-        <xs:attribute name="upcEanExtensions" default="" type="xs:string" use="optional" />
-        <xs:attribute name="charset" default="utf-8" type="xs:string" use="optional" />
-        <xs:attribute name="formats" type="xs:string" use="required" />
+        <xs:attribute name="pureBarcode" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set to "true", the system will assume that the source document being scanned (limited by <code>&lt;scanArea&gt;</code>) does not contain any elements other than the barcode. This option can speed up the recognition process significantly. If, however, this option is enabled and there are elements other than a barcode, recognition may fail completely.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="gs1" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set to "true", the system will assume that all recognized barcodes are GS1-compliant barcodes, and the way all processes behave and work will be adjusted accordingly (for instance, the way in which the FNC1 character is handled for Code 128)</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="tryHarder" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set to "true", more computing time will be invested in order to guarantee successful recognition. For example, the system will also scan for barcodes along the vertical axis.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowedLengths" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set, it will limit the allowed lengths for encoded values. In other words, barcodes with a length that is not listed will be ignored. (Example: "13,8,25")</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="barcode39CheckDigit" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set to "true", the system will assume that all recognized Code 39 barcodes contain a correct check digit.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="codabarStartEndDigits" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set to "true", the start and stop symbols of recognized Codabar barcodes will be read instead of removed during recognition.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="upcEanExtensions" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set, it will limit the allowed lengths for encoded EAN and UPC Extensions. In other words, barcodes with an Extension length that is not listed will be ignored. (Example: "2,5")</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="charset" default="utf-8" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to specify the character set in which the barcode contents are stored.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="formats" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to define the list of barcodes (comma-separated) that should be searched for. There must be at least one barcode format here; otherwise, no search will be run. The names are the same as those used in <code>&lt;add&gt;</code>, i.e., the following are the barcode names available:
+                        <ul>
+                            <li>qrcode</li>
+                            <li>aztec</li>
+                            <li>codabar</li>
+                            <li>code128</li>
+                            <li>code39</li>
+                            <li>datamatrix</li>
+                            <li>ean13</li>
+                            <li>ean8</li>
+                            <li>itf</li>
+                            <li>pdf417</li>
+                            <li>upca</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="BarcodeDetectOutputFormatType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to select the format in which the recognition results should be returned.
+                    <ul>
+                        <li>json = JSON</li>
+                        <li>xml = XML</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="xml" />
-            <xs:enumeration value="json" />
+            <xs:enumeration value="xml"/>
+            <xs:enumeration value="json"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="DataMatrixShapeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Can be used to force a specific shape for generated Data Matrix codes.
+                    <ul>
+                        <li>default = Select an appropriate shape.</li>
+                        <li>rectangle = Force a rectangular shape.</li>
+                        <li>square = Force a square shape.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="default" />
-            <xs:enumeration value="rectangle" />
-            <xs:enumeration value="square" />
+            <xs:enumeration value="default"/>
+            <xs:enumeration value="rectangle"/>
+            <xs:enumeration value="square"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="Pdf417CompactionModeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If PDF417 barcode compression has been enabled with the "compact" attribute, the encoding selected here for the compression of generated PDF417 barcodes will be used.
+                    <ul>
+                        <li>auto = Try to determine the best encoding method automatically.</li>
+                        <li>byte = Select a byte encoding method in which every 5 codewords represent 6 bytes.</li>
+                        <li>numeric = Select a numeric encoding method in which a group of 15 codewords represents up to 44 decimal numbers.</li>
+                        <li>text = Select a text encoding method in which each codeword represents up to 2 letters.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="text" />
-            <xs:enumeration value="numeric" />
-            <xs:enumeration value="byte" />
-            <xs:enumeration value="auto" />
+            <xs:enumeration value="text"/>
+            <xs:enumeration value="numeric"/>
+            <xs:enumeration value="byte"/>
+            <xs:enumeration value="auto"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="QrCodeErrorCorrectionType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to adjust the error correction level for generated QR codes. The higher the level, the more error-resistant the barcode, ensuring that damaged codes will still be readable.
+                    <ul>
+                        <li>l = Low</li>
+                        <li>m = Medium</li>
+                        <li>q = Quartile</li>
+                        <li>h = High</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="l" />
-            <xs:enumeration value="m" />
-            <xs:enumeration value="q" />
-            <xs:enumeration value="h" />
+            <xs:enumeration value="l"/>
+            <xs:enumeration value="m"/>
+            <xs:enumeration value="q"/>
+            <xs:enumeration value="h"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="QrSwissPaymentFormatType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to select the parts, that shall be included in the barcode.
+                    <ul>
+                        <li>codeOnly = Only the barcode itself shall be shown.</li>
+                        <li>billOnly = The barcode and the payment summary shall be shown.</li>
+                        <li>billPortraitSheet = The dimensions of the barcode and the payment summary shall be optimized for placement in the lower left corner of a page in DIN-A4 format.</li>
+                        <li>billExtraSpace = The same as "billPortraitSheet", but with extra spacings.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="codeOnly" />
-            <xs:enumeration value="billOnly" />
-            <xs:enumeration value="billPortraitSheet" />
-            <xs:enumeration value="billExtraSpace" />
+            <xs:enumeration value="codeOnly"/>
+            <xs:enumeration value="billOnly"/>
+            <xs:enumeration value="billPortraitSheet"/>
+            <xs:enumeration value="billExtraSpace"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="QrSwissPaymentSeparatorType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The border style for separators in between the different parts of the barcode.
+                    <ul>
+                        <li>none = No separator shall be used.</li>
+                        <li>solidLine = A solid separator line.</li>
+                        <li>solidLineWithScissors = A solid separator line with a scissor icon.</li>
+                        <li>dashedLine = A dashed separator line.</li>
+                        <li>dashedLineWithScissors = A dashed separator line with a scissor icon.</li>
+                        <li>dottedLine = A dotted separator line.</li>
+                        <li>dottedLineWithScissors = A dotted separator line with a scissor icon.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="none" />
-            <xs:enumeration value="solidLine" />
-            <xs:enumeration value="solidLineWithScissors" />
-            <xs:enumeration value="dashedLine" />
-            <xs:enumeration value="dashedLineWithScissors" />
-            <xs:enumeration value="dottedLine" />
-            <xs:enumeration value="dottedLineWithScissors" />
+            <xs:enumeration value="none"/>
+            <xs:enumeration value="solidLine"/>
+            <xs:enumeration value="solidLineWithScissors"/>
+            <xs:enumeration value="dashedLine"/>
+            <xs:enumeration value="dashedLineWithScissors"/>
+            <xs:enumeration value="dottedLine"/>
+            <xs:enumeration value="dottedLineWithScissors"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="QrSwissPaymentLanguageType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Selects the language of the barcode's payment summary.
+                    <ul>
+                        <li>de = german</li>
+                        <li>fr = french</li>
+                        <li>it = italian</li>
+                        <li>en = english</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="de" />
-            <xs:enumeration value="fr" />
-            <xs:enumeration value="it" />
-            <xs:enumeration value="en" />
+            <xs:enumeration value="de"/>
+            <xs:enumeration value="fr"/>
+            <xs:enumeration value="it"/>
+            <xs:enumeration value="en"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="QrSwissPaymentPdfModeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Selects the page relative position to place the barcode at.
+                    <ul>
+                        <li>insertBefore = Places the barcode on a new, empty page before the selected page.</li>
+                        <li>appendAtEnd = Places the barcode on a new, empty page at the end of the document.</li>
+                        <li>addToPage = Place the barcode on the selected page.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="insertBefore" />
-            <xs:enumeration value="appendAtEnd" />
-            <xs:enumeration value="addToPage" />
+            <xs:enumeration value="insertBefore"/>
+            <xs:enumeration value="appendAtEnd"/>
+            <xs:enumeration value="addToPage"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="QrBarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>A QR barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseBarcodeType">
-                <xs:attribute name="errorCorrection" default="l" type="tns:QrCodeErrorCorrectionType" />
+                <xs:attribute name="errorCorrection" default="l" type="tns:QrCodeErrorCorrectionType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to adjust the error correction level for generated QR codes. The higher the level, the more error-resistant the barcode, ensuring that damaged codes will still be readable.
+                                <ul>
+                                    <li>l = Low</li>
+                                    <li>m = Medium</li>
+                                    <li>q = Quartile</li>
+                                    <li>h = High</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="Pdf417BarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>A PDF417 barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseBarcodeType">
-                <xs:attribute name="errorCorrection" default="2" use="optional">
+                <xs:attribute name="errorCorrection" default="2">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to adjust the error correction level for generated PDF417 codes. The higher the level, the more error-resistant the barcode, ensuring that damaged codes will still be readable. A level of 1 to 8 can be specified.</p>
+                        </xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
-                            <xs:maxInclusive value="8" />
+                            <xs:minInclusive value="1"/>
+                            <xs:maxInclusive value="8"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="compact" default="false" type="xs:boolean" use="optional" />
-                <xs:attribute name="compactionMode" default="auto" type="tns:Pdf417CompactionModeType" use="optional" />
-                <xs:attribute name="dataCodewordsMin" use="optional">
+                <xs:attribute name="compact" default="false" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>If this value is set to "true," the contents of all generated PDF417 barcodes will be compressed using the encoding selected with the "compactionMode" attribute.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="compactionMode" default="auto" type="tns:Pdf417CompactionModeType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>If PDF417 barcode compression has been enabled with the "compact" attribute, the encoding selected here for the compression of generated PDF417 barcodes will be used.
+                                <ul>
+                                    <li>auto = Try to determine the best encoding method automatically.</li>
+                                    <li>byte = Select a byte encoding method in which every 5 codewords represent 6 bytes.</li>
+                                    <li>numeric = Select a numeric encoding method in which a group of 15 codewords represents up to 44 decimal numbers.</li>
+                                    <li>text = Select a text encoding method in which each codeword represents up to 2 letters.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="dataCodewordsMin">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to specify the minimum number of codewords allowed in a single PDF417 barcode row.</p>
+                        </xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="dataCodewordsMax" use="optional">
+                <xs:attribute name="dataCodewordsMax">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to specify the maximum number of codewords allowed in a single PDF417 barcode row.</p>
+                        </xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="symbolsPerCodewordMin" use="optional">
+                <xs:attribute name="symbolsPerCodewordMin">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to specify the minimum number of code symbols that are allowed to be in a single codeword in the PDF417 barcode.</p>
+                        </xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="symbolsPerCodewordMax" use="optional">
+                <xs:attribute name="symbolsPerCodewordMax">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to specify the maximum number of code symbols that are allowed to be in a single codeword in the PDF417 barcode.</p>
+                        </xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="shape" default="default" type="tns:DataMatrixShapeType" use="optional" />
+                <xs:attribute name="shape" default="default" type="tns:DataMatrixShapeType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Can be used to force a specific shape for generated PDF417 barcodes.
+                                <ul>
+                                    <li>default = Select an appropriate shape.</li>
+                                    <li>rectangle = Force a rectangular shape.</li>
+                                    <li>square = Force a square shape.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="DataMatrixBarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>A DataMatrix barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseBarcodeType">
-                <xs:attribute name="errorCorrection" default="2" use="optional">
+                <xs:attribute name="errorCorrection" default="2">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to adjust the error correction level for generated Data Matrix codes. The higher the level, the more error-resistant the barcode, ensuring that damaged codes will still be readable. A level of 1 to 8 can be specified.</p>
+                        </xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
-                            <xs:maxInclusive value="8" />
+                            <xs:minInclusive value="1"/>
+                            <xs:maxInclusive value="8"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="shape" default="default" type="tns:DataMatrixShapeType" />
+                <xs:attribute name="shape" default="default" type="tns:DataMatrixShapeType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Can be used to force a specific shape for generated Data Matrix codes.
+                                <ul>
+                                    <li>default = Select an appropriate shape.</li>
+                                    <li>rectangle = Force a rectangular shape.</li>
+                                    <li>square = Force a square shape.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="AztecBarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>A aztec barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseBarcodeType">
-                <xs:attribute name="errorCorrection" default="7" use="optional">
+                <xs:attribute name="errorCorrection" default="7">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to adjust the error correction level for generated Aztec Codes. The higher the level, the more error-resistant the barcode, ensuring that damaged codes will still be readable. A percentage value of one to one hundred can be entered.</p>
+                        </xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
-                            <xs:maxInclusive value="100" />
+                            <xs:minInclusive value="1"/>
+                            <xs:maxInclusive value="100"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="layers" default="0" use="optional">
+                <xs:attribute name="layers" default="0">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to specify the number of layers that the generated Aztec Code should use. The higher the number, the larger the resulting barcode and its capacity.
+                                <ul>
+                                    <li>"-4" to "-1" = Compact Aztec Code with a minimum capacity of 13 digits or 12 letters and an area of 15 x 15 pixels.</li>
+                                    <li>"0" = Standard Aztec Code that will be optimized in order to use the smallest possible of layers for the value that is being encoded.</li>
+                                    <li>"1" to "32" = Standard Aztec Code with a maximum capacity of 3832 digits or 3067 letters and an area of 151 x 151 pixels.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="-4" />
-                            <xs:maxInclusive value="32" />
+                            <xs:minInclusive value="-4"/>
+                            <xs:maxInclusive value="32"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
@@ -235,90 +621,251 @@
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="CodabarBarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>A Codabar barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:BaseBarcodeType" />
+            <xs:extension base="tns:BaseBarcodeType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="Code128BarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>A Code128 barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:BaseBarcodeType" />
+            <xs:extension base="tns:BaseBarcodeType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="Code39BarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>A Code39 barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:BaseBarcodeType" />
+            <xs:extension base="tns:BaseBarcodeType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="Ean13BarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>An EAN13 barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:BaseBarcodeType" />
+            <xs:extension base="tns:BaseBarcodeType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="Ean8BarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>An EAN8 barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:BaseBarcodeType" />
+            <xs:extension base="tns:BaseBarcodeType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="ItfBarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>An ITF barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:BaseBarcodeType" />
+            <xs:extension base="tns:BaseBarcodeType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="UpcaBarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>An UPCA barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:BaseBarcodeType" />
+            <xs:extension base="tns:BaseBarcodeType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:simpleType name="BarcodeDetectInputFormatType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to select the format of the file with the contents that will be scanned for barcodes.
+                    <ul>
+                        <li>pdf = PDF document</li>
+                        <li>img = Image document (JPG, PNG, TIF)</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="pdf" />
-            <xs:enumeration value="img" />
+            <xs:enumeration value="pdf"/>
+            <xs:enumeration value="img"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="BarcodeCreateOutputFormatType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines the output format for the barcode generation. The resulting document will be created by this webservice, where selected image formats will completly ignore a possibly given PDF source document and will only contain the barcode image.
+                </p>
+                <p>
+                    <b>Important:</b>
+                    This parameter is for internal use only. Please only set this value to anything other than "pdf", if you are really sure that you need to do so.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="pdf" />
-            <xs:enumeration value="bmp" />
-            <xs:enumeration value="jpg" />
-            <xs:enumeration value="png" />
-            <xs:enumeration value="tif" />
+            <xs:enumeration value="pdf"/>
+            <xs:enumeration value="bmp"/>
+            <xs:enumeration value="jpg"/>
+            <xs:enumeration value="png"/>
+            <xs:enumeration value="tif"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="QrSwissPaymentBarcodeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>A swiss QR payment barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:all>
-            <xs:element name="content" type="tns:QrSwissPaymentContentType" minOccurs="1" maxOccurs="1" />
-            <xs:element name="pdf" type="tns:QrSwissPaymentPdfType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="position" type="tns:RectangleType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="content" type="tns:QrSwissPaymentContentType"/>
+            <xs:element name="pdf" type="tns:QrSwissPaymentPdfType" minOccurs="0"/>
+            <xs:element name="position" type="tns:RectangleType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>Selects the position, the barcode shall be placed at.</p>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:all>
         <xs:attribute name="format" default="codeOnly">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to select the parts, that shall be included in the barcode.
+                        <ul>
+                            <li>codeOnly = Only the barcode itself shall be shown.</li>
+                            <li>billOnly = The barcode and the payment summary shall be shown.</li>
+                            <li>billPortraitSheet = The dimensions of the barcode and the payment summary shall be optimized for placement in the lower left corner of a page in DIN-A4 format.</li>
+                            <li>billExtraSpace = The same as "billPortraitSheet", but with extra spacings.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
-                <xs:restriction base="tns:QrSwissPaymentFormatType" />
+                <xs:restriction base="tns:QrSwissPaymentFormatType"/>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="language" default="de">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Selects the language of the barcode's payment summary.
+                        <ul>
+                            <li>de = german</li>
+                            <li>fr = french</li>
+                            <li>it = italian</li>
+                            <li>en = english</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
-                <xs:restriction base="tns:QrSwissPaymentLanguageType" />
+                <xs:restriction base="tns:QrSwissPaymentLanguageType"/>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="dpi" default="200" type="xs:int" />
-        <xs:attribute name="separator" default="dashedLineWithScissors" type="tns:QrSwissPaymentSeparatorType" />
+        <xs:attribute name="dpi" default="200" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to select the resolution of the barcode.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="separator" default="dashedLineWithScissors" type="tns:QrSwissPaymentSeparatorType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The border style for separators in between the different parts of the barcode.
+                        <ul>
+                            <li>none = No separator shall be used.</li>
+                            <li>solidLine = A solid separator line.</li>
+                            <li>solidLineWithScissors = A solid separator line with a scissor icon.</li>
+                            <li>dashedLine = A dashed separator line.</li>
+                            <li>dashedLineWithScissors = A dashed separator line with a scissor icon.</li>
+                            <li>dottedLine = A dotted separator line.</li>
+                            <li>dottedLineWithScissors = A dotted separator line with a scissor icon.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="QrSwissPaymentContentType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to select the content encoded in the barcode.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
-                <xs:attributeGroup ref="tns:FileDataGroup" />
-                <xs:attribute name="format" default="json" type="tns:QrSwissPaymentContentFormatType" />
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
+                <xs:attribute name="format" default="json" type="tns:QrSwissPaymentContentFormatType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Selects the format of the encoded data.
+                                <ul>
+                                    <li>plain = The barcode shall contain plain text data.</li>
+                                    <li>json = The barcode shall contain structured json data.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
     <xs:complexType name="QrSwissPaymentPdfType">
-        <xs:attribute name="page" default="1" type="xs:int" />
-        <xs:attribute name="mode" default="appendAtEnd" type="tns:QrSwissPaymentPdfModeType" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to position the barcode in a PDF document.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="page" default="1" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The number of the page, the barcode shall be placed at or relative to. (depending on the selected placement "mode".)</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mode" default="appendAtEnd" type="tns:QrSwissPaymentPdfModeType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Selects the position to place the barcode at.
+                        <ul>
+                            <li>insertBefore = Places the barcode on a new, empty page before the selected page.</li>
+                            <li>appendAtEnd = Places the barcode on a new, empty page at the end of the document.</li>
+                            <li>addToPage = Place the barcode on the selected page.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="QrSwissPaymentContentFormatType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Selects the format of the encoded data.
+                    <ul>
+                        <li>plain = The code shall contain plain text.</li>
+                        <li>json = The code shall contain structured json data.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="plain" />
-            <xs:enumeration value="json" />
+            <xs:enumeration value="plain"/>
+            <xs:enumeration value="json"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

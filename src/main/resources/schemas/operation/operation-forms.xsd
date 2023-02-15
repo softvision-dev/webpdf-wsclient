@@ -1,54 +1,151 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="FormsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The forms operation element can be used to import and export PDF forms.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:choice>
-                    <xs:element name="import" type="tns:FormsImportType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="export" type="tns:FormsExportType" minOccurs="0" maxOccurs="1" />
-                    <xs:element name="flatten" type="tns:FormsFlattenType" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="import" type="tns:FormsImportType" minOccurs="0"/>
+                    <xs:element name="export" type="tns:FormsExportType" minOccurs="0"/>
+                    <xs:element name="flatten" type="tns:FormsFlattenType" minOccurs="0"/>
                 </xs:choice>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="FormsBaseType" />
+    <xs:complexType name="FormsBaseType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>A common base type for all forms operations.</p>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
     <xs:complexType name="FormsImportType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to import data into the form fields.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:FormsBaseType">
                 <xs:all>
-                    <xs:element name="data" type="tns:FormsFileDataType" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="data" type="tns:FormsFileDataType"/>
                 </xs:all>
-                <xs:attribute name="flatten" default="false" type="xs:boolean" />
-                <xs:attribute name="format" default="xml" type="tns:FormsFormatType" />
+                <xs:attribute name="flatten" default="false" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>When set to "true" this will render the field contents after importing the new form values. (please refer to the documentation of the "flatten element").</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="format" default="xml" type="tns:FormsFormatType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to set the format for exporting the data in a PDF form:
+                                <ul>
+                                    <li>xml = XML</li>
+                                    <li>fdf = FDF</li>
+                                    <li>xfdf = XFDF</li>
+                                    <li>xdp = XDP (only for PDF documents that contain XFA data)</li>
+                                </ul>
+                                <p>The exported data will be returned with the web service call as per the selected format.</p>
+                                <b>Tip:</b>
+                                The format of this is described by the http://schema.webpdf.de/1.0/form/data.xsd schema.
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="FormsExportType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to export data from the form fields.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:FormsBaseType">
-                <xs:attribute name="format" default="xml" type="tns:FormsFormatType" />
-                <xs:attribute name="fdfFileName" default="" type="xs:string" />
+                <xs:attribute name="format" default="xml" type="tns:FormsFormatType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to set the format for exporting the data in a PDF form:
+                                <ul>
+                                    <li>xml = XML</li>
+                                    <li>fdf = FDF</li>
+                                    <li>xfdf = XFDF</li>
+                                    <li>xdp = XDP (only for PDF documents that contain XFA data)</li>
+                                </ul>
+                                <p>The exported data will be returned with the web service call as per the selected format.</p>
+                                <b>Tip:</b>
+                                The format of this is described by the http://schema.webpdf.de/1.0/form/data.xsd schema.
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="fdfFileName" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Used to specify the file name of the PDF document that should be loaded automatically when the FDF document is opened. This setting is only used if "format" is set to "fdf".</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="FormsFlattenType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to remove and render PDF fields. This will remove the interactive form fields from the document and will create a static, visual representation of such fields.
+
+                </p>
+                <p>
+                    <b>Important:</b>
+                    The flatten options only work with "AcroForms." "Static XFA Forms" and "Dynamic XFA forms" created with Adobe® LiveCycle®, for example, are not supported.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:FormsBaseType" />
+            <xs:extension base="tns:FormsBaseType"/>
         </xs:complexContent>
     </xs:complexType>
     <xs:simpleType name="FormsFormatType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to set the format for exporting the data in a PDF form:
+                    <ul>
+                        <li>xml = XML</li>
+                        <li>fdf = FDF</li>
+                        <li>xfdf = XFDF</li>
+                        <li>xdp = XDP (only for PDF documents that contain XFA data)</li>
+                    </ul>
+                    <p>The exported data will be returned with the web service call as per the selected format.</p>
+                    <b>Tip:</b>
+                    The format of this is described by the http://schema.webpdf.de/1.0/form/data.xsd schema.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="xml" />
-            <xs:enumeration value="fdf" />
-            <xs:enumeration value="xfdf" />
-            <xs:enumeration value="xdp" />
+            <xs:enumeration value="xml"/>
+            <xs:enumeration value="fdf"/>
+            <xs:enumeration value="xfdf"/>
+            <xs:enumeration value="xdp"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="FormsFileDataType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Selects a source for form data.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
-                <xs:attributeGroup ref="tns:FileDataGroup" />
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>

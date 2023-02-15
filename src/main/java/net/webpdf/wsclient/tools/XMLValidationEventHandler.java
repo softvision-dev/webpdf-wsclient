@@ -4,23 +4,31 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEventLocator;
+import jakarta.xml.bind.ValidationEvent;
+import jakarta.xml.bind.ValidationEventHandler;
+import jakarta.xml.bind.ValidationEventLocator;
+
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * <p>
+ * An instance of {@link XMLValidationEventHandler} validates and handles incoming messages detected by the Jakarta
+ * XML Binding provider.
+ * </p>
+ * <p>
+ * This validation ensures, that XML contents are well-formed and valid.
+ * </p>
+ */
 class XMLValidationEventHandler implements ValidationEventHandler {
 
-    @NotNull
-    private List<String> messages = new ArrayList<>();
-    @NotNull
-    private XMLStatus xmlStatus = XMLStatus.OK;
+    private final @NotNull List<String> messages = new ArrayList<>();
+    private @NotNull XMLStatus xmlStatus = XMLStatus.OK;
 
     /**
-     * Returns true, as long as the {@link XMLStatus} equals OK.
+     * Returns {@code true}, as long as the {@link XMLStatus} equals OK.
      *
-     * @return True, if the {@link XMLStatus} equals OK.
+     * @return {@code true}, if the {@link XMLStatus} equals OK.
      */
     boolean isValid() {
         return this.xmlStatus.equals(XMLStatus.OK);
@@ -60,7 +68,7 @@ class XMLValidationEventHandler implements ValidationEventHandler {
         ValidationEventLocator validationEventLocator = event.getLocator();
         if (validationEventLocator != null) {
             message = message + String.format(" (line: %d; column: %d)", validationEventLocator.getLineNumber(),
-                validationEventLocator.getColumnNumber());
+                    validationEventLocator.getColumnNumber());
         }
         messages.add(message);
 
@@ -72,8 +80,7 @@ class XMLValidationEventHandler implements ValidationEventHandler {
      *
      * @return A String containing the collected messages from all {@link ValidationEvent}s.
      */
-    @NotNull
-    String getMessages() {
+    @NotNull String getMessages() {
         return StringUtils.join(messages, "\n");
     }
 
@@ -82,8 +89,7 @@ class XMLValidationEventHandler implements ValidationEventHandler {
      *
      * @return the current {@link XMLStatus}.
      */
-    @NotNull
-    XMLStatus getXMLStatus() {
+    @NotNull XMLStatus getXMLStatus() {
         return this.xmlStatus;
     }
 

@@ -1,28 +1,171 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="UrlConverterType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The "URLConverter" web service van be used to convert URL resources (websites) to a PDF document.
+
+                </p>
+                <p>
+                    <b>Important:</b>
+                    Please keep the limitations of HTML conversion in mind (see chapter "HTML conversion").
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:all>
-            <xs:element name="basicAuth" type="tns:HttpBasicAuthType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="page" type="tns:PageType" minOccurs="0" maxOccurs="1" />
-            <xs:element name="proxy" type="tns:HttpProxyType" minOccurs="0" maxOccurs="1" />
+            <xs:element name="basicAuth" type="tns:HttpBasicAuthType" minOccurs="0"/>
+            <xs:element name="page" type="tns:UrlConverterPageType" minOccurs="0"/>
+            <xs:element name="proxy" type="tns:HttpProxyType" minOccurs="0"/>
         </xs:all>
-        <xs:attribute name="url" default="" type="xs:string" />
+        <xs:attribute name="url" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The URL for the resource to be converted.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="HttpBasicAuthType">
-        <xs:attribute name="userName" default="" type="xs:string" />
-        <xs:attribute name="password" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to define the appropriate login information if access to the resource requires a login using the "Basic Authentication" method.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="userName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Username if the URL requests an authentication of the "Basic Authentication" type.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="password" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Password if the URL requests an authentication of the "Basic Authentication" type.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="HttpProxyType">
-        <xs:attribute name="userName" default="" type="xs:string" />
-        <xs:attribute name="password" default="" type="xs:string" />
-        <xs:attribute name="address" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to define the proxy and the access information if the resource must be fetched through a proxy.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="userName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Username if access to the proxy service requires authentication.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="password" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Password if access to the proxy service requires authentication.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="address" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The address at which the proxy server can be reached.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="port" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The port that should be used to access the proxy server.</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="UrlConverterPageType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Sets the page size, margins, and headers and footers for the converted document in the PDF document.</p>
+                <p>
+                    <b>Important:</b>
+                    The settings may override the default values for a format that itself has page settings.
+                    In addition, not all settings can be applied to all formats (see, for example, the description of headers and footers).
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:PageType">
+                <xs:all>
+                    <xs:element name="header" type="tns:UrlConverterHeaderType" minOccurs="0"/>
+                    <xs:element name="footer" type="tns:UrlConverterFooterType" minOccurs="0"/>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="UrlConverterHeaderType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines the content that will be used as a header. The content is passed in BASE64 encoded and contains
+                    HTML and (embedded) CSS code to position and format the header.
+                </p>
+                <p>The header can contain the variables <code>${html.pageNumber}</code> (page number), <code>${html.totalPages}</code> (total number of pages)
+                    and <code>${html.title}</code> (HTML head meta tag <code>&lt;title&gt;</code>).
+                </p>
+                <p>
+                    <b>Important:</b>The header is not used for all file format conversions. The header is not supported for file formats that
+                    already contain their own header definition, such as Office formats. The header defined here works only for HTML-based
+                    formats such as HTML files, emails, or template-based conversions (e.g. text formats).
+                </p>
+                <p>Example:</p>
+                <pre class="language-html">
+                    <![CDATA[
+<p>
+  <span style="font-size: 12px">Page ${html.pageNumber} of ${html.totalPages} pages</span>
+</p>
+]]>
+                </pre>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="UrlConverterFooterType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines the content that will be used as a footer. The content is passed in BASE64 encoded and contains
+                    HTML and (embedded) CSS code to position and format the footer.
+                </p>
+                <p>The footer can contain the variables <code>${html.pageNumber}</code> (page number), <code>${html.totalPages}</code> (total number of pages)
+                    and <code>${html.title}</code> (HTML head meta tag <code>&lt;title&gt;</code>).
+                </p>
+                <p>
+                    <b>Important:</b>The footer is not used for all file format conversions. The footer is not supported for file formats that
+                    already contain their own footer definition, such as Office formats. The footer defined here works only for HTML-based
+                    formats such as HTML files, emails, or template-based conversions (e.g. text formats).
+                </p>
+                <p>Example:</p>
+                <pre class="language-html">
+                    <![CDATA[
+<p>
+  <span style="font-size: 12px">Page ${html.pageNumber} of ${html.totalPages} pages</span>
+</p>
+]]>
+                </pre>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary">
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
+            </xs:extension>
+        </xs:simpleContent>
     </xs:complexType>
 </xs:schema>

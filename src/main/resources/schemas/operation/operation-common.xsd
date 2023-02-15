@@ -1,186 +1,1038 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-compress.xsd"/>
     <xs:complexType name="BillingType">
-        <xs:attribute name="customerCode" default="" type="xs:string" />
-        <xs:attribute name="userName" default="" type="xs:string" />
-        <xs:attribute name="applicationName" default="external" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>The <code>billing</code> element can be used to affect the values that are written to the server's statistics logs (called "billing logs") for the web service call.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="customerCode" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>A free text that identifies the customer calling the web service. This attribute makes it possible to analyze the logs with regard to specific customers, for example.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="userName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>A free text that specifies the name of the user calling the web service. This attribute makes it possible to analyze the logs with regard to specific users, for example.
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        If the web service is called from the server's portal and a user is logged in, the user's name will be entered automatically.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="applicationName" default="external" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>A free text that specifies the name of the application calling the web service. This attribute makes it possible to analyze the logs with regard to specific applications, for example.
+
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        If the web service is called by an external application that does not set its own value for "applicationName", a value of "external" will be entered automatically. If the web service is called from the server's portal, a value of "portal" will be entered automatically.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="PdfPasswordType">
-        <xs:attribute name="permission" default="" type="xs:string" />
-        <xs:attribute name="open" default="" type="xs:string" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>The <code>password</code> element can be used to set the user and owner passwords or certificates for the PDF document which are needed if the PDF document is protected. For example, if a protected PDF document is to be edited with the web service, then these settings can be used to provide the password or certificates for access.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="keyPair" type="tns:KeyPairType" minOccurs="0"/>
+        </xs:all>
+        <xs:attribute name="permission" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>A password that allows "editing access" to the document. If the provided PDF document is password protected and the web service operation is to edit the document, then the appropriate password (owner password) must be provided to unlock the document.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="open" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>A password that is required to open the document. If the provided PDF document is protected in such a way that a password (user password) is required to read the document, the corresponding password must also be passed. Without this password it is not possible to edit the document with the web service, because it cannot be read.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="MarginType">
-        <xs:attribute name="left" default="20" type="xs:int" />
-        <xs:attribute name="right" default="20" type="xs:int" />
-        <xs:attribute name="top" default="20" type="xs:int" />
-        <xs:attribute name="bottom" default="20" type="xs:int" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to define a margin for a rectangular container.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="left" default="20" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Left margin settings.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="right" default="20" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Right margin settings.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="top" default="20" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Top margin settings.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="bottom" default="20" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Bottom margin settings.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="PageType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to define a page format for an operation.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:MarginType">
-                <xs:attribute name="width" default="210" type="xs:int" />
-                <xs:attribute name="height" default="297" type="xs:int" />
-                <xs:attribute name="metrics" default="mm">
-                    <xs:simpleType>
-                        <xs:restriction base="tns:MetricsType">
-                            <xs:enumeration value="mm" />
-                        </xs:restriction>
-                    </xs:simpleType>
+                <xs:attribute name="width" default="210" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Page width.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="height" default="297" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Page height.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="metrics" default="mm" type="tns:MetricsType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Unit for the arguments.
+                                <ul>
+                                    <li>pt = Points(1/72 inch)</li>
+                                    <li>pc = Picas(12 points)</li>
+                                    <li>px = Pixels(1/96 inch)</li>
+                                    <li>mm = Millimeters</li>
+                                    <li>in = Inches</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
                 </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:attributeGroup name="PointGroup">
-        <xs:attribute name="x" default="0" use="optional">
+        <xs:attribute name="x" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>X-axis position.</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="y" default="0" use="optional">
+        <xs:attribute name="y" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Y-axis position.</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="metrics" default="mm" type="tns:MetricsType" use="optional" />
-        <xs:attribute name="coordinates" default="user" type="tns:CoordinatesType" use="optional" />
+        <xs:attribute name="metrics" default="mm" type="tns:MetricsType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Unit for the X-axis/Y-axis position and signature field height and width arguments:
+                        <ul>
+                            <li>pt = Points (1/72 inch)</li>
+                            <li>pc = Picas (12 points)</li>
+                            <li>px = Pixels (1/96 inch)</li>
+                            <li>mm = Millimeters</li>
+                            <li>in = Inches</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="coordinates" default="user" type="tns:CoordinatesType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to define the coordinate system and, accordingly, the origin for the position arguments.
+                        <ul>
+                            <li>user = User coordinate system (origin at top left)</li>
+                            <li>pdf = PDF coordinate system (origin at bottom left)</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:attributeGroup>
     <xs:attributeGroup name="RectangleGroup">
-        <xs:attribute name="width" default="0" use="optional">
+        <xs:attribute name="width" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Width of the rectangle.</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="height" default="0" use="optional">
+        <xs:attribute name="height" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Height of the rectangle.</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attributeGroup ref="tns:PointGroup" />
+        <xs:attributeGroup ref="tns:PointGroup"/>
+    </xs:attributeGroup>
+    <xs:attributeGroup name="DimensionsGroup">
+        <xs:attribute name="width" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The width dimension.</p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="height" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The height dimension.</p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:float">
+                    <xs:minInclusive value="0"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="metrics" default="mm" type="tns:MetricsType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Unit for the X-axis/Y-axis position and signature field height and width arguments:
+                        <ul>
+                            <li>pt = Points(1/72 inch)</li>
+                            <li>pc = Picas(12 points)</li>
+                            <li>px = Pixels(1/96 inch)</li>
+                            <li>mm = Millimeters</li>
+                            <li>in = Inches</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="coordinates" default="user" type="tns:CoordinatesType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to define the coordinate system and, accordingly, the origin for the position arguments.
+                        <ul>
+                            <li>user = User coordinate system (origin at top left)</li>
+                            <li>pdf = PDF coordinate system (origin at bottom left)</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:attributeGroup>
     <xs:simpleType name="MetricsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Unit for the X-axis/Y-axis position and signature field height and width arguments:
+                    <ul>
+                        <li>pt = Points(1/72 inch)</li>
+                        <li>pc = Picas(12 points)</li>
+                        <li>px = Pixels(1/96 inch)</li>
+                        <li>mm = Millimeters</li>
+                        <li>in = Inches</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="px" />
-            <xs:enumeration value="mm" />
+            <xs:enumeration value="pt"/>
+            <xs:enumeration value="pc"/>
+            <xs:enumeration value="px"/>
+            <xs:enumeration value="mm"/>
+            <xs:enumeration value="in"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="CoordinatesType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to define the coordinate system and, accordingly, the origin for the position arguments.
+                    <ul>
+                        <li>user = User coordinate system (origin at top left)</li>
+                        <li>pdf = PDF coordinate system (origin at bottom left)</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="pdf" />
-            <xs:enumeration value="user" />
+            <xs:enumeration value="pdf"/>
+            <xs:enumeration value="user"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="PointType">
-        <xs:attributeGroup ref="tns:PointGroup" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to select a point.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attributeGroup ref="tns:PointGroup"/>
     </xs:complexType>
     <xs:complexType name="RectangleType">
-        <xs:attributeGroup ref="tns:RectangleGroup" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to select a rectangle.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attributeGroup ref="tns:RectangleGroup"/>
+    </xs:complexType>
+    <xs:complexType name="PaddedRectangleType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to select a rectangle and define a padding for it's contents.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attributeGroup ref="tns:DimensionsGroup"/>
+        <xs:attributeGroup ref="tns:PaddingGroup"/>
     </xs:complexType>
     <xs:simpleType name="LanguageType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>An ISO 639-1-compliant language code consisting of 2 letters. If there is one, a localized template will be
+                    selected using the language selected here. If not defined, the language in which the server is running is used.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:token">
-            <xs:pattern value="[a-z]{2}" />
+            <xs:pattern value="system|[a-z]{2}"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="RgbColorType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The hereby defined color needs to be specified as a hexadecimal RGB value with a number sign before it.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:token">
-            <xs:pattern value="#[0-9a-fA-F]{6}" />
+            <xs:pattern value="#[0-9a-fA-F]{6}"/>
         </xs:restriction>
     </xs:simpleType>
-    <xs:complexType name="BaseToolboxType" />
+    <xs:complexType name="BaseToolboxType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The base type for all Toolbox webservice operations.</p>
+            </xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
     <xs:simpleType name="DpiType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to select a dpi resolution.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:int">
-            <xs:minInclusive value="0" />
-            <xs:maxInclusive value="9600" />
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="9600"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="OpacityType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to select an opacity value as a percentage.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:int">
-            <xs:minInclusive value="0" />
-            <xs:maxInclusive value="100" />
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="100"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:attributeGroup name="FileDataGroup">
         <xs:attribute name="source" default="value">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Selects the data source for the hereby expressed resource.
+                        Possible values are:
+                        <ul>
+                            <li>value = The element's value shall contain the BASE64 encoded data.</li>
+                            <li>uri = The data shall be located at the given uri.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
-                <xs:restriction base="tns:FileDataSourceType" />
+                <xs:restriction base="tns:FileDataSourceType"/>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="uri" default="" type="xs:anyURI" />
+        <xs:attribute name="uri" default="" type="xs:anyURI">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The uri the data shall be located at. (This shall only have effect, if the "source" is "uri".)</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:attributeGroup>
     <xs:simpleType name="FileDataSourceType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Selects the data source for the hereby expressed resource.
+                    Possible values are:
+                    <ul>
+                        <li>value = The element's value shall contain the BASE64 encoded data.</li>
+                        <li>uri = The data shall be located at the given uri.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="value" />
-            <xs:enumeration value="uri" />
+            <xs:enumeration value="value"/>
+            <xs:enumeration value="uri"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="ImageOptimizationType">
-        <xs:attribute name="deskew" default="true" type="xs:boolean" />
-        <xs:attribute name="despeckle" default="true" type="xs:boolean" />
-        <xs:attribute name="reduceDithering" default="false" type="xs:boolean" />
-        <xs:attribute name="noiseReduction" default="low" type="tns:OptimizationIntensityType" />
+        <xs:annotation>
+            <xs:documentation>
+                <p>The optimization element allows to correct the images of the pages to optimize them for OCR. Except for the "deskew" parameter, none of the optimizations are actually visible in the generated documents. The other optimizations are only used to improve the text recognition.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="deskew" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Straight scans of pages can be created with a slight skew. If this value is set to true, an attempt is made to counter-rotate this skew and thus "deskew" the page. The results of this manipulation are visible in the resulting document.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="despeckle" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this mode is set, impurities and stains are reduced. These are caused, for example, by dust or dirt on the pane of a scanner. It is recommended to activate this optimization.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="reduceDithering" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>In black and white images (including black and white scans), color values are often represented by a halftone according to their brightness (dithering / moiré effect). These halftones/hatchings translate a color value into a uniform sequence of black and white areas that visually appear to be a uniform area of the same color/brightness. Such patterns can be very difficult to delineate against actual text that may be in such a "colored" area. Setting this value to true will try to reduce such dithering patterns. This mode should only be set if absolutely necessary, as this process can be very lossy.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="noiseReduction" default="low" type="tns:OptimizationIntensityType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this mode is set, an attempt is made to remove background noise from the image, which is caused by irregularities in the image background or by artifacts that can result from image compression. Such irregularities - especially around letters - can affect recognition. It is recommended to activate this optimization.
+                        <ul>
+                            <li>off = Do not apply this optimization</li>
+                            <li>value = Choose your own value</li>
+                            <li>low = Perform optimization only with low intensity to avoid information loss.</li>
+                            <li>medium = Perform optimization with medium intensity.</li>
+                            <li>high = Perform optimization with high intensity and accept possible information losses.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="noiseReductionValue" default="1.0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Allows in combination with the noiseReduction mode "value" the free choice of a value for this optimization. A decimal value greater than 0 indicates the intensity with which the effect is to be applied to the image. The predefined values range between 1.0 (low) and 3.0 (high).</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0.0" />
+                    <xs:minInclusive value="0.0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="gammaCorrection" default="off" type="tns:OptimizationIntensityType" />
+        <xs:attribute name="gammaCorrection" default="off" type="tns:OptimizationIntensityType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>This value should only be activated for very poorly exposed images. Selective light value spreading (compression) is used to emphasize the dark areas of the image over the light areas (gamma correction) and thus make detection possible at all. This mode should only be activated if absolutely necessary, since it can lead to strong information losses or otherwise make a recognition impossible. Together with an increase in image contrast, this optimization can be used, for example, to remove image backgrounds that would otherwise be difficult to distinguish from the letters applied to them.
+                        <ul>
+                            <li>off = Do not apply this optimization</li>
+                            <li>value = Select your own value</li>
+                            <li>low = Perform optimization only with low intensity to avoid information loss.</li>
+                            <li>medium = Perform optimization with medium intensity.</li>
+                            <li>high = Perform optimization with strong intensity and accept possible information losses.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="gammaCorrectionValue" default="0.0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Allows in combination with the gammaCorrection mode "value" the free choice of a value for this optimization. A comma value greater than 0 specifies the value to be applied to the image as gamma correction. The predefined values range between 1.5 (low) and 2.5 (high).</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0.0" />
+                    <xs:minInclusive value="0.0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="increaseContrast" default="off" type="tns:OptimizationIntensityType" />
+        <xs:attribute name="increaseContrast" default="off" type="tns:OptimizationIntensityType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>This value should only be activated for very poorly exposed images. By increasing the contrast, an attempt is made to emphasize the dark areas of the image over the light ones, thus making detection possible at all. This mode should only be activated if absolutely necessary, as it can lead to severe information loss or otherwise make detection impossible. Together with gamma correction, this optimization can be used, for example, to remove image backgrounds that would otherwise be difficult to distinguish from the letters applied to them.
+                        <ul>
+                            <li>off = Do not apply this optimization</li>
+                            <li>value = Choose your own value</li>
+                            <li>low = Perform optimization only with low intensity to avoid information loss.</li>
+                            <li>medium = Perform optimization with medium intensity.</li>
+                            <li>high = Perform optimization with strong intensity and accept possible information losses.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="increaseContrastValue" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Allows in combination with the increaseContrast mode "value" the free choice of a value for this optimization. An integer value between -100 and +100 specifies the intensity of the contrast enhancement. The predefined values range between 25 (low) and 75 (high).</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="-100" />
-                    <xs:maxInclusive value="100" />
+                    <xs:minInclusive value="-100"/>
+                    <xs:maxInclusive value="100"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="edgeAccentuation" default="low" type="tns:OptimizationIntensityType" />
+        <xs:attribute name="edgeAccentuation" default="low" type="tns:OptimizationIntensityType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set, a Marr-Hildreth operator is used to accentuate the edges of the image. This optimization usually leads to significantly better recognition results, but can also lead to information loss.
+                        <ul>
+                            <li>off = Do not apply this optimization</li>
+                            <li>value = Choose your own value</li>
+                            <li>low = Perform optimization only with low intensity to avoid information loss.</li>
+                            <li>medium = Perform optimization with medium intensity.</li>
+                            <li>high = Perform optimization with strong intensity and accept possible information losses.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="edgeAccentuationValue" default="100">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Allows in combination with the edgeAccentuation mode "value" the free choice of a value for this optimization. An integer percentage value indicates the intensity of the edge accentuation. The actual image is overlaid with a corresponding sharpening filter for the edge accentuation - this percentage value specifies how intensively this effect should be emphasized compared to the original image. The predefined values range between 100 (low) and 200 percent (high).</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="sharpen" default="low" type="tns:OptimizationIntensityType" />
+        <xs:attribute name="sharpen" default="low" type="tns:OptimizationIntensityType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set, edge sharpening is applied to the image. This optimization usually leads to significantly better recognition results, but can also lead to information loss.
+                        <ul>
+                            <li>off = Do not apply this optimization</li>
+                            <li>value = Select your own value</li>
+                            <li>low = Apply optimization only with low intensity to avoid information loss.</li>
+                            <li>medium = Perform optimization with medium intensity.</li>
+                            <li>high = Perform optimization with strong intensity and accept possible information losses.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="sharpenValue" default="1.0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Allows in combination with the sharpen mode "value" the free choice of a value for this optimization. A comma value greater than 0 indicates the intensity with which the effect is to be applied to the image. The predefined values range between 1.0 (low) and 3.0 (high).</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0.0" />
+                    <xs:minInclusive value="0.0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="medianFilter" default="low" type="tns:OptimizationIntensityType" />
+        <xs:attribute name="medianFilter" default="low" type="tns:OptimizationIntensityType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this value is set, the color and brightness diversity of the image is selectively reduced and unified via a median filter. In general, this makes areas more uniform and more clearly distinguishable from their surroundings. This can lead to better recognition results, especially for images with a colored or grayscale background.
+                        <ul>
+                            <li>off = Do not apply this optimization</li>
+                            <li>value = Select your own value</li>
+                            <li>low = Perform optimization only with low intensity to avoid information loss.</li>
+                            <li>medium = Perform optimization with medium intensity.</li>
+                            <li>high = Perform optimization with strong intensity and accept possible information losses.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="medianFilterValue" default="1">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Allows, in combination with the medianFilter mode "value", the free choice of a value for this optimization. An integer value greater than 0 specifies the grid size with which the effect is to be applied to the image. The predefined values range between 1 (low) and 3 (high).</p>
+                </xs:documentation>
+            </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0" />
+                    <xs:minInclusive value="0"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
     <xs:simpleType name="OptimizationIntensityType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>If this value is set, edge sharpening is applied to the image. This optimization usually leads to significantly better recognition results, but can also lead to information loss.
+                    <ul>
+                        <li>off = Do not apply this optimization</li>
+                        <li>value = Select your own value</li>
+                        <li>low = Apply optimization only with low intensity to avoid information loss.</li>
+                        <li>medium = Perform optimization with medium intensity.</li>
+                        <li>high = Perform optimization with strong intensity and accept possible information losses.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="off" />
-            <xs:enumeration value="value" />
-            <xs:enumeration value="low" />
-            <xs:enumeration value="medium" />
-            <xs:enumeration value="high" />
+            <xs:enumeration value="off"/>
+            <xs:enumeration value="value"/>
+            <xs:enumeration value="low"/>
+            <xs:enumeration value="medium"/>
+            <xs:enumeration value="high"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="KeyPairType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Allows the private key for decrypting an asymmetrically encrypted document to be handed over and the associated rights holder (recipient) to be selected by means of the certificate assigned to him.
+                    The document can only be decrypted if both are present and the private key and certificate both match and are intended for decrypting the document.
+
+                    When encrypting the document, it is possible to define multiple rights holders, but when decrypting the document as configured here, only a single one of these rights holders can be selected for which the decryption is to be performed.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="privateKey" type="tns:PrivateKeyFileDataType" default=""/>
+            <xs:element name="certificate" type="tns:CertificateFileDataType" default=""/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="CertificateFileDataType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Allows the transfer of a certificate (as a PEM file), for the en-/decryption of an asymmetrically encrypted document. The certificate identifies the rights recipient who is to be given access to the document.
+                    The transfer of multiple certificates or other structures is not intended at this point; exactly one certificate is expected for the decryption of the document.
+                    The rights recipient must already be assigned to the document when the document is encrypted. The certificate and private key must therefore be selected in such a way that they map a rights recipient who was entered in this document when it was encrypted.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="PrivateKeyFileDataType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Allows the private key to be passed (as a PEM file), for decryption of an asymmetrically encrypted document.
+                    The transfer of multiple private keys or other structures is not provided for at this point; exactly one private key is expected for decrypting the document.
+                    The rights recipient must already be assigned to the document when the document is encrypted. The certificate and private key must therefore be selected in such a way that they map a rights recipient who was entered in this document when it was encrypted.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attributeGroup ref="tns:FileDataGroup"/>
+                <xs:attribute name="password" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>If the private key itself is encrypted (recommended), this password allows read access to the key to make it available for decrypting the document.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:attributeGroup name="PaddingGroup">
+        <xs:attribute name="left" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The left padding value.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="right" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The right padding value.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="top" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The top padding value.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="bottom" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The bottom padding value.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:attributeGroup>
+    <xs:attributeGroup name="AlignmentGroup">
+        <xs:attribute name="horizontalAlignment" default="left">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If margins are created when the page is scaled or if the page content must be positioned relative to a context (for example, the crop box), this value specifies how margins are to be split and how overall page content is to be positioned on the page.
+                        <ul>
+                            <li>left = Contents are to be arranged left-justified.</li>
+                            <li>center = Content should be centered.</li>
+                            <li>right = Contents should be arranged right-justified.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="left"/>
+                    <xs:enumeration value="center"/>
+                    <xs:enumeration value="right"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="verticalAlignment" default="top">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If margins are created when the page is scaled or if the page content must be positioned relative to a context (for example, the crop box), this value specifies how margins are to be split and how overall page content is to be positioned on the page.
+                        <ul>
+                            <li>top = Content should be positioned at the top of the page.</li>
+                            <li>center = Content should be centered.</li>
+                            <li>bottom = content should be positioned at the bottom.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="top"/>
+                    <xs:enumeration value="center"/>
+                    <xs:enumeration value="bottom"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:attributeGroup>
+    <xs:complexType name="SettingsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to configure global settings that should be respected when running the web service operation. This concerns e.g. settings whether the execution of the operation is allowed within the scope of the PDF document settings or how the result of the operation should be handled.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="signature" type="tns:SignatureSettingsType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>The <code>signature</code> element allows to make settings for automatic handling of digital signatures. The web service operation checks whether it´s execution is valid for a given signed document according to the settings or whether invalidation of the existing signatures is allowed. Thus, the settings allow for intentional invalidation of signatures.
+                        </p>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="compress" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>The <code>compress</code> element can be used to automatically compress the contents of the PDF document when saving it. Whenever the web service operation saves the PDF document, it should try to compress it according to the settings specified here. Document compression can also be triggered specifically via the 'compress' web service instead.
+                        </p>
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="compressObjects" type="tns:CompressObjectsType" minOccurs="0"/>
+                    </xs:all>
+                    <xs:attribute name="compressProfile" default="never" type="tns:CompressProfileType">
+                        <xs:annotation>
+                            <xs:documentation>
+                                <p>Sets the profile for automatic document compression and thus defines whether compression should be applied when saving.
+                                    <ul>
+                                        <li>always = PDF documents should always be compressed when saved.</li>
+                                        <li>never = PDF documents should not be automatically compressed.</li>
+                                        <li>recompress = PDF documents should only be compressed automatically if they were already compressed before.</li>
+                                    </ul>
+                                </p>
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="pdfa" type="tns:PdfaSettingsType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>
+                            The <code>pdfa</code> element allows to make settings for automatic handling of PDF/A documents. The web service operation checks whether it´s execution is valid for a given PDF/A document according to the settings.
+                        </p>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+    <xs:simpleType name="SignatureEditProfileType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines the profile whose rules web services have to check before they can come to execution. These profiles define a set of rules concerning the validity of signatures. A web service whose execution for a given signed document would violate the ruleset selected here should instead abort with an appropriate error code.
+                    <ul>
+                        <li>adobeRestrictions = Only those changes are allowed that are enabled by the included signatures. This follows the specifications given by Adobe.</li>
+                        <li>generalEditRestrictions = All changes to signed documents are prohibited, even those that might be allowed according to the included signatures.</li>
+                        <li>noEditRestrictions = Editing of signed documents is not restricted and all changes are allowed (by doing this, you accept the invalidation of included signatures).</li>
+                    </ul>
+
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="adobeRestrictions"/>
+            <xs:enumeration value="generalEditRestrictions"/>
+            <xs:enumeration value="noEditRestrictions"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="SignatureSettingsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The <code>signature</code> element allows to set settings for automatic signature handling and verification. All web services prioritize checking whether their execution is valid for a given signed document - according to these settings - or would risk invalidation of the existing signatures. (This is also defining profiles, that would allow signature invalidation).
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="signatureEditProfile" default="adobeRestrictions" type="tns:SignatureEditProfileType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Defines the profile whose rules web services have to check before they can come to execution. These profiles define a set of rules concerning the validity of signatures. A web service whose execution for a given signed document would violate the rule set selected here should instead abort with an appropriate error code.
+                        <ul>
+                            <li>adobeRestrictions = Only those changes are allowed that are enabled by the included signatures. This follows the specifications given by Adobe.</li>
+                            <li>generalEditRestrictions = All changes to signed documents are prohibited, even those that might be allowed according to the included signatures.</li>
+                            <li>noEditRestrictions = Editing of signed documents is not restricted and all changes are allowed. (By doing this, you accept the possible invalidation of included signatures.)</li>
+                        </ul>
+
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        You can find further explanations of these profiles in the chapter "Signature Validation".
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="PdfaEditProfileType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+                    Defines the profile whose rules web services have to check before they can come to execution. These profiles define a set of rules concerning the validity of PDF/A documents. A web service whose execution for a given PDF/A document would violate the rule set selected here should instead abort with an appropriate error code.
+                    <ul>
+                        <li>generalEditRestrictions = All changes to PDF/A documents are prohibited.</li>
+                        <li>removePdfaMetadata = All changes to PDF/A documents are allowed, but the PDF/A state of the document is revoked. (By removing the PDF/A metadata.)</li>
+                        <li>noEditRestrictions = All changes to PDF/A documents are allowed, without touching the PDF/A state of the document. (Risking the invalidation of the document.)</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="generalEditRestrictions"/>
+            <xs:enumeration value="removePdfaMetadata"/>
+            <xs:enumeration value="noEditRestrictions"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="PdfaSettingsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+                    The <code>pdfa</code> element allows to make settings for automatic handling of PDF/A documents. Editing a PDF/A document will most likely render it invalid, thus the web service operation checks whether it´s execution is valid for a given PDF/A document according to these settings.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="pdfaEditProfile" default="removePdfaMetadata" type="tns:PdfaEditProfileType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Defines the profile whose rules web services have to check before they can come to execution. These profiles define a set of rules concerning the validity of PDF/A documents. A web service whose execution for a given PDF/A document would violate the rule set selected here should instead abort with an appropriate error code.
+                        <ul>
+                            <li>generalEditRestrictions = All changes to PDF/A documents are prohibited.</li>
+                            <li>removePdfaMetadata = All changes to PDF/A documents are allowed, but the PDF/A state of the document is revoked. (By removing the PDF/A metadata.)</li>
+                            <li>noEditRestrictions = All changes to PDF/A documents are allowed, without touching the PDF/A state of the document. (Risking the invalidation of the document.)</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="CompressSettingsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Combines object definitions of the document into so-called "object streams" and compresses them. This operation is recommended especially for larger documents with many objects. The size of contained resources (such as graphics and fonts) cannot be reduced in this way.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:CompressType">
+                <xs:attribute name="compressProfile" default="never" type="tns:CompressProfileType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Sets the profile for automatic document compression and thus defines whether compression should be applied when saving.
+                                <ul>
+                                    <li>always = PDF documents should always be compressed when saved.</li>
+                                    <li>never = PDF documents should not be automatically compressed.</li>
+                                    <li>recompress = PDF documents should only be compressed automatically if they were already compressed previously.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="CompressProfileType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Sets the profile for automatic document compression and thus defines whether compression should be applied when saving.
+                    <ul>
+                        <li>always = PDF documents should always be compressed when saved.</li>
+                        <li>never = PDF documents should not be automatically compressed.</li>
+                        <li>recompress = PDF documents should only be compressed automatically if they were already compressed previously.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="always"/>
+            <xs:enumeration value="never"/>
+            <xs:enumeration value="recompress"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="JustificationType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Selects the horizontal justification/alignment/orientation of elements.
+                    <ul>
+                        <li>leftJustified = All elements shall be oriented to the left.</li>
+                        <li>centered = All elements shall be placed in the center of the container.</li>
+                        <li>rightJustified = All elements shall be oriented to the right.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="leftJustified"/>
+            <xs:enumeration value="centered"/>
+            <xs:enumeration value="rightJustified"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="AxisType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Selects a predefined axis for a coordinate system.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="x"/>
+            <xs:enumeration value="y"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="QuadrilateralType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Selects a rectangular area via it's 4 determining corner points.</p>
+                <p>
+                    <b>important:</b>
+                    The quadrilateral's points shall be defined in the clockwise order: top-left, top-right, bottom-right, bottom-left
+                </p>
+                <p>
+                    <b>important:</b>
+                    Even though the PDF standard defines algorithms, that can handle self intersecting and overlapping quadrilaterals, such should be avoided to prevent unexpected results.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="4" maxOccurs="4">
+            <xs:element name="point" type="tns:PointType">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>Selects one of the defining corner points of the quadrilateral.</p>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+    <xs:simpleType name="SvgGraphicsStateModeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+                    Selects the SVG syntax used for formatting graphics states.
+                    <ul>
+                        <li>verbose = Writes verbose graphics states and groups and always prefers direct path definitions.</li>
+                        <li>centralize = Writes compact graphics states and groups and centralizes formatting instructions, also utilizes the "use" syntax to prepare and reference indirect paths. (May not be readable by some SVG viewers.)</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="verbose"/>
+            <xs:enumeration value="centralize"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="SvgPathDrawModeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+                    Selects the SVG syntax used for formatting paths.
+                    <ul>
+                        <li>verbose = Writes verbose paths, containing a human readable complete and simple syntax.</li>
+                        <li>compress = Compresses path draw instructions, by applying the EBNF (Extended Backus Naur Form).</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="verbose"/>
+            <xs:enumeration value="compact"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

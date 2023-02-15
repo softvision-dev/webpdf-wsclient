@@ -1,21 +1,21 @@
 package net.webpdf.wsclient.webservicefactory;
 
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
-import net.webpdf.wsclient.*;
+import net.webpdf.wsclient.openapi.*;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.operation.*;
-import net.webpdf.wsclient.session.DataFormat;
-import net.webpdf.wsclient.session.RestSession;
+import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.testsuite.TestResources;
-import net.webpdf.wsclient.testsuite.TestServer;
+import net.webpdf.wsclient.testsuite.server.ServerType;
+import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.TestServer;
+import net.webpdf.wsclient.webservice.WebServiceFactory;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.webservice.WebServiceType;
+import net.webpdf.wsclient.webservice.rest.*;
 import org.apache.commons.io.FileUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
@@ -24,361 +24,361 @@ import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(JUnitParamsRunner.class)
 public class RestWebserviceFactoryTest {
 
     private final TestResources testResources = new TestResources(RestWebserviceFactoryTest.class);
-    @Rule
     public TestServer testServer = new TestServer();
 
-    private <T extends WebService> T getWebService(WebServiceType webServiceType) throws IOException, URISyntaxException {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
+    private <T extends RestWebService<?, ?, RestDocument>> T getWebService(WebServiceType webServiceType)
+            throws IOException, URISyntaxException {
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
+                testServer.getServer(ServerType.LOCAL))) {
             return WebServiceFactory.createInstance(session, webServiceType);
         }
     }
 
-    private <T extends WebService> T getTypedWebservice(DataFormat dataFormat, Class<T> expectedType, File configFile) throws Exception {
-        T webService;
+    private <T_WEBSERVICE extends RestWebService<?, ?, RestDocument>> T_WEBSERVICE
+    getTypedWebservice(File configFile)
+            throws Exception {
+        T_WEBSERVICE webService;
         String json = FileUtils.readFileToString(configFile, Charset.defaultCharset());
 
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
-            session.setDataFormat(dataFormat);
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL))) {
             try (StringReader stringReader = new StringReader(json)) {
                 StreamSource streamSource = new StreamSource(stringReader);
                 webService = WebServiceFactory.createInstance(session, streamSource);
             }
         }
 
-        assertNotNull("webservice should have been instantiated.",
-            webService);
-        assertTrue(String.format("webservice should have been an instance of the %s webservice.",
-            expectedType.getName()),
-            expectedType.isInstance(webService));
-        assertNotNull("Operation data should have been initialized",
-            webService.getOperation());
+        assertNotNull(webService, "webservice should have been instantiated.");
+        assertNotNull(webService.getOperationParameters(),
+                "Operation parameters should have been initialized");
         return webService;
     }
 
     @Test
-    @Parameters({
-        "XML|barcode.xml",
-        "JSON|barcode.json"
-    })
-    public void testFactoryBarcodeFromStream(String dataType, String configFileName) throws Exception {
-        DataFormat dataFormat = DataFormat.valueOf(dataType);
-        BarcodeRestWebService webService = getTypedWebservice(
-            dataFormat, BarcodeRestWebService.class, testResources.getResource(configFileName)
-        );
-        assertNotNull("Operation should have been initialized", webService.getOperation());
-        assertNotNull("Add element should have been created.",
-            webService.getOperation().getAdd());
-        assertNotNull("QR-code element should have been created.",
-            webService.getOperation().getAdd().getQrcode());
-        assertEquals("Number of added QR-codes is incorrect.", 1,
-            webService.getOperation().getAdd().getQrcode().size());
-        assertEquals("Value of value attribute is unexpected.",
-            "webPDFTest", webService.getOperation().getAdd().getQrcode().get(0).getValue());
-        assertEquals("Value of pages attribute is unexpected.",
-            "1", webService.getOperation().getAdd().getQrcode().get(0).getPages());
-        assertEquals("Value of rotation attribute is unexpected.",
-            90, webService.getOperation().getAdd().getQrcode().get(0).getRotation());
-        assertEquals("Value of charset attribute is unexpected.",
-            "utf-8", webService.getOperation().getAdd().getQrcode().get(0).getCharset());
-        assertEquals("Value of errorCorrection attribute is unexpected.",
-            QrCodeErrorCorrectionType.M, webService.getOperation().getAdd().getQrcode().get(0).getErrorCorrection());
-        assertEquals("Value of margin attribute is unexpected.",
-            1, webService.getOperation().getAdd().getQrcode().get(0).getMargin());
+    public void testFactoryBarcodeFromStream() {
+        assertDoesNotThrow(() -> {
+            BarcodeRestWebService<RestDocument> webService =
+                    getTypedWebservice(testResources.getResource("barcode.json"));
+            assertNotNull(webService.getOperationParameters(),
+                    "Operation should have been initialized");
+            assertNotNull(webService.getOperationParameters().getAdd(),
+                    "Add element should have been created.");
+            assertNotNull(webService.getOperationParameters().getAdd().getQrcode(),
+                    "QR-code element should have been created.");
+            assertEquals(1, webService.getOperationParameters().getAdd().getQrcode().size(),
+                    "Number of added QR-codes is incorrect.");
+            assertEquals("webPDFTest", webService.getOperationParameters().getAdd().getQrcode().get(0).getValue(),
+                    "Value of value attribute is unexpected.");
+            assertEquals("1", webService.getOperationParameters().getAdd().getQrcode().get(0).getPages(),
+                    "Value of pages attribute is unexpected.");
+            assertEquals(90, webService.getOperationParameters().getAdd().getQrcode().get(0).getRotation(),
+                    "Value of rotation attribute is unexpected.");
+            assertEquals("utf-8", webService.getOperationParameters().getAdd().getQrcode().get(0).getCharset(),
+                    "Value of charset attribute is unexpected.");
+            assertEquals(OperationQrBarcode.ErrorCorrectionEnum.M,
+                    webService.getOperationParameters().getAdd().getQrcode().get(0).getErrorCorrection(),
+                    "Value of errorCorrection attribute is unexpected.");
+            assertEquals(1, webService.getOperationParameters().getAdd().getQrcode().get(0).getMargin(),
+                    "Value of margin attribute is unexpected.");
+        });
     }
 
     @Test
-    @Parameters({
-        "XML|convert.xml",
-        "JSON|convert.json"
-    })
-    public void testFactoryConverterFromStream(String dataType, String configFileName) throws Exception {
-        DataFormat dataFormat = DataFormat.valueOf(dataType);
-        ConverterRestWebService webService = getTypedWebservice(
-            dataFormat, ConverterRestWebService.class, testResources.getResource(configFileName)
-        );
-        assertNotNull("Operation should have been initialized", webService.getOperation());
-        assertTrue("Value of embedFonts attribute is unexpected.",
-            webService.getOperation().isEmbedFonts());
-        assertEquals("Value of pages attribute is unexpected.",
-            "1", webService.getOperation().getPages());
-        assertTrue("Value of reduceResolution attribute is unexpected.",
-            webService.getOperation().isSetReduceResolution());
-        assertEquals("Value of maxRecursion attribute is unexpected.",
-            2, webService.getOperation().getMaxRecursion());
-        assertEquals("Value of jpegQuality attribute is unexpected.",
-            3, webService.getOperation().getJpegQuality());
-        assertEquals("Value of fileExtension attribute is unexpected.",
-            "zip", webService.getOperation().getFileExtension());
-        assertEquals("Value of dpi attribute is unexpected.",
-            4, webService.getOperation().getDpi());
-        assertFalse("Value of compression attribute is unexpected.",
-            webService.getOperation().isCompression());
-        assertEquals("Value of maxRecursion attribute is unexpected.",
-            "testPwd", webService.getOperation().getAccessPassword());
+    public void testFactoryConverterFromStream() {
+        assertDoesNotThrow(() -> {
+            ConverterRestWebService<RestDocument> webService =
+                    getTypedWebservice(testResources.getResource("convert.json"));
+            assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+            assertNotNull(webService.getOperationParameters().getEmbedFonts(),
+                    "Value of embedFonts should have been initialized.");
+            assertTrue(webService.getOperationParameters().getEmbedFonts(),
+                    "Value of embedFonts attribute is unexpected.");
+            assertEquals("1", webService.getOperationParameters().getPages(),
+                    "Value of pages attribute is unexpected.");
+            assertNotNull(webService.getOperationParameters().getReduceResolution(),
+                    "Value of reduceResolution should have been initialized");
+            assertTrue(webService.getOperationParameters().getReduceResolution(),
+                    "Value of reduceResolution attribute is unexpected.");
+            assertEquals(2, webService.getOperationParameters().getMaxRecursion(),
+                    "Value of maxRecursion attribute is unexpected.");
+            assertEquals(3, webService.getOperationParameters().getJpegQuality(),
+                    "Value of jpegQuality attribute is unexpected.");
+            assertEquals("zip", webService.getOperationParameters().getFileExtension(),
+                    "Value of fileExtension attribute is unexpected.");
+            assertEquals(4, webService.getOperationParameters().getDpi(),
+                    "Value of dpi attribute is unexpected.");
+            assertNotNull(webService.getOperationParameters().getCompression(),
+                    "Value of compression should have been initialized");
+            assertFalse(webService.getOperationParameters().getCompression(),
+                    "Value of compression attribute is unexpected.");
+            assertEquals("testPwd", webService.getOperationParameters().getAccessPassword(),
+                    "Value of maxRecursion attribute is unexpected.");
 
-        assertNotNull("Pdfa element should have been created.",
-            webService.getOperation().getPdfa());
-        assertNotNull("Convert element should have been created.",
-            webService.getOperation().getPdfa().getConvert());
-        assertEquals("Value of level attribute is unexpected.",
-            PdfaLevelType.LEVEL_1A, webService.getOperation().getPdfa().getConvert().getLevel());
-        assertEquals("Value of errorReport attribute is unexpected.",
-            PdfaErrorReportType.MESSAGE, webService.getOperation().getPdfa().getConvert().getErrorReport());
-        assertEquals("Value of imageQuality attribute is unexpected.",
-            1, webService.getOperation().getPdfa().getConvert().getImageQuality());
-        assertEquals("Value of successReport attribute is unexpected.",
-            PdfaSuccessReportType.ZIP, webService.getOperation().getPdfa().getConvert().getSuccessReport());
+            assertNotNull(webService.getOperationParameters().getPdfa(),
+                    "Pdfa element should have been created.");
+            assertNotNull(webService.getOperationParameters().getPdfa().getConvert(),
+                    "Convert element should have been created.");
+            assertEquals(OperationConvertPdfa.LevelEnum._1A, webService.getOperationParameters().getPdfa()
+                            .getConvert().getLevel(),
+                    "Value of level attribute is unexpected.");
+            assertEquals(OperationConvertPdfa.ErrorReportEnum.MESSAGE,
+                    webService.getOperationParameters().getPdfa().getConvert().getErrorReport(),
+                    "Value of errorReport attribute is unexpected.");
+            assertEquals(1, webService.getOperationParameters().getPdfa().getConvert().getImageQuality(),
+                    "Value of imageQuality attribute is unexpected.");
+            assertEquals(OperationConvertPdfa.SuccessReportEnum.ZIP,
+                    webService.getOperationParameters().getPdfa().getConvert().getSuccessReport(),
+                    "Value of successReport attribute is unexpected.");
+        });
     }
 
     @Test
-    @Parameters({
-        "XML|ocr.xml",
-        "JSON|ocr.json"
-    })
-    public void testFactoryOCRFromStream(String dataType, String configFileName) throws Exception {
-        DataFormat dataFormat = DataFormat.valueOf(dataType);
-        OcrRestWebService webService = getTypedWebservice(
-            dataFormat, OcrRestWebService.class, testResources.getResource(configFileName)
-        );
-        assertNotNull("Operation should have been initialized", webService.getOperation());
-        assertFalse("Value of checkResolution attribute is unexpected.",
-            webService.getOperation().isCheckResolution());
-        assertTrue("Value of forceEachPage attribute is unexpected.",
-            webService.getOperation().isForceEachPage());
-        assertEquals("Value of imageDpi attribute is unexpected.",
-            1, webService.getOperation().getImageDpi());
-        assertEquals("Value of language attribute is unexpected.",
-            OcrLanguageType.FRA, webService.getOperation().getLanguage());
-        assertEquals("Value of outputFormat attribute is unexpected.",
-            OcrOutputType.PDF, webService.getOperation().getOutputFormat());
+    public void testFactoryOCRFromStream() {
+        assertDoesNotThrow(() -> {
+            OcrRestWebService<RestDocument> webService =
+                    getTypedWebservice(testResources.getResource("ocr.json"));
+            assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+            assertNotNull(webService.getOperationParameters().getCheckResolution(),
+                    "Value of checkResolution should have been initialized");
+            assertFalse(webService.getOperationParameters().getCheckResolution(),
+                    "Value of checkResolution attribute is unexpected.");
+            assertNotNull(webService.getOperationParameters().getForceEachPage(),
+                    "Value of forceEachPage should have been initialized");
+            assertTrue(webService.getOperationParameters().getForceEachPage(),
+                    "Value of forceEachPage attribute is unexpected.");
+            assertEquals(1, webService.getOperationParameters().getImageDpi(),
+                    "Value of imageDpi attribute is unexpected.");
+            assertEquals(OperationOcr.LanguageEnum.FRA,
+                    webService.getOperationParameters().getLanguage(),
+                    "Value of language attribute is unexpected.");
+            assertEquals(OperationOcr.OutputFormatEnum.PDF,
+                    webService.getOperationParameters().getOutputFormat(),
+                    "Value of outputFormat attribute is unexpected.");
 
-        assertNotNull("Page element should have been created.",
-            webService.getOperation().getPage());
-        assertEquals("Value of width attribute is unexpected.",
-            1, webService.getOperation().getPage().getWidth());
-        assertEquals("Value of height attribute is unexpected.",
-            2, webService.getOperation().getPage().getHeight());
-        assertEquals("Value of metrics attribute is unexpected.",
-            MetricsType.MM, webService.getOperation().getPage().getMetrics());
+            assertNotNull(webService.getOperationParameters().getPage(),
+                    "Page element should have been created.");
+            assertEquals(1, webService.getOperationParameters().getPage().getWidth(),
+                    "Value of width attribute is unexpected.");
+            assertEquals(2, webService.getOperationParameters().getPage().getHeight(),
+                    "Value of height attribute is unexpected.");
+            assertEquals(OperationOcrPage.MetricsEnum.MM,
+                    webService.getOperationParameters().getPage().getMetrics(),
+                    "Value of metrics attribute is unexpected.");
+        });
     }
 
     @Test
-    @Parameters({
-        "XML|pdfa.xml",
-        "JSON|pdfa.json"
-    })
-    public void testFactoryPDFAFromStream(String dataType, String configFileName) throws Exception {
-        DataFormat dataFormat = DataFormat.valueOf(dataType);
-        PdfaRestWebService webService = getTypedWebservice(
-            dataFormat, PdfaRestWebService.class, testResources.getResource(configFileName)
-        );
-        assertNotNull("Operation should have been initialized", webService.getOperation());
-        assertNotNull("Analyze element should have been created.",
-            webService.getOperation().getAnalyze());
-        assertEquals("Value of level attribute is unexpected.",
-            PdfaLevelType.LEVEL_1A, webService.getOperation().getAnalyze().getLevel());
+    public void testFactoryPDFAFromStream() {
+        assertDoesNotThrow(() -> {
+            PdfaRestWebService<RestDocument> webService =
+                    getTypedWebservice(testResources.getResource("pdfa.json"));
+            assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+            assertNotNull(webService.getOperationParameters().getAnalyze(),
+                    "Analyze element should have been created.");
+            assertEquals(OperationAnalyzePdfa.LevelEnum._1A,
+                    webService.getOperationParameters().getAnalyze().getLevel(),
+                    "Value of level attribute is unexpected.");
+        });
     }
 
     @Test
-    @Parameters({
-        "XML|signature.xml",
-        "JSON|signature.json"
-    })
-    public void testFactorySignatureFromStream(String dataType, String configFileName) throws Exception {
-        DataFormat dataFormat = DataFormat.valueOf(dataType);
-        SignatureRestWebService webService = getTypedWebservice(
-            dataFormat, SignatureRestWebService.class, testResources.getResource(configFileName)
-        );
-        assertNotNull("Operation should have been initialized", webService.getOperation());
-        assertNotNull("Add element should have been created.",
-            webService.getOperation().getAdd());
-        assertEquals("Value of location attribute is unexpected.",
-            "testLocation", webService.getOperation().getAdd().getLocation());
-        assertTrue("Value of appendSignature attribute is unexpected.",
-            webService.getOperation().getAdd().isAppendSignature());
-        assertEquals("Value of certificationLevel attribute is unexpected.",
-            CertificationLevelType.NONE, webService.getOperation().getAdd().getCertificationLevel());
-        assertEquals("Value of contact attribute is unexpected.",
-            "testContact", webService.getOperation().getAdd().getContact());
-        assertEquals("Value of fieldName attribute is unexpected.",
-            "testName", webService.getOperation().getAdd().getFieldName());
-        assertEquals("Value of keyName attribute is unexpected.",
-            "testKey", webService.getOperation().getAdd().getKeyName());
-        assertEquals("Value of keyPassword attribute is unexpected.",
-            "testPwd", webService.getOperation().getAdd().getKeyPassword());
-        assertEquals("Value of reason attribute is unexpected.",
-            "testReason", webService.getOperation().getAdd().getReason());
+    public void testFactorySignatureFromStream() {
+        assertDoesNotThrow(() -> {
+            SignatureRestWebService<RestDocument> webService =
+                    getTypedWebservice(testResources.getResource("signature.json"));
+            assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+            assertNotNull(webService.getOperationParameters().getAdd(),
+                    "Add element should have been created.");
+            assertEquals("testLocation", webService.getOperationParameters().getAdd().getLocation(),
+                    "Value of location attribute is unexpected.");
+            assertNotNull(webService.getOperationParameters().getAdd().getAppendSignature(),
+                    "Value of appendSignature should have been initialized");
+            assertTrue(webService.getOperationParameters().getAdd().getAppendSignature(),
+                    "Value of appendSignature attribute is unexpected.");
+            assertEquals(OperationAddSignature.CertificationLevelEnum.NONE,
+                    webService.getOperationParameters().getAdd().getCertificationLevel(),
+                    "Value of certificationLevel attribute is unexpected.");
+            assertEquals("testContact", webService.getOperationParameters().getAdd().getContact(),
+                    "Value of contact attribute is unexpected.");
+            assertEquals("testName", webService.getOperationParameters().getAdd().getFieldName(),
+                    "Value of fieldName attribute is unexpected.");
+            assertEquals("testKey", webService.getOperationParameters().getAdd().getKeyName(),
+                    "Value of keyName attribute is unexpected.");
+            assertEquals("testPwd", webService.getOperationParameters().getAdd().getKeyPassword(),
+                    "Value of keyPassword attribute is unexpected.");
+            assertEquals("testReason", webService.getOperationParameters().getAdd().getReason(),
+                    "Value of reason attribute is unexpected.");
 
-        assertNotNull("Appearance element should have been created.",
-            webService.getOperation().getAdd().getAppearance());
-        assertEquals("Value of page attribute is unexpected.",
-            1, webService.getOperation().getAdd().getAppearance().getPage());
-        assertEquals("Value of name attribute is unexpected.",
-            "testName", webService.getOperation().getAdd().getAppearance().getName());
-        assertEquals("Value of identifier attribute is unexpected.",
-            "testIdentifier", webService.getOperation().getAdd().getAppearance().getIdentifier());
+            assertNotNull(webService.getOperationParameters().getAdd().getAppearance(),
+                    "Appearance element should have been created.");
+            assertEquals(1, webService.getOperationParameters().getAdd().getAppearance().getPage(),
+                    "Value of page attribute is unexpected.");
+            assertEquals("testName",
+                    webService.getOperationParameters().getAdd().getAppearance().getName(),
+                    "Value of name attribute is unexpected.");
+            assertEquals("testIdentifier",
+                    webService.getOperationParameters().getAdd().getAppearance().getIdentifier(),
+                    "Value of identifier attribute is unexpected.");
+        });
     }
 
     @Test
-    @Parameters({
-        "XML|toolbox.xml",
-        "JSON|toolbox.json"
-    })
-    public void testFactoryToolboxFromStream(String dataType, String configFileName) throws Exception {
-        DataFormat dataFormat = DataFormat.valueOf(dataType);
-        ToolboxRestWebService webService = getTypedWebservice(
-            dataFormat, ToolboxRestWebService.class, testResources.getResource(configFileName)
-        );
-        BaseToolboxType element1 = webService.getOperation().get(0);
-        assertNotNull("First element should have been created.",
-            element1);
-        assertTrue("First element should have been instance of delete type.",
-            element1 instanceof DeleteType);
+    public void testFactoryToolboxFromStream() {
+        assertDoesNotThrow(() -> {
+            ToolboxRestWebService<RestDocument> webService =
+                    getTypedWebservice(testResources.getResource("toolbox.json"));
+            OperationBaseToolbox element1 = webService.getOperationParameters().get(0);
+            assertNotNull(element1, "First element should have been created.");
+            assertNotNull(element1.getDelete(),
+                    "First element should have been instance of delete type.");
 
-        assertEquals("Value of pages attribute is unexpected.",
-            "1", ((DeleteType) webService.getOperation().get(0)).getPages());
+            assertNotNull(element1.getDelete().getPages(),
+                    "Value of pages should have been initialized");
+            assertEquals("1", (element1.getDelete()).getPages(),
+                    "Value of pages attribute is unexpected.");
 
-        BaseToolboxType element2 = webService.getOperation().get(1);
-        assertNotNull("Second element should have been created.",
-            element2);
-        assertTrue("Second element should have been instance of rotate type.",
-            element2 instanceof RotateType);
+            OperationBaseToolbox element2 = webService.getOperationParameters().get(1);
+            assertNotNull(element2, "Second element should have been created.");
+            assertNotNull(element2.getRotate(),
+                    "Second element should have been instance of rotate type.");
 
-        assertEquals("Value of pages attribute is unexpected.",
-            "*", ((RotateType) webService.getOperation().get(1)).getPages());
-        assertEquals("Value of degrees attribute is unexpected.",
-            90, ((RotateType) webService.getOperation().get(1)).getDegrees());
-        assertEquals("Value of pageGroup attribute is unexpected.",
-            PageGroupType.EVEN, ((RotateType) webService.getOperation().get(1)).getPageGroup());
-        assertEquals("Value of pageOrientation attribute is unexpected.",
-            PageOrientationType.ANY, ((RotateType) webService.getOperation().get(1)).getPageOrientation());
+            assertNotNull(element2.getRotate().getPages(),
+                    "Value of pages should have been initialized");
+            assertEquals("*", element2.getRotate().getPages(),
+                    "Value of pages attribute is unexpected.");
+            assertEquals(90, element2.getRotate().getDegrees(),
+                    "Value of degrees attribute is unexpected.");
+            assertEquals(OperationToolboxRotateRotate.PageGroupEnum.EVEN,
+                    element2.getRotate().getPageGroup(),
+                    "Value of pageGroup attribute is unexpected.");
+            assertEquals(OperationToolboxRotateRotate.PageOrientationEnum.ANY,
+                    element2.getRotate().getPageOrientation(),
+                    "Value of pageOrientation attribute is unexpected.");
 
-        BaseToolboxType element3 = webService.getOperation().get(2);
-        assertNotNull("Third element should have been created.",
-            element3);
-        assertTrue("Third element should have been instance of watermark type.",
-            element3 instanceof WatermarkType);
-        assertEquals("Value of pages attribute is unexpected.",
-            "2", ((WatermarkType) webService.getOperation().get(2)).getPages());
-        assertEquals("Value of angle attribute is unexpected.",
-            180, ((WatermarkType) webService.getOperation().get(2)).getAngle());
+            OperationBaseToolbox element3 = webService.getOperationParameters().get(2);
+            assertNotNull(element3,
+                    "Third element should have been created.");
+            assertNotNull(element3.getWatermark(),
+                    "Third element should have been instance of watermark type.");
+            assertEquals("2", element3.getWatermark().getPages(),
+                    "Value of pages attribute is unexpected.");
+            assertEquals(180, element3.getWatermark().getAngle(),
+                    "Value of angle attribute is unexpected.");
 
-        assertNotNull("Text element should have been created.",
-            ((WatermarkType) webService.getOperation().get(2)).getText());
-        assertEquals("Value of text attribute is unexpected.",
-            "testText", ((WatermarkType) webService.getOperation().get(2)).getText().getText());
+            assertNotNull(element3.getWatermark().getText(),
+                    "Text element should have been created.");
+            assertEquals("testText", element3.getWatermark().getText().getText(),
+                    "Value of text attribute is unexpected.");
+        });
     }
 
     @Test
-    @Parameters({
-        "XML|url_convert.xml",
-        "JSON|url_convert.json"
-    })
-    public void testFactoryUrlConverterFromStream(String dataType, String configFileName) throws Exception {
-        DataFormat dataFormat = DataFormat.valueOf(dataType);
-        UrlConverterRestWebService webService = getTypedWebservice(
-            dataFormat, UrlConverterRestWebService.class,
-            testResources.getResource(configFileName)
-        );
-        assertNotNull("Operation should have been initialized", webService.getOperation());
-        assertEquals("Value of url attribute is unexpected.",
-            "testURL", webService.getOperation().getUrl());
+    public void testFactoryUrlConverterFromStream() {
+        assertDoesNotThrow(() -> {
+            UrlConverterRestWebService<RestDocument> webService =
+                    getTypedWebservice(testResources.getResource("url_convert.json"));
+            assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+            assertEquals("testURL", webService.getOperationParameters().getUrl(),
+                    "Value of url attribute is unexpected.");
 
-        assertNotNull("Page element should have been created.",
-            webService.getOperation().getPage());
-        assertEquals("Value of metrics attribute is unexpected.",
-            MetricsType.MM, webService.getOperation().getPage().getMetrics());
-        assertEquals("Value of height attribute is unexpected.",
-            1, webService.getOperation().getPage().getHeight());
-        assertEquals("Value of width attribute is unexpected.",
-            2, webService.getOperation().getPage().getWidth());
-        assertEquals("Value of bottom attribute is unexpected.",
-            3, webService.getOperation().getPage().getBottom());
-        assertEquals("Value of left attribute is unexpected.",
-            4, webService.getOperation().getPage().getLeft());
-        assertEquals("Value of right attribute is unexpected.",
-            5, webService.getOperation().getPage().getRight());
-        assertEquals("Value of top attribute is unexpected.",
-            6, webService.getOperation().getPage().getTop());
+            assertNotNull(webService.getOperationParameters().getPage(),
+                    "Page element should have been created.");
+            assertEquals(OperationUrlConverterPage.MetricsEnum.MM,
+                    webService.getOperationParameters().getPage().getMetrics(),
+                    "Value of metrics attribute is unexpected.");
+            assertEquals(1, webService.getOperationParameters().getPage().getHeight(),
+                    "Value of height attribute is unexpected.");
+            assertEquals(2, webService.getOperationParameters().getPage().getWidth(),
+                    "Value of width attribute is unexpected.");
+            assertEquals(3, webService.getOperationParameters().getPage().getBottom(),
+                    "Value of bottom attribute is unexpected.");
+            assertEquals(4, webService.getOperationParameters().getPage().getLeft(),
+                    "Value of left attribute is unexpected.");
+            assertEquals(5, webService.getOperationParameters().getPage().getRight(),
+                    "Value of right attribute is unexpected.");
+            assertEquals(6, webService.getOperationParameters().getPage().getTop(),
+                    "Value of top attribute is unexpected.");
 
-        assertNotNull("BasicAuth element should have been created.",
-            webService.getOperation().getBasicAuth());
-        assertEquals("Value of password attribute is unexpected.",
-            "testPwd", webService.getOperation().getBasicAuth().getPassword());
-        assertEquals("Value of userName attribute is unexpected.",
-            "testUser", webService.getOperation().getBasicAuth().getUserName());
+            assertNotNull(webService.getOperationParameters().getBasicAuth(),
+                    "BasicAuth element should have been created.");
+            assertEquals("testPwd", webService.getOperationParameters().getBasicAuth().getPassword(),
+                    "Value of password attribute is unexpected.");
+            assertEquals("testUser", webService.getOperationParameters().getBasicAuth().getUserName(),
+                    "Value of userName attribute is unexpected.");
 
-        assertNotNull("Proxy element should have been created.",
-            webService.getOperation().getProxy());
-        assertEquals("Value of userName attribute is unexpected.",
-            "testUser", webService.getOperation().getProxy().getUserName());
-        assertEquals("Value of password attribute is unexpected.",
-            "testPwd", webService.getOperation().getProxy().getPassword());
-        assertEquals("Value of address attribute is unexpected.",
-            "testAddress", webService.getOperation().getProxy().getAddress());
-        assertEquals("Value of port attribute is unexpected.",
-            1, webService.getOperation().getProxy().getPort());
+            assertNotNull(webService.getOperationParameters().getProxy(),
+                    "Proxy element should have been created.");
+            assertEquals("testUser", webService.getOperationParameters().getProxy().getUserName(),
+                    "Value of userName attribute is unexpected.");
+            assertEquals("testPwd", webService.getOperationParameters().getProxy().getPassword(),
+                    "Value of password attribute is unexpected.");
+            assertEquals("testAddress", webService.getOperationParameters().getProxy().getAddress(),
+                    "Value of address attribute is unexpected.");
+            assertEquals(1, webService.getOperationParameters().getProxy().getPort(),
+                    "Value of port attribute is unexpected.");
+        });
     }
 
     @Test
-    public void testFactoryCreateWebserviceInstance() throws Exception {
-        ToolboxRestWebService toolboxWebService = getWebService(WebServiceType.TOOLBOX);
-        assertNotNull("The toolbox webservice should have been initialized.", toolboxWebService);
-        assertNotNull("The toolbox operation should have been initialized.", toolboxWebService.getOperation());
+    public void testFactoryCreateWebserviceInstance() {
+        assertDoesNotThrow(() -> {
+            ToolboxRestWebService<RestDocument> toolboxWebService = getWebService(WebServiceType.TOOLBOX);
+            assertNotNull(toolboxWebService,
+                    "The toolbox webservice should have been initialized.");
+            assertNotNull(toolboxWebService.getOperationParameters(),
+                    "The toolbox operation should have been initialized.");
 
-        ConverterRestWebService converterWebService = getWebService(WebServiceType.CONVERTER);
-        assertNotNull("The converter webservice should have been initialized.", converterWebService);
-        assertNotNull("The converter operation should have been initialized.", converterWebService.getOperation());
+            ConverterRestWebService<RestDocument> converterWebService = getWebService(WebServiceType.CONVERTER);
+            assertNotNull(converterWebService, "The converter webservice should have been initialized.");
+            assertNotNull(converterWebService.getOperationParameters(),
+                    "The converter operation should have been initialized.");
 
-        SignatureRestWebService signatureWebService = getWebService(WebServiceType.SIGNATURE);
-        assertNotNull("The signature webservice should have been initialized.", signatureWebService);
-        assertNotNull("The signature operation should have been initialized.", signatureWebService.getOperation());
+            SignatureRestWebService<RestDocument> signatureWebService = getWebService(WebServiceType.SIGNATURE);
+            assertNotNull(signatureWebService, "The signature webservice should have been initialized.");
+            assertNotNull(signatureWebService.getOperationParameters(),
+                    "The signature operation should have been initialized.");
 
-        BarcodeRestWebService barcodeWebService = getWebService(WebServiceType.BARCODE);
-        assertNotNull("The barcode webservice should have been initialized.", barcodeWebService);
-        assertNotNull("The barcode operation should have been initialized.", barcodeWebService.getOperation());
+            BarcodeRestWebService<RestDocument> barcodeWebService = getWebService(WebServiceType.BARCODE);
+            assertNotNull(barcodeWebService, "The barcode webservice should have been initialized.");
+            assertNotNull(barcodeWebService.getOperationParameters(),
+                    "The barcode operation should have been initialized.");
 
-        PdfaRestWebService pdfaWebService = getWebService(WebServiceType.PDFA);
-        assertNotNull("The pdfa webservice should have been initialized.", pdfaWebService);
-        assertNotNull("The pdfa operation should have been initialized.", pdfaWebService.getOperation());
+            PdfaRestWebService<RestDocument> pdfaWebService = getWebService(WebServiceType.PDFA);
+            assertNotNull(pdfaWebService, "The pdfa webservice should have been initialized.");
+            assertNotNull(pdfaWebService.getOperationParameters(),
+                    "The pdfa operation should have been initialized.");
 
-        UrlConverterRestWebService urlConverterWebService = getWebService(WebServiceType.URLCONVERTER);
-        assertNotNull("The url converter webservice should have been initialized.", urlConverterWebService);
-        assertNotNull("The url converter operation should have been initialized.", urlConverterWebService.getOperation());
+            UrlConverterRestWebService<RestDocument> urlConverterWebService =
+                    getWebService(WebServiceType.URLCONVERTER);
+            assertNotNull(urlConverterWebService, "The url converter webservice should have been initialized.");
+            assertNotNull(urlConverterWebService.getOperationParameters(),
+                    "The url converter operation should have been initialized.");
 
-        OcrRestWebService ocrWebService = getWebService(WebServiceType.OCR);
-        assertNotNull("The ocr webservice should have been initialized.", ocrWebService);
-        assertNotNull("The ocr operation should have been initialized.", ocrWebService.getOperation());
+            OcrRestWebService<RestDocument> ocrWebService = getWebService(WebServiceType.OCR);
+            assertNotNull(ocrWebService, "The ocr webservice should have been initialized.");
+            assertNotNull(ocrWebService.getOperationParameters(),
+                    "The ocr operation should have been initialized.");
+        });
     }
 
     @Test
-    public void testNoOperationData() throws Exception {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL))) {
-            WebServiceFactory.createInstance(session, (StreamSource) null);
-            fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(String.format("Error code %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
-        }
+    public void testNoOperationData() {
+        assertDoesNotThrow(() -> {
+            try (Session<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL))) {
+                WebServiceFactory.createInstance(session, (StreamSource) null);
+                fail("ResultException expected");
+            } catch (ResultException ex) {
+                assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                        String.format("Error code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+            }
+        });
     }
 
-    @Test
-    public void testNoValidDataFormat() throws Exception {
-        try (RestSession session = SessionFactory.createInstance(WebServiceProtocol.REST, testServer.getServer(TestServer.ServerType.LOCAL));
-             StringReader reader = new StringReader("")) {
-            session.setDataFormat(null);
-            WebServiceFactory.createInstance(session, new StreamSource(reader));
-            fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(String.format("Error code %s expected.", Error.INVALID_OPERATION_DATA.getCode()),
-                ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode());
-        }
-    }
 }
 

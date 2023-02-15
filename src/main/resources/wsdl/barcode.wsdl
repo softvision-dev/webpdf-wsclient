@@ -12,12 +12,10 @@
     </wsp:Policy>
     <types>
         <xsd:schema>
-            <xsd:import namespace="http://schema.webpdf.de/1.0/soap/barcode"
-                        schemaLocation="http://localhost:8080/webPDF/soap/barcode?xsd=1"/>
+            <xsd:import namespace="http://schema.webpdf.de/1.0/soap/barcode"/>
         </xsd:schema>
         <xsd:schema>
-            <xsd:import namespace="http://schema.webpdf.de/1.0/operation"
-                        schemaLocation="http://localhost:8080/webPDF/soap/barcode?xsd=2"/>
+            <xsd:import namespace="http://schema.webpdf.de/1.0/operation"/>
         </xsd:schema>
     </types>
     <message name="execute">
@@ -55,8 +53,6 @@
         </operation>
     </binding>
     <service name="BarcodeService">
-        <port name="BarcodePort" binding="tns:BarcodePortBinding">
-            <soap12:address location="http://localhost:8080/webPDF/soap/barcode"/>
-        </port>
+        <port name="BarcodePort" binding="tns:BarcodePortBinding"/>
     </service>
 </definitions>

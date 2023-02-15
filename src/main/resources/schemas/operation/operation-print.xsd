@@ -1,33 +1,115 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd" />
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
+           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd"/>
     <xs:complexType name="PrintType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The print operation element can be used to print documents.</p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
-                <xs:attribute name="printerName" default="" type="xs:string" />
-                <xs:attribute name="pages" default="" type="xs:string" />
-                <xs:attribute name="jobName" default="webPDF Print Job" type="xs:string" />
+                <xs:attribute name="printerName" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>This attribute is used to specify the name of the printer that should be used to print the PDF document. If a printer is not declared, then the system's default printer will be used for printing.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="pages" default="" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Defines which page(s) should be printed. The page number can be an individual page, a page range, or a list (separated with commas) (e.g., "1,5-6,9"). To specify "all pages," use an asterisk ("*").</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="jobName" default="webPDF Print Job" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>This attribute is used to define the name of the print job (as shown in the Print Spooler in Windows, for example).</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
                 <xs:attribute name="copies" default="1">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Defines the number of copies that should be printed.</p>
+                        </xs:documentation>
+                    </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1" />
+                            <xs:minInclusive value="1"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
-                <xs:attribute name="autoRotate" default="true" type="xs:boolean" />
-                <xs:attribute name="shrinkToMargins" default="false" type="xs:boolean" />
-                <xs:attribute name="expandToMargins" default="false" type="xs:boolean" />
-                <xs:attribute name="centerInPage" default="false" type="xs:boolean" />
-                <xs:attribute name="dpi" default="0" type="xs:int" />
-                <xs:attribute name="mode" default="default" type="tns:PrintModeType" />
+                <xs:attribute name="autoRotate" default="true" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>If "true," the PDF document's orientation will be automatically adjusted in line with the printer's configured paper orientation.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="shrinkToMargins" default="false" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>If "true," any PDF page that is larger than the paper will be shrunk to fit the paper size.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="expandToMargins" default="false" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>If "true," any PDF page that is smaller than the paper will be enlarged to fit the paper size.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="centerInPage" default="false" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>If "true", the PDF page will be centered in the middle of the paper.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="dpi" default="0" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Sets the printer resolution for the "image" print mode. If this value is set to 0, the document will be printed, using a resolution suggested by the printer. (High resolutions will lead to better quality results, but will tremendously increase the required time and resources.)</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="mode" default="default" type="tns:PrintModeType">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Select the printing mode, that shall be used.
+                                <ul>
+                                    <li>default = The drawing operations are applied to the printout as defined in the PDF document.</li>
+                                    <li>image = Creates an image of a fixed resolution for every page of the document, to guarantee a uniform printing result.</li>
+                                    <li>raster = Every page of the document is rastered before printing. This is a compatibility mode for older printers.</li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
     <xs:simpleType name="PrintModeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Select the printing mode, that shall be used.
+                    <ul>
+                        <li>default = The drawing operations are applied to the printout as defined in the PDF document.</li>
+                        <li>image = Creates an image of a fixed resolution for every page of the document, to guarantee a uniform printing result.</li>
+                        <li>raster = Every page of the document is rastered before printing. This is a compatibility mode for older printers.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="default" />
-            <xs:enumeration value="raster" />
-            <xs:enumeration value="image" />
+            <xs:enumeration value="default"/>
+            <xs:enumeration value="raster"/>
+            <xs:enumeration value="image"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

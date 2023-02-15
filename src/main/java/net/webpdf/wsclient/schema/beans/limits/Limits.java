@@ -3,15 +3,19 @@ package net.webpdf.wsclient.schema.beans.limits;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
+/**
+ * A class implementing {@link Limits} lists the webDPF server´s upload limits for a specific user type.
+ */
 @XmlRootElement
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = UserLimits.class, name = "user"),
-    @JsonSubTypes.Type(value = AnonymousLimits.class, name = "anonymous")
+        @JsonSubTypes.Type(value = UserLimits.class, name = "user"),
+        @JsonSubTypes.Type(value = AnonymousLimits.class, name = "anonymous")
 })
 @SuppressWarnings("unused")
 public interface Limits extends Serializable {
@@ -62,9 +66,10 @@ public interface Limits extends Serializable {
     void setDiskSpaceLimit(int diskSpaceLimit);
 
     /**
-     * Whether or not usage limits exist for the user type.
+     * Returns {@code true}, if usage limits exist for the user type.
      *
-     * @return True, if limits have been set for the affected user type.
+     * @return {@code true}, if limits have been set for the affected user type.
      */
     boolean hasLimits();
+
 }

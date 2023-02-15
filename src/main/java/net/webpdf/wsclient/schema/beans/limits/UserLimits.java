@@ -1,5 +1,8 @@
 package net.webpdf.wsclient.schema.beans.limits;
 
+/**
+ * An instance of {@link UserLimits} lists the upload limits for registered webPDF server users.
+ */
 public class UserLimits implements Limits {
 
     private int diskSpaceLimit;
@@ -61,12 +64,13 @@ public class UserLimits implements Limits {
     }
 
     /**
-     * Whether or not usage limits exist for the user type.
+     * Returns {@code true}, if usage limits exist for the user type.
      *
-     * @return True, if limits have been set for the affected user type.
+     * @return {@code true}, if limits have been set for the affected user type.
      */
     @Override
     public boolean hasLimits() {
         return this.uploadLimit > 0 || this.maxFiles > 0 || this.diskSpaceLimit > 0;
     }
+
 }
