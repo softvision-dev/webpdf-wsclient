@@ -26,7 +26,10 @@ You can use this library, by adding this dependency to your project:
 
 ## Usage
 You will find some [usage examples](https://github.com/softvision-dev/webpdf-wsclient/wiki/Usage) in the wiki.
- 
+
+## Migration
+**Be aware:** With version 9.0.0 this library also has undergone major changes to the logic, structure and naming of it´s packages and classes. If you already used prior versions of wsclient, you should expect having to adapt your imports and code accordingly. You will find further information in our [migration guide](https://github.com/softvision-dev/webpdf-wsclient/wiki/Migration).
+
 ## Documentation
 Have a look at our [wiki](https://github.com/softvision-dev/webpdf-wsclient/wiki) for examples and details.
 
