@@ -1,11 +1,12 @@
 package net.webpdf.wsclient.tools;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.DataFormat;
 import org.apache.hc.core5.http.HttpEntity;
@@ -44,9 +45,9 @@ public class SerializeHelper {
      *
      * @param httpEntity The {@link HttpEntity}, that shall be searched for processable content.
      * @return The extracted response String.
-     * @throws IOException Shall be thrown, when extracting the response content failed.
+     * @throws ResultException Shall be thrown, when extracting the response content failed.
      */
-    private static @NotNull String getResponseContent(@NotNull HttpEntity httpEntity) throws IOException {
+    private static @NotNull String getResponseContent(@NotNull HttpEntity httpEntity) throws ResultException {
         try (InputStreamReader inputStreamReader = new InputStreamReader(httpEntity.getContent());
              BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
 
@@ -57,6 +58,8 @@ public class SerializeHelper {
                 response.append(tempToken);
             }
             return response.toString();
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.INVALID_OPERATION_DATA, ex);
         }
     }
 
@@ -73,7 +76,7 @@ public class SerializeHelper {
             throws ResultException {
         try {
             if (httpEntity == null) {
-                throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
+                throw new ClientResultException(Error.INVALID_OPERATION_DATA);
             }
             String response = EntityUtils.toString(httpEntity);
 
@@ -82,7 +85,7 @@ public class SerializeHelper {
                 return fromXML(streamSource, type);
             }
         } catch (IOException | ParseException ex) {
-            throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA, ex));
+            throw new ClientResultException(Error.INVALID_OPERATION_DATA, ex);
         }
     }
 
@@ -99,7 +102,7 @@ public class SerializeHelper {
     public static <T> @NotNull T fromXML(@Nullable StreamSource streamSource, @Nullable Class<T> type)
             throws ResultException {
         if (streamSource == null || type == null) {
-            throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
+            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
         }
         XMLValidationEventHandler xmlValidationEventHandler = new XMLValidationEventHandler();
 
@@ -122,9 +125,8 @@ public class SerializeHelper {
             return type.cast(jaxbElement.getValue());
 
         } catch (SAXException | JAXBException ex) {
-            Result result = Result.build(Error.INVALID_OPERATION_DATA, ex);
-            result.appendMessage(xmlValidationEventHandler.getMessages());
-            throw new ResultException(result);
+            throw new ClientResultException(Error.INVALID_OPERATION_DATA, ex)
+                    .appendMessage(xmlValidationEventHandler.getMessages());
         }
     }
 
@@ -139,17 +141,13 @@ public class SerializeHelper {
      */
     public static <T> @NotNull T fromJSON(@Nullable HttpEntity httpEntity, @Nullable Class<T> type)
             throws ResultException {
-        try {
-            if (httpEntity == null) {
-                throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
-            }
-            String response = SerializeHelper.getResponseContent(httpEntity);
-            try (StringReader stringReader = new StringReader(response)) {
-                StreamSource streamSource = new StreamSource(stringReader);
-                return fromJSON(streamSource, type);
-            }
-        } catch (IOException ex) {
-            throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA, ex));
+        if (httpEntity == null) {
+            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
+        }
+        String response = SerializeHelper.getResponseContent(httpEntity);
+        try (StringReader stringReader = new StringReader(response)) {
+            StreamSource streamSource = new StreamSource(stringReader);
+            return fromJSON(streamSource, type);
         }
     }
 
@@ -166,7 +164,7 @@ public class SerializeHelper {
     public static <T> @NotNull T fromJSON(@Nullable StreamSource streamSource, @Nullable Class<T> type)
             throws ResultException {
         if (streamSource == null || type == null) {
-            throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
+            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
         }
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JakartaXmlBindAnnotationModule());
@@ -175,7 +173,7 @@ public class SerializeHelper {
         try (Reader reader = streamSource.getReader()) {
             return objectMapper.readValue(reader, type);
         } catch (IOException ex) {
-            throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA, ex));
+            throw new ClientResultException(Error.INVALID_OPERATION_DATA, ex);
         }
     }
 
@@ -184,13 +182,18 @@ public class SerializeHelper {
      *
      * @param object The object to serialize.
      * @return The resulting {@link DataFormat#JSON} {@link String}.
+     * @throws ResultException Shall be thrown upon a serialization failure.
      */
     @NotNull
-    public static String toJSON(@Nullable Object object) throws IOException {
+    public static String toJSON(@Nullable Object object) throws ResultException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JakartaXmlBindAnnotationModule());
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return objectMapper.writeValueAsString(object);
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException ex) {
+            throw new ClientResultException(Error.TO_XML_JSON, ex);
+        }
     }
 
     /**
@@ -203,7 +206,7 @@ public class SerializeHelper {
      */
     public static @NotNull String toXML(@Nullable Object object, @Nullable Class<?> type) throws ResultException {
         if (object == null || type == null) {
-            throw new ResultException(Result.build(Error.TO_XML_JSON));
+            throw new ClientResultException(Error.TO_XML_JSON);
         }
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(type);
@@ -217,7 +220,7 @@ public class SerializeHelper {
 
             return stringWriter.toString();
         } catch (JAXBException ex) {
-            throw new ResultException(Result.build(Error.TO_XML_JSON, ex));
+            throw new ClientResultException(Error.TO_XML_JSON, ex);
         }
     }
 

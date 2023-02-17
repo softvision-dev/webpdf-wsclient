@@ -10,7 +10,6 @@ import org.apache.hc.core5.http.NameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -96,9 +95,9 @@ public interface Session<T_DOCUMENT extends Document> extends AutoCloseable {
     /**
      * Close the {@link Session}.
      *
-     * @throws java.io.IOException Shall be thrown, if closing the {@link Session} failed.
+     * @throws ResultException Shall be thrown, if closing the {@link Session} failed.
      */
     @Override
-    void close() throws IOException;
+    void close() throws ResultException;
 
 }

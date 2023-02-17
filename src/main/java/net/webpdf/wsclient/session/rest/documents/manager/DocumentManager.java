@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -93,7 +92,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
     /**
      * Downloads the {@link RestDocument} and writes it to the given {@link OutputStream}.
      *
-     * @param document   The {@link RestDocument} to download.
+     * @param document     The {@link RestDocument} to download.
      * @param outputStream The {@link OutputStream} to write the downloaded {@link RestDocument} to.
      * @throws ResultException Shall be thrown, should the download have failed.
      */
@@ -105,9 +104,9 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      *
      * @param file The {@link File} to upload.
      * @return The resulting {@link RestDocument} handle.
-     * @throws IOException Shall be thrown, should the upload have failed.
+     * @throws ResultException Shall be thrown, should the upload have failed.
      */
-    @NotNull T_REST_DOCUMENT uploadDocument(@Nullable File file) throws IOException;
+    @NotNull T_REST_DOCUMENT uploadDocument(@Nullable File file) throws ResultException;
 
     /**
      * Uploads the given {@link InputStream} to the webPDF server as a document resource with the given file name, adds
@@ -116,9 +115,9 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @param data     The document {@link InputStream} to upload.
      * @param fileName The name of the uploaded document.
      * @return The resulting {@link RestDocument} handle.
-     * @throws IOException Shall be thrown, should the upload have failed.
+     * @throws ResultException Shall be thrown, should the upload have failed.
      */
-    @NotNull T_REST_DOCUMENT uploadDocument(@Nullable InputStream data, @Nullable String fileName) throws IOException;
+    @NotNull T_REST_DOCUMENT uploadDocument(@Nullable InputStream data, @Nullable String fileName) throws ResultException;
 
     /**
      * Deletes the {@link RestDocument} with the given document ID from the webPDF server.
@@ -134,9 +133,9 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @param documentId The document ID of the {@link RestDocument} to rename.
      * @param fileName   The new name for the {@link RestDocument}.
      * @return The resulting {@link RestDocument} handle.
-     * @throws IOException Shall be thrown, should renaming the document have failed.
+     * @throws ResultException Shall be thrown, should renaming the document have failed.
      */
-    @NotNull T_REST_DOCUMENT renameDocument(@Nullable String documentId, @Nullable String fileName) throws IOException;
+    @NotNull T_REST_DOCUMENT renameDocument(@Nullable String documentId, @Nullable String fileName) throws ResultException;
 
     /**
      * Checks whether a document history is collected for managed {@link RestDocument}s.

@@ -5,9 +5,10 @@ import jakarta.xml.bind.DatatypeConverter;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.handler.MessageContext;
 import jakarta.xml.ws.soap.MTOMFeature;
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.exception.ServerResultException;
 import net.webpdf.wsclient.schema.operation.BillingType;
 import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;
@@ -25,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.xml.namespace.QName;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -76,7 +76,7 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
     @Override
     public @NotNull T_SOAP_DOCUMENT process() throws ResultException {
         if (getSourceDocument() == null) {
-            throw new ResultException(Result.build(Error.NO_DOCUMENT));
+            throw new ClientResultException(Error.NO_DOCUMENT);
         }
 
         DataHandler resultDataHandler;
@@ -91,8 +91,8 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
 
             return getSourceDocument();
 
-        } catch (IOException | WebServiceException ex) {
-            throw new ResultException(Result.build(Error.SOAP_EXECUTION, ex));
+        } catch (WebServiceException ex) {
+            throw new ServerResultException(ex);
         }
     }
 
@@ -160,13 +160,13 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
                     : this.webserviceURL.toURL();
 
             if (url == null) {
-                throw new ResultException(Result.build(Error.WSDL_INVALID_FILE));
+                throw new ClientResultException(Error.WSDL_INVALID_FILE);
             }
 
             return url;
 
         } catch (MalformedURLException ex) {
-            throw new ResultException(Result.build(Error.WSDL_INVALID_URL, ex));
+            throw new ClientResultException(Error.WSDL_INVALID_URL, ex);
         }
     }
 

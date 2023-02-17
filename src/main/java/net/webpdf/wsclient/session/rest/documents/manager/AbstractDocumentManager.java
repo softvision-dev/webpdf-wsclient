@@ -1,8 +1,8 @@
 package net.webpdf.wsclient.session.rest.documents.manager;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
@@ -95,7 +95,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
                 .executeRequest(DocumentFile[].class);
 
         if (documentFileList == null) {
-            throw new ResultException(Result.build(Error.HTTP_IO_ERROR));
+            throw new ClientResultException(Error.HTTP_IO_ERROR);
         }
 
         this.documentMap.clear();
@@ -119,7 +119,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
         if (document != null && (documentId = document.getDocumentId()) != null) {
             return documentId;
         }
-        throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+        throw new ClientResultException(Error.INVALID_DOCUMENT);
     }
 
     /**
@@ -132,7 +132,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
     @Override
     public @NotNull T_REST_DOCUMENT getDocument(@Nullable String documentId) throws ResultException {
         if (!containsDocument(documentId)) {
-            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
         return this.documentMap.get(documentId);
     }
@@ -166,7 +166,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
     public void downloadDocument(@Nullable String documentId, @Nullable OutputStream outputStream)
             throws ResultException {
         if (!containsDocument(documentId)) {
-            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
 
         HttpRestRequest.createRequest(this.session)
@@ -194,15 +194,17 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      *
      * @param file The {@link File} to upload.
      * @return The resulting {@link RestDocument} handle.
-     * @throws IOException Shall be thrown, should the upload have failed.
+     * @throws ResultException Shall be thrown, should the upload have failed.
      */
     @Override
-    public @NotNull T_REST_DOCUMENT uploadDocument(@Nullable File file) throws IOException {
+    public @NotNull T_REST_DOCUMENT uploadDocument(@Nullable File file) throws ResultException {
         if (file == null) {
-            throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
+            throw new ClientResultException(Error.INVALID_FILE_SOURCE);
         }
         try (InputStream data = FileUtils.openInputStream(file)) {
             return uploadDocument(data, file.getName());
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.INVALID_FILE_SOURCE, ex);
         }
     }
 
@@ -213,32 +215,36 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @param data     The document {@link InputStream} to upload.
      * @param fileName The name of the uploaded document.
      * @return The resulting {@link RestDocument} handle.
-     * @throws IOException Shall be thrown, should the upload have failed.
+     * @throws ResultException Shall be thrown, should the upload have failed.
      */
     @Override
     public @NotNull T_REST_DOCUMENT uploadDocument(@Nullable InputStream data, @Nullable String fileName)
-            throws IOException {
+            throws ResultException {
         if (data == null || fileName == null) {
-            throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
+            throw new ClientResultException(Error.INVALID_FILE_SOURCE);
         }
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.setMode(HttpMultipartMode.LEGACY);
-        builder.setCharset(StandardCharsets.UTF_8);
-        builder.addBinaryBody("filedata", IOUtils.toByteArray(data),
-                ContentType.DEFAULT_BINARY, fileName);
-        HttpEntity entity = builder.build();
+        try {
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.setMode(HttpMultipartMode.LEGACY);
+            builder.setCharset(StandardCharsets.UTF_8);
+            builder.addBinaryBody("filedata", IOUtils.toByteArray(data),
+                    ContentType.DEFAULT_BINARY, fileName);
+            HttpEntity entity = builder.build();
 
-        List<NameValuePair> parameters = new ArrayList<>();
-        parameters.add(new BasicNameValuePair("history", Boolean.toString(documentHistoryActive)));
+            List<NameValuePair> parameters = new ArrayList<>();
+            parameters.add(new BasicNameValuePair("history", Boolean.toString(documentHistoryActive)));
 
-        URI uri = this.session.getURI("documents", parameters);
-        DocumentFile documentFile = HttpRestRequest.createRequest(session)
-                .buildRequest(HttpMethod.POST, uri, entity)
-                .executeRequest(DocumentFile.class);
-        if (documentFile == null) {
-            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+            URI uri = this.session.getURI("documents", parameters);
+            DocumentFile documentFile = HttpRestRequest.createRequest(session)
+                    .buildRequest(HttpMethod.POST, uri, entity)
+                    .executeRequest(DocumentFile.class);
+            if (documentFile == null) {
+                throw new ClientResultException(Error.INVALID_DOCUMENT);
+            }
+            return synchronize(documentFile);
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.INVALID_FILE_SOURCE, ex);
         }
-        return synchronize(documentFile);
     }
 
     /**
@@ -250,7 +256,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
     @Override
     public void deleteDocument(@Nullable String documentId) throws ResultException {
         if (!containsDocument(documentId)) {
-            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
         HttpRestRequest.createRequest(session)
                 .buildRequest(HttpMethod.DELETE, "documents/" + documentId, null)
@@ -264,18 +270,18 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @param documentId The document ID of the {@link RestDocument} to rename.
      * @param fileName   The new name for the {@link RestDocument}.
      * @return The resulting {@link RestDocument} handle.
-     * @throws IOException Shall be thrown, should renaming the document have failed.
+     * @throws ResultException Shall be thrown, should renaming the document have failed.
      */
     @Override
     public @NotNull T_REST_DOCUMENT renameDocument(@Nullable String documentId, @Nullable String fileName)
-            throws IOException {
+            throws ResultException {
         if (!containsDocument(documentId)) {
-            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
         T_REST_DOCUMENT restDocument = getDocument(documentId);
         DocumentFile documentFile = restDocument.getDocumentFile();
         if (documentFile == null) {
-            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
         documentFile.setFileName(fileName);
         documentFile = HttpRestRequest.createRequest(session)
@@ -283,7 +289,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
                         prepareHttpEntity(documentFile))
                 .executeRequest(DocumentFile.class);
         if (documentFile == null) {
-            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
         return synchronize(documentFile);
     }
@@ -323,7 +329,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
     @Override
     public @NotNull List<HistoryEntry> getDocumentHistory(@Nullable String documentId) throws ResultException {
         if (!this.isDocumentHistoryActive()) {
-            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
+            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
         }
         return getDocument(documentId).getHistory();
     }
@@ -341,7 +347,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
     public @NotNull HistoryEntry getDocumentHistoryEntry(@Nullable String documentId, int historyId)
             throws ResultException {
         if (!this.isDocumentHistoryActive()) {
-            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
+            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
         }
         return getDocument(documentId).getHistoryEntry(historyId);
     }
@@ -358,10 +364,10 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
     public @Nullable HistoryEntry updateDocumentHistory(@Nullable String documentId, @Nullable HistoryEntry historyEntry)
             throws ResultException {
         if (!this.isDocumentHistoryActive() || historyEntry == null) {
-            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
+            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
         }
         if (!containsDocument(documentId)) {
-            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
 
         T_REST_DOCUMENT restDocument = this.documentMap.get(documentId);
@@ -397,7 +403,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
             throws ResultException {
         String documentId;
         if (documentFile == null || (documentId = documentFile.getDocumentId()) == null) {
-            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
 
         T_REST_DOCUMENT restDocument = createDocument(documentId);
@@ -446,7 +452,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
                 .executeRequest(HistoryEntry[].class);
 
         if (history == null) {
-            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
+            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
         }
 
         for (HistoryEntry historyEntry : history) {
@@ -465,7 +471,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
     private <T> @NotNull HttpEntity prepareHttpEntity(@Nullable T parameter) throws ResultException {
         try {
             if (parameter == null) {
-                throw new ResultException(Result.build(Error.NO_OPERATION_DATA));
+                throw new ClientResultException(Error.NO_OPERATION_DATA);
             }
             return new StringEntity(
                     this.session.getDataFormat() == DataFormat.XML
@@ -474,8 +480,8 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
                     this.session.getDataFormat() != null ?
                             ContentType.create(this.session.getDataFormat().getMimeType(), StandardCharsets.UTF_8) :
                             null);
-        } catch (IOException | UnsupportedCharsetException ex) {
-            throw new ResultException(Result.build(Error.TO_XML_JSON, ex));
+        } catch (UnsupportedCharsetException ex) {
+            throw new ClientResultException(Error.TO_XML_JSON, ex);
         }
     }
 

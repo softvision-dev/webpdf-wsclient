@@ -1,10 +1,11 @@
 package net.webpdf.wsclient.session.rest;
 
+import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.exception.TokenProviderResultException;
 import net.webpdf.wsclient.session.connection.http.HttpAuthorizationProvider;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
@@ -136,10 +137,10 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     /**
      * Login into the webPDF server and prepare a new {@link SessionToken}.
      *
-     * @throws IOException Shall be thrown in case of an HTTP access error.
+     * @throws ResultException Shall be thrown in case of an HTTP access error.
      */
     @Override
-    public void login() throws IOException {
+    public void login() throws ResultException {
         login((SessionToken) null);
     }
 
@@ -156,10 +157,10 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      * </p>
      *
      * @param token The {@link Token} to provide a session for.
-     * @throws IOException Shall be thrown in case of an HTTP access error.
+     * @throws ResultException Shall be thrown in case of an HTTP access error.
      */
     @Override
-    public void login(@Nullable Token token) throws IOException {
+    public void login(@Nullable Token token) throws ResultException {
         this.token = token;
 
         if (token == null) {
@@ -179,11 +180,15 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      * </p>
      *
      * @param tokenProvider The {@link TokenProvider} to provide a session for.
-     * @throws IOException HTTP access error.
+     * @throws ResultException HTTP access error.
      */
     @Override
-    public void login(@Nullable TokenProvider<?> tokenProvider) throws IOException {
-        login(tokenProvider != null ? tokenProvider.provideToken() : null);
+    public void login(@Nullable TokenProvider<?> tokenProvider) throws ResultException {
+        try {
+            login(tokenProvider != null ? tokenProvider.provideToken() : null);
+        } catch (Exception ex) {
+            throw new TokenProviderResultException(ex);
+        }
     }
 
     /**
@@ -207,7 +212,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
                     .buildRequest(HttpMethod.POST, REFRESH_PATH, null)
                     .executeRequest(SessionToken.class);
         } else {
-            throw new ResultException(Result.build(Error.FORBIDDEN_TOKEN_REFRESH));
+            throw new ClientResultException(Error.FORBIDDEN_TOKEN_REFRESH);
         }
     }
 
@@ -238,30 +243,35 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     /**
      * Close the {@link RestSession}.
      *
-     * @throws java.io.IOException Shall be thrown, if closing the {@link RestSession} failed.
+     * @throws ResultException Shall be thrown, if closing the {@link RestSession} failed.
      */
     @Override
-    public void close() throws IOException {
+    public void close() throws ResultException {
+        ResultException resultException = null;
         try {
             if (this.token != null && !this.token.getToken().isEmpty()) {
                 logout();
             }
-        } catch (ResultException ex) {
-            throw new IOException("Unable to logout from server", ex);
         } finally {
             if (this.httpClient != null) {
-                this.httpClient.close();
+                try {
+                    this.httpClient.close();
+                } catch (IOException ex) {
+                    resultException = new ClientResultException(Error.HTTP_IO_ERROR, ex);
+                }
             }
+        }
+        if (resultException != null) {
+            throw resultException;
         }
     }
 
     /**
      * Logout from the {@link RestSession}.
      *
-     * @throws IOException Shall be thrown in case of an HTTP access error.
+     * @throws ResultException Shall be thrown in case of an HTTP access error.
      */
-    private void logout() throws IOException {
-
+    private void logout() throws ResultException {
         HttpRestRequest.createRequest(this)
                 .buildRequest(HttpMethod.GET, LOGOUT_PATH, null)
                 .executeRequest(Object.class);

@@ -1,9 +1,9 @@
 package net.webpdf.wsclient.session;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
@@ -75,10 +75,10 @@ public final class SessionFactory {
                 case REST:
                     return (T_SESSION) new RestWebServiceSession(url, tlsContext);
                 default:
-                    throw new ResultException(Result.build(Error.SESSION_CREATE));
+                    throw new ClientResultException(Error.SESSION_CREATE);
             }
         } catch (ClassCastException ex) {
-            throw new ResultException(Result.build(Error.SESSION_CREATE));
+            throw new ClientResultException(Error.SESSION_CREATE, ex);
         }
     }
 

@@ -1,8 +1,6 @@
 
 package net.webpdf.wsclient.schema.stubs;
 
-import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import org.jetbrains.annotations.Nullable;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -16,10 +14,6 @@ import jakarta.xml.bind.annotation.XmlType;
  * failure of a webservice call. <br>
  * It shall describe the failure, by providing an error code, an error message and an optional exception describing the
  * issue.
- * </p>
- * <p>
- * <b>Important:</b> The hereby contained error codes should not be confused with the wsclient {@link Error} codes,
- * those shall be represented by a {@link Result} instead.
  * </p>
  *
  * <p>Java-class for the FaultInfo complex type.

@@ -36,8 +36,9 @@ public final class TestServer {
         }
     }
 
-    public URL getServer(ServerType serverType) throws URISyntaxException, MalformedURLException {
-        return buildServer(serverType, ServerProtocol.HTTP, null, null);
+    public URL getServer(ServerType serverType) {
+        return assertDoesNotThrow(() ->
+                buildServer(serverType, ServerProtocol.HTTP, null, null));
     }
 
     public URL getServer(ServerType serverType, String user, String password)

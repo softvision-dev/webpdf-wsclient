@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.webservice.rest;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
@@ -8,7 +9,6 @@ import net.webpdf.wsclient.webservice.AbstractWebService;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
@@ -21,7 +21,6 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 
@@ -94,8 +93,8 @@ public abstract class RestWebService<T_OPERATION_DATA, T_OPERATION_PARAMETER, T_
                     getSession().getDataFormat() != null ?
                             ContentType.create(getSession().getDataFormat().getMimeType(), StandardCharsets.UTF_8) :
                             null);
-        } catch (IOException | UnsupportedCharsetException ex) {
-            throw new ResultException(Result.build(Error.TO_XML_JSON, ex));
+        } catch (UnsupportedCharsetException ex) {
+            throw new ClientResultException(Error.TO_XML_JSON, ex);
         }
     }
 

@@ -1,5 +1,8 @@
 package net.webpdf.wsclient.session.soap.documents;
 
+import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.exception.Error;
+import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.documents.AbstractDocument;
 import net.webpdf.wsclient.webservice.soap.SoapWebService;
 import org.jetbrains.annotations.Nullable;
@@ -76,23 +79,26 @@ public class SoapWebServiceDocument extends AbstractDocument implements SoapDocu
      * Attempts to write the response {@link SoapDocument} to the given {@link DataHandler}.
      *
      * @param resultDataHandler The {@link DataHandler} the response {@link SoapDocument} shall be written to.
-     * @throws IOException Shall be thrown, should writing the result document fail.
+     * @throws ResultException Shall be thrown, should writing the result document fail.
      */
     @Override
-    public void save(@Nullable DataHandler resultDataHandler) throws IOException {
+    public void save(@Nullable DataHandler resultDataHandler) throws ResultException {
 
         if (this.outputStream == null) {
-            throw new IOException("No output stream available");
+            throw new ClientResultException(Error.SOAP_EXECUTION, new IOException("No output stream available"));
         }
 
         if (resultDataHandler == null) {
-            throw new IOException("No document content available");
+            throw new ClientResultException(Error.SOAP_EXECUTION, new IOException("No document content available"));
         }
 
-        resultDataHandler.writeTo(this.outputStream);
-
-        if (resultDataHandler instanceof Closeable) {
-            ((Closeable) resultDataHandler).close();
+        try {
+            resultDataHandler.writeTo(this.outputStream);
+            if (resultDataHandler instanceof Closeable) {
+                ((Closeable) resultDataHandler).close();
+            }
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.SOAP_EXECUTION, ex);
         }
     }
 

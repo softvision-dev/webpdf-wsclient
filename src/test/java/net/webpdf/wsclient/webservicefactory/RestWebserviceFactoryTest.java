@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.webservicefactory;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.Error;
@@ -19,9 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +31,7 @@ public class RestWebserviceFactoryTest {
     public TestServer testServer = new TestServer();
 
     private <T extends RestWebService<?, ?, RestDocument>> T getWebService(WebServiceType webServiceType)
-            throws IOException, URISyntaxException {
+            throws ResultException {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                 testServer.getServer(ServerType.LOCAL))) {
             return WebServiceFactory.createInstance(session, webServiceType);
@@ -373,8 +372,8 @@ public class RestWebserviceFactoryTest {
                     WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL))) {
                 WebServiceFactory.createInstance(session, (StreamSource) null);
                 fail("ResultException expected");
-            } catch (ResultException ex) {
-                assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+            } catch (ClientResultException ex) {
+                assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                         String.format("Error code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
             }
         });

@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.webservicefactory;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
@@ -18,9 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +30,7 @@ public class SoapWebserviceFactoryTest {
     public TestServer testServer = new TestServer();
 
     private <T extends SoapWebService<?, ?, SoapDocument>> T getWebService(WebServiceType webServiceType)
-            throws IOException, URISyntaxException {
+            throws ResultException {
         try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
             return WebServiceFactory.createInstance(session, webServiceType);
@@ -357,8 +356,8 @@ public class SoapWebserviceFactoryTest {
                     testServer.getServer(ServerType.LOCAL))) {
                 WebServiceFactory.createInstance(session, (StreamSource) null);
                 fail("ResultException expected");
-            } catch (ResultException ex) {
-                assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+            } catch (ClientResultException ex) {
+                assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                         String.format("Error code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
             }
         });
@@ -369,9 +368,11 @@ public class SoapWebserviceFactoryTest {
         try {
             WebServiceFactory.createInstance(null, (StreamSource) null);
             fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(ex.getResult().getCode(), Error.SESSION_CREATE.getCode(),
+        } catch (ClientResultException ex) {
+            assertEquals(ex.getCode(), Error.SESSION_CREATE.getCode(),
                     String.format("Error code %s expected.", Error.SESSION_CREATE.getCode()));
+        } catch (ResultException ex) {
+            fail("A ClientResultException had been expected.");
         }
     }
 

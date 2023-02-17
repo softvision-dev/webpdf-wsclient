@@ -17,11 +17,6 @@ import org.jetbrains.annotations.NotNull;
 public enum Error {
 
     /**
-     * No error has occurred, the webservice executed successfully.
-     */
-    NONE(0, "No error"),
-
-    /**
      * An unexpected Exception has occurred, the wsclient does not define a matching fallback behaviour for the
      * situation.
      */
@@ -121,13 +116,11 @@ public enum Error {
      */
     WSDL_INVALID_URL(-51, "Invalid WSDL URL"),
     /**
-     * The server returned a webPDF error code for the executed SOAP operation, the exact server side failure cause
-     * should be contained.
+     * A client side SOAP execution error occurred.
      */
     SOAP_EXECUTION(-52, "SOAP web service execution error"),
     /**
-     * The server returned a webPDF error code for the executed REST operation, the exact server side failure cause
-     * should be contained.
+     * A client side REST execution error occurred.
      */
     REST_EXECUTION(-53, "REST web service execution error");
 

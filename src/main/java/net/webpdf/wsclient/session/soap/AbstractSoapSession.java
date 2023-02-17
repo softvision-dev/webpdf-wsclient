@@ -1,6 +1,7 @@
 package net.webpdf.wsclient.session.soap;
 
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.exception.TokenProviderResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.AbstractSession;
 import net.webpdf.wsclient.session.credentials.TokenCredentials;
@@ -13,7 +14,6 @@ import org.apache.hc.client5.http.auth.Credentials;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 
@@ -103,10 +103,15 @@ public abstract class AbstractSoapSession<T_SOAP_DOCUMENT extends SoapDocument>
      * authorizing this session.
      *
      * @param tokenProvider The {@link TokenProvider} creating the {@link Token} authorizing this session.
+     * @throws ResultException Shall be thrown in case of an HTTP access error.
      */
     @Override
-    public void setCredentials(@Nullable TokenProvider<?> tokenProvider) throws IOException {
-        setCredentials(tokenProvider != null ? tokenProvider.provideToken() : null);
+    public void setCredentials(@Nullable TokenProvider<?> tokenProvider) throws ResultException {
+        try {
+            setCredentials(tokenProvider != null ? tokenProvider.provideToken() : null);
+        } catch (Exception ex) {
+            throw new TokenProviderResultException(ex);
+        }
     }
 
     /**

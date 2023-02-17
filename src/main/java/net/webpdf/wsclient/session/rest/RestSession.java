@@ -14,8 +14,6 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
 /**
  * <p>
  * A class implementing {@link RestSession} establishes and manages a {@link WebServiceProtocol#REST} connection with
@@ -62,25 +60,25 @@ public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Sessi
     /**
      * Login into the webPDF server and prepare a session {@link Token}.
      *
-     * @throws IOException Shall be thrown in case of a HTTP access error.
+     * @throws ResultException Shall be thrown in case of a HTTP access error.
      */
-    void login() throws IOException;
+    void login() throws ResultException;
 
     /**
      * Login into the server using the given {@link Token}.
      *
      * @param token The {@link Token} to provide a session for.
-     * @throws IOException Shall be thrown in case of a HTTP access error.
+     * @throws ResultException Shall be thrown in case of a HTTP access error.
      */
-    void login(@Nullable Token token) throws IOException;
+    void login(@Nullable Token token) throws ResultException;
 
     /**
      * Login into the server using the given {@link TokenProvider}.
      *
      * @param tokenProvider The {@link TokenProvider} to provide a session for.
-     * @throws IOException HTTP access error.
+     * @throws ResultException HTTP access error.
      */
-    void login(@Nullable TokenProvider<?> tokenProvider) throws IOException;
+    void login(@Nullable TokenProvider<?> tokenProvider) throws ResultException;
 
     /**
      * <p>

@@ -1,12 +1,12 @@
 package net.webpdf.wsclient.webservice;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.Session;
@@ -55,7 +55,7 @@ public final class WebServiceFactory {
                             .createSoapInstance((SoapSession<SoapDocument>) session, webServiceType,
                                     createSoapParameters(webServiceType));
                 } else {
-                    throw new ResultException(Result.build(Error.INVALID_WEBSERVICE_SESSION));
+                    throw new ClientResultException(Error.INVALID_WEBSERVICE_SESSION);
                 }
             case REST:
                 if (session instanceof RestSession) {
@@ -63,10 +63,10 @@ public final class WebServiceFactory {
                             .createRestInstance((RestSession<RestDocument>) session, webServiceType,
                                     createRestParameters(webServiceType));
                 } else {
-                    throw new ResultException(Result.build(Error.INVALID_WEBSERVICE_SESSION));
+                    throw new ClientResultException(Error.INVALID_WEBSERVICE_SESSION);
                 }
             default:
-                throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE_PROTOCOL));
+                throw new ClientResultException(Error.UNKNOWN_WEBSERVICE_PROTOCOL);
         }
     }
 
@@ -102,7 +102,7 @@ public final class WebServiceFactory {
                 operationData.setBarcode(new BarcodeType());
                 break;
             default:
-                throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE_TYPE));
+                throw new ClientResultException(Error.UNKNOWN_WEBSERVICE_TYPE);
         }
         return operationData;
     }
@@ -152,7 +152,7 @@ public final class WebServiceFactory {
                 operation = new RestOperationData(barcodeOperation);
                 break;
             default:
-                throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE_TYPE));
+                throw new ClientResultException(Error.UNKNOWN_WEBSERVICE_TYPE);
         }
         return operation;
     }
@@ -181,13 +181,13 @@ public final class WebServiceFactory {
     @NotNull T_WEBSERVICE createInstance(
             @Nullable Session<T_DOCUMENT> session, @Nullable StreamSource streamSource) throws ResultException {
         if (session == null) {
-            throw new ResultException(Result.build(Error.SESSION_CREATE));
+            throw new ClientResultException(Error.SESSION_CREATE);
         }
 
         // get the data format
         DataFormat dataFormat = session.getDataFormat();
         if (dataFormat == null) {
-            throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
+            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
         }
 
         // create the web service instance
@@ -205,7 +205,7 @@ public final class WebServiceFactory {
                             soapOperationData
                     );
                 } else {
-                    throw new ResultException(Result.build(Error.INVALID_WEBSERVICE_SESSION));
+                    throw new ClientResultException(Error.INVALID_WEBSERVICE_SESSION);
                 }
             case REST:
                 // convert the data into a operation object
@@ -220,10 +220,10 @@ public final class WebServiceFactory {
                             restOperationData
                     );
                 } else {
-                    throw new ResultException(Result.build(Error.INVALID_WEBSERVICE_SESSION));
+                    throw new ClientResultException(Error.INVALID_WEBSERVICE_SESSION);
                 }
             default:
-                throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE_PROTOCOL));
+                throw new ClientResultException(Error.UNKNOWN_WEBSERVICE_PROTOCOL);
         }
     }
 
@@ -274,7 +274,7 @@ public final class WebServiceFactory {
         ) {
             return WebServiceType.URLCONVERTER;
         } else {
-            throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE_TYPE));
+            throw new ClientResultException(Error.UNKNOWN_WEBSERVICE_TYPE);
         }
     }
 
@@ -298,7 +298,7 @@ public final class WebServiceFactory {
             @Nullable OperationData operationData) throws ResultException {
 
         if (operationData == null) {
-            throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
+            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
         }
 
         switch (webServiceType) {
@@ -331,7 +331,7 @@ public final class WebServiceFactory {
                 barcodeWebService.setOperationParameters(operationData.getBarcode());
                 return (T_WEBSERVICE) barcodeWebService;
             default:
-                throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE_TYPE));
+                throw new ClientResultException(Error.UNKNOWN_WEBSERVICE_TYPE);
         }
     }
 
@@ -355,7 +355,7 @@ public final class WebServiceFactory {
             @Nullable RestOperationData operationData) throws ResultException {
 
         if (operationData == null) {
-            throw new ResultException(Result.build(Error.INVALID_OPERATION_DATA));
+            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
         }
 
         switch (webServiceType) {
@@ -388,7 +388,7 @@ public final class WebServiceFactory {
                 barcodeWebService.setOperationParameters(operationData.getBarcode());
                 return (T_WEBSERVICE) barcodeWebService;
             default:
-                throw new ResultException(Result.build(Error.UNKNOWN_WEBSERVICE_TYPE));
+                throw new ClientResultException(Error.UNKNOWN_WEBSERVICE_TYPE);
         }
     }
 

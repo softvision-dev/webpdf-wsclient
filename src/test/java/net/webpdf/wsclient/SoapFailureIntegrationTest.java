@@ -1,10 +1,10 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.exception.ServerResultException;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.*;
-import net.webpdf.wsclient.schema.stubs.WebServiceException;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.server.ServerType;
@@ -41,10 +41,9 @@ public class SoapFailureIntegrationTest {
                 webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
                 fallbackFailAndClose(webService.process());
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-106, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-106, exception.getErrorCode());
             }
         });
     }
@@ -69,10 +68,9 @@ public class SoapFailureIntegrationTest {
                 webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
                 fallbackFailAndClose(webService.process());
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-311, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-311, exception.getErrorCode());
             }
         });
     }
@@ -91,10 +89,9 @@ public class SoapFailureIntegrationTest {
                 webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
                 fallbackFailAndClose(webService.process());
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-21, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-21, exception.getErrorCode());
             }
         });
     }
@@ -118,10 +115,9 @@ public class SoapFailureIntegrationTest {
                 webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
                 fallbackFailAndClose(webService.process());
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-5009, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-5009, exception.getErrorCode());
             }
         });
     }
@@ -141,10 +137,9 @@ public class SoapFailureIntegrationTest {
                 fallbackFailAndClose(webService.process());
                 assertTrue(fileOut.exists());
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-20, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-20, exception.getErrorCode());
             }
         });
     }
@@ -164,10 +159,9 @@ public class SoapFailureIntegrationTest {
                 fallbackFailAndClose(webService.process());
                 assertTrue(fileOut.exists());
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-5009, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-5009, exception.getErrorCode());
             }
         });
     }

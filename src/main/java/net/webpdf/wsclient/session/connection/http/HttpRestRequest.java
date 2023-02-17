@@ -1,11 +1,10 @@
 package net.webpdf.wsclient.session.connection.http;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.beans.Failure;
-import net.webpdf.wsclient.schema.stubs.FaultInfo;
-import net.webpdf.wsclient.schema.stubs.WebServiceException;
+import net.webpdf.wsclient.exception.ServerResultException;
+import net.webpdf.wsclient.openapi.WebserviceException;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
@@ -107,7 +106,7 @@ public class HttpRestRequest {
     public @NotNull HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable URI uri,
             @Nullable HttpEntity httpEntity) throws ResultException {
         if (httpMethod == null) {
-            throw new ResultException(Result.build(Error.UNKNOWN_HTTP_METHOD));
+            throw new ClientResultException(Error.UNKNOWN_HTTP_METHOD);
         }
 
         if (uri == null) {
@@ -128,7 +127,7 @@ public class HttpRestRequest {
                 httpUriRequest = new HttpPut(uri);
                 break;
             default:
-                throw new ResultException(Result.build(Error.UNKNOWN_HTTP_METHOD));
+                throw new ClientResultException(Error.UNKNOWN_HTTP_METHOD);
         }
 
         httpUriRequest.addHeader(HttpHeaders.ACCEPT, this.acceptHeader);
@@ -150,16 +149,12 @@ public class HttpRestRequest {
      * failure state in form of a matching {@link ResultException}.
      * </p>
      * <p>
-     * Should the failure state represent a {@link FaultInfo} object, it shall indicate a server side failure to execute
-     * the operation and shall be wrapped in a {@link WebServiceException}.<br>
-     * The {@link WebServiceException} shall be set as the cause of the thrown {@link ResultException} and shall
-     * additionally be returned via the {@link Result#getException()} covered in the {@link ResultException}.
+     * Should the failure state represent a server side failure is shall throw a {@link ServerResultException}.<br>
      * </p>
      *
      * @param httpResponse The {@link HttpResponse} to check for a failure state.
      * @throws ResultException Shall be thrown, if the {@link HttpResponse} represents a failure state.
-     * @see ResultException
-     * @see Result#getException()
+     * @see ServerResultException
      */
     private void checkResponse(@NotNull CloseableHttpResponse httpResponse) throws ResultException {
 
@@ -172,43 +167,32 @@ public class HttpRestRequest {
         // get the response
         HttpEntity httpEntity = httpResponse.getEntity();
         if (httpEntity == null) {
-            throw new ResultException(Result.build(Error.HTTP_EMPTY_ENTITY));
+            throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
         }
 
-        String responseOutput;
+        String exceptionMessage = "";
 
         // is this a webPDF server response or a general server error?
         String contentType = httpEntity.getContentType();
         if (contentType != null && (contentType.equals(DataFormat.XML.getMimeType())
                 || contentType.equals(DataFormat.JSON.getMimeType()))) {
-
-            Failure exceptionBean = DataFormat.XML.equals(this.dataFormat)
-                    ? SerializeHelper.fromXML(httpEntity, Failure.class)
-                    : SerializeHelper.fromJSON(httpEntity, Failure.class);
-
-            responseOutput = "Server error: " + exceptionBean.getErrorMessage()
-                    + " (" + exceptionBean.getErrorCode() + ")\n"
-                    + (exceptionBean.getStackTrace() != null && !exceptionBean.getStackTrace().isEmpty() ?
-                    "Server stack trace: " + exceptionBean.getStackTrace() + "\n" : "");
-            if (exceptionBean.getErrorCode() != 0) {
-                FaultInfo faultInfo = new FaultInfo();
-                faultInfo.setErrorMessage(exceptionBean.getErrorMessage());
-                faultInfo.setErrorCode(exceptionBean.getErrorCode());
-                faultInfo.setStackTrace(exceptionBean.getStackTrace());
-                throw new ResultException(Result.build(Error.REST_EXECUTION,
-                        new WebServiceException(responseOutput, faultInfo)));
+            WebserviceException wsException = DataFormat.XML.equals(this.dataFormat)
+                    ? SerializeHelper.fromXML(httpEntity, WebserviceException.class)
+                    : SerializeHelper.fromJSON(httpEntity, WebserviceException.class);
+            if (wsException.getErrorCode() != 0) {
+                throw new ServerResultException(wsException);
             }
         } else {
             try {
-                responseOutput = EntityUtils.toString(httpEntity, StandardCharsets.UTF_8);
+                exceptionMessage = EntityUtils.toString(httpEntity, StandardCharsets.UTF_8);
             } catch (ParseException | IOException ex) {
-                throw new ResultException(Result.build(Error.HTTP_CUSTOM_ERROR, ex));
+                throw new ClientResultException(Error.HTTP_CUSTOM_ERROR, ex);
             }
         }
 
         // throw the extracted error message
-        throw new ResultException(Result.build(Error.HTTP_CUSTOM_ERROR).appendMessage(
-                code + " " + httpResponse.getReasonPhrase() + "\n" + responseOutput));
+        throw new ClientResultException(Error.HTTP_CUSTOM_ERROR).appendMessage(
+                code + " " + httpResponse.getReasonPhrase() + "\n" + exceptionMessage);
     }
 
     /**
@@ -220,12 +204,12 @@ public class HttpRestRequest {
      */
     public void executeRequest(@Nullable OutputStream outputStream) throws ResultException {
         if (outputStream == null) {
-            throw new ResultException(Result.build(Error.INVALID_FILE_SOURCE));
+            throw new ClientResultException(Error.INVALID_FILE_SOURCE);
         }
         try (CloseableHttpResponse closeableHttpResponse = this.httpClient.execute(httpUriRequest)) {
             closeableHttpResponse.getEntity().writeTo(outputStream);
         } catch (IOException ex) {
-            throw new ResultException(Result.build(Error.HTTP_IO_ERROR, ex));
+            throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
         }
     }
 
@@ -270,10 +254,8 @@ public class HttpRestRequest {
                         ? SerializeHelper.fromXML(streamSource, type)
                         : SerializeHelper.fromJSON(streamSource, type);
             }
-        } catch (ResultException ex) {
-            throw ex;
         } catch (IOException | ParseException ex) {
-            throw new ResultException(Result.build(Error.HTTP_IO_ERROR, ex));
+            throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
         }
     }
 

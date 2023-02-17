@@ -1,57 +1,64 @@
 package net.webpdf.wsclient.exception;
 
-import net.webpdf.wsclient.schema.stubs.FaultInfo;
-import net.webpdf.wsclient.schema.stubs.WebServiceException;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-
 /**
  * <p>
- * An instance of {@link ResultException} will be encountered in case a wsclient operation failed.<br>
- * It shall describe the failure, by providing a detailed {@link Result} describing the issue.<br>
- * It shall describe a webPDF server failure state, by wrapping a {@link WebServiceException} - see below.
+ * An instance of {@link ResultException} will be encountered in case a wsclient operation failed for some reason.<br>
+ * A {@link ResultException} mostly serves as the common, generic, catchable base type for more specific exceptions that
+ * provide more detailed information about the failure.
  * </p>
- * <p>
- * The hereby contained {@link Result} and {@link Error} instances shall allow to evaluate such a wsclient failure
- * state.
- * </p>
- * <p>
- * <b>Important:</b> The hereby contained {@link Result} should not be confused with the webPDF server´s
- * {@link FaultInfo}.
- * </p>
- * <p>
- * <b>Important:</b> Should a webPDF server error ({@link WebServiceException}) occur, it shall be wrapped by a
- * {@link ResultException}, which shall return the {@link WebServiceException} via {@link #getCause()} or via the
- * contained {@link Result}.
- * </p>
- *
- * @see Result#getError()
- * @see Result#getException()
- * @see Result
- * @see Error
  */
-public class ResultException extends IOException {
-
-    private final @NotNull Result result;
+public class ResultException extends Exception {
 
     /**
-     * Creates a wsclient {@link ResultException}, for further processing of failures during webservice calls.
-     *
-     * @param result The {@link Result} to be covered by the exception
+     * <p>
+     * Constructs a new {@link ResultException} with {@code null} as its detail message.<br>
+     * The cause is not initialized, and may subsequently be initialized by a call to {@link #initCause}.
+     * </p>
      */
-    public ResultException(@NotNull Result result) {
-        super(result.getMessage(), result.getException());
-        this.result = result;
+    protected ResultException() {
+        super();
     }
 
     /**
-     * Returns the covered {@link Result}.
+     * <p>
+     * Constructs a new {@link ResultException} with the specified detail message.<br>
+     * The cause is not initialized, and may subsequently be initialized by a call to {@link #initCause}.
+     * </p>
      *
-     * @return The covered {@link Result}.
+     * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()}
+     *                method.
      */
-    public @NotNull Result getResult() {
-        return this.result;
+    protected ResultException(String message) {
+        super(message);
+    }
+
+    /**
+     * <p>
+     * Constructs a new {@link ResultException} with the specified detail message and cause.<br>
+     * Note that the detail message associated with {@code cause} is <i>not</i> automatically incorporated in this
+     * exception's detail message.
+     * </p>
+     *
+     * @param message the detail message (which is saved for later retrieval by the {@link #getMessage()} method).
+     * @param cause   the cause (which is saved for later retrieval by the {@link #getCause()} method).  (A {@code null}
+     *                value is permitted, and indicates that the cause is nonexistent or unknown.)
+     */
+    protected ResultException(String message, Exception cause) {
+        super(message, cause);
+    }
+
+    /**
+     * <p>
+     * Constructs a new {@link ResultException} with the specified cause and a detail message of
+     * {@code (cause==null ? null : cause.toString())} (which typically contains the class and detail message of
+     * {@code cause}).
+     * </p>
+     *
+     * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null}
+     *              value is permitted, and indicates that the cause is nonexistent or unknown.)
+     */
+    protected ResultException(Exception cause) {
+        super(cause);
     }
 
 }

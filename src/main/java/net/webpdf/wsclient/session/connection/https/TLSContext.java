@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.session.connection.https;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.hc.core5.ssl.SSLContexts;
@@ -81,7 +81,7 @@ public class TLSContext {
 
         } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException |
                  IOException ex) {
-            throw new ResultException(Result.build(Error.HTTPS_IO_ERROR, ex));
+            throw new ClientResultException(Error.HTTPS_IO_ERROR, ex);
         }
     }
 

@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.http;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.testsuite.server.ServerType;
@@ -20,7 +21,6 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
@@ -136,7 +136,7 @@ public class HttpRestRequestIntegrationTest {
     @Test
     @IntegrationTest
     public void testNullHttpPath() {
-        assertThrows(IOException.class,
+        assertThrows(ClientResultException.class,
                 () -> {
                     File file = testResources.getResource("test.pdf");
                     try (RestWebServiceSession session =
@@ -162,7 +162,7 @@ public class HttpRestRequestIntegrationTest {
     @Test
     @IntegrationTest
     public void testNullTypRequest() {
-        assertThrows(IOException.class,
+        assertThrows(ClientResultException.class,
                 () -> {
                     File file = testResources.getResource("test.pdf");
                     try (RestWebServiceSession session =

@@ -1,8 +1,8 @@
 package net.webpdf.wsclient.session.rest.documents.manager;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.rest.RestSession;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ public class RestWebServiceDocumentManager extends AbstractDocumentManager<RestW
     @Override
     protected @NotNull RestWebServiceDocument createDocument(@Nullable String documentId) throws ResultException {
         if (documentId == null) {
-            throw new ResultException(Result.build(Error.INVALID_DOCUMENT));
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
 
         return new RestWebServiceDocument(documentId);

@@ -1,10 +1,10 @@
 package net.webpdf.wsclient;
 
 import jakarta.xml.ws.WebServiceException;
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
-import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.Session;
@@ -155,9 +155,9 @@ public class WebserviceTLSIntegrationTest {
                 testRestSSL(url, keystoreFile, selfSigned);
                 assertEquals(0, expectedErrorCode,
                         String.format("Found %d but %d has been expected.", 0, expectedErrorCode));
-            } catch (ResultException ex) {
-                assertEquals(expectedErrorCode, ex.getResult().getCode(),
-                        String.format("Found %d but %d has been expected.", ex.getResult().getCode(),
+            } catch (ClientResultException ex) {
+                assertEquals(expectedErrorCode, ex.getCode(),
+                        String.format("Found %d but %d has been expected.", ex.getCode(),
                                 expectedErrorCode));
             }
         });

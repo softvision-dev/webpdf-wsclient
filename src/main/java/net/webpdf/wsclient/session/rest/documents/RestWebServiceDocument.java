@@ -1,9 +1,9 @@
 package net.webpdf.wsclient.session.rest.documents;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.documents.AbstractDocument;
 import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
@@ -109,7 +109,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
     @Override
     public @NotNull HistoryEntry getHistoryEntry(int historyId) throws ResultException {
         if (!this.historyMap.containsKey(historyId)) {
-            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
+            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
         }
         return this.historyMap.get(historyId);
     }
@@ -122,7 +122,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      */
     public void updateHistoryEntry(@Nullable HistoryEntry historyEntry) throws ResultException {
         if (historyEntry == null) {
-            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
+            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
         }
         int historyId = historyEntry.getId();
 
@@ -143,7 +143,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      */
     public @NotNull HistoryEntry lastHistory() throws ResultException {
         if (this.historyMap.isEmpty()) {
-            throw new ResultException(Result.build(Error.INVALID_HISTORY_DATA));
+            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
         }
         return this.historyMap.get(this.historyMap.size());
     }

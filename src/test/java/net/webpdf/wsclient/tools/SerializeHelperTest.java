@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.tools;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
@@ -134,18 +135,22 @@ public class SerializeHelperTest {
             HttpEntity entity = new FileEntity(testResources.getResource("convert.json"), ContentType.APPLICATION_JSON);
             SerializeHelper.fromXML(entity, OperationData.class);
             fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+        } catch (ClientResultException ex) {
+            assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+        } catch (ResultException ex) {
+            fail("A ClientResultException had been expected.");
         }
 
         try {
             HttpEntity entity = new FileEntity(testResources.getResource("convert.xml"), ContentType.APPLICATION_XML);
             SerializeHelper.fromJSON(entity, OperationData.class);
             fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+        } catch (ClientResultException ex) {
+            assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+        } catch (ResultException ex) {
+            fail("A ClientResultException had been expected.");
         }
     }
 
@@ -154,61 +159,77 @@ public class SerializeHelperTest {
         try {
             SerializeHelper.fromXML((StreamSource) null, OperationData.class);
             fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+        } catch (ClientResultException ex) {
+            assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+        } catch (ResultException ex) {
+            fail("A ClientResultException had been expected.");
         }
         try {
             SerializeHelper.fromXML(new StreamSource(), null);
             fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+        } catch (ClientResultException ex) {
+            assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+        } catch (ResultException ex) {
+            fail("A ClientResultException had been expected.");
         }
 
         try {
             SerializeHelper.fromXML((HttpEntity) null, OperationData.class);
             fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+        } catch (ClientResultException ex) {
+            assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+        } catch (ResultException ex) {
+            fail("A ClientResultException had been expected.");
         }
         try {
             SerializeHelper.fromXML(new FileEntity(new File(""), ContentType.APPLICATION_XML), null);
             fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+        } catch (ClientResultException ex) {
+            assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+        } catch (ResultException ex) {
+            fail("A ClientResultException had been expected.");
         }
 
         try {
             SerializeHelper.fromJSON((StreamSource) null, OperationData.class);
             fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+        } catch (ClientResultException ex) {
+            assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+        } catch (ResultException ex) {
+            fail("A ClientResultException had been expected.");
         }
         try {
             SerializeHelper.fromJSON(new StreamSource(), null);
             fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+        } catch (ClientResultException ex) {
+            assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+        } catch (ResultException ex) {
+            fail("A ClientResultException had been expected.");
         }
 
         try {
             SerializeHelper.fromJSON((HttpEntity) null, OperationData.class);
             fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+        } catch (ClientResultException ex) {
+            assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+        } catch (ResultException ex) {
+            fail("A ClientResultException had been expected.");
         }
         try {
             SerializeHelper.fromJSON(new FileEntity(new File(""), ContentType.APPLICATION_JSON), null);
             fail("ResultException expected");
-        } catch (ResultException ex) {
-            assertEquals(ex.getResult().getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+        } catch (ClientResultException ex) {
+            assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
                     String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+        } catch (ResultException ex) {
+            fail("A ClientResultException had been expected.");
         }
     }
 

@@ -1,10 +1,10 @@
 package net.webpdf.wsclient.session;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.session.rest.AbstractRestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.Result;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
@@ -89,7 +89,7 @@ public abstract class AbstractSession<T_DOCUMENT extends Document> implements Se
                 this.credentialsProvider.setCredentials(this.authScope, this.credentials);
             }
         } catch (URISyntaxException ex) {
-            throw new ResultException(Result.build(Error.INVALID_URL, ex));
+            throw new ClientResultException(Error.INVALID_URL, ex);
         }
     }
 
@@ -146,7 +146,7 @@ public abstract class AbstractSession<T_DOCUMENT extends Document> implements Se
                     .setPath(this.baseUrl.getPath() + this.basePath + subPath)
                     .build();
         } catch (URISyntaxException ex) {
-            throw new ResultException(Result.build(Error.INVALID_URL, ex));
+            throw new ClientResultException(Error.INVALID_URL, ex);
         }
     }
 
@@ -165,7 +165,7 @@ public abstract class AbstractSession<T_DOCUMENT extends Document> implements Se
                     .addParameters(parameters)
                     .build();
         } catch (URISyntaxException ex) {
-            throw new ResultException(Result.build(Error.INVALID_URL, ex));
+            throw new ClientResultException(Error.INVALID_URL, ex);
         }
     }
 

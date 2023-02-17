@@ -1,5 +1,6 @@
 package net.webpdf.wsclient.documents;
 
+import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import org.apache.commons.io.FileUtils;
@@ -38,7 +39,7 @@ public class SoapDocumentTest {
 
     @Test
     public void testSoapDocumentNullSource() {
-        assertThrows(IOException.class,
+        assertThrows(ClientResultException.class,
                 () -> {
                     File targetFile = testResources.getTempFolder().newFile();
 
@@ -53,7 +54,7 @@ public class SoapDocumentTest {
 
     @Test
     public void testSoapDocumentNullTarget() {
-        assertThrows(IOException.class,
+        assertThrows(ClientResultException.class,
                 () -> {
                     File sourceFile = testResources.getResource("test.pdf");
                     try (SoapWebServiceDocument soapDocument =
@@ -89,7 +90,7 @@ public class SoapDocumentTest {
 
     @Test
     public void testSoapDocumentNullSourceStreaming() {
-        assertThrows(IOException.class,
+        assertThrows(ClientResultException.class,
                 () -> {
                     File targetFile = testResources.getTempFolder().newFile();
 
@@ -105,7 +106,7 @@ public class SoapDocumentTest {
 
     @Test
     public void testSoapDocumentNullTargetStreaming() {
-        assertThrows(IOException.class,
+        assertThrows(ClientResultException.class,
                 () -> {
                     File sourceFile = testResources.getResource("test.pdf");
                     try (InputStream inputStream = Files.newInputStream(sourceFile.toPath());
@@ -120,7 +121,7 @@ public class SoapDocumentTest {
 
     @Test
     public void testHandleTargetDataHandler() {
-        assertThrows(IOException.class,
+        assertThrows(ClientResultException.class,
                 () -> {
                     File sourceFile = testResources.getResource("test.pdf");
                     File targetFile = testResources.getTempFolder().newFile();

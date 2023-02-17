@@ -1,9 +1,9 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.exception.ServerResultException;
 import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.stubs.WebServiceException;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.server.ServerType;
@@ -39,10 +39,9 @@ public class RestFailureIntegrationTest {
 
                 webService.process();
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-106, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-106, exception.getErrorCode());
             }
         });
     }
@@ -69,10 +68,9 @@ public class RestFailureIntegrationTest {
 
                 webService.process();
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-311, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-311, exception.getErrorCode());
             }
         });
     }
@@ -91,10 +89,9 @@ public class RestFailureIntegrationTest {
 
                 webService.process();
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-21, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-21, exception.getErrorCode());
             }
         });
     }
@@ -122,10 +119,9 @@ public class RestFailureIntegrationTest {
 
                 webService.process();
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-5009, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-5009, exception.getErrorCode());
             }
         });
     }
@@ -144,10 +140,9 @@ public class RestFailureIntegrationTest {
 
                 webService.process();
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-58, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-58, exception.getErrorCode());
             }
         });
     }
@@ -166,10 +161,9 @@ public class RestFailureIntegrationTest {
 
                 webService.process();
             } catch (ResultException ex) {
-                Throwable cause = ex.getCause();
-                assertTrue(cause instanceof WebServiceException);
-                WebServiceException exception = (WebServiceException) cause;
-                assertEquals(-5009, exception.getFaultInfo().getErrorCode());
+                assertTrue(ex instanceof ServerResultException);
+                ServerResultException exception = (ServerResultException) ex;
+                assertEquals(-5009, exception.getErrorCode());
             }
         });
     }

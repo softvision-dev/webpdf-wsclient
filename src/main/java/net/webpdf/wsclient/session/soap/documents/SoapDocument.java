@@ -1,12 +1,11 @@
 package net.webpdf.wsclient.session.soap.documents;
 
 import jakarta.activation.DataHandler;
+import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.soap.SoapWebService;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 
 /**
  * <p>
@@ -32,8 +31,8 @@ public interface SoapDocument extends Document, AutoCloseable {
      *
      * @param resultDataHandler The {@link DataHandler} the {@link WebServiceProtocol#SOAP} response document shall be
      *                          written to.
-     * @throws IOException Shall be thrown, should writing the result document fail.
+     * @throws ResultException Shall be thrown, should writing the result document fail.
      */
-    void save(@Nullable DataHandler resultDataHandler) throws IOException;
+    void save(@Nullable DataHandler resultDataHandler) throws ResultException;
 
 }
