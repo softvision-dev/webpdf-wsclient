@@ -8,6 +8,7 @@ import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import net.webpdf.wsclient.testsuite.server.TestServer;
@@ -25,6 +26,10 @@ import java.nio.charset.Charset;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Starting with version 9.0.0 REST webservices are directly attempting to connect to the server during initialization.
+ * For this reason the following tests must be treated as integration tests.
+ */
 public class RestWebserviceFactoryTest {
 
     private final TestResources testResources = new TestResources(RestWebserviceFactoryTest.class);
@@ -59,6 +64,7 @@ public class RestWebserviceFactoryTest {
     }
 
     @Test
+    @IntegrationTest
     public void testFactoryBarcodeFromStream() {
         assertDoesNotThrow(() -> {
             BarcodeRestWebService<RestDocument> webService =
@@ -88,6 +94,7 @@ public class RestWebserviceFactoryTest {
     }
 
     @Test
+    @IntegrationTest
     public void testFactoryConverterFromStream() {
         assertDoesNotThrow(() -> {
             ConverterRestWebService<RestDocument> webService =
@@ -137,6 +144,7 @@ public class RestWebserviceFactoryTest {
     }
 
     @Test
+    @IntegrationTest
     public void testFactoryOCRFromStream() {
         assertDoesNotThrow(() -> {
             OcrRestWebService<RestDocument> webService =
@@ -172,6 +180,7 @@ public class RestWebserviceFactoryTest {
     }
 
     @Test
+    @IntegrationTest
     public void testFactoryPDFAFromStream() {
         assertDoesNotThrow(() -> {
             PdfaRestWebService<RestDocument> webService =
@@ -186,6 +195,7 @@ public class RestWebserviceFactoryTest {
     }
 
     @Test
+    @IntegrationTest
     public void testFactorySignatureFromStream() {
         assertDoesNotThrow(() -> {
             SignatureRestWebService<RestDocument> webService =
@@ -227,6 +237,7 @@ public class RestWebserviceFactoryTest {
     }
 
     @Test
+    @IntegrationTest
     public void testFactoryToolboxFromStream() {
         assertDoesNotThrow(() -> {
             ToolboxRestWebService<RestDocument> webService =
@@ -277,6 +288,7 @@ public class RestWebserviceFactoryTest {
     }
 
     @Test
+    @IntegrationTest
     public void testFactoryUrlConverterFromStream() {
         assertDoesNotThrow(() -> {
             UrlConverterRestWebService<RestDocument> webService =
@@ -324,6 +336,7 @@ public class RestWebserviceFactoryTest {
     }
 
     @Test
+    @IntegrationTest
     public void testFactoryCreateWebserviceInstance() {
         assertDoesNotThrow(() -> {
             ToolboxRestWebService<RestDocument> toolboxWebService = getWebService(WebServiceType.TOOLBOX);
@@ -366,6 +379,7 @@ public class RestWebserviceFactoryTest {
     }
 
     @Test
+    @IntegrationTest
     public void testNoOperationData() {
         assertDoesNotThrow(() -> {
             try (Session session = SessionFactory.createInstance(
