@@ -13,7 +13,7 @@ import java.security.cert.X509Certificate;
 public class AlwaysTrustManager implements X509TrustManager {
 
     /**
-     * Does never throw exceptions for {@link X509Certificate}s - ie.: Does not validate certificates and trusts all
+     * Does never throw exceptions for {@link X509Certificate}s - i.e.: Does not validate certificates and trusts all
      * certificates.
      *
      * @param certificates The peer {@link X509Certificate}s chain.
@@ -24,7 +24,7 @@ public class AlwaysTrustManager implements X509TrustManager {
     }
 
     /**
-     * Does never throw exceptions for {@link X509Certificate}s - ie.: Does not validate certificates and trusts all
+     * Does never throw exceptions for {@link X509Certificate}s - i.e.: Does not validate certificates and trusts all
      * certificates.
      *
      * @param certificates The peer {@link X509Certificate} chain.

@@ -1,15 +1,20 @@
 package net.webpdf.wsclient.session;
 
+import net.webpdf.wsclient.session.access.UserAccess;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.session.soap.SoapWebServiceSession;
-import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.junit.jupiter.api.Test;
 
 import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SoapSessionTest {
+/**
+ * Post 9.0.0 this test can not work for REST, as a RestSession will automatically try to connect to the
+ * given URL during initialization, while SOAP still delays the actual request.
+ * (An actual connection attempt to the hereby used URLs must obviously fail.)
+ */
+public class SessionTest {
 
     private static final String SOME_URL = "http://someInvalidURL.de";
     private static final String SOME_CREDENTIALS_URL = "http://username:password@someInvalidURL.de";
@@ -19,7 +24,8 @@ public class SoapSessionTest {
         assertDoesNotThrow(() -> {
             URL url = new URL(SOME_URL);
             try (SoapWebServiceSession soapSession =
-                         SessionFactory.createInstance(WebServiceProtocol.SOAP, url)) {
+                         SessionFactory.createInstance(WebServiceProtocol.SOAP, url,
+                                 new UserAccess("usr", "pwd"))) {
                 assertNotNull(soapSession,
                         "SOAPSession should have been initialized.");
                 assertTrue(soapSession.isUseLocalWsdl(),
@@ -35,16 +41,14 @@ public class SoapSessionTest {
                         "MimeType should have been xml.");
                 assertEquals(WebServiceProtocol.SOAP, soapSession.getWebServiceProtocol(),
                         "WebserviceProtocol should have been SOAP.");
-                assertNull(soapSession.getCredentials(),
-                        "Credentials should not have been initialized.");
-                soapSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd".toCharArray()));
+                assertNotNull(soapSession.getCredentials());
                 assertEquals("usr", soapSession.getCredentials().getUserPrincipal().getName(),
                         "Credentials should define usr for authentication.");
                 assertEquals("pwd", new String(soapSession.getCredentials().getPassword()),
                         "Credentials should define pwd as the authentication password.");
 
                 assertEquals(SOME_URL + "/soap/sub", soapSession.getURI("sub").toString(),
-                        "URI subpath should have been created.");
+                        "URI sub-path should have been created.");
             }
         });
     }
@@ -75,14 +79,8 @@ public class SoapSessionTest {
                         "Credentials should define username for authentication.");
                 assertEquals("password", new String(soapSession.getCredentials().getPassword()),
                         "Credentials should define password as the authentication password.");
-                soapSession.setCredentials(new UsernamePasswordCredentials("usr", "pwd".toCharArray()));
-                assertEquals("usr", soapSession.getCredentials().getUserPrincipal().getName(),
-                        "Credentials should define usr for authentication.");
-                assertEquals("pwd", new String(soapSession.getCredentials().getPassword()),
-                        "Credentials should define pwd as the authentication password.");
-
                 assertEquals(SOME_URL + "/soap/sub", soapSession.getURI("sub").toString(),
-                        "URI subpath should have been created.");
+                        "URI sub-path should have been created.");
             }
         });
     }

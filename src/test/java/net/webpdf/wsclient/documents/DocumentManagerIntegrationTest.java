@@ -44,7 +44,6 @@ public class DocumentManagerIntegrationTest {
             ) {
                 assertNotNull(session,
                         "Valid session should have been created.");
-                session.login();
                 RestDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                 assertNotNull(document,
                         "Valid document should have been returned.");
@@ -78,7 +77,6 @@ public class DocumentManagerIntegrationTest {
                                  testServer.getServer(ServerType.LOCAL))) {
                 assertNotNull(session,
                         "Valid session should have been created.");
-                session.login();
                 RestDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                 assertNotNull(document,
                         "Valid document should have been returned.");
@@ -110,7 +108,6 @@ public class DocumentManagerIntegrationTest {
                     testServer.getServer(ServerType.LOCAL))) {
                 assertNotNull(session,
                         "Valid session should have been created.");
-                session.login();
                 RestDocument document = session.getDocumentManager().uploadDocument(sourceFile1);
                 assertNotNull(document,
                         "Valid document should have been returned.");
@@ -137,8 +134,6 @@ public class DocumentManagerIntegrationTest {
                                  testServer.getServer(ServerType.LOCAL))) {
                 assertNotNull(session,
                         "Valid session should have been created.");
-                session.login();
-
                 session.getDocumentManager().setDocumentHistoryActive(true);
                 RestDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                 assertNotNull(document,
@@ -200,7 +195,6 @@ public class DocumentManagerIntegrationTest {
                  OutputStream outputStream = Files.newOutputStream(targetFile.toPath())
             ) {
                 assertNotNull(session, "Valid session should have been created.");
-                session.login();
                 RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                 assertNotNull(document, "Valid document should have been returned.");
                 session.getDocumentManager().downloadDocument(getDocumentID(document), outputStream);
@@ -221,7 +215,6 @@ public class DocumentManagerIntegrationTest {
                                          testServer.getServer(ServerType.LOCAL))) {
                         assertNotNull(session,
                                 "Valid session should have been created.");
-                        session.login();
                         RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                         assertNotNull(document,
                                 "Valid document should have been returned.");
@@ -239,7 +232,6 @@ public class DocumentManagerIntegrationTest {
                                  SessionFactory.createInstance(WebServiceProtocol.REST,
                                          testServer.getServer(ServerType.LOCAL))) {
                         assertNotNull(session, "Valid session should have been created.");
-                        session.login();
                         session.getDocumentManager().uploadDocument(null);
                     }
                 });
@@ -254,7 +246,6 @@ public class DocumentManagerIntegrationTest {
                             WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL))) {
                         assertNotNull(session, "Valid session should have been created.");
-                        session.login();
                         session.getDocumentManager().getDocument(null);
                     }
                 });

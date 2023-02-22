@@ -22,7 +22,6 @@ public class JsonConfigNode implements ConfigNode {
     }
 
     @Override
-    @SuppressWarnings("SameParameterValue")
     public boolean getBoolean(@NotNull String key, boolean defaultValue) {
         if (this.node == null) {
             return defaultValue;

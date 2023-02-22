@@ -19,7 +19,6 @@ import java.util.List;
  * history can be accessed via a {@link DocumentManager} by an assigned document ID.
  * </p>
  */
-@SuppressWarnings("unused")
 public interface RestDocument extends Document {
 
     /**

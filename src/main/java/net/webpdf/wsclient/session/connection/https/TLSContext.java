@@ -26,7 +26,6 @@ import java.security.cert.X509Certificate;
  * no longer supported by the webPDF wsclient, as it is obsolete and insecure.
  * </p>
  */
-@SuppressWarnings({"unused"})
 public class TLSContext {
 
     private static final TrustManager[] TRUST_ALL = new TrustManager[]{new AlwaysTrustManager()};
@@ -116,6 +115,7 @@ public class TLSContext {
      * @param tlsProtocol The {@link TLSProtocol}, that shall be used.
      * @return The {@link TLSContext} itself.
      */
+    @SuppressWarnings("unused")
     public @NotNull TLSContext setTLSProtocol(@NotNull TLSProtocol tlsProtocol) {
         this.tlsProtocol = tlsProtocol;
         return this;

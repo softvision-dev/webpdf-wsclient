@@ -32,7 +32,6 @@ public class RestFailureIntegrationTest {
             File file = testResources.getResource("integration/files/invalid.gif");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-                session.login();
                 ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.CONVERTER);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
@@ -53,7 +52,6 @@ public class RestFailureIntegrationTest {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-                session.login();
                 SignatureRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.SIGNATURE);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
@@ -82,7 +80,6 @@ public class RestFailureIntegrationTest {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-                session.login();
                 PdfaRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.PDFA);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
@@ -103,7 +100,6 @@ public class RestFailureIntegrationTest {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-                session.login();
                 ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.TOOLBOX);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
@@ -133,7 +129,6 @@ public class RestFailureIntegrationTest {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-                session.login();
                 UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
@@ -154,7 +149,6 @@ public class RestFailureIntegrationTest {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-                session.login();
                 OcrRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.OCR);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));

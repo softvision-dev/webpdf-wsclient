@@ -10,7 +10,6 @@ package net.webpdf.wsclient.schema;
  * <b>Conforming readers shall ignore all flags other than those at bit positions 3, 4, 5, 6, 9, 10, 11, and 12.</b>
  * </p>
  */
-@SuppressWarnings("unused")
 public interface AccessPermissionType {
 
     /**

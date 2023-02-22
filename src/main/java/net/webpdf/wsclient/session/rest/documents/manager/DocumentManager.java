@@ -19,7 +19,6 @@ import java.util.List;
  *
  * @param <T_REST_DOCUMENT> The {@link RestDocument} type managed by the {@link DocumentManager}.
  */
-@SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
@@ -45,6 +44,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @return A list of the synchronized {@link RestDocument}s.
      * @throws ResultException Shall be thrown upon a synchronization failure.
      */
+    @SuppressWarnings("unused")
     @NotNull List<T_REST_DOCUMENT> synchronize() throws ResultException;
 
     /**
@@ -169,6 +169,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @return The selected {@link HistoryEntry}.
      * @throws ResultException Shall be thrown, should requesting the document history have failed.
      */
+    @SuppressWarnings("unused")
     @NotNull HistoryEntry getDocumentHistoryEntry(@Nullable String documentId, int historyId) throws ResultException;
 
     /**

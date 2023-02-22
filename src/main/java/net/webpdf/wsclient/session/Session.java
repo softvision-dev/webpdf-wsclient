@@ -1,6 +1,5 @@
 package net.webpdf.wsclient.session;
 
-import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
@@ -18,14 +17,11 @@ import java.util.List;
  * An instance of {@link Session} establishes and manages a {@link WebServiceProtocol} connection
  * with a webPDF server.
  * </p>
- *
- * @param <T_DOCUMENT> The {@link Document} type used by this {@link Session}.
  */
-@SuppressWarnings("unused")
-public interface Session<T_DOCUMENT extends Document> extends AutoCloseable {
+public interface Session extends AutoCloseable {
 
     /**
-     * Returns the currently set {@link TLSContext}. ({@code null} in case this is representing a HTTP {@link Session})
+     * Returns the currently set {@link TLSContext}. ({@code null} in case this is representing an HTTP {@link Session})
      *
      * @return The currently set {@link TLSContext}.
      */
@@ -84,13 +80,6 @@ public interface Session<T_DOCUMENT extends Document> extends AutoCloseable {
      * @return The {@link Credentials} authorizing this session.
      */
     @Nullable Credentials getCredentials();
-
-    /**
-     * Sets the {@link Credentials} authorizing this session.
-     *
-     * @param userCredentials The {@link Credentials} authorizing this session.
-     */
-    void setCredentials(@Nullable Credentials userCredentials);
 
     /**
      * Close the {@link Session}.

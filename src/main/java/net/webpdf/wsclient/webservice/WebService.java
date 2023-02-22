@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <T_SETTINGS>            The operation´s additional settings type, used to configure webservice independent
  *                                options and parameters.
  */
-public interface WebService<T_SESSION extends Session<T_DOCUMENT>, T_OPERATION_DATA, T_OPERATION_PARAMETER,
+public interface WebService<T_SESSION extends Session, T_OPERATION_DATA, T_OPERATION_PARAMETER,
         T_DOCUMENT extends Document, T_BILLING, T_PASSWORD, T_SETTINGS> {
 
     /**

@@ -1,8 +1,7 @@
-package net.webpdf.wsclient.session.credentials.token;
+package net.webpdf.wsclient.session.access.token;
 
 import com.fasterxml.jackson.annotation.*;
 import net.webpdf.wsclient.session.Session;
-import net.webpdf.wsclient.session.rest.RestSession;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -12,11 +11,7 @@ import java.time.Instant;
  * <p>
  * An instance of {@link SessionToken} wraps the access and refresh tokens provided by the webPDF server.
  * </p>
- * <p>
- * Such a Token can be obtained, by calling {@link RestSession#login()}.
- * </p>
  */
-@SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({"expiresIn", "token", "refreshToken"})

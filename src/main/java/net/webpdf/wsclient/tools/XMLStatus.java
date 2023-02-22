@@ -14,7 +14,7 @@ enum XMLStatus {
      */
     WARNING,
     /**
-     * The XML validation most likely failed, the validated contents contents are invalid.
+     * The XML validation most likely failed, the validated contents are invalid.
      */
     ERROR,
     /**

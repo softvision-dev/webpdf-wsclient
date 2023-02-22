@@ -368,7 +368,7 @@ public class RestWebserviceFactoryTest {
     @Test
     public void testNoOperationData() {
         assertDoesNotThrow(() -> {
-            try (Session<RestDocument> session = SessionFactory.createInstance(
+            try (Session session = SessionFactory.createInstance(
                     WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL))) {
                 WebServiceFactory.createInstance(session, (StreamSource) null);
                 fail("ResultException expected");

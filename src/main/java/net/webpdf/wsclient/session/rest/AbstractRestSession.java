@@ -1,7 +1,6 @@
 package net.webpdf.wsclient.session.rest;
 
 import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.exception.TokenProviderResultException;
 import net.webpdf.wsclient.session.connection.http.HttpAuthorizationProvider;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
@@ -11,14 +10,14 @@ import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.Session;
-import net.webpdf.wsclient.session.credentials.token.OAuthToken;
-import net.webpdf.wsclient.session.credentials.token.Token;
-import net.webpdf.wsclient.session.credentials.token.SessionToken;
+import net.webpdf.wsclient.session.access.token.Token;
+import net.webpdf.wsclient.session.access.token.SessionToken;
 import net.webpdf.wsclient.schema.beans.User;
 import net.webpdf.wsclient.session.AbstractSession;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
-import net.webpdf.wsclient.session.credentials.token.TokenProvider;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.ChainElement;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -51,7 +50,7 @@ import java.net.URL;
  * @param <T_REST_DOCUMENT> The {@link RestDocument} type used by this {@link RestSession}.
  */
 public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
-        extends AbstractSession<T_REST_DOCUMENT> implements RestSession<T_REST_DOCUMENT> {
+        extends AbstractSession implements RestSession<T_REST_DOCUMENT> {
 
     private static final @NotNull String INFO_PATH = "authentication/user/info/";
     private static final @NotNull String LOGOUT_PATH = "authentication/user/logout/";
@@ -59,7 +58,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     private static final @NotNull String REFRESH_PATH = "authentication/user/refresh/";
     private final @NotNull HttpClientBuilder httpClientBuilder;
     private @Nullable Token token = new SessionToken();
-    private @Nullable User user = new User();
+    private @Nullable User user;
     private @Nullable CloseableHttpClient httpClient;
     private final @NotNull DocumentManager<T_REST_DOCUMENT> documentManager = createDocumentManager();
     private final @NotNull AdministrationManager<T_REST_DOCUMENT> administrationManager = createAdministrationManager();
@@ -68,13 +67,15 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      * Creates a new {@link AbstractRestSession} instance providing connection information, authorization objects and
      * a {@link DocumentManager} for a webPDF server-client {@link RestSession}.
      *
-     * @param url        The {@link URL} of the webPDF server
-     * @param tlsContext The {@link TLSContext} used for this https {@link RestSession}.
-     *                   ({@code null} in case an unencrypted HTTP {@link RestSession} shall be created.)
+     * @param url         The {@link URL} of the webPDF server
+     * @param tlsContext  The {@link TLSContext} used for this https {@link RestSession}.
+     *                    ({@code null} in case an unencrypted HTTP {@link RestSession} shall be created.)
+     * @param credentials The {@link Credentials} used for authorization of this session.
      * @throws ResultException Shall be thrown, in case establishing the {@link RestSession} failed.
      */
-    public AbstractRestSession(@NotNull URL url, @Nullable TLSContext tlsContext) throws ResultException {
-        super(url, WebServiceProtocol.REST, tlsContext);
+    public AbstractRestSession(@NotNull URL url, @Nullable TLSContext tlsContext, Credentials credentials)
+            throws ResultException {
+        super(url, WebServiceProtocol.REST, tlsContext, credentials);
 
         RequestConfig clientConfig = RequestConfig.custom().setAuthenticationEnabled(true).build();
         HttpAuthorizationProvider authorizationProvider = new HttpAuthorizationProvider(this);
@@ -92,6 +93,14 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
                     .build();
             httpClientBuilder.setConnectionManager(new PoolingHttpClientConnectionManager(registry));
         }
+        if (getCredentials() == null || getCredentials() instanceof UsernamePasswordCredentials) {
+            this.token = HttpRestRequest.createRequest(this)
+                    .buildRequest(HttpMethod.GET, LOGIN_PATH, null)
+                    .executeRequest(SessionToken.class);
+        }
+        this.user = HttpRestRequest.createRequest(this)
+                .buildRequest(HttpMethod.GET, INFO_PATH, null)
+                .executeRequest(User.class);
     }
 
     /**
@@ -132,63 +141,6 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     @Override
     public @NotNull AdministrationManager<T_REST_DOCUMENT> getAdministrationManager() {
         return administrationManager;
-    }
-
-    /**
-     * Login into the webPDF server and prepare a new {@link SessionToken}.
-     *
-     * @throws ResultException Shall be thrown in case of an HTTP access error.
-     */
-    @Override
-    public void login() throws ResultException {
-        login((SessionToken) null);
-    }
-
-    /**
-     * <p>
-     * Login into the server using the given {@link Token}.
-     * <ul>
-     * <li><b>In case the token is {@code null}:</b> A fresh {@link SessionToken} shall be created.</li>
-     * <li><b>In case the token is a {@link SessionToken}:</b> The token shall be used and can be refreshed using
-     * {@link #refresh()}.</li>
-     * <li><b>In case the token is an {@link OAuthToken}:</b> The token shall be used, however it can not be
-     * refreshed using {@link #refresh()} - use {@link OAuthToken#refresh(String)} instead.</li>
-     * </ul>
-     * </p>
-     *
-     * @param token The {@link Token} to provide a session for.
-     * @throws ResultException Shall be thrown in case of an HTTP access error.
-     */
-    @Override
-    public void login(@Nullable Token token) throws ResultException {
-        this.token = token;
-
-        if (token == null) {
-            this.token = HttpRestRequest.createRequest(this)
-                    .buildRequest(HttpMethod.GET, LOGIN_PATH, null)
-                    .executeRequest(SessionToken.class);
-        }
-        this.user = HttpRestRequest.createRequest(this)
-                .buildRequest(HttpMethod.GET, INFO_PATH, null)
-                .executeRequest(User.class);
-    }
-
-    /**
-     * <p>
-     * Login into the server using the given {@link TokenProvider}.<br>
-     * This shall call {@link #login(Token)} using the {@link Token} produced by {@link TokenProvider#provideToken()}.
-     * </p>
-     *
-     * @param tokenProvider The {@link TokenProvider} to provide a session for.
-     * @throws ResultException HTTP access error.
-     */
-    @Override
-    public void login(@Nullable TokenProvider<?> tokenProvider) throws ResultException {
-        try {
-            login(tokenProvider != null ? tokenProvider.provideToken() : null);
-        } catch (Exception ex) {
-            throw new TokenProviderResultException(ex);
-        }
     }
 
     /**
@@ -250,7 +202,11 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
         ResultException resultException = null;
         try {
             if (this.token != null && !this.token.getToken().isEmpty()) {
-                logout();
+                HttpRestRequest.createRequest(this)
+                        .buildRequest(HttpMethod.GET, LOGOUT_PATH, null)
+                        .executeRequest(Object.class);
+                this.token = null;
+                this.user = null;
             }
         } finally {
             if (this.httpClient != null) {
@@ -264,20 +220,6 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
         if (resultException != null) {
             throw resultException;
         }
-    }
-
-    /**
-     * Logout from the {@link RestSession}.
-     *
-     * @throws ResultException Shall be thrown in case of an HTTP access error.
-     */
-    private void logout() throws ResultException {
-        HttpRestRequest.createRequest(this)
-                .buildRequest(HttpMethod.GET, LOGOUT_PATH, null)
-                .executeRequest(Object.class);
-
-        this.token = null;
-        this.user = null;
     }
 
     /**

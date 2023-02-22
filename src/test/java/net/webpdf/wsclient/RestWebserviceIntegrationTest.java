@@ -43,9 +43,6 @@ public class RestWebserviceIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-
-                session.login();
-
                 ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.CONVERTER);
 
@@ -90,9 +87,6 @@ public class RestWebserviceIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-
-                session.login();
-
                 ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.TOOLBOX);
 
@@ -155,9 +149,6 @@ public class RestWebserviceIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-
-                session.login();
-
                 SignatureRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.SIGNATURE);
 
@@ -202,9 +193,6 @@ public class RestWebserviceIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-
-                session.login();
-
                 PdfaRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.PDFA);
 
@@ -243,9 +231,6 @@ public class RestWebserviceIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-
-                session.login();
-
                 OcrRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.OCR);
 
@@ -280,9 +265,6 @@ public class RestWebserviceIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-
-                session.login();
-
                 BarcodeRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.BARCODE);
 
@@ -346,9 +328,6 @@ public class RestWebserviceIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-
-                session.login();
-
                 UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
 
@@ -389,7 +368,6 @@ public class RestWebserviceIntegrationTest {
                     testServer.getServer(ServerType.LOCAL));
                  StringReader stringReader = new StringReader(json)) {
                 StreamSource streamSource = new StreamSource(stringReader);
-                session.login();
                 ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session, streamSource);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
                 File fileOut = testResources.getTempFolder().newFile();
@@ -409,9 +387,6 @@ public class RestWebserviceIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL))) {
-
-                session.login();
-
                 ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.TOOLBOX);
 
@@ -459,7 +434,6 @@ public class RestWebserviceIntegrationTest {
                     testServer.getServer(ServerType.LOCAL))) {
                 assertNotNull(restSession,
                         "Valid session should have been created.");
-                restSession.login();
                 assertNotNull(restSession.getToken(),
                         "Token should have been initialized.");
                 assertNotEquals("", restSession.getToken().getToken(),
@@ -481,7 +455,6 @@ public class RestWebserviceIntegrationTest {
                     testServer.getServer(ServerType.LOCAL, "user", "user"))) {
                 assertNotNull(restSession,
                         "Valid session should have been created.");
-                restSession.login();
                 assertNotNull(restSession.getToken(),
                         "Token should have been initialized.");
                 assertNotEquals("", restSession.getToken().getToken(),
@@ -501,7 +474,6 @@ public class RestWebserviceIntegrationTest {
                     testServer.getServer(ServerType.LOCAL, "admin", "admin"))) {
                 assertNotNull(restSession,
                         "Valid session should have been created.");
-                restSession.login();
                 assertNotNull(restSession.getToken(),
                         "Token should have been initialized.");
                 assertNotEquals("", restSession.getToken().getToken(),

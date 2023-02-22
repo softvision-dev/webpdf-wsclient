@@ -1,8 +1,12 @@
-package net.webpdf.wsclient.session.credentials.token;
+package net.webpdf.wsclient.session.access.token;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import net.webpdf.wsclient.session.Session;
+import org.apache.hc.client5.http.auth.BasicUserPrincipal;
+import org.apache.hc.client5.http.auth.Credentials;
 import org.jetbrains.annotations.NotNull;
+
+import java.security.Principal;
 
 /**
  * <p>
@@ -16,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
  * <b>Important:</b> Make sure, that the token belongs to an authorization provider known to the webPDF server.
  * </p>
  */
-@SuppressWarnings("unused")
-public class OAuthToken implements Token {
+public class OAuthToken implements Token, Credentials {
 
     private @NotNull String token;
 
@@ -55,6 +58,28 @@ public class OAuthToken implements Token {
      */
     public void refresh(@NotNull String accessToken) {
         this.token = accessToken;
+    }
+
+    /**
+     * Returns the determined {@link Principal}, which shall use this {@link OAuthToken}.
+     *
+     * @return The determined {@link Principal}.
+     */
+    @Override
+    public Principal getUserPrincipal() {
+        return new BasicUserPrincipal(getToken());
+    }
+
+    /**
+     * Returns the password matching the {@link Principal}.<br>
+     * A {@link OAuthToken} instance shall assume, that it´s {@link Principal} does not require a password and
+     * shall return {@code null}.
+     *
+     * @return Always {@code null}.
+     */
+    @Override
+    public char[] getPassword() {
+        return null;
     }
 
 }

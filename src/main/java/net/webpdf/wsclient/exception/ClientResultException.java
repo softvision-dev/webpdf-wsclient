@@ -20,7 +20,6 @@ import java.util.List;
  *
  * @see Error
  */
-@SuppressWarnings("unused")
 public class ClientResultException extends ResultException {
 
     private final @NotNull Error error;
@@ -128,6 +127,7 @@ public class ClientResultException extends ResultException {
      * @return {@code true}, if this {@link ResultException} is representing the same failure state, as the given
      * {@link Error}. ({@code false} otherwise.)
      */
+    @SuppressWarnings("unused")
     boolean equalsError(@Nullable Error error) {
         return this.error.equals(error);
     }

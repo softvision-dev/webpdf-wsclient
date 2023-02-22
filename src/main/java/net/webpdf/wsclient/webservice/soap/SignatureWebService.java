@@ -31,7 +31,7 @@ public class SignatureWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @param session The {@link SoapSession} a {@link SignatureWebService} shall be created for.
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
-    public SignatureWebService(@NotNull SoapSession<T_SOAP_DOCUMENT> session) throws ResultException {
+    public SignatureWebService(@NotNull SoapSession session) throws ResultException {
         super(session, WebServiceType.SIGNATURE);
     }
 

@@ -32,7 +32,7 @@ public class ToolboxWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @param session The {@link SoapSession} a {@link ToolboxWebService} shall be created for.
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
-    public ToolboxWebService(@NotNull SoapSession<T_SOAP_DOCUMENT> session) throws ResultException {
+    public ToolboxWebService(@NotNull SoapSession session) throws ResultException {
         super(session, WebServiceType.TOOLBOX);
     }
 

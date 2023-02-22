@@ -2,6 +2,7 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.openapi.OperationConvertPdfa;
 import net.webpdf.wsclient.openapi.OperationPdfa;
+import net.webpdf.wsclient.session.access.UserAccess;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -15,7 +16,6 @@ import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.ConverterRestWebService;
 import org.apache.commons.io.FileUtils;
-import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.stream.StreamSource;
@@ -68,7 +68,6 @@ public class RestCredentialsIntegrationTest {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL,
                             ServerProtocol.HTTP, true))) {
-                session.login();
                 executeConverter(session);
             }
         });
@@ -79,13 +78,8 @@ public class RestCredentialsIntegrationTest {
     public void testWithUserCredentials() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
-
-                UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
-                        testServer.getLocalUser(), testServer.getLocalPassword());
-                session.setCredentials(userCredentials);
-
-                session.login();
+                    testServer.getServer(ServerType.LOCAL),
+                    new UserAccess(testServer.getLocalUser(), testServer.getLocalPassword()))) {
                 executeConverter(session);
             }
         });
@@ -97,12 +91,9 @@ public class RestCredentialsIntegrationTest {
         assertDoesNotThrow(() -> {
             File resFile = testResources.getResource("convert.json");
             String json = FileUtils.readFileToString(resFile, Charset.defaultCharset());
-
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL));
                  StringReader stringReader = new StringReader(json)) {
-                session.login();
-
                 ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         new StreamSource(stringReader));
 

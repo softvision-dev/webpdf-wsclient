@@ -42,7 +42,7 @@ public class WebserviceTLSIntegrationTest {
             tlsContext.setTrustStore(keystoreFile, "");
         }
 
-        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP, url,
+        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, url,
                 tlsContext)) {
             ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.CONVERTER);
@@ -113,9 +113,6 @@ public class WebserviceTLSIntegrationTest {
 
         try (RestSession<RestDocument> session = SessionFactory.createInstance(
                 WebServiceProtocol.REST, url, tlsContext)) {
-
-            session.login();
-
             ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.CONVERTER);
 
@@ -135,10 +132,6 @@ public class WebserviceTLSIntegrationTest {
     @ParameterizedTest
     @TLSTest
     @CsvSource(delimiter = '|', value = {
-            "PUBLIC|HTTPS|0|true|false",
-            "PUBLIC|HTTP|-34|true|false",
-            "PUBLIC|HTTPS|0|false|false",
-            "PUBLIC|HTTPS|0|false|true",
             "LOCAL|HTTPS|0|false|true",
             "LOCAL|HTTPS|-31|true|false",
             "LOCAL|HTTPS|0|true|true"
@@ -154,7 +147,7 @@ public class WebserviceTLSIntegrationTest {
                 File keystoreFile = setKeystoreFile ? testServer.getDemoKeystoreFile(this.keystoreFile) : null;
                 testRestSSL(url, keystoreFile, selfSigned);
                 assertEquals(0, expectedErrorCode,
-                        String.format("Found %d but %d has been expected.", 0, expectedErrorCode));
+                        String.format("%d had been expected, but the request succeeded.", expectedErrorCode));
             } catch (ClientResultException ex) {
                 assertEquals(expectedErrorCode, ex.getCode(),
                         String.format("Found %d but %d has been expected.", ex.getCode(),

@@ -137,7 +137,7 @@ public class SerializeHelperTest {
             fail("ResultException expected");
         } catch (ClientResultException ex) {
             assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
-                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -148,7 +148,7 @@ public class SerializeHelperTest {
             fail("ResultException expected");
         } catch (ClientResultException ex) {
             assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
-                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -161,7 +161,7 @@ public class SerializeHelperTest {
             fail("ResultException expected");
         } catch (ClientResultException ex) {
             assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
-                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -170,7 +170,7 @@ public class SerializeHelperTest {
             fail("ResultException expected");
         } catch (ClientResultException ex) {
             assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
-                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -180,7 +180,7 @@ public class SerializeHelperTest {
             fail("ResultException expected");
         } catch (ClientResultException ex) {
             assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
-                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -189,7 +189,7 @@ public class SerializeHelperTest {
             fail("ResultException expected");
         } catch (ClientResultException ex) {
             assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
-                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -199,7 +199,7 @@ public class SerializeHelperTest {
             fail("ResultException expected");
         } catch (ClientResultException ex) {
             assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
-                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -208,7 +208,7 @@ public class SerializeHelperTest {
             fail("ResultException expected");
         } catch (ClientResultException ex) {
             assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
-                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -218,7 +218,7 @@ public class SerializeHelperTest {
             fail("ResultException expected");
         } catch (ClientResultException ex) {
             assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
-                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -227,7 +227,7 @@ public class SerializeHelperTest {
             fail("ResultException expected");
         } catch (ClientResultException ex) {
             assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
-                    String.format("Errorcode %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }

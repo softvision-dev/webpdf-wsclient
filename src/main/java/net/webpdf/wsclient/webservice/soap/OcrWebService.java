@@ -31,7 +31,7 @@ public class OcrWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @param session The {@link SoapSession} a {@link OcrWebService} shall be created for.
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
-    public OcrWebService(@NotNull SoapSession<T_SOAP_DOCUMENT> session) throws ResultException {
+    public OcrWebService(@NotNull SoapSession session) throws ResultException {
         super(session, WebServiceType.OCR);
     }
 

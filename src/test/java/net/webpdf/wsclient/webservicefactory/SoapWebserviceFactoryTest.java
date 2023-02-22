@@ -31,7 +31,7 @@ public class SoapWebserviceFactoryTest {
 
     private <T extends SoapWebService<?, ?, SoapDocument>> T getWebService(WebServiceType webServiceType)
             throws ResultException {
-        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
             return WebServiceFactory.createInstance(session, webServiceType);
         }
@@ -42,7 +42,7 @@ public class SoapWebserviceFactoryTest {
         T webService;
         String xml = FileUtils.readFileToString(configFile, Charset.defaultCharset());
 
-        try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                 testServer.getServer(ServerType.LOCAL))) {
             try (StringReader stringReader = new StringReader(xml)) {
                 StreamSource streamSource = new StreamSource(stringReader);
@@ -352,7 +352,7 @@ public class SoapWebserviceFactoryTest {
     @Test
     public void testNoOperationData() {
         assertDoesNotThrow(() -> {
-            try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 WebServiceFactory.createInstance(session, (StreamSource) null);
                 fail("ResultException expected");

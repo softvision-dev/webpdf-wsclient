@@ -11,7 +11,6 @@ import net.webpdf.wsclient.tools.SerializeHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.methods.*;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jetbrains.annotations.NotNull;
@@ -156,7 +155,7 @@ public class HttpRestRequest {
      * @throws ResultException Shall be thrown, if the {@link HttpResponse} represents a failure state.
      * @see ServerResultException
      */
-    private void checkResponse(@NotNull CloseableHttpResponse httpResponse) throws ResultException {
+    private void checkResponse(@NotNull ClassicHttpResponse httpResponse) throws ResultException {
 
         // any error?
         int code = httpResponse.getCode();
@@ -206,8 +205,11 @@ public class HttpRestRequest {
         if (outputStream == null) {
             throw new ClientResultException(Error.INVALID_FILE_SOURCE);
         }
-        try (CloseableHttpResponse closeableHttpResponse = this.httpClient.execute(httpUriRequest)) {
-            closeableHttpResponse.getEntity().writeTo(outputStream);
+        try {
+            this.httpClient.execute(httpUriRequest, response -> {
+                response.getEntity().writeTo(outputStream);
+                return null;
+            });
         } catch (IOException ex) {
             throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
         }
@@ -219,42 +221,51 @@ public class HttpRestRequest {
      * ({@link HttpEntity}) to an instance of the given type.
      * </p>
      * <p>
-     * The resulting intermediate {@link HttpResponse} shall be checked via {@link #checkResponse(CloseableHttpResponse)}}.
+     * The resulting intermediate {@link HttpResponse} shall be checked via {@link #checkResponse(ClassicHttpResponse)}}.
      * </p>
      *
      * @param type The type to translate the data transfer object {@link HttpEntity} to.
      * @return The resulting data transfer object {@link HttpEntity} translated to an instance of the given type.
      * @throws ResultException Shall be thrown, should the {@link HttpResponse} not be readable or should it´s
-     *                         validation via {@link #checkResponse(CloseableHttpResponse)} fail.
+     *                         validation via {@link #checkResponse(ClassicHttpResponse)} fail.
      */
     public <T> @Nullable T executeRequest(@Nullable Class<T> type) throws ResultException {
+        try {
+            return this.httpClient.execute(httpUriRequest, response -> {
+                try {
+                    checkResponse(response);
+                } catch (ResultException ex) {
+                    throw new IOException(ex);
+                }
 
-        try (CloseableHttpResponse closeableHttpResponse = this.httpClient.execute(httpUriRequest)) {
+                HttpEntity httpEntity = response.getEntity();
 
-            checkResponse(closeableHttpResponse);
+                ContentType contentType = httpEntity.getContentType() == null ? ContentType.DEFAULT_TEXT :
+                        ContentType.create(httpEntity.getContentType(), StandardCharsets.UTF_8);
+                String mimeType = contentType.getMimeType();
+                Charset charset = contentType.getCharset() != null ? contentType.getCharset() : StandardCharsets.UTF_8;
 
-            HttpEntity httpEntity = closeableHttpResponse.getEntity();
+                String value = EntityUtils.toString(httpEntity, charset);
+                if (StringUtils.isEmpty(value)) {
+                    return null;
+                }
 
-            ContentType contentType = httpEntity.getContentType() == null ? ContentType.DEFAULT_TEXT :
-                    ContentType.create(httpEntity.getContentType(), StandardCharsets.UTF_8);
-            String mimeType = contentType.getMimeType();
-            Charset charset = contentType.getCharset() != null ? contentType.getCharset() : StandardCharsets.UTF_8;
-
-            String value = EntityUtils.toString(httpEntity, charset);
-            if (StringUtils.isEmpty(value)) {
-                return null;
+                if (mimeType == null || dataFormat == null || !mimeType.equals(dataFormat.getMimeType())) {
+                    return null;
+                }
+                try (StringReader stringReader = new StringReader(value)) {
+                    StreamSource streamSource = new StreamSource(stringReader);
+                    return DataFormat.XML.equals(dataFormat)
+                            ? SerializeHelper.fromXML(streamSource, type)
+                            : SerializeHelper.fromJSON(streamSource, type);
+                } catch (ResultException ex) {
+                    throw new IOException(ex);
+                }
+            });
+        } catch (IOException ex) {
+            if (ex.getCause() instanceof ResultException) {
+                throw (ResultException) ex.getCause();
             }
-
-            if (mimeType == null || this.dataFormat == null || !mimeType.equals(this.dataFormat.getMimeType())) {
-                return null;
-            }
-            try (StringReader stringReader = new StringReader(value)) {
-                StreamSource streamSource = new StreamSource(stringReader);
-                return DataFormat.XML.equals(this.dataFormat)
-                        ? SerializeHelper.fromXML(streamSource, type)
-                        : SerializeHelper.fromJSON(streamSource, type);
-            }
-        } catch (IOException | ParseException ex) {
             throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
         }
     }

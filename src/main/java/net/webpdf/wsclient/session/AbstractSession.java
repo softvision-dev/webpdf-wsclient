@@ -1,7 +1,6 @@
 package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.session.rest.AbstractRestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.Error;
@@ -28,17 +27,14 @@ import java.util.List;
  * An instance of {@link AbstractSession} establishes and manages a {@link WebServiceProtocol} connection
  * with a webPDF server.
  * </p>
- *
- * @param <T_DOCUMENT> The {@link Document} type used by this {@link Session}.
  */
-public abstract class AbstractSession<T_DOCUMENT extends Document> implements Session<T_DOCUMENT> {
+public abstract class AbstractSession implements Session {
 
     private final @NotNull BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
     private final @NotNull DataFormat dataFormat;
     private final @NotNull String basePath;
     private final @NotNull WebServiceProtocol webServiceProtocol;
     private final @NotNull URI baseUrl;
-    private final @Nullable AuthScope authScope;
     private final @Nullable TLSContext tlsContext;
     private @Nullable Credentials credentials;
     private @Nullable ProxyConfiguration proxy;
@@ -51,10 +47,11 @@ public abstract class AbstractSession<T_DOCUMENT extends Document> implements Se
      * @param webServiceProtocol The {@link WebServiceProtocol} used for this {@link Session}.
      * @param tlsContext         The {@link TLSContext} used for this https {@link Session}.
      *                           ({@code null} in case an unencrypted HTTP {@link Session} shall be created.)
+     * @param credentials        The {@link Credentials} used for authorization of this session.
      * @throws ResultException Shall be thrown, in case establishing the {@link Session} failed.
      */
     public AbstractSession(@NotNull URL url, @NotNull WebServiceProtocol webServiceProtocol,
-            @Nullable TLSContext tlsContext) throws ResultException {
+            @Nullable TLSContext tlsContext, @Nullable Credentials credentials) throws ResultException {
         // The used protocol determines the data format.
         switch (webServiceProtocol) {
             case SOAP:
@@ -67,6 +64,7 @@ public abstract class AbstractSession<T_DOCUMENT extends Document> implements Se
         this.webServiceProtocol = webServiceProtocol;
         this.tlsContext = tlsContext;
         this.basePath = webServiceProtocol.equals(WebServiceProtocol.SOAP) ? "soap/" : "rest/";
+        this.credentials = credentials;
         String toUrl = url.toString();
         if (!toUrl.endsWith("/")) {
             toUrl = toUrl + "/";
@@ -77,16 +75,23 @@ public abstract class AbstractSession<T_DOCUMENT extends Document> implements Se
             URIBuilder uriBuilder = new URIBuilder(toUrl);
             String userInfo = uriBuilder.getUserInfo();
             this.baseUrl = uriBuilder.setUserInfo(null).build();
-            this.authScope = new AuthScope(this.baseUrl.getHost(), this.baseUrl.getPort());
+            // try to extract credentials from the user info of the URL
+            if (this.credentials == null && userInfo != null) {
+                String name = "";
+                String password = "";
+                String[] implicitCredentials = userInfo.split(":");
+                if (implicitCredentials.length >= 1) {
+                    name = implicitCredentials[0];
+                }
 
-            // extract user info from the URL
-            if (userInfo != null) {
-                extractUserInfo(userInfo);
+                if (implicitCredentials.length >= 2) {
+                    password = implicitCredentials[1];
+                }
+                this.credentials = new UsernamePasswordCredentials(name, password.toCharArray());
             }
-
-            // set credentials based on the URL settings
             if (this.credentials != null) {
-                this.credentialsProvider.setCredentials(this.authScope, this.credentials);
+                this.credentialsProvider.setCredentials(
+                        new AuthScope(this.baseUrl.getHost(), this.baseUrl.getPort()), this.credentials);
             }
         } catch (URISyntaxException ex) {
             throw new ClientResultException(Error.INVALID_URL, ex);
@@ -94,7 +99,7 @@ public abstract class AbstractSession<T_DOCUMENT extends Document> implements Se
     }
 
     /**
-     * Returns the currently set {@link TLSContext}. ({@code null} in case this is representing a HTTP {@link Session})
+     * Returns the currently set {@link TLSContext}. ({@code null} in case this is representing an HTTP {@link Session})
      *
      * @return The currently set {@link TLSContext}.
      */
@@ -188,49 +193,11 @@ public abstract class AbstractSession<T_DOCUMENT extends Document> implements Se
     }
 
     /**
-     * Sets the {@link Credentials} authorizing this session.
-     *
-     * @param userCredentials The {@link Credentials} authorizing this session.
-     */
-    public void setCredentials(@Nullable Credentials userCredentials) {
-        // set new credentials
-        if (userCredentials != null) {
-            this.credentials = userCredentials;
-            this.credentialsProvider.setCredentials(this.authScope, this.credentials);
-        }
-    }
-
-    /**
-     * Extract and deduce the {@link UsernamePasswordCredentials} from a given user info String.
-     *
-     * @param userInfo The user info String containing the {@link UsernamePasswordCredentials}, separated by ":".
-     */
-    private void extractUserInfo(@Nullable String userInfo) {
-
-        String name = "";
-        String password = "";
-
-        if (userInfo != null) {
-            String[] credentials = userInfo.split(":");
-
-            if (credentials.length >= 1) {
-                name = credentials[0];
-            }
-
-            if (credentials.length >= 2) {
-                password = credentials[1];
-            }
-        }
-
-        this.credentials = new UsernamePasswordCredentials(name, password.toCharArray());
-    }
-
-    /**
      * Returns the currently registered {@link CredentialsProvider}.
      *
      * @return The currently registered {@link CredentialsProvider}.
      */
-    public @NotNull CredentialsProvider getCredentialsProvider() {
+    protected @NotNull CredentialsProvider getCredentialsProvider() {
         return credentialsProvider;
     }
 

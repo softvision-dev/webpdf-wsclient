@@ -49,8 +49,6 @@ public class WebserviceProxyTest {
             )) {
                 session.setProxy(new ProxyConfiguration("127.0.0.1", 8888));
 
-                session.login();
-
                 UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
 
@@ -84,7 +82,7 @@ public class WebserviceProxyTest {
     @ProxyTest
     public void testSOAPProxyHTTP() {
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+            try (SoapSession session = SessionFactory.createInstance(
                     WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL,
                             ServerProtocol.HTTP, true)
@@ -130,7 +128,7 @@ public class WebserviceProxyTest {
             TLSContext tlsContext = new TLSContext()
                     .setAllowSelfSigned(true)
                     .setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+            try (SoapSession session = SessionFactory.createInstance(
                     WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL,
                             ServerProtocol.HTTPS, true),
@@ -183,8 +181,6 @@ public class WebserviceProxyTest {
                     tlsContext
             )) {
                 session.setProxy(new ProxyConfiguration("127.0.0.1", 8888));
-
-                session.login();
 
                 UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An instance of {@link AdministrationManager} allows to administrate the webPDF server.
  *
- * @param <T_REST_DOCUMENT> The {@link RestDocument} used by the currently activs {@link RestSession}.
+ * @param <T_REST_DOCUMENT> The {@link RestDocument} used by the currently active {@link RestSession}.
  */
 public class AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
 

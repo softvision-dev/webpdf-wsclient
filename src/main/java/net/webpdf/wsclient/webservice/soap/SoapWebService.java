@@ -14,8 +14,8 @@ import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.schema.operation.SettingsType;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
+import net.webpdf.wsclient.session.access.token.OAuthToken;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
-import net.webpdf.wsclient.session.credentials.TokenCredentials;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.webservice.AbstractWebService;
@@ -42,7 +42,7 @@ import java.util.Map;
  * @param <T_WEBPDF_PORT>         The interface stub type to operate the webservice endpoint with.
  */
 public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOAP_DOCUMENT extends SoapDocument>
-        extends AbstractWebService<SoapSession<T_SOAP_DOCUMENT>, OperationData, T_OPERATION_PARAMETER, T_SOAP_DOCUMENT,
+        extends AbstractWebService<SoapSession, OperationData, T_OPERATION_PARAMETER, T_SOAP_DOCUMENT,
         BillingType, PdfPasswordType, SettingsType> {
 
     private static final String SSL_SOCKET_FACTORY = "com.sun.xml.ws.transport.https.client.SSLSocketFactory";
@@ -58,7 +58,7 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
      * @param session        The {@link SoapSession} the webservice interface shall be created for.
      * @param webServiceType The {@link WebServiceType} interface, that shall be created.
      */
-    public SoapWebService(@NotNull SoapSession<T_SOAP_DOCUMENT> session, @NotNull WebServiceType webServiceType)
+    public SoapWebService(@NotNull SoapSession session, @NotNull WebServiceType webServiceType)
             throws ResultException {
         super(webServiceType, session);
         this.qname = new QName(webServiceType.getSoapNamespaceURI(), webServiceType.getSoapLocalPart());
@@ -191,7 +191,7 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
         // set auth information
         if (getSession().getCredentials() != null) {
 
-            boolean tokenCredentials = getSession().getCredentials() instanceof TokenCredentials;
+            boolean tokenCredentials = getSession().getCredentials() instanceof OAuthToken;
             if (tokenCredentials) {
                 getHeaders().put(HttpHeaders.AUTHORIZATION,
                         Collections.singletonList("Bearer" +

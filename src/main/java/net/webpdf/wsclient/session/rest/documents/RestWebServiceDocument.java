@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * it´s history can be accessed via a {@link DocumentManager} by an assigned document ID.
  * </p>
  */
-@SuppressWarnings("unused")
 public class RestWebServiceDocument extends AbstractDocument implements RestDocument {
 
     private final @NotNull ConcurrentHashMap<Integer, HistoryEntry> historyMap = new ConcurrentHashMap<>();
@@ -141,6 +140,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      * @return The most recent {@link HistoryEntry}.
      * @throws ResultException Shall be thrown, when updating the document history failed.
      */
+    @SuppressWarnings("unused")
     public @NotNull HistoryEntry lastHistory() throws ResultException {
         if (this.historyMap.isEmpty()) {
             throw new ClientResultException(Error.INVALID_HISTORY_DATA);
@@ -153,6 +153,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      *
      * @return The number of known {@link HistoryEntry}s for this {@link RestWebServiceDocument}.
      */
+    @SuppressWarnings("unused")
     public int getHistorySize() {
         return this.historyMap.size();
     }

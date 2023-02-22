@@ -1,5 +1,6 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.session.access.UserAccess;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
@@ -18,7 +19,6 @@ import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.soap.ConverterWebService;
 import org.apache.commons.io.FileUtils;
-import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.stream.StreamSource;
@@ -35,7 +35,7 @@ public class SoapCredentialsIntegrationTest {
     private final TestResources testResources = new TestResources(SoapCredentialsIntegrationTest.class);
     public TestServer testServer = new TestServer();
 
-    private void executeConverter(Session<SoapDocument> session) {
+    private void executeConverter(Session session) {
         File file = testResources.getResource("integration/files/lorem-ipsum.docx");
         File fileOut = testResources.getTempFolder().newFile();
 
@@ -70,7 +70,7 @@ public class SoapCredentialsIntegrationTest {
     @IntegrationTest
     public void testWithUserCredentialsInURL() {
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+            try (SoapSession session = SessionFactory.createInstance(
                     WebServiceProtocol.SOAP, testServer.getServer(
                             ServerType.LOCAL, ServerProtocol.HTTP,
                             true))) {
@@ -83,13 +83,9 @@ public class SoapCredentialsIntegrationTest {
     @IntegrationTest
     public void testWithUserCredentials() {
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
-
-                UsernamePasswordCredentials userCredentials = new UsernamePasswordCredentials(
-                        testServer.getLocalUser(), testServer.getLocalPassword());
-                session.setCredentials(userCredentials);
-
+            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+                    testServer.getServer(ServerType.LOCAL),
+                    new UserAccess(testServer.getLocalUser(), testServer.getLocalPassword()))) {
                 executeConverter(session);
             }
         });
@@ -102,7 +98,7 @@ public class SoapCredentialsIntegrationTest {
             File resFile = testResources.getResource("convert.xml");
             String xml = FileUtils.readFileToString(resFile, Charset.defaultCharset());
 
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+            try (SoapSession session = SessionFactory.createInstance(
                     WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL));
                  StringReader stringReader = new StringReader(xml)) {

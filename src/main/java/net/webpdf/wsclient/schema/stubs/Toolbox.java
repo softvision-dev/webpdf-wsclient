@@ -40,7 +40,7 @@ public interface Toolbox {
      *                    the webservice call.
      * @param fileURL     The URL of the source document that shall be processed. (might be {@code null} to select a
      *                    file via it´s  {@link DataHandler} instead.)
-     * @param fileContent The {@link DataHandler} of the source document, that shall be prcoessed.
+     * @param fileContent The {@link DataHandler} of the source document, that shall be processed.
      *                    (might be {@code null} to select a resource via URL instead.)
      * @return The {@link DataHandler} of the resulting document.
      * @throws WebServiceException Shall be thrown, when calling the webservice failed.

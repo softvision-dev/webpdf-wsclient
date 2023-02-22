@@ -18,7 +18,6 @@ import net.webpdf.wsclient.webservice.soap.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,12 +27,11 @@ public class SoapWebserviceIntegrationTest {
     private final TestResources testResources = new TestResources(SoapWebserviceIntegrationTest.class);
     public TestServer testServer = new TestServer();
 
-    @SuppressWarnings("Duplicates")
     @Test
     @IntegrationTest
     public void testConverter() {
         assertDoesNotThrow(() -> {
-            try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.CONVERTER);
@@ -51,6 +49,10 @@ public class SoapWebserviceIntegrationTest {
                 webService.getOperationParameters().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
                 webService.getOperationParameters().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
+                webService.getPassword();
+                webService.getBilling();
+                webService.getSettings();
+
                 try (SoapDocument soapDocument = webService.process()) {
                     assertNotNull(soapDocument);
                     assertTrue(fileOut.exists());
@@ -63,7 +65,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testToolbox() {
         assertDoesNotThrow(() -> {
-            try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 ToolboxWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.TOOLBOX);
@@ -81,13 +83,9 @@ public class SoapWebserviceIntegrationTest {
                 // set merge file data
                 mergeType.setData(new MergeFileDataType());
                 mergeType.getData().setFormat(FileDataFormatType.PDF);
+                mergeType.getData().setValue(Files.readAllBytes(
+                        testResources.getResource("integration/files/merge.pdf").toPath()));
 
-                try {
-                    mergeType.getData().setValue(Files.readAllBytes(
-                            testResources.getResource("integration/files/merge.pdf").toPath()));
-                } catch (IOException ex) {
-                    System.out.println("Unable to add merge file data to params: " + ex.getMessage());
-                }
                 webService.getOperationParameters().add(mergeType);
 
                 // add rotate operation to the toolbox operation list
@@ -120,7 +118,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testSignature() {
         assertDoesNotThrow(() -> {
-            try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 SignatureWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.SIGNATURE);
@@ -167,7 +165,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testPdfa() {
         assertDoesNotThrow(() -> {
-            try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 PdfaWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.PDFA);
@@ -200,7 +198,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testOcr() {
         assertDoesNotThrow(() -> {
-            try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 OcrWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.OCR);
@@ -234,7 +232,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testBarcode() {
         assertDoesNotThrow(() -> {
-            try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 BarcodeWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.BARCODE);
@@ -293,7 +291,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testUrlConverter() {
         assertDoesNotThrow(() -> {
-            try (Session<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 UrlConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
@@ -325,7 +323,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testConverterRemoteWSDL() {
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 session.setUseLocalWsdl(false);
                 ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
@@ -356,7 +354,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testToolboxRemoteWSDL() {
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 session.setUseLocalWsdl(false);
                 ToolboxWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
@@ -375,13 +373,9 @@ public class SoapWebserviceIntegrationTest {
                 // set merge file data
                 mergeType.setData(new MergeFileDataType());
                 mergeType.getData().setFormat(FileDataFormatType.PDF);
+                mergeType.getData().setValue(Files.readAllBytes(
+                        testResources.getResource("integration/files/merge.pdf").toPath()));
 
-                try {
-                    mergeType.getData().setValue(Files.readAllBytes(
-                            testResources.getResource("integration/files/merge.pdf").toPath()));
-                } catch (IOException ex) {
-                    System.out.println("Unable to add merge file data to params: " + ex.getMessage());
-                }
                 webService.getOperationParameters().add(mergeType);
 
                 // add rotate operation to the toolbox operation list
@@ -414,7 +408,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testSignatureRemoteWSDL() {
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 session.setUseLocalWsdl(false);
                 SignatureWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
@@ -459,7 +453,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testPdfaRemoteWSDL() {
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 session.setUseLocalWsdl(false);
                 PdfaWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
@@ -493,7 +487,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testOcrRemoteWSDL() {
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 session.setUseLocalWsdl(false);
                 OcrWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
@@ -528,7 +522,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testBarcodeRemoteWSDL() {
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 session.setUseLocalWsdl(false);
                 BarcodeWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
@@ -588,7 +582,7 @@ public class SoapWebserviceIntegrationTest {
     @IntegrationTest
     public void testUrlConverterRemoteWSDL() {
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL))) {
                 session.setUseLocalWsdl(false);
                 UrlConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,

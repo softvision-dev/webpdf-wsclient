@@ -65,6 +65,11 @@ public final class TestServer {
                 uri = this.uriBuilderLocalServer.build();
                 uriBuilder = new URIBuilder(uri);
                 if (user != null && password != null) {
+                    /*
+                     * Even though the deprecation warning is entirely correct - we support such credentials and hence
+                     * must test it.
+                     */
+                    //noinspection deprecation
                     uriBuilder.setUserInfo(user, password);
                 }
                 if (serverProtocol.equals(ServerProtocol.HTTP)) {
@@ -75,7 +80,6 @@ public final class TestServer {
                     uriBuilder.setScheme("https");
                 }
                 break;
-
             case PUBLIC:
                 uri = this.uriBuilderPublicServer.build();
                 uriBuilder = new URIBuilder(uri);

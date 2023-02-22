@@ -7,6 +7,7 @@ import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
 import net.webpdf.wsclient.openapi.OperationConvertPdfa;
+import net.webpdf.wsclient.session.access.token.OAuthToken;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.config.TestConfig;
 import net.webpdf.wsclient.testsuite.integration.annotations.OAuthTest;
@@ -18,7 +19,6 @@ import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.soap.SoapSession;
-import net.webpdf.wsclient.session.credentials.token.OAuthToken;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.io.TestResources;
@@ -59,29 +59,25 @@ public class OauthTokenIntegrationTest {
     @OAuthTest(provider = OAuthProviderSelection.AUTH_0)
     public void testRestAuth0TokenTest() {
         assertDoesNotThrow(() -> {
+            Auth0Config auth0Config = TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config();
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
-                Auth0Config auth0Config = TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config();
+                    testServer.getServer(ServerType.LOCAL),
+                    // Implement the Auth0 TokenProvider
+                    () -> {
+                        // Request an access token from the Auth0 authorization provider:
+                        AuthAPI auth = new AuthAPI(
+                                auth0Config.getAuthority(),
+                                auth0Config.getClientID(),
+                                auth0Config.getClientSecret()
+                        );
+                        TokenRequest tokenRequest = auth.requestToken(
+                                auth0Config.getAudience()
+                        );
 
-                // Receive Auth0 access token and provide it to the RestSession:
-                assertDoesNotThrow(() -> session.login(
-                        // Implement the Auth0 TokenProvider
-                        () -> {
-                            // Request an access token from the Auth0 authorization provider:
-                            AuthAPI auth = new AuthAPI(
-                                    auth0Config.getAuthority(),
-                                    auth0Config.getClientID(),
-                                    auth0Config.getClientSecret()
-                            );
-                            TokenRequest tokenRequest = auth.requestToken(
-                                    auth0Config.getAudience()
-                            );
-
-                            // Create and return the webPDF wsclient access Token.
-                            return new OAuthToken(tokenRequest.execute().getAccessToken());
-                        })
-                );
-
+                        // Create and return the webPDF wsclient access Token.
+                        return new OAuthToken(tokenRequest.execute().getAccessToken());
+                    }
+            )) {
                 // Execute requests to webPDF webservices using the access token:
                 executeWSRequest(session);
             }
@@ -103,41 +99,36 @@ public class OauthTokenIntegrationTest {
     @Test
     @OAuthTest(provider = OAuthProviderSelection.AZURE)
     public void testRestAzureTokenTest() {
+        AzureConfig azureConfig = TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig();
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
-                AzureConfig azureConfig = TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig();
+                    testServer.getServer(ServerType.LOCAL),
+                    // Implement the Azure TokenProvider
+                    () -> {
+                        // Request an access token from the Azure authorization provider:
+                        ConfidentialClientApplication app = ConfidentialClientApplication.builder(
+                                        azureConfig.getClientID(),
+                                        ClientCredentialFactory.createFromSecret(
+                                                azureConfig.getClientSecret()
+                                        ))
+                                .authority(
+                                        azureConfig.getAuthority()
+                                )
+                                .build();
+                        ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
+                                        Collections.singleton(
+                                                azureConfig.getScope()
+                                        ))
+                                .build();
+                        CompletableFuture<IAuthenticationResult> future =
+                                app.acquireToken(clientCredentialParam);
+                        IAuthenticationResult authenticationResult =
+                                assertDoesNotThrow(() -> future.get());
 
-                // Receive Azure access token and provide it to the RestSession:
-                assertDoesNotThrow(
-                        () -> session.login(
-                                // Implement the Azure TokenProvider
-                                () -> {
-                                    // Request an access token from the Azure authorization provider:
-                                    ConfidentialClientApplication app = ConfidentialClientApplication.builder(
-                                                    azureConfig.getClientID(),
-                                                    ClientCredentialFactory.createFromSecret(
-                                                            azureConfig.getClientSecret()
-                                                    ))
-                                            .authority(
-                                                    azureConfig.getAuthority()
-                                            )
-                                            .build();
-                                    ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
-                                                    Collections.singleton(
-                                                            azureConfig.getScope()
-                                                    ))
-                                            .build();
-                                    CompletableFuture<IAuthenticationResult> future =
-                                            app.acquireToken(clientCredentialParam);
-                                    IAuthenticationResult authenticationResult =
-                                            assertDoesNotThrow(() -> future.get());
-
-                                    // Create and return the webPDF wsclient access Token.
-                                    return new OAuthToken(authenticationResult.accessToken());
-                                })
-                );
-
+                        // Create and return the webPDF wsclient access Token.
+                        return new OAuthToken(authenticationResult.accessToken());
+                    }
+            )) {
                 // Execute requests to webPDF webservices using the access token:
                 executeWSRequest(session);
             }
@@ -159,29 +150,26 @@ public class OauthTokenIntegrationTest {
     @Test
     @OAuthTest(provider = OAuthProviderSelection.AUTH_0)
     public void testSOAPAuth0TokenTest() {
+        Auth0Config auth0Config = TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config();
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
-                Auth0Config auth0Config = TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config();
+            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+                    testServer.getServer(ServerType.LOCAL),
+                    // Implement the Auth0 TokenProvider
+                    () -> {
+                        // Request an access token from the Auth0 authorization provider:
+                        AuthAPI auth = new AuthAPI(
+                                auth0Config.getAuthority(),
+                                auth0Config.getClientID(),
+                                auth0Config.getClientSecret()
+                        );
+                        TokenRequest tokenRequest = auth.requestToken(
+                                auth0Config.getAudience()
+                        );
 
-                assertDoesNotThrow(() -> session.setCredentials(
-                        // Implement the Auth0 TokenProvider
-                        () -> {
-                            // Request an access token from the Auth0 authorization provider:
-                            AuthAPI auth = new AuthAPI(
-                                    auth0Config.getAuthority(),
-                                    auth0Config.getClientID(),
-                                    auth0Config.getClientSecret()
-                            );
-                            TokenRequest tokenRequest = auth.requestToken(
-                                    auth0Config.getAudience()
-                            );
-
-                            // Create and return the webPDF wsclient access Token.
-                            return new OAuthToken(tokenRequest.execute().getAccessToken());
-                        })
-                );
-
+                        // Create and return the webPDF wsclient access Token.
+                        return new OAuthToken(tokenRequest.execute().getAccessToken());
+                    }
+            )) {
                 // Execute requests to webPDF webservices using the access token:
                 executeWSRequest(session);
             }
@@ -203,39 +191,36 @@ public class OauthTokenIntegrationTest {
     @Test
     @OAuthTest(provider = OAuthProviderSelection.AZURE)
     public void testSOAPAzureTokenTest() {
+        AzureConfig azureConfig = TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig();
         assertDoesNotThrow(() -> {
-            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
-                AzureConfig azureConfig = TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig();
+            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
+                    testServer.getServer(ServerType.LOCAL),
+                    // Implement the Azure TokenProvider
+                    () -> {
+                        // Request an access token from the Azure authorization provider:
+                        ConfidentialClientApplication app = ConfidentialClientApplication.builder(
+                                        azureConfig.getClientID(),
+                                        ClientCredentialFactory.createFromSecret(
+                                                azureConfig.getClientSecret()
+                                        ))
+                                .authority(
+                                        azureConfig.getAuthority()
+                                )
+                                .build();
+                        ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
+                                        Collections.singleton(
+                                                azureConfig.getScope()
+                                        ))
+                                .build();
+                        CompletableFuture<IAuthenticationResult> future =
+                                app.acquireToken(clientCredentialParam);
+                        IAuthenticationResult authenticationResult =
+                                assertDoesNotThrow(() -> future.get());
 
-                assertDoesNotThrow(() -> session.setCredentials(
-                        // Implement the Azure TokenProvider
-                        () -> {
-                            // Request an access token from the Azure authorization provider:
-                            ConfidentialClientApplication app = ConfidentialClientApplication.builder(
-                                            azureConfig.getClientID(),
-                                            ClientCredentialFactory.createFromSecret(
-                                                    azureConfig.getClientSecret()
-                                            ))
-                                    .authority(
-                                            azureConfig.getAuthority()
-                                    )
-                                    .build();
-                            ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
-                                            Collections.singleton(
-                                                    azureConfig.getScope()
-                                            ))
-                                    .build();
-                            CompletableFuture<IAuthenticationResult> future =
-                                    app.acquireToken(clientCredentialParam);
-                            IAuthenticationResult authenticationResult =
-                                    assertDoesNotThrow(() -> future.get());
-
-                            // Create and return the webPDF wsclient access Token.
-                            return new OAuthToken(authenticationResult.accessToken());
-                        })
-                );
-
+                        // Create and return the webPDF wsclient access Token.
+                        return new OAuthToken(authenticationResult.accessToken());
+                    }
+            )) {
                 // Execute requests to webPDF webservices using the access token:
                 executeWSRequest(session);
             }
@@ -279,7 +264,7 @@ public class OauthTokenIntegrationTest {
      *
      * @param session The {@link SoapSession} to use.
      */
-    private void executeWSRequest(@NotNull SoapSession<SoapDocument> session) {
+    private void executeWSRequest(@NotNull SoapSession session) {
         assertDoesNotThrow(() -> {
             PdfaWebService<SoapDocument> webService =
                     WebServiceFactory.createInstance(session, WebServiceType.PDFA);

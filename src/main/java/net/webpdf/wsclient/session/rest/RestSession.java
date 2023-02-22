@@ -4,9 +4,8 @@ import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.session.credentials.token.SessionToken;
-import net.webpdf.wsclient.session.credentials.token.Token;
-import net.webpdf.wsclient.session.credentials.token.TokenProvider;
+import net.webpdf.wsclient.session.access.token.SessionToken;
+import net.webpdf.wsclient.session.access.token.Token;
 import net.webpdf.wsclient.schema.beans.User;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
@@ -26,8 +25,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <T_REST_DOCUMENT> The {@link RestDocument} type used by this {@link RestSession}
  */
-@SuppressWarnings("unused")
-public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Session<T_REST_DOCUMENT> {
+public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Session {
 
     /**
      * Returns the session {@link Token} of this {@link RestSession}.
@@ -55,30 +53,8 @@ public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Sessi
      *
      * @return The active {@link AdministrationManager} of this {@link RestSession}.
      */
+    @SuppressWarnings("unused")
     @NotNull AdministrationManager<T_REST_DOCUMENT> getAdministrationManager();
-
-    /**
-     * Login into the webPDF server and prepare a session {@link Token}.
-     *
-     * @throws ResultException Shall be thrown in case of a HTTP access error.
-     */
-    void login() throws ResultException;
-
-    /**
-     * Login into the server using the given {@link Token}.
-     *
-     * @param token The {@link Token} to provide a session for.
-     * @throws ResultException Shall be thrown in case of a HTTP access error.
-     */
-    void login(@Nullable Token token) throws ResultException;
-
-    /**
-     * Login into the server using the given {@link TokenProvider}.
-     *
-     * @param tokenProvider The {@link TokenProvider} to provide a session for.
-     * @throws ResultException HTTP access error.
-     */
-    void login(@Nullable TokenProvider<?> tokenProvider) throws ResultException;
 
     /**
      * <p>

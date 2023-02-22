@@ -156,13 +156,13 @@ public class SoapDocumentTest {
                 assertEquals(IOUtils.toString(inputStream, StandardCharsets.UTF_8),
                         IOUtils.toString(soapDocument.getSourceDataHandler().getDataSource().getInputStream(),
                                 StandardCharsets.UTF_8),
-                        "Inputstream of data source and original input should be identical.");
+                        "Input-stream of data source and original input should be identical.");
             }
         });
     }
 
     @Test
-    public void testDataSourceGetOutputstream() {
+    public void testDataSourceGetOutputStream() {
         assertThrows(UnsupportedOperationException.class,
                 () -> {
                     File sourceFile = testResources.getResource("test.pdf");

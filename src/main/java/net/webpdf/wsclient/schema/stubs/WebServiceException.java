@@ -21,7 +21,7 @@ import jakarta.xml.ws.WebFault;
 public class WebServiceException extends Exception {
 
     /**
-     * Java type that goes as soapenv:Fault detail element.
+     * Java type that goes as SOAP envelop:Fault detail element.
      */
     private final @NotNull FaultInfo faultInfo;
 

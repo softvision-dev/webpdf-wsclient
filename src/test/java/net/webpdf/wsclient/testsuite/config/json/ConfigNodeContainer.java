@@ -17,7 +17,6 @@ public abstract class ConfigNodeContainer implements ConfigNode {
         return node.getString(key, defaultValue);
     }
 
-    @SuppressWarnings("SameParameterValue")
     @Override
     public boolean getBoolean(@NotNull String key, boolean defaultValue) {
         return node.getBoolean(key, defaultValue);

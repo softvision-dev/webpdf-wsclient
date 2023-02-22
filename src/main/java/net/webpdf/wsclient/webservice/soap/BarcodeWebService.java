@@ -31,7 +31,7 @@ public class BarcodeWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @param session The {@link SoapSession} a {@link BarcodeWebService} shall be created for.
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
-    public BarcodeWebService(@NotNull SoapSession<T_SOAP_DOCUMENT> session) throws ResultException {
+    public BarcodeWebService(@NotNull SoapSession session) throws ResultException {
         super(session, WebServiceType.BARCODE);
     }
 

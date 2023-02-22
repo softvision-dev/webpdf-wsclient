@@ -47,12 +47,12 @@ public final class WebServiceFactory {
     @SuppressWarnings("unchecked")
     public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?, ?>>
     @NotNull T_WEBSERVICE createInstance(
-            @NotNull Session<T_DOCUMENT> session, @NotNull WebServiceType webServiceType) throws ResultException {
+            @NotNull Session session, @NotNull WebServiceType webServiceType) throws ResultException {
         switch (session.getWebServiceProtocol()) {
             case SOAP:
                 if (session instanceof SoapSession) {
                     return (T_WEBSERVICE) WebServiceFactory
-                            .createSoapInstance((SoapSession<SoapDocument>) session, webServiceType,
+                            .createSoapInstance((SoapSession) session, webServiceType,
                                     createSoapParameters(webServiceType));
                 } else {
                     throw new ClientResultException(Error.INVALID_WEBSERVICE_SESSION);
@@ -179,7 +179,7 @@ public final class WebServiceFactory {
     @SuppressWarnings("unchecked")
     public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?, ?>>
     @NotNull T_WEBSERVICE createInstance(
-            @Nullable Session<T_DOCUMENT> session, @Nullable StreamSource streamSource) throws ResultException {
+            @Nullable Session session, @Nullable StreamSource streamSource) throws ResultException {
         if (session == null) {
             throw new ClientResultException(Error.SESSION_CREATE);
         }
@@ -201,7 +201,7 @@ public final class WebServiceFactory {
                 // detect the web service with the operation data
                 if (session instanceof SoapSession) {
                     return (T_WEBSERVICE) WebServiceFactory.createSoapInstance(
-                            (SoapSession<SoapDocument>) session, determineWebServiceType(soapOperationData),
+                            (SoapSession) session, determineWebServiceType(soapOperationData),
                             soapOperationData
                     );
                 } else {
@@ -294,7 +294,7 @@ public final class WebServiceFactory {
     @SuppressWarnings("unchecked")
     private static <T_DOCUMENT extends SoapDocument, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?, ?>>
     @NotNull T_WEBSERVICE createSoapInstance(
-            @NotNull SoapSession<T_DOCUMENT> session, @NotNull WebServiceType webServiceType,
+            @NotNull SoapSession session, @NotNull WebServiceType webServiceType,
             @Nullable OperationData operationData) throws ResultException {
 
         if (operationData == null) {

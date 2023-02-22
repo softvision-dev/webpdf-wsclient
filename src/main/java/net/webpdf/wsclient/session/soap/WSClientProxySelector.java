@@ -10,12 +10,11 @@ import java.util.*;
 
 /**
  * An instance of {@link WSClientProxySelector} initializes a custom proxy selector, that prepares proxy settings for
- * webPDF calls. It shall fallback to the default proxy selector, when a processed {@link URI} is not pointing to a
+ * webPDF calls. It shall fall back to the default proxy selector, when a processed {@link URI} is not pointing to a
  * webPDF endpoint. It will restore the previously set proxy selector, when closed. The default proxy selector shall
  * also be used as a fallback, when a resource path shall be routed, that is not based on one of the given
  * routedResources.
  */
-@SuppressWarnings("unused")
 public class WSClientProxySelector extends ProxySelector implements AutoCloseable {
 
     private static final @NotNull String[] SUPPORTED_SCHEMES = new String[]{"http", "https"};
@@ -24,7 +23,7 @@ public class WSClientProxySelector extends ProxySelector implements AutoCloseabl
     private final @Nullable ProxySelector defaultProxySelector;
 
     /**
-     * Initializes a custom proxy selector, that prepares proxy settings for webPDF calls. It shall fallback to the
+     * Initializes a custom proxy selector, that prepares proxy settings for webPDF calls. It shall fall back to the
      * default proxy selector, when a processed {@link URI} is not pointing to a webPDF endpoint. It will restore the
      * previously set proxy selector, when closed. The default proxy selector shall also be used as a fallback, when a
      * resource path shall be routed, that is not based on one of the given routedResources.
@@ -64,6 +63,7 @@ public class WSClientProxySelector extends ProxySelector implements AutoCloseabl
      *
      * @param routedResource The {@link URI}, that shall be routed via this selector.
      */
+    @SuppressWarnings("unused")
     public void addRoutedResource(URI routedResource) {
         this.routedResources.add(routedResource);
     }

@@ -24,7 +24,7 @@ import java.util.Map;
  * @param <T_SETTINGS>            The operation´s additional settings type, used to configure webservice independent
  *                                options and parameters.
  */
-public abstract class AbstractWebService<T_SESSION extends Session<T_DOCUMENT>, T_OPERATION_DATA, T_OPERATION_PARAMETER,
+public abstract class AbstractWebService<T_SESSION extends Session, T_OPERATION_DATA, T_OPERATION_PARAMETER,
         T_DOCUMENT extends Document, T_BILLING, T_PASSWORD, T_SETTINGS>
         implements WebService<T_SESSION, T_OPERATION_DATA, T_OPERATION_PARAMETER, T_DOCUMENT, T_BILLING, T_PASSWORD,
         T_SETTINGS> {

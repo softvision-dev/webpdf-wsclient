@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public interface FileDataType<T> {
 
     /**
-     * Return the file data source. (might be {@code null}, if the data source shall be defined using an URI or direct
+     * Return the file data source. (might be {@code null}, if the data source shall be defined using a URI or direct
      * byte value.)
      *
      * @return The file data source.
@@ -24,7 +24,7 @@ public interface FileDataType<T> {
     @Nullable FileDataSourceType getSource();
 
     /**
-     * Set the file data source. (might be {@code null}, if the data source shall be defined using an URI or direct byte
+     * Set the file data source. (might be {@code null}, if the data source shall be defined using a URI or direct byte
      * value.)
      *
      * @param value The file data source.
@@ -63,7 +63,7 @@ public interface FileDataType<T> {
 
     /**
      * Returns the value in the selected data format. (might be {@code null}, if the data source shall be defined using
-     * a file data handler or an URI.)
+     * a file data handler or a URI.)
      *
      * @return The source data.
      */
@@ -71,7 +71,7 @@ public interface FileDataType<T> {
 
     /**
      * Set the value in the selected data format. (might be {@code null}, if the data source shall be defined using a
-     * file data handler or an URI.)
+     * file data handler or a URI.)
      *
      * @param value The source data.
      */
