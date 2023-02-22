@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.session.access.token;
+package net.webpdf.wsclient.session.auth.token;
 
 import com.fasterxml.jackson.annotation.*;
 import net.webpdf.wsclient.session.Session;

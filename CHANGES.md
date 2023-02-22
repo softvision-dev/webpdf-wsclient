@@ -47,7 +47,7 @@
     - DocumentManager is only available for REST sessions.
     - InputStreamDataSource and WSClientProxySelector are only available for SOAP sessions.
     - Removed support for selectable transfer DataFormat. SOAP shall always use XML, REST shall always use JSON.
-- Adding REST and SOAP OAuth Token support.
+- Adding REST and SOAP OAuth2 Token support.
 - Adapted IntegrationTests:
     - Adding accessible config file "config/testConfig.json", to allow easier adaptation and configuration of tests.
     - Adding conditional integration test execution.

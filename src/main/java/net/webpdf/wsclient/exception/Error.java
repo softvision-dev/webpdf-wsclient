@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.exception;
 
-import net.webpdf.wsclient.session.access.token.SessionToken;
+import net.webpdf.wsclient.session.auth.token.SessionToken;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import org.jetbrains.annotations.NotNull;
@@ -125,7 +125,7 @@ public enum Error {
     REST_EXECUTION(-53, "REST web service execution error"),
     /**
      * An {@link Exception} has occurred during the authentication/authorization step.
-     * (look at the providing {@link SessionAccessResultException}´s cause for more details.)
+     * (look at the providing {@link AuthResultException}´s cause for more details.)
      */
     AUTH_ERROR(-54, "Authentication/Authorization failure.");
 
@@ -175,5 +175,5 @@ public enum Error {
     public int getCode() {
         return this.code;
     }
-}
 
+}

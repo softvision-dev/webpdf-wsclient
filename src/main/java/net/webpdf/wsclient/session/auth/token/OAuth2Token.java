@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.session.access.token;
+package net.webpdf.wsclient.session.auth.token;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import net.webpdf.wsclient.session.Session;
@@ -10,7 +10,7 @@ import java.security.Principal;
 
 /**
  * <p>
- * An instance of {@link OAuthToken} wraps the access token of a webPDF {@link Session} in an object.
+ * An instance of {@link OAuth2Token} wraps the access token of a webPDF {@link Session} in an object.
  * </p>
  * <p>
  * Such a Token can only be obtained and refreshed, by a valid external authorization provider and can not be acquired
@@ -20,17 +20,17 @@ import java.security.Principal;
  * <b>Important:</b> Make sure, that the token belongs to an authorization provider known to the webPDF server.
  * </p>
  */
-public class OAuthToken implements Token, Credentials {
+public class OAuth2Token implements Token, Credentials {
 
     private @NotNull String token;
 
     /**
-     * Creates a new {@link OAuthToken} for the access token determined by an OAuth provider.
+     * Creates a new {@link OAuth2Token} for the access token determined by an OAuth provider.
      *
      * @param accessToken The access token {@code String} value.
      */
     @JsonCreator
-    public OAuthToken(@NotNull String accessToken) {
+    public OAuth2Token(@NotNull String accessToken) {
         this.token = accessToken;
     }
 
@@ -46,7 +46,7 @@ public class OAuthToken implements Token, Credentials {
 
     /**
      * <p>
-     * Refreshes the {@link OAuthToken} by replacing the stored accessToken with a refreshed, new access token.
+     * Refreshes the {@link OAuth2Token} by replacing the stored accessToken with a refreshed, new access token.
      * </p>
      * <p>
      * <b>Important:</b> It is out of scope for The webPDF server (and wsclient) to actually implement a refreshing
@@ -61,7 +61,7 @@ public class OAuthToken implements Token, Credentials {
     }
 
     /**
-     * Returns the determined {@link Principal}, which shall use this {@link OAuthToken}.
+     * Returns the determined {@link Principal}, which shall use this {@link OAuth2Token}.
      *
      * @return The determined {@link Principal}.
      */
@@ -72,7 +72,7 @@ public class OAuthToken implements Token, Credentials {
 
     /**
      * Returns the password matching the {@link Principal}.<br>
-     * A {@link OAuthToken} instance shall assume, that it´s {@link Principal} does not require a password and
+     * A {@link OAuth2Token} instance shall assume, that it´s {@link Principal} does not require a password and
      * shall return {@code null}.
      *
      * @return Always {@code null}.

@@ -1,6 +1,6 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.session.access.UserAccess;
+import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
@@ -85,7 +85,7 @@ public class SoapCredentialsIntegrationTest {
         assertDoesNotThrow(() -> {
             try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL),
-                    new UserAccess(testServer.getLocalUser(), testServer.getLocalPassword()))) {
+                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword()))) {
                 executeConverter(session);
             }
         });

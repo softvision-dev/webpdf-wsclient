@@ -2,7 +2,7 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.openapi.OperationConvertPdfa;
 import net.webpdf.wsclient.openapi.OperationPdfa;
-import net.webpdf.wsclient.session.access.UserAccess;
+import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -79,7 +79,7 @@ public class RestCredentialsIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL),
-                    new UserAccess(testServer.getLocalUser(), testServer.getLocalPassword()))) {
+                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword()))) {
                 executeConverter(session);
             }
         });

@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.http;
 
 import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.session.access.UserAccess;
+import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.testsuite.server.ServerType;
@@ -39,7 +39,7 @@ public class HttpRestRequestIntegrationTest {
             File outputFile = testResources.getTempFolder().newFile();
             try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL),
-                    new UserAccess(testServer.getLocalUser(), testServer.getLocalPassword()));
+                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword()));
                  OutputStream fos = Files.newOutputStream(outputFile.toPath())) {
                 HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                 assertNotNull(httpRestRequest,
@@ -81,7 +81,7 @@ public class HttpRestRequestIntegrationTest {
                     //noinspection unused
                     try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL),
-                            new UserAccess("invalid", "invalid"))) {
+                            new UserAuthProvider("invalid", "invalid"))) {
                         fail("The login itself shall fail and this line should never be reached.");
                     }
                 });

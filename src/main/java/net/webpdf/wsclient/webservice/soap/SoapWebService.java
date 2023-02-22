@@ -14,7 +14,7 @@ import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.schema.operation.SettingsType;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
-import net.webpdf.wsclient.session.access.token.OAuthToken;
+import net.webpdf.wsclient.session.auth.token.OAuth2Token;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
@@ -191,7 +191,7 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
         // set auth information
         if (getSession().getCredentials() != null) {
 
-            boolean tokenCredentials = getSession().getCredentials() instanceof OAuthToken;
+            boolean tokenCredentials = getSession().getCredentials() instanceof OAuth2Token;
             if (tokenCredentials) {
                 getHeaders().put(HttpHeaders.AUTHORIZATION,
                         Collections.singletonList("Bearer" +

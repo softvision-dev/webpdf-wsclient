@@ -1,8 +1,8 @@
 package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.exception.SessionAccessResultException;
-import net.webpdf.wsclient.session.access.SessionAccess;
+import net.webpdf.wsclient.exception.AuthResultException;
+import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
@@ -63,15 +63,15 @@ public final class SessionFactory {
      *
      * @param webServiceProtocol The {@link WebServiceProtocol} used to communicate with the server.
      * @param url                The {@link URL} of the server.
-     * @param accessMethod       The {@link SessionAccess} method to use for authentication/authorization of the
+     * @param authProvider       The {@link AuthProvider} method to use for authentication/authorization of the
      *                           {@link Session}.
      * @return The {@link Session} organizing the communication with the server at the given {@link URL}.
      * @throws ResultException Shall be thrown in case establishing the {@link Session} failed.
      */
     public static <T_SESSION extends Session> @NotNull T_SESSION createInstance(
-            @NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url, @NotNull SessionAccess<?> accessMethod
+            @NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url, @NotNull AuthProvider<?> authProvider
     ) throws ResultException {
-        return createInstance(webServiceProtocol, url, null, accessMethod);
+        return createInstance(webServiceProtocol, url, null, authProvider);
     }
 
     /**
@@ -109,7 +109,7 @@ public final class SessionFactory {
      * @param webServiceProtocol The {@link WebServiceProtocol} used to communicate with the server.
      * @param url                The {@link URL} of the server.
      * @param tlsContext         {@link TLSContext} configuring an HTTPS {@link Session}.
-     * @param accessMethod       The {@link SessionAccess} method to use for authentication/authorization of the
+     * @param authProvider       The {@link AuthProvider} method to use for authentication/authorization of the
      *                           {@link Session}.
      * @return The {@link Session} organizing the communication with the server at the given {@link URL}.
      * @throws ResultException Shall be thrown in case establishing the {@link Session} failed.
@@ -117,14 +117,14 @@ public final class SessionFactory {
     @SuppressWarnings("unchecked")
     public static <T_SESSION extends Session> @NotNull T_SESSION createInstance(
             @NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url, @Nullable TLSContext tlsContext,
-            @Nullable SessionAccess<?> accessMethod
+            @Nullable AuthProvider<?> authProvider
     ) throws ResultException {
         Credentials credentials = null;
-        if (accessMethod != null) {
+        if (authProvider != null) {
             try {
-                credentials = accessMethod.getCredentials();
+                credentials = authProvider.provide();
             } catch (Exception ex) {
-                throw new SessionAccessResultException(ex);
+                throw new AuthResultException(ex);
             }
         }
         try {

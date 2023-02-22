@@ -1,13 +1,15 @@
 package net.webpdf.wsclient;
 
 import com.auth0.client.auth.AuthAPI;
+import com.auth0.exception.Auth0Exception;
 import com.auth0.net.TokenRequest;
 import com.microsoft.aad.msal4j.ClientCredentialFactory;
 import com.microsoft.aad.msal4j.ClientCredentialParameters;
 import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
+import net.webpdf.wsclient.exception.AuthResultException;
 import net.webpdf.wsclient.openapi.OperationConvertPdfa;
-import net.webpdf.wsclient.session.access.token.OAuthToken;
+import net.webpdf.wsclient.session.auth.token.OAuth2Token;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.config.TestConfig;
 import net.webpdf.wsclient.testsuite.integration.annotations.OAuthTest;
@@ -33,14 +35,15 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class OauthTokenIntegrationTest {
+public class Oauth2TokenIntegrationTest {
 
-    private final TestResources testResources = new TestResources(OauthTokenIntegrationTest.class);
+    private final TestResources testResources = new TestResources(Oauth2TokenIntegrationTest.class);
     public TestServer testServer = new TestServer();
 
     /**
@@ -60,7 +63,8 @@ public class OauthTokenIntegrationTest {
     public void testRestAuth0TokenTest() {
         assertDoesNotThrow(() -> {
             Auth0Config auth0Config = TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config();
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL),
                     // Implement the Auth0 TokenProvider
                     () -> {
@@ -75,7 +79,11 @@ public class OauthTokenIntegrationTest {
                         );
 
                         // Create and return the webPDF wsclient access Token.
-                        return new OAuthToken(tokenRequest.execute().getAccessToken());
+                        try {
+                            return new OAuth2Token(tokenRequest.execute().getAccessToken());
+                        } catch (Auth0Exception ex) {
+                            throw new AuthResultException(ex);
+                        }
                     }
             )) {
                 // Execute requests to webPDF webservices using the access token:
@@ -101,20 +109,26 @@ public class OauthTokenIntegrationTest {
     public void testRestAzureTokenTest() {
         AzureConfig azureConfig = TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig();
         assertDoesNotThrow(() -> {
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL),
                     // Implement the Azure TokenProvider
                     () -> {
                         // Request an access token from the Azure authorization provider:
-                        ConfidentialClientApplication app = ConfidentialClientApplication.builder(
-                                        azureConfig.getClientID(),
-                                        ClientCredentialFactory.createFromSecret(
-                                                azureConfig.getClientSecret()
-                                        ))
-                                .authority(
-                                        azureConfig.getAuthority()
-                                )
-                                .build();
+                        ConfidentialClientApplication app;
+                        try {
+                            app = ConfidentialClientApplication.builder(
+                                            azureConfig.getClientID(),
+                                            ClientCredentialFactory.createFromSecret(
+                                                    azureConfig.getClientSecret()
+                                            ))
+                                    .authority(
+                                            azureConfig.getAuthority()
+                                    )
+                                    .build();
+                        } catch (MalformedURLException ex) {
+                            throw new AuthResultException(ex);
+                        }
                         ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
                                         Collections.singleton(
                                                 azureConfig.getScope()
@@ -126,7 +140,7 @@ public class OauthTokenIntegrationTest {
                                 assertDoesNotThrow(() -> future.get());
 
                         // Create and return the webPDF wsclient access Token.
-                        return new OAuthToken(authenticationResult.accessToken());
+                        return new OAuth2Token(authenticationResult.accessToken());
                     }
             )) {
                 // Execute requests to webPDF webservices using the access token:
@@ -167,7 +181,11 @@ public class OauthTokenIntegrationTest {
                         );
 
                         // Create and return the webPDF wsclient access Token.
-                        return new OAuthToken(tokenRequest.execute().getAccessToken());
+                        try {
+                            return new OAuth2Token(tokenRequest.execute().getAccessToken());
+                        } catch (Auth0Exception ex) {
+                            throw new AuthResultException(ex);
+                        }
                     }
             )) {
                 // Execute requests to webPDF webservices using the access token:
@@ -198,15 +216,20 @@ public class OauthTokenIntegrationTest {
                     // Implement the Azure TokenProvider
                     () -> {
                         // Request an access token from the Azure authorization provider:
-                        ConfidentialClientApplication app = ConfidentialClientApplication.builder(
-                                        azureConfig.getClientID(),
-                                        ClientCredentialFactory.createFromSecret(
-                                                azureConfig.getClientSecret()
-                                        ))
-                                .authority(
-                                        azureConfig.getAuthority()
-                                )
-                                .build();
+                        ConfidentialClientApplication app;
+                        try {
+                            app = ConfidentialClientApplication.builder(
+                                            azureConfig.getClientID(),
+                                            ClientCredentialFactory.createFromSecret(
+                                                    azureConfig.getClientSecret()
+                                            ))
+                                    .authority(
+                                            azureConfig.getAuthority()
+                                    )
+                                    .build();
+                        } catch (MalformedURLException ex) {
+                            throw new AuthResultException(ex);
+                        }
                         ClientCredentialParameters clientCredentialParam = ClientCredentialParameters.builder(
                                         Collections.singleton(
                                                 azureConfig.getScope()
@@ -218,7 +241,7 @@ public class OauthTokenIntegrationTest {
                                 assertDoesNotThrow(() -> future.get());
 
                         // Create and return the webPDF wsclient access Token.
-                        return new OAuthToken(authenticationResult.accessToken());
+                        return new OAuth2Token(authenticationResult.accessToken());
                     }
             )) {
                 // Execute requests to webPDF webservices using the access token:
