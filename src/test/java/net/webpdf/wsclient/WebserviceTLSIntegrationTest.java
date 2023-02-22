@@ -149,8 +149,8 @@ public class WebserviceTLSIntegrationTest {
                 assertEquals(0, expectedErrorCode,
                         String.format("%d had been expected, but the request succeeded.", expectedErrorCode));
             } catch (ClientResultException ex) {
-                assertEquals(expectedErrorCode, ex.getCode(),
-                        String.format("Found %d but %d has been expected.", ex.getCode(),
+                assertEquals(expectedErrorCode, ex.getErrorCode(),
+                        String.format("Found %d but %d has been expected.", ex.getErrorCode(),
                                 expectedErrorCode));
             }
         });

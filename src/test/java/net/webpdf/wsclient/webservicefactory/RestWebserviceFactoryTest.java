@@ -387,7 +387,7 @@ public class RestWebserviceFactoryTest {
                 WebServiceFactory.createInstance(session, (StreamSource) null);
                 fail("ResultException expected");
             } catch (ClientResultException ex) {
-                assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                assertEquals(ex.getWsclientError(), Error.INVALID_OPERATION_DATA,
                         String.format("Error code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
             }
         });

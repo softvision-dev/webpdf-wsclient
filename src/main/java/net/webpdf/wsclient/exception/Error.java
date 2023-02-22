@@ -122,7 +122,12 @@ public enum Error {
     /**
      * A client side REST execution error occurred.
      */
-    REST_EXECUTION(-53, "REST web service execution error");
+    REST_EXECUTION(-53, "REST web service execution error"),
+    /**
+     * An {@link Exception} has occurred during the authentication/authorization step.
+     * (look at the providing {@link SessionAccessResultException}´s cause for more details.)
+     */
+    AUTH_ERROR(-54, "Authentication/Authorization failure.");
 
     private final int code;
     private final @NotNull String message;

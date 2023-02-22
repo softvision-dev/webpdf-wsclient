@@ -22,9 +22,7 @@ import java.util.List;
  */
 public class ClientResultException extends ResultException {
 
-    private final @NotNull Error error;
     private final @NotNull List<String> messages = new ArrayList<>();
-    private final int exitCode;
 
     /**
      * Creates a new {@link ResultException} wrapping the given wsclient {@link Error} fail state.
@@ -32,35 +30,7 @@ public class ClientResultException extends ResultException {
      * @param error The wsclient {@link Error} fail state to wrap.
      */
     public ClientResultException(@NotNull Error error) {
-        this(error, 0, null);
-    }
-
-    /**
-     * Creates a new {@link ResultException} wrapping the given wsclient {@link Error} fail state and exit code.
-     *
-     * @param error    The wsclient {@link Error} fail state to wrap.
-     * @param exitCode The exit code to set.
-     */
-    public ClientResultException(@NotNull Error error, int exitCode) {
-        this(error, exitCode, null);
-    }
-
-    /**
-     * <p>
-     * Creates a new {@link ResultException} wrapping the given wsclient {@link Error} fail state and {@link Exception}
-     * cause.
-     * </p>
-     * <p>
-     * <b>Important:</b> A {@link ClientResultException} is describing failures in an application implementing a
-     * wsclient and should never be used to indicate fail states on the side of the webPDF server.<br>
-     * {@link ServerResultException} shall be reserved for that purpose.
-     * </p>
-     *
-     * @param error The wsclient {@link Error} fail state to wrap.
-     * @param cause The {@link Exception} that caused this failure.
-     */
-    public ClientResultException(@NotNull Error error, @Nullable Exception cause) {
-        this(error, 0, cause);
+        this(error, null);
     }
 
     /**
@@ -74,14 +44,11 @@ public class ClientResultException extends ResultException {
      * {@link ServerResultException} shall be reserved for that purpose.
      * </p>
      *
-     * @param error    The wsclient {@link Error} fail state to wrap.
-     * @param exitCode The exit code to set.
-     * @param cause    The {@link Exception} that caused this failure.
+     * @param error The wsclient {@link Error} fail state to wrap.
+     * @param cause The {@link Exception} that caused this failure.
      */
-    public ClientResultException(@NotNull Error error, int exitCode, @Nullable Exception cause) {
-        super(cause);
-        this.error = error;
-        this.exitCode = exitCode;
+    public ClientResultException(@NotNull Error error, @Nullable Exception cause) {
+        super(error, error.getMessage(), error.getCode(), null, cause);
     }
 
     /**
@@ -92,17 +59,13 @@ public class ClientResultException extends ResultException {
      */
     @Override
     public @Nullable String getMessage() {
-        String errorMessage = this.error.getMessage();
+        String errorMessage = getWsclientError().getMessage();
         String detailMessage = StringUtils.join(this.messages, "\n");
 
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(errorMessage);
         stringBuilder.append(!detailMessage.isEmpty() && stringBuilder.length() > 0 ? "\n" : "");
         stringBuilder.append(detailMessage);
-        if (this.exitCode != 0) {
-            stringBuilder.append(stringBuilder.length() > 0 ? " " : "");
-            stringBuilder.append("[").append(this.exitCode).append("]");
-        }
         return stringBuilder.toString();
     }
 
@@ -129,27 +92,7 @@ public class ClientResultException extends ResultException {
      */
     @SuppressWarnings("unused")
     boolean equalsError(@Nullable Error error) {
-        return this.error.equals(error);
-    }
-
-    /**
-     * Returns the wsclient execution {@link Error} represented by this {@link ResultException}.
-     *
-     * @return The wsclient execution {@link Error} represented by this {@link ResultException}.
-     */
-    public @NotNull Error getError() {
-        return this.error;
-    }
-
-    /**
-     * Returns the numeric error code represented by this {@link ResultException}.
-     *
-     * @return The numeric error code represented by this {@link ResultException}.
-     * @see Error#getCode()
-     * @see #getError()
-     */
-    public int getCode() {
-        return this.error.getCode();
+        return getWsclientError().equals(error);
     }
 
     /**

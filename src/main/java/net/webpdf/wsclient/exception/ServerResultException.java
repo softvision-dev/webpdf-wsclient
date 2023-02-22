@@ -13,10 +13,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ServerResultException extends ResultException {
 
-    private final int errorCode;
-    private final String errorMessage;
-    private final String stackTraceMessage;
-
     /**
      * Instantiates a new {@link ServerResultException} that wraps a webPDF server fail state.
      *
@@ -24,8 +20,9 @@ public class ServerResultException extends ResultException {
      */
     public ServerResultException(@Nullable WebserviceException openApiException) {
         this(
-                openApiException != null ? openApiException.getErrorCode() : 0,
+                Error.REST_EXECUTION,
                 openApiException != null ? openApiException.getErrorMessage() : "",
+                openApiException != null ? openApiException.getErrorCode() : 0,
                 openApiException != null ? openApiException.getStackTrace() : null
         );
     }
@@ -37,8 +34,9 @@ public class ServerResultException extends ResultException {
      */
     public ServerResultException(@Nullable WebServiceException soapStubException) {
         this(
-                soapStubException != null ? soapStubException.getFaultInfo().getErrorCode() : 0,
+                Error.SOAP_EXECUTION,
                 soapStubException != null ? soapStubException.getFaultInfo().getErrorMessage() : "",
+                soapStubException != null ? soapStubException.getFaultInfo().getErrorCode() : 0,
                 soapStubException != null ? soapStubException.getFaultInfo().getStackTrace() : null
         );
     }
@@ -52,45 +50,9 @@ public class ServerResultException extends ResultException {
      * @param errorMessage The message of the webPDF server fail state.
      * @param stackTrace   The stacktrace of the webPDF server fail state, as a {@link String}.
      */
-    public ServerResultException(int errorCode, @Nullable String errorMessage, @Nullable String stackTrace) {
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
-        this.stackTraceMessage = stackTrace;
-    }
-
-    /**
-     * Returns the <a href="https://portal.webpdf.de/webPDF/help/doc/en/appendix/error_codes.html">webPDF server error code</a>
-     * wrapped by this {@link ServerResultException}.
-     *
-     * @return The <a href="https://portal.webpdf.de/webPDF/help/doc/en/appendix/error_codes.html">webPDF server error code</a>
-     * wrapped by this {@link ServerResultException}.
-     */
-    public int getErrorCode() {
-        return this.errorCode;
-    }
-
-    /**
-     * Returns the message belonging to the wrapped
-     * <a href="https://portal.webpdf.de/webPDF/help/doc/en/appendix/error_codes.html">webPDF server error code</a>.
-     *
-     * @return The message belonging to the wrapped
-     * <a href="https://portal.webpdf.de/webPDF/help/doc/en/appendix/error_codes.html">webPDF server error code</a>.
-     */
-    public @Nullable String getErrorMessage() {
-        return this.errorMessage;
-    }
-
-    /**
-     * Returns the stacktrace that lead to the wrapped
-     * <a href="https://portal.webpdf.de/webPDF/help/doc/en/appendix/error_codes.html">webPDF server error code</a>.
-     * as a {@link String}.
-     *
-     * @return The stacktrace that lead to the wrapped
-     * <a href="https://portal.webpdf.de/webPDF/help/doc/en/appendix/error_codes.html">webPDF server error code</a>.
-     * as a {@link String}.
-     */
-    public @Nullable String getStackTraceMessage() {
-        return this.stackTraceMessage;
+    public ServerResultException(Error wsclientError, @Nullable String errorMessage, int errorCode,
+            @Nullable String stackTrace) {
+        super(wsclientError, errorMessage, errorCode, stackTrace, null);
     }
 
     /**
@@ -100,7 +62,7 @@ public class ServerResultException extends ResultException {
      */
     @Override
     public String toString() {
-        return "Server error: " + (getErrorMessage() != null ? getErrorMessage() : "")
+        return "Server error: " + (getMessage() != null ? getMessage() : "")
                 + " (" + getErrorCode() + ")\n"
                 + (getStackTraceMessage() != null && !getStackTraceMessage().isEmpty() ?
                 "Server stack trace: " + getStackTraceMessage() + "\n" : "");

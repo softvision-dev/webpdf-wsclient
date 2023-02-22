@@ -357,7 +357,7 @@ public class SoapWebserviceFactoryTest {
                 WebServiceFactory.createInstance(session, (StreamSource) null);
                 fail("ResultException expected");
             } catch (ClientResultException ex) {
-                assertEquals(ex.getCode(), Error.INVALID_OPERATION_DATA.getCode(),
+                assertEquals(ex.getWsclientError(), Error.INVALID_OPERATION_DATA,
                         String.format("Error code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
             }
         });
@@ -369,7 +369,7 @@ public class SoapWebserviceFactoryTest {
             WebServiceFactory.createInstance(null, (StreamSource) null);
             fail("ResultException expected");
         } catch (ClientResultException ex) {
-            assertEquals(ex.getCode(), Error.SESSION_CREATE.getCode(),
+            assertEquals(ex.getWsclientError(), Error.SESSION_CREATE,
                     String.format("Error code %s expected.", Error.SESSION_CREATE.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");

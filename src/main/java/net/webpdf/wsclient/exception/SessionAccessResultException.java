@@ -1,6 +1,7 @@
 package net.webpdf.wsclient.exception;
 
 import net.webpdf.wsclient.session.access.SessionAccess;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>
@@ -13,11 +14,13 @@ public class SessionAccessResultException extends ResultException {
 
     /**
      * Creates a new {@link SessionAccessResultException}, by wrapping the given {@link Exception} as it´s cause.
+     * <p>
+     * * @param wsClientError     The wsclient specific {@link Error}.
      *
      * @param cause The actual {@link Exception}, that caused the {@link SessionAccessResultException}.
      */
-    public SessionAccessResultException(Exception cause) {
-        super(cause);
+    public SessionAccessResultException(@Nullable Exception cause) {
+        super(Error.AUTH_ERROR, cause != null ? cause.getMessage() : null, Error.AUTH_ERROR.getCode(), null, cause);
     }
 
 }
