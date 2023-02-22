@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <p>
@@ -27,8 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RestWebServiceDocument extends AbstractDocument implements RestDocument {
 
     private final @NotNull ConcurrentHashMap<Integer, HistoryEntry> historyMap = new ConcurrentHashMap<>();
+    private final @NotNull AtomicReference<DocumentFile> documentFile = new AtomicReference<>();
     private final @Nullable String documentId;
-    private @Nullable DocumentFile documentFile;
 
     /**
      * Creates a {@link RestWebServiceDocument} known to the webPDF server by the given document ID.
@@ -50,7 +51,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
         if (this.documentId != null) {
             return this.documentId;
         }
-        return this.documentFile != null ? this.documentFile.getDocumentId() : null;
+        return this.documentFile.get() != null ? this.documentFile.get().getDocumentId() : null;
     }
 
     /**
@@ -60,7 +61,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      */
     @Override
     public @Nullable DocumentFile getDocumentFile() {
-        return documentFile;
+        return documentFile.get();
     }
 
     /**
@@ -70,7 +71,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      */
     @Override
     public void setDocumentFile(@Nullable DocumentFile documentFile) {
-        this.documentFile = documentFile;
+        this.documentFile.set(documentFile);
     }
 
     /**

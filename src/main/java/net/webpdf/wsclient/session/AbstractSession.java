@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <p>
@@ -36,8 +37,8 @@ public abstract class AbstractSession implements Session {
     private final @NotNull WebServiceProtocol webServiceProtocol;
     private final @NotNull URI baseUrl;
     private final @Nullable TLSContext tlsContext;
-    private @Nullable Credentials credentials;
-    private @Nullable ProxyConfiguration proxy;
+    private final @Nullable Credentials credentials;
+    private final @NotNull AtomicReference<ProxyConfiguration> proxy = new AtomicReference<>();
 
     /**
      * Creates a new {@link AbstractRestSession} instance providing connection information and authorization objects
@@ -64,7 +65,6 @@ public abstract class AbstractSession implements Session {
         this.webServiceProtocol = webServiceProtocol;
         this.tlsContext = tlsContext;
         this.basePath = webServiceProtocol.equals(WebServiceProtocol.SOAP) ? "soap/" : "rest/";
-        this.credentials = credentials;
         String toUrl = url.toString();
         if (!toUrl.endsWith("/")) {
             toUrl = toUrl + "/";
@@ -76,7 +76,7 @@ public abstract class AbstractSession implements Session {
             String userInfo = uriBuilder.getUserInfo();
             this.baseUrl = uriBuilder.setUserInfo(null).build();
             // try to extract credentials from the user info of the URL
-            if (this.credentials == null && userInfo != null) {
+            if (credentials == null && userInfo != null) {
                 String name = "";
                 String password = "";
                 String[] implicitCredentials = userInfo.split(":");
@@ -88,6 +88,8 @@ public abstract class AbstractSession implements Session {
                     password = implicitCredentials[1];
                 }
                 this.credentials = new UsernamePasswordCredentials(name, password.toCharArray());
+            } else {
+                this.credentials = credentials;
             }
             if (this.credentials != null) {
                 this.credentialsProvider.setCredentials(
@@ -115,7 +117,7 @@ public abstract class AbstractSession implements Session {
      */
     @Override
     public @Nullable ProxyConfiguration getProxy() {
-        return proxy;
+        return proxy.get();
     }
 
     /**
@@ -126,7 +128,7 @@ public abstract class AbstractSession implements Session {
      */
     @Override
     public void setProxy(@Nullable ProxyConfiguration proxy) throws ResultException {
-        this.proxy = proxy;
+        this.proxy.set(proxy);
     }
 
     /**

@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <p>
@@ -19,10 +21,10 @@ import java.net.URL;
  * </p>
  */
 public abstract class AbstractSoapSession
-        extends AbstractSession implements SoapSession{
+        extends AbstractSession implements SoapSession {
 
-    private boolean useLocalWsdl = true;
-    private @Nullable WSClientProxySelector proxySelector = null;
+    private final @NotNull AtomicBoolean useLocalWsdl = new AtomicBoolean(true);
+    private final @NotNull AtomicReference<WSClientProxySelector> proxySelector = new AtomicReference<>();
 
     /**
      * Creates a new {@link AbstractSoapSession} instance providing connection information and authorization objects
@@ -48,7 +50,7 @@ public abstract class AbstractSoapSession
      */
     @Override
     public boolean isUseLocalWsdl() {
-        return useLocalWsdl;
+        return useLocalWsdl.get();
     }
 
     /**
@@ -61,7 +63,7 @@ public abstract class AbstractSoapSession
     @SuppressWarnings({"SameParameterValue"})
     @Override
     public void setUseLocalWsdl(boolean useLocalWsdl) {
-        this.useLocalWsdl = useLocalWsdl;
+        this.useLocalWsdl.set(useLocalWsdl);
     }
 
     /**
@@ -72,14 +74,15 @@ public abstract class AbstractSoapSession
      */
     @Override
     public void setProxy(@Nullable ProxyConfiguration proxy) throws ResultException {
-        if (this.proxySelector != null) {
-            this.proxySelector.close();
-            this.proxySelector = null;
+        if (this.proxySelector.get() != null) {
+            this.proxySelector.get().close();
+            this.proxySelector.set(null);
         }
         super.setProxy(proxy);
         if (proxy != null) {
-            this.proxySelector = new WSClientProxySelector(
-                    new URI[]{getURI("")}, proxy.getHost());
+            this.proxySelector.set(
+                    new WSClientProxySelector(new URI[]{getURI("")}, proxy.getHost())
+            );
         }
     }
 
@@ -88,8 +91,8 @@ public abstract class AbstractSoapSession
      */
     @Override
     public void close() {
-        if (proxySelector != null) {
-            proxySelector.close();
+        if (proxySelector.get() != null) {
+            proxySelector.get().close();
         }
     }
 

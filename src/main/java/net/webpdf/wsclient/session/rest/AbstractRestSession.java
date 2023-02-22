@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <p>
@@ -57,9 +58,9 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     private static final @NotNull String LOGIN_PATH = "authentication/user/login/";
     private static final @NotNull String REFRESH_PATH = "authentication/user/refresh/";
     private final @NotNull HttpClientBuilder httpClientBuilder;
-    private @Nullable Token token = new SessionToken();
-    private @Nullable User user;
-    private @Nullable CloseableHttpClient httpClient;
+    private final @Nullable User user;
+    private final @NotNull CloseableHttpClient httpClient;
+    private final @NotNull AtomicReference<Token> token = new AtomicReference<>(new SessionToken());
     private final @NotNull DocumentManager<T_REST_DOCUMENT> documentManager = createDocumentManager();
     private final @NotNull AdministrationManager<T_REST_DOCUMENT> administrationManager = createAdministrationManager();
 
@@ -93,10 +94,11 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
                     .build();
             httpClientBuilder.setConnectionManager(new PoolingHttpClientConnectionManager(registry));
         }
+        this.httpClient = this.httpClientBuilder.build();
         if (getCredentials() == null || getCredentials() instanceof UsernamePasswordCredentials) {
-            this.token = HttpRestRequest.createRequest(this)
+            this.token.set(HttpRestRequest.createRequest(this)
                     .buildRequest(HttpMethod.GET, LOGIN_PATH, null)
-                    .executeRequest(SessionToken.class);
+                    .executeRequest(SessionToken.class));
         }
         this.user = HttpRestRequest.createRequest(this)
                 .buildRequest(HttpMethod.GET, INFO_PATH, null)
@@ -110,7 +112,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      */
     @Override
     public @Nullable Token getToken() {
-        return this.token;
+        return this.token.get();
     }
 
     /**
@@ -120,7 +122,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      */
     @Override
     public @NotNull CloseableHttpClient getHttpClient() {
-        return this.httpClient == null ? this.httpClient = this.httpClientBuilder.build() : this.httpClient;
+        return this.httpClient;
     }
 
     /**
@@ -157,12 +159,12 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      * @throws ResultException Shall be thrown, when refreshing the session failed.
      */
     @Override
-    public void refresh() throws ResultException {
-        if (this.token instanceof SessionToken) {
-            this.token = ((SessionToken) this.token).provideRefreshToken();
-            this.token = HttpRestRequest.createRequest(this)
+    public synchronized void refresh() throws ResultException {
+        if (this.token.get() instanceof SessionToken) {
+            this.token.set(((SessionToken) this.token.get()).provideRefreshToken());
+            this.token.set(HttpRestRequest.createRequest(this)
                     .buildRequest(HttpMethod.POST, REFRESH_PATH, null)
-                    .executeRequest(SessionToken.class);
+                    .executeRequest(SessionToken.class));
         } else {
             throw new ClientResultException(Error.FORBIDDEN_TOKEN_REFRESH);
         }
@@ -185,7 +187,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      * @throws ResultException Shall be thrown, when resolving the {@link ProxyConfiguration} failed.
      */
     @Override
-    public void setProxy(@Nullable ProxyConfiguration proxy) throws ResultException {
+    public synchronized void setProxy(@Nullable ProxyConfiguration proxy) throws ResultException {
         super.setProxy(proxy);
         if (proxy != null) {
             httpClientBuilder.setRoutePlanner(new DefaultProxyRoutePlanner(proxy.getHost()));
@@ -201,20 +203,16 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     public void close() throws ResultException {
         ResultException resultException = null;
         try {
-            if (this.token != null && !this.token.getToken().isEmpty()) {
+            if (!this.token.get().getToken().isEmpty()) {
                 HttpRestRequest.createRequest(this)
                         .buildRequest(HttpMethod.GET, LOGOUT_PATH, null)
                         .executeRequest(Object.class);
-                this.token = null;
-                this.user = null;
             }
         } finally {
-            if (this.httpClient != null) {
-                try {
-                    this.httpClient.close();
-                } catch (IOException ex) {
-                    resultException = new ClientResultException(Error.HTTP_IO_ERROR, ex);
-                }
+            try {
+                this.httpClient.close();
+            } catch (IOException ex) {
+                resultException = new ClientResultException(Error.HTTP_IO_ERROR, ex);
             }
         }
         if (resultException != null) {

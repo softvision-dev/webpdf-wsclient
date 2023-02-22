@@ -31,6 +31,8 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * An instance of {@link AbstractDocumentManager} allows to monitor and interact with the {@link RestDocument}s uploaded
@@ -41,9 +43,9 @@ import java.util.*;
 public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocument>
         implements DocumentManager<T_REST_DOCUMENT> {
 
-    private final @NotNull Map<String, T_REST_DOCUMENT> documentMap = new HashMap<>();
+    private final @NotNull Map<String, T_REST_DOCUMENT> documentMap = new ConcurrentHashMap<>();
     private final @NotNull RestSession<T_REST_DOCUMENT> session;
-    private boolean documentHistoryActive = false;
+    private final @NotNull AtomicBoolean documentHistoryActive = new AtomicBoolean(false);
 
     /**
      * Initializes a {@link DocumentManager} for the given {@link RestSession}.
@@ -72,7 +74,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown upon a synchronization failure.
      */
     @Override
-    public @NotNull T_REST_DOCUMENT synchronize(@NotNull DocumentFile documentFile) throws ResultException {
+    public synchronized @NotNull T_REST_DOCUMENT synchronize(@NotNull DocumentFile documentFile) throws ResultException {
         if (containsDocument(documentFile.getDocumentId())) {
             synchronizeDocumentInfo(documentFile);
             return getDocument(documentFile.getDocumentId());
@@ -89,7 +91,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown upon a synchronization failure.
      */
     @Override
-    public @NotNull List<T_REST_DOCUMENT> synchronize() throws ResultException {
+    public synchronized @NotNull List<T_REST_DOCUMENT> synchronize() throws ResultException {
         DocumentFile[] documentFileList = HttpRestRequest.createRequest(session)
                 .buildRequest(HttpMethod.GET, "documents/list", null)
                 .executeRequest(DocumentFile[].class);
@@ -232,7 +234,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
             HttpEntity entity = builder.build();
 
             List<NameValuePair> parameters = new ArrayList<>();
-            parameters.add(new BasicNameValuePair("history", Boolean.toString(documentHistoryActive)));
+            parameters.add(new BasicNameValuePair("history", Boolean.toString(documentHistoryActive.get())));
 
             URI uri = this.session.getURI("documents", parameters);
             DocumentFile documentFile = HttpRestRequest.createRequest(session)
@@ -301,7 +303,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      */
     @Override
     public boolean isDocumentHistoryActive() {
-        return documentHistoryActive;
+        return documentHistoryActive.get();
     }
 
     /**
@@ -310,8 +312,8 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @param documentHistoryActive {@code true} should collecting the document history be activated.
      */
     @Override
-    public void setDocumentHistoryActive(boolean documentHistoryActive) throws ResultException {
-        this.documentHistoryActive = documentHistoryActive;
+    public synchronized void setDocumentHistoryActive(boolean documentHistoryActive) throws ResultException {
+        this.documentHistoryActive.set(documentHistoryActive);
         if (documentHistoryActive) {
             for (T_REST_DOCUMENT document : getDocuments()) {
                 synchronizeDocumentHistory(document.getDocumentId());
@@ -361,8 +363,9 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown, should updating the document history have failed.
      */
     @Override
-    public @Nullable HistoryEntry updateDocumentHistory(@Nullable String documentId, @Nullable HistoryEntry historyEntry)
-            throws ResultException {
+    public synchronized @Nullable HistoryEntry updateDocumentHistory(
+            @Nullable String documentId, @Nullable HistoryEntry historyEntry
+    ) throws ResultException {
         if (!this.isDocumentHistoryActive() || historyEntry == null) {
             throw new ClientResultException(Error.INVALID_HISTORY_DATA);
         }
@@ -421,7 +424,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @return The matching {@link RestDocument}.
      * @throws ResultException Shall be thrown, should the synchronization fail.
      */
-    private @NotNull T_REST_DOCUMENT synchronizeDocumentInfo(@Nullable DocumentFile DocumentFile)
+    private synchronized @NotNull T_REST_DOCUMENT synchronizeDocumentInfo(@Nullable DocumentFile DocumentFile)
             throws ResultException {
         String documentId = getDocumentID(DocumentFile);
 
@@ -445,7 +448,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @param documentId The document ID of the {@link RestDocument} to synchronize the document history for.
      * @throws ResultException Shall be thrown, should synchronizing the document history have failed.
      */
-    private void synchronizeDocumentHistory(@Nullable String documentId) throws ResultException {
+    private synchronized void synchronizeDocumentHistory(@Nullable String documentId) throws ResultException {
         T_REST_DOCUMENT restDocument = getDocument(documentId);
         HistoryEntry[] history = HttpRestRequest.createRequest(getSession())
                 .buildRequest(HttpMethod.GET, "documents/" + documentId + "/history", null)
