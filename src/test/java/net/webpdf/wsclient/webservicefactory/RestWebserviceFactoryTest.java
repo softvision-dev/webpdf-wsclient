@@ -2,6 +2,7 @@ package net.webpdf.wsclient.webservicefactory;
 
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.openapi.*;
+import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
@@ -38,7 +39,7 @@ public class RestWebserviceFactoryTest {
     private <T extends RestWebService<?, ?, RestDocument>> T getWebService(WebServiceType webServiceType)
             throws ResultException {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL), new AnonymousAuthProvider())) {
             return WebServiceFactory.createInstance(session, webServiceType);
         }
     }
@@ -50,7 +51,8 @@ public class RestWebserviceFactoryTest {
         String json = FileUtils.readFileToString(configFile, Charset.defaultCharset());
 
         try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL))) {
+                WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL),
+                new AnonymousAuthProvider())) {
             try (StringReader stringReader = new StringReader(json)) {
                 StreamSource streamSource = new StreamSource(stringReader);
                 webService = WebServiceFactory.createInstance(session, streamSource);
@@ -383,7 +385,8 @@ public class RestWebserviceFactoryTest {
     public void testNoOperationData() {
         assertDoesNotThrow(() -> {
             try (Session session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL))) {
+                    WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 WebServiceFactory.createInstance(session, (StreamSource) null);
                 fail("ResultException expected");
             } catch (ClientResultException ex) {

@@ -18,4 +18,5 @@ public class ErrorTest {
         assertEquals(Error.UNKNOWN_EXCEPTION.getMessage(), error.getMessage(),
                 "Error-message should be according to UNKNOWN");
     }
+
 }

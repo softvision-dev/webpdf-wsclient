@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SessionTest {
 
     private static final String SOME_URL = "http://someInvalidURL.de";
-    private static final String SOME_CREDENTIALS_URL = "http://username:password@someInvalidURL.de";
 
     @Test
     public void testCreateSoapSession() {
@@ -33,52 +32,16 @@ public class SessionTest {
                 soapSession.setUseLocalWsdl(false);
                 assertFalse(soapSession.isUseLocalWsdl(),
                         "SOAPSession should not be using local wsdl after modification.");
-                assertNotNull(soapSession.getDataFormat(),
-                        "DataFormat should have been initialized.");
-                assertEquals(DataFormat.XML, soapSession.getDataFormat(),
-                        "DataFormat should have been XML.");
-                assertEquals(DataFormat.XML.getMimeType(), soapSession.getDataFormat().getMimeType(),
-                        "MimeType should have been xml.");
                 assertEquals(WebServiceProtocol.SOAP, soapSession.getWebServiceProtocol(),
                         "WebserviceProtocol should have been SOAP.");
-                assertNotNull(soapSession.getCredentials());
-                assertEquals("usr", soapSession.getCredentials().getUserPrincipal().getName(),
+                assertNotNull(soapSession.getAuthMaterial().getCredentials());
+                assertEquals("usr", soapSession.getAuthMaterial().getCredentials()
+                                .getUserPrincipal().getName(),
                         "Credentials should define usr for authentication.");
-                assertEquals("pwd", new String(soapSession.getCredentials().getPassword()),
+                assertEquals("pwd",
+                        new String(soapSession.getAuthMaterial().getCredentials().getPassword()),
                         "Credentials should define pwd as the authentication password.");
 
-                assertEquals(SOME_URL + "/soap/sub", soapSession.getURI("sub").toString(),
-                        "URI sub-path should have been created.");
-            }
-        });
-    }
-
-    @Test
-    public void testCreateCredentialsSoapSession() {
-        assertDoesNotThrow(() -> {
-            URL url = new URL(SOME_CREDENTIALS_URL);
-            try (SoapWebServiceSession soapSession =
-                         SessionFactory.createInstance(WebServiceProtocol.SOAP, url)) {
-                assertNotNull(soapSession,
-                        "SOAPSession should have been initialized.");
-                assertTrue(soapSession.isUseLocalWsdl(),
-                        "SOAPSession should use local wsdl by default.");
-                soapSession.setUseLocalWsdl(false);
-                assertFalse(soapSession.isUseLocalWsdl(),
-                        "SOAPSession should not be using local wsdl after modification.");
-                assertNotNull(soapSession.getDataFormat(),
-                        "DataFormat should have been initialized");
-                assertEquals(DataFormat.XML, soapSession.getDataFormat(),
-                        "DataFormat should have been XML.");
-                assertEquals(DataFormat.XML.getMimeType(), soapSession.getDataFormat().getMimeType(),
-                        "MimeType should have been xml.");
-                assertEquals(WebServiceProtocol.SOAP, soapSession.getWebServiceProtocol(),
-                        "WebserviceProtocol should have been SOAP.");
-                assertNotNull(soapSession.getCredentials());
-                assertEquals("username", soapSession.getCredentials().getUserPrincipal().getName(),
-                        "Credentials should define username for authentication.");
-                assertEquals("password", new String(soapSession.getCredentials().getPassword()),
-                        "Credentials should define password as the authentication password.");
                 assertEquals(SOME_URL + "/soap/sub", soapSession.getURI("sub").toString(),
                         "URI sub-path should have been created.");
             }

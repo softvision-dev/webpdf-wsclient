@@ -1,6 +1,7 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.openapi.OperationUrlConverterPage;
+import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
@@ -13,7 +14,7 @@ import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.soap.SoapSession;
-import net.webpdf.wsclient.testsuite.server.ServerProtocol;
+import net.webpdf.wsclient.testsuite.server.TransferProtocol;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import net.webpdf.wsclient.testsuite.server.TestServer;
@@ -44,8 +45,8 @@ public class WebserviceProxyTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL,
-                            ServerProtocol.HTTP, true)
+                    testServer.getServer(ServerType.LOCAL),
+                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
             )) {
                 session.setProxy(new ProxyConfiguration("127.0.0.1", 8888));
 
@@ -84,8 +85,8 @@ public class WebserviceProxyTest {
         assertDoesNotThrow(() -> {
             try (SoapSession session = SessionFactory.createInstance(
                     WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL,
-                            ServerProtocol.HTTP, true)
+                    testServer.getServer(ServerType.LOCAL),
+                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
             )) {
                 session.setProxy(new ProxyConfiguration("localhost", 8888));
 
@@ -130,9 +131,9 @@ public class WebserviceProxyTest {
                     .setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
             try (SoapSession session = SessionFactory.createInstance(
                     WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL,
-                            ServerProtocol.HTTPS, true),
-                    tlsContext
+                    testServer.getServer(ServerType.LOCAL, TransferProtocol.HTTPS),
+                    tlsContext,
+                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
             )) {
                 session.setProxy(new ProxyConfiguration("localhost", 8888));
 
@@ -176,9 +177,9 @@ public class WebserviceProxyTest {
                     .setTrustStore(testServer.getDemoKeystoreFile(keystoreFile), "");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL,
-                            ServerProtocol.HTTPS, true),
-                    tlsContext
+                    testServer.getServer(ServerType.LOCAL, TransferProtocol.HTTPS),
+                    tlsContext,
+                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
             )) {
                 session.setProxy(new ProxyConfiguration("127.0.0.1", 8888));
 

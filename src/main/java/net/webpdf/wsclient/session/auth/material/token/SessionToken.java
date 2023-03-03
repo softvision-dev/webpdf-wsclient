@@ -1,4 +1,4 @@
-package net.webpdf.wsclient.session.auth.token;
+package net.webpdf.wsclient.session.auth.material.token;
 
 import com.fasterxml.jackson.annotation.*;
 import net.webpdf.wsclient.session.Session;
@@ -15,12 +15,13 @@ import java.time.Instant;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({"expiresIn", "token", "refreshToken"})
-public class SessionToken implements Serializable, Token {
+public class SessionToken implements Serializable, JWTToken {
 
     @JsonProperty("token")
     private @NotNull String token = "";
     @JsonProperty("refreshToken")
     private @NotNull String refreshToken = "";
+    @SuppressWarnings("unused")
     @JsonProperty("expiresIn")
     private long expiresIn = -1;
     private @NotNull Instant expiration = Instant.now();
@@ -45,6 +46,7 @@ public class SessionToken implements Serializable, Token {
     /**
      * Creates a new, empty {@link SessionToken}.
      */
+    @SuppressWarnings("unused")
     public SessionToken() {
     }
 
@@ -59,12 +61,19 @@ public class SessionToken implements Serializable, Token {
     }
 
     /**
-     * Returns the token expiry time in seconds. Shall return -1 for an uninitialized  session.
-     *
-     * @return The token expiry time in seconds.
+     * <p>
+     * Replaces the access token with the refresh token.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> Using the refresh token as auth material is only valid and advisable while refreshing the
+     * webPDF access token - other calls to the server will fail until a new access token is provided.<br>
+     * Synchronization of webservice calls is absolutely necessary during a token refresh and it is recommended to delay
+     * other calls until a fresh and valid access token is available.<br>
+     * This {@link SessionToken} should be discarded after refreshing the token has finished.
+     * </p>
      */
-    public long getExpiresIn() {
-        return expiresIn;
+    public void refresh() {
+        this.token = refreshToken;
     }
 
     /**
@@ -77,12 +86,15 @@ public class SessionToken implements Serializable, Token {
     }
 
     /**
-     * Provides a refresh {@link SessionToken} to refresh a {@link Session} with.
+     * Returns {@code true}, if the current access token is expired and {@link #refresh()} should be called to request
+     * a new access token for the {@link Session}.
      *
-     * @return a refresh {@link SessionToken} to refresh a {@link Session} with.
+     * @param skewTime An additional skew time, in seconds, that is added during expiry evaluation.
+     *                 (Adding a skew time helps in avoiding to use expired access tokens because of transfer delays.)
+     * @return {@code true}, if the current access token is expired.
      */
-    public @NotNull RefreshToken provideRefreshToken() {
-        return new RefreshToken(this.refreshToken);
+    public boolean isExpired(int skewTime) {
+        return getExpiration().isBefore(Instant.now().plusSeconds(skewTime));
     }
 
 }

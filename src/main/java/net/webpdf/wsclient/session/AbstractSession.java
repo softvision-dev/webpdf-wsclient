@@ -1,17 +1,14 @@
 package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.session.auth.AuthProvider;
+import net.webpdf.wsclient.session.auth.material.AuthMaterial;
 import net.webpdf.wsclient.session.rest.AbstractRestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
-import org.apache.hc.client5.http.auth.AuthScope;
-import org.apache.hc.client5.http.auth.Credentials;
-import org.apache.hc.client5.http.auth.CredentialsProvider;
-import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
-import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -31,14 +29,13 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public abstract class AbstractSession implements Session {
 
-    private final @NotNull BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-    private final @NotNull DataFormat dataFormat;
+    private final @NotNull AuthProvider authProvider;
     private final @NotNull String basePath;
     private final @NotNull WebServiceProtocol webServiceProtocol;
     private final @NotNull URI baseUrl;
     private final @Nullable TLSContext tlsContext;
-    private final @Nullable Credentials credentials;
     private final @NotNull AtomicReference<ProxyConfiguration> proxy = new AtomicReference<>();
+    private final @NotNull AtomicInteger skewTime = new AtomicInteger(1);
 
     /**
      * Creates a new {@link AbstractRestSession} instance providing connection information and authorization objects
@@ -48,20 +45,12 @@ public abstract class AbstractSession implements Session {
      * @param webServiceProtocol The {@link WebServiceProtocol} used for this {@link Session}.
      * @param tlsContext         The {@link TLSContext} used for this https {@link Session}.
      *                           ({@code null} in case an unencrypted HTTP {@link Session} shall be created.)
-     * @param credentials        The {@link Credentials} used for authorization of this session.
+     * @param authProvider       The {@link AuthProvider} for authentication/authorization of this {@link Session}.
      * @throws ResultException Shall be thrown, in case establishing the {@link Session} failed.
      */
     public AbstractSession(@NotNull URL url, @NotNull WebServiceProtocol webServiceProtocol,
-            @Nullable TLSContext tlsContext, @Nullable Credentials credentials) throws ResultException {
-        // The used protocol determines the data format.
-        switch (webServiceProtocol) {
-            case SOAP:
-                this.dataFormat = DataFormat.XML;
-                break;
-            case REST:
-            default:
-                this.dataFormat = DataFormat.JSON;
-        }
+            @Nullable TLSContext tlsContext, @NotNull AuthProvider authProvider) throws ResultException {
+        this.authProvider = authProvider;
         this.webServiceProtocol = webServiceProtocol;
         this.tlsContext = tlsContext;
         this.basePath = webServiceProtocol.equals(WebServiceProtocol.SOAP) ? "soap/" : "rest/";
@@ -69,35 +58,24 @@ public abstract class AbstractSession implements Session {
         if (!toUrl.endsWith("/")) {
             toUrl = toUrl + "/";
         }
-
+        // determine the base URL
         try {
-            // get the URL
             URIBuilder uriBuilder = new URIBuilder(toUrl);
-            String userInfo = uriBuilder.getUserInfo();
             this.baseUrl = uriBuilder.setUserInfo(null).build();
-            // try to extract credentials from the user info of the URL
-            if (credentials == null && userInfo != null) {
-                String name = "";
-                String password = "";
-                String[] implicitCredentials = userInfo.split(":");
-                if (implicitCredentials.length >= 1) {
-                    name = implicitCredentials[0];
-                }
-
-                if (implicitCredentials.length >= 2) {
-                    password = implicitCredentials[1];
-                }
-                this.credentials = new UsernamePasswordCredentials(name, password.toCharArray());
-            } else {
-                this.credentials = credentials;
-            }
-            if (this.credentials != null) {
-                this.credentialsProvider.setCredentials(
-                        new AuthScope(this.baseUrl.getHost(), this.baseUrl.getPort()), this.credentials);
-            }
         } catch (URISyntaxException ex) {
             throw new ClientResultException(Error.INVALID_URL, ex);
         }
+    }
+
+    /**
+     * Provides {@link AuthMaterial} for the authorization of the {@link Session}´s requests, using the
+     * {@link Session}´s {@link AuthProvider}.
+     *
+     * @return {@link AuthMaterial} for the authorization of the {@link Session}´s requests.
+     * @throws ResultException Shall be thrown, should the determination of {@link AuthMaterial} fail.
+     */
+    public synchronized @NotNull AuthMaterial getAuthMaterial() throws ResultException {
+        return this.authProvider.provide(this);
     }
 
     /**
@@ -177,30 +155,35 @@ public abstract class AbstractSession implements Session {
     }
 
     /**
-     * Returns the {@link DataFormat} accepted by this {@link Session}.
+     * <p>
+     * Returns the {@link Session}´s skew time.<br>
+     * The skew time helps to avoid using expired tokens. The returned value (in seconds) is subtracted from the
+     * expiry time to avoid issues possibly caused by transfer delays.<br>
+     * It can not be guaranteed, but is recommended, that custom implementations of {@link AuthProvider} handle this
+     * accordingly.
+     * </p>
      *
-     * @return The {@link DataFormat} accepted by this {@link Session}.
+     * @return The {@link Session}´s token refresh skew time in seconds.
      */
-    public @NotNull DataFormat getDataFormat() {
-        return dataFormat;
+    @Override
+    public int getSkewTime() {
+        return this.skewTime.get();
     }
 
     /**
-     * Returns the {@link Credentials} authorizing this session.
+     * <p>
+     * Sets the {@link Session}´s skew time.<br>
+     * The skew time helps to avoid using expired tokens. The returned value (in seconds) is subtracted from the
+     * expiry time to avoid issues possibly caused by transfer delays.<br>
+     * It can not be guaranteed, but is recommended, that custom implementations of {@link AuthProvider} handle this
+     * accordingly.
+     * </p>
      *
-     * @return The {@link Credentials} authorizing this session.
+     * @param skewTime The {@link Session}´s token refresh skew time in seconds.
      */
-    public @Nullable Credentials getCredentials() {
-        return credentials;
-    }
-
-    /**
-     * Returns the currently registered {@link CredentialsProvider}.
-     *
-     * @return The currently registered {@link CredentialsProvider}.
-     */
-    protected @NotNull CredentialsProvider getCredentialsProvider() {
-        return credentialsProvider;
+    @Override
+    public void setSkewTime(int skewTime) {
+        this.skewTime.set(skewTime);
     }
 
 }

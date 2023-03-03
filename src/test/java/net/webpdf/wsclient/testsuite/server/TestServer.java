@@ -37,24 +37,14 @@ public final class TestServer {
     }
 
     public URL getServer(ServerType serverType) {
-        return assertDoesNotThrow(() ->
-                buildServer(serverType, ServerProtocol.HTTP, null, null));
+        return assertDoesNotThrow(() -> buildServer(serverType, TransferProtocol.HTTP));
     }
 
-    public URL getServer(ServerType serverType, String user, String password)
-            throws URISyntaxException, MalformedURLException {
-        return buildServer(serverType, ServerProtocol.HTTP, user, password);
+    public URL getServer(ServerType serverType, TransferProtocol transferProtocol) {
+        return assertDoesNotThrow(() -> buildServer(serverType, transferProtocol));
     }
 
-    public URL getServer(ServerType serverType, ServerProtocol serverProtocol, boolean useCredentials)
-            throws URISyntaxException, MalformedURLException {
-        String user = useCredentials ? TestConfig.getInstance().getServerConfig().getLocalUser() : null;
-        String password = useCredentials ? TestConfig.getInstance().getServerConfig().getLocalPassword() : null;
-
-        return buildServer(serverType, serverProtocol, user, password);
-    }
-
-    private URL buildServer(ServerType serverType, ServerProtocol serverProtocol, String user, String password)
+    private URL buildServer(ServerType serverType, TransferProtocol transferProtocol)
             throws URISyntaxException, MalformedURLException {
 
         URI uri;
@@ -64,15 +54,7 @@ public final class TestServer {
             case LOCAL:
                 uri = this.uriBuilderLocalServer.build();
                 uriBuilder = new URIBuilder(uri);
-                if (user != null && password != null) {
-                    /*
-                     * Even though the deprecation warning is entirely correct - we support such credentials and hence
-                     * must test it.
-                     */
-                    //noinspection deprecation
-                    uriBuilder.setUserInfo(user, password);
-                }
-                if (serverProtocol.equals(ServerProtocol.HTTP)) {
+                if (transferProtocol.equals(TransferProtocol.HTTP)) {
                     uriBuilder.setPort(TestConfig.getInstance().getServerConfig().getLocalHttpPort());
                     uriBuilder.setScheme("http");
                 } else {
@@ -83,7 +65,7 @@ public final class TestServer {
             case PUBLIC:
                 uri = this.uriBuilderPublicServer.build();
                 uriBuilder = new URIBuilder(uri);
-                if (serverProtocol.equals(ServerProtocol.HTTP)) {
+                if (transferProtocol.equals(TransferProtocol.HTTP)) {
                     uriBuilder.setScheme("http");
                     uriBuilder.setPort(TestConfig.getInstance().getServerConfig().getPublicHttpPort());
                 } else {
@@ -107,7 +89,7 @@ public final class TestServer {
     }
 
     public File getDemoKeystoreFile(File keystoreFile) throws Exception {
-        URL serverUrl = getServer(ServerType.PUBLIC, ServerProtocol.HTTPS, false);
+        URL serverUrl = getServer(ServerType.PUBLIC, TransferProtocol.HTTPS);
         HttpsURLConnection conn = (HttpsURLConnection) serverUrl.openConnection();
         conn.connect();
         Certificate[] certs = conn.getServerCertificates();

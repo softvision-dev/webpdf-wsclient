@@ -1,11 +1,11 @@
 package net.webpdf.wsclient.session.soap;
 
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.AbstractSession;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
-import org.apache.hc.client5.http.auth.Credentials;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,15 +30,15 @@ public abstract class AbstractSoapSession
      * Creates a new {@link AbstractSoapSession} instance providing connection information and authorization objects
      * for a webPDF server-client {@link SoapSession}.
      *
-     * @param url         The {@link URL} of the webPDF server
-     * @param tlsContext  The {@link TLSContext} used for this https {@link SoapSession}.
-     *                    ({@code null} in case an unencrypted HTTP {@link SoapSession} shall be created.)
-     * @param credentials The {@link Credentials} used for authorization of this session.
+     * @param url          The {@link URL} of the webPDF server
+     * @param tlsContext   The {@link TLSContext} used for this https {@link SoapSession}.
+     *                     ({@code null} in case an unencrypted HTTP {@link SoapSession} shall be created.)
+     * @param authProvider The {@link AuthProvider} for authentication/authorization of this {@link SoapSession}.
      * @throws ResultException Shall be thrown, in case establishing the {@link SoapSession} failed.
      */
     public AbstractSoapSession(@NotNull URL url, @Nullable TLSContext tlsContext,
-            @Nullable Credentials credentials) throws ResultException {
-        super(url, WebServiceProtocol.SOAP, tlsContext, credentials);
+            @NotNull AuthProvider authProvider) throws ResultException {
+        super(url, WebServiceProtocol.SOAP, tlsContext, authProvider);
     }
 
     /**

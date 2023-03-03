@@ -1,6 +1,7 @@
 package net.webpdf.wsclient.webservicefactory;
 
 import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
@@ -32,7 +33,8 @@ public class SoapWebserviceFactoryTest {
     private <T extends SoapWebService<?, ?, SoapDocument>> T getWebService(WebServiceType webServiceType)
             throws ResultException {
         try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL),
+                new AnonymousAuthProvider())) {
             return WebServiceFactory.createInstance(session, webServiceType);
         }
     }
@@ -43,7 +45,8 @@ public class SoapWebserviceFactoryTest {
         String xml = FileUtils.readFileToString(configFile, Charset.defaultCharset());
 
         try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(ServerType.LOCAL))) {
+                testServer.getServer(ServerType.LOCAL),
+                new AnonymousAuthProvider())) {
             try (StringReader stringReader = new StringReader(xml)) {
                 StreamSource streamSource = new StreamSource(stringReader);
                 webService = WebServiceFactory.createInstance(session, streamSource);
@@ -353,7 +356,8 @@ public class SoapWebserviceFactoryTest {
     public void testNoOperationData() {
         assertDoesNotThrow(() -> {
             try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 WebServiceFactory.createInstance(session, (StreamSource) null);
                 fail("ResultException expected");
             } catch (ClientResultException ex) {

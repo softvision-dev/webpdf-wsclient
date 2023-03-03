@@ -1,7 +1,8 @@
 package net.webpdf.wsclient;
 
-import jakarta.xml.ws.WebServiceException;
 import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
@@ -9,7 +10,7 @@ import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.testsuite.server.ServerProtocol;
+import net.webpdf.wsclient.testsuite.server.TransferProtocol;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import net.webpdf.wsclient.testsuite.server.TestServer;
@@ -43,7 +44,7 @@ public class WebserviceTLSIntegrationTest {
         }
 
         try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, url,
-                tlsContext)) {
+                tlsContext, new AnonymousAuthProvider())) {
             ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.CONVERTER);
 
@@ -65,7 +66,7 @@ public class WebserviceTLSIntegrationTest {
     @TLSTest
     public void testSoapSSL() {
         assertDoesNotThrow(() -> testSoapSSL(testServer.getServer(ServerType.PUBLIC,
-                        ServerProtocol.HTTPS, false),
+                        TransferProtocol.HTTPS),
                 testServer.getDemoKeystoreFile(keystoreFile), false));
     }
 
@@ -73,15 +74,15 @@ public class WebserviceTLSIntegrationTest {
     @TLSTest
     public void testSoapSSLSelfSigned() {
         assertDoesNotThrow(() -> testSoapSSL(testServer.getServer(ServerType.LOCAL,
-                ServerProtocol.HTTPS, false), null, true));
+                TransferProtocol.HTTPS), null, true));
     }
 
     @Test
     @TLSTest
     public void testSoapSSLWrongKeystore() {
-        assertThrows(WebServiceException.class,
+        assertThrows(ClientResultException.class,
                 () -> testSoapSSL(testServer.getServer(ServerType.LOCAL,
-                                ServerProtocol.HTTPS, false),
+                                TransferProtocol.HTTPS),
                         testServer.getDemoKeystoreFile(keystoreFile), false));
     }
 
@@ -89,17 +90,15 @@ public class WebserviceTLSIntegrationTest {
     @TLSTest
     public void testSoapSSLCACertsFallback() {
         assertDoesNotThrow(() -> testSoapSSL(testServer.getServer(
-                        ServerType.PUBLIC, ServerProtocol.HTTPS,
-                        false),
+                        ServerType.PUBLIC, TransferProtocol.HTTPS),
                 null, false));
     }
 
     @Test
     @TLSTest
     public void testSoapSSLProtocolFailure() {
-        assertThrows(WebServiceException.class, () ->
-                testSoapSSL(testServer.getServer(ServerType.PUBLIC,
-                                ServerProtocol.HTTP, false),
+        assertThrows(ClientResultException.class, () ->
+                testSoapSSL(testServer.getServer(ServerType.PUBLIC, TransferProtocol.HTTP),
                         testServer.getDemoKeystoreFile(keystoreFile), false));
     }
 
@@ -112,7 +111,8 @@ public class WebserviceTLSIntegrationTest {
         }
 
         try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                WebServiceProtocol.REST, url, tlsContext)) {
+                WebServiceProtocol.REST, url, tlsContext,
+                new AnonymousAuthProvider())) {
             ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                     WebServiceType.CONVERTER);
 
@@ -133,22 +133,22 @@ public class WebserviceTLSIntegrationTest {
     @TLSTest
     @CsvSource(delimiter = '|', value = {
             "LOCAL|HTTPS|0|false|true",
-            "LOCAL|HTTPS|-31|true|false",
+            "LOCAL|HTTPS|-54|true|false",
             "LOCAL|HTTPS|0|true|true"
     })
     public void testRestSSL(String type, String protocol, int expectedErrorCode, boolean setKeystoreFile,
             boolean selfSigned) {
         assertDoesNotThrow(() -> {
             ServerType serverType = ServerType.valueOf(type);
-            ServerProtocol serverProtocol = ServerProtocol.valueOf(protocol);
+            TransferProtocol serverProtocol = TransferProtocol.valueOf(protocol);
 
             try {
-                URL url = testServer.getServer(serverType, serverProtocol, false);
+                URL url = testServer.getServer(serverType, serverProtocol);
                 File keystoreFile = setKeystoreFile ? testServer.getDemoKeystoreFile(this.keystoreFile) : null;
                 testRestSSL(url, keystoreFile, selfSigned);
                 assertEquals(0, expectedErrorCode,
                         String.format("%d had been expected, but the request succeeded.", expectedErrorCode));
-            } catch (ClientResultException ex) {
+            } catch (ResultException ex) {
                 assertEquals(expectedErrorCode, ex.getErrorCode(),
                         String.format("Found %d but %d has been expected.", ex.getErrorCode(),
                                 expectedErrorCode));

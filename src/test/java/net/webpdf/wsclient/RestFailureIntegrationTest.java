@@ -2,6 +2,7 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.exception.ServerResultException;
 import net.webpdf.wsclient.openapi.*;
+import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.rest.RestSession;
@@ -31,7 +32,8 @@ public class RestFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/invalid.gif");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.CONVERTER);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
@@ -50,8 +52,10 @@ public class RestFailureIntegrationTest {
     public void testSignatureFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 SignatureRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.SIGNATURE);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
@@ -78,8 +82,10 @@ public class RestFailureIntegrationTest {
     public void testPdfaFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 PdfaRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.PDFA);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
@@ -98,8 +104,10 @@ public class RestFailureIntegrationTest {
     public void testToolboxFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.TOOLBOX);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
@@ -127,8 +135,10 @@ public class RestFailureIntegrationTest {
     public void testUrlConverterFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
@@ -147,8 +157,10 @@ public class RestFailureIntegrationTest {
     public void testOCRFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 OcrRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.OCR);
                 webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));

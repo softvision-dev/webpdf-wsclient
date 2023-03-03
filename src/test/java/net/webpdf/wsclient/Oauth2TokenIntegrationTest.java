@@ -9,7 +9,7 @@ import com.microsoft.aad.msal4j.ConfidentialClientApplication;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
 import net.webpdf.wsclient.exception.AuthResultException;
 import net.webpdf.wsclient.openapi.OperationConvertPdfa;
-import net.webpdf.wsclient.session.auth.token.OAuth2Token;
+import net.webpdf.wsclient.session.auth.material.token.OAuth2Token;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.config.TestConfig;
 import net.webpdf.wsclient.testsuite.integration.annotations.OAuthTest;
@@ -67,7 +67,7 @@ public class Oauth2TokenIntegrationTest {
                     WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL),
                     // Implement the Auth0 TokenProvider
-                    () -> {
+                    (auth0Session) -> {
                         // Request an access token from the Auth0 authorization provider:
                         AuthAPI auth = new AuthAPI(
                                 auth0Config.getAuthority(),
@@ -113,7 +113,7 @@ public class Oauth2TokenIntegrationTest {
                     WebServiceProtocol.REST,
                     testServer.getServer(ServerType.LOCAL),
                     // Implement the Azure TokenProvider
-                    () -> {
+                    (azureSession) -> {
                         // Request an access token from the Azure authorization provider:
                         ConfidentialClientApplication app;
                         try {
@@ -169,7 +169,7 @@ public class Oauth2TokenIntegrationTest {
             try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL),
                     // Implement the Auth0 TokenProvider
-                    () -> {
+                    (auth0Session) -> {
                         // Request an access token from the Auth0 authorization provider:
                         AuthAPI auth = new AuthAPI(
                                 auth0Config.getAuthority(),
@@ -214,7 +214,7 @@ public class Oauth2TokenIntegrationTest {
             try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
                     testServer.getServer(ServerType.LOCAL),
                     // Implement the Azure TokenProvider
-                    () -> {
+                    (azureSession) -> {
                         // Request an access token from the Azure authorization provider:
                         ConfidentialClientApplication app;
                         try {

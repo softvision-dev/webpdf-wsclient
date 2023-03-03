@@ -184,19 +184,11 @@ public final class WebServiceFactory {
             throw new ClientResultException(Error.SESSION_CREATE);
         }
 
-        // get the data format
-        DataFormat dataFormat = session.getDataFormat();
-        if (dataFormat == null) {
-            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
-        }
-
         // create the web service instance
         switch (session.getWebServiceProtocol()) {
             case SOAP:
                 // convert the data into a operation object
-                OperationData soapOperationData = dataFormat.equals(DataFormat.XML)
-                        ? SerializeHelper.fromXML(streamSource, OperationData.class)
-                        : SerializeHelper.fromJSON(streamSource, OperationData.class);
+                OperationData soapOperationData = SerializeHelper.fromXML(streamSource, OperationData.class);
 
                 // detect the web service with the operation data
                 if (session instanceof SoapSession) {
@@ -209,9 +201,7 @@ public final class WebServiceFactory {
                 }
             case REST:
                 // convert the data into a operation object
-                RestOperationData restOperationData = dataFormat.equals(DataFormat.XML)
-                        ? SerializeHelper.fromXML(streamSource, RestOperationData.class)
-                        : SerializeHelper.fromJSON(streamSource, RestOperationData.class);
+                RestOperationData restOperationData = SerializeHelper.fromJSON(streamSource, RestOperationData.class);
 
                 // detect the web service with the operation data
                 if (session instanceof RestSession) {

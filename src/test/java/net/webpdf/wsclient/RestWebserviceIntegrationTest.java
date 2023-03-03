@@ -1,6 +1,8 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.openapi.*;
+import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
+import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
@@ -41,8 +43,10 @@ public class RestWebserviceIntegrationTest {
     @IntegrationTest
     public void testConverter() {
         assertDoesNotThrow(() -> {
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.CONVERTER);
 
@@ -85,8 +89,10 @@ public class RestWebserviceIntegrationTest {
     @IntegrationTest
     public void testToolbox() {
         assertDoesNotThrow(() -> {
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.TOOLBOX);
 
@@ -147,8 +153,10 @@ public class RestWebserviceIntegrationTest {
     @IntegrationTest
     public void testSignature() {
         assertDoesNotThrow(() -> {
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 SignatureRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.SIGNATURE);
 
@@ -191,8 +199,10 @@ public class RestWebserviceIntegrationTest {
     @IntegrationTest
     public void testPdfa() {
         assertDoesNotThrow(() -> {
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 PdfaRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.PDFA);
 
@@ -229,8 +239,10 @@ public class RestWebserviceIntegrationTest {
     @IntegrationTest
     public void testOcr() {
         assertDoesNotThrow(() -> {
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 OcrRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.OCR);
 
@@ -263,8 +275,10 @@ public class RestWebserviceIntegrationTest {
     @IntegrationTest
     public void testBarcode() {
         assertDoesNotThrow(() -> {
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 BarcodeRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.BARCODE);
 
@@ -326,8 +340,10 @@ public class RestWebserviceIntegrationTest {
     @IntegrationTest
     public void testUrlConverter() {
         assertDoesNotThrow(() -> {
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
 
@@ -364,8 +380,10 @@ public class RestWebserviceIntegrationTest {
             File configFile = testResources.getResource("toolbox.json");
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             String json = FileUtils.readFileToString(configFile, Charset.defaultCharset());
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL));
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider());
                  StringReader stringReader = new StringReader(json)) {
                 StreamSource streamSource = new StreamSource(stringReader);
                 ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session, streamSource);
@@ -385,8 +403,10 @@ public class RestWebserviceIntegrationTest {
     @IntegrationTest
     public void testToolboxSwitchToOutputFile() {
         assertDoesNotThrow(() -> {
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.TOOLBOX);
 
@@ -430,14 +450,12 @@ public class RestWebserviceIntegrationTest {
     public void testHandleRestSession() {
         assertDoesNotThrow(() -> {
             // Anonymous
-            try (RestSession<RestDocument> restSession = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL))) {
+            try (RestSession<RestDocument> restSession = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 assertNotNull(restSession,
                         "Valid session should have been created.");
-                assertNotNull(restSession.getToken(),
-                        "Token should have been initialized.");
-                assertNotEquals("", restSession.getToken().getToken(),
-                        "Token should have been not empty.");
                 assertNotNull(restSession.getUser(),
                         "UserCredentials should have been initialized.");
                 assertTrue(restSession.getUser().isUser(),
@@ -451,14 +469,12 @@ public class RestWebserviceIntegrationTest {
             }
 
             // User
-            try (RestWebServiceSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL, "user", "user"))) {
+            try (RestWebServiceSession restSession = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new UserAuthProvider("user", "user"))) {
                 assertNotNull(restSession,
                         "Valid session should have been created.");
-                assertNotNull(restSession.getToken(),
-                        "Token should have been initialized.");
-                assertNotEquals("", restSession.getToken().getToken(),
-                        "Token should have been not empty.");
                 assertNotNull(restSession.getUser(),
                         "UserInfo should have been initialized.");
                 assertTrue(restSession.getUser().isUser(),
@@ -470,14 +486,12 @@ public class RestWebserviceIntegrationTest {
             }
 
             // Admin
-            try (RestWebServiceSession restSession = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL, "admin", "admin"))) {
+            try (RestWebServiceSession restSession = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new UserAuthProvider("admin", "admin"))) {
                 assertNotNull(restSession,
                         "Valid session should have been created.");
-                assertNotNull(restSession.getToken(),
-                        "Token should have been initialized.");
-                assertNotEquals("", restSession.getToken().getToken(),
-                        "Token should have been not empty.");
                 assertNotNull(restSession.getUser(),
                         "UserInfo should have been initialized.");
                 assertTrue(restSession.getUser().isUser(),

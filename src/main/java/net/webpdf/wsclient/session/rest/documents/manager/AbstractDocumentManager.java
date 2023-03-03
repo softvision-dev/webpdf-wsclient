@@ -1,6 +1,7 @@
 package net.webpdf.wsclient.session.rest.documents.manager;
 
 import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
@@ -8,7 +9,6 @@ import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
-import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
 import org.apache.commons.io.FileUtils;
@@ -172,7 +172,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
         }
 
         HttpRestRequest.createRequest(this.session)
-                .setAcceptHeader("application/octet-stream")
+                .setAcceptHeader(DataFormat.OCTET_STREAM.getMimeType())
                 .buildRequest(HttpMethod.GET, "documents/" + documentId, null)
                 .executeRequest(outputStream);
     }
@@ -476,13 +476,8 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
             if (parameter == null) {
                 throw new ClientResultException(Error.NO_OPERATION_DATA);
             }
-            return new StringEntity(
-                    this.session.getDataFormat() == DataFormat.XML
-                            ? SerializeHelper.toXML(parameter, parameter.getClass())
-                            : SerializeHelper.toJSON(parameter),
-                    this.session.getDataFormat() != null ?
-                            ContentType.create(this.session.getDataFormat().getMimeType(), StandardCharsets.UTF_8) :
-                            null);
+            return new StringEntity(SerializeHelper.toJSON(parameter),
+                    ContentType.create(DataFormat.JSON.getMimeType(), StandardCharsets.UTF_8));
         } catch (UnsupportedCharsetException ex) {
             throw new ClientResultException(Error.TO_XML_JSON, ex);
         }

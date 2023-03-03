@@ -1,6 +1,5 @@
 package net.webpdf.wsclient.exception;
 
-import net.webpdf.wsclient.session.auth.token.SessionToken;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import org.jetbrains.annotations.NotNull;
@@ -102,9 +101,17 @@ public enum Error {
     TO_XML_JSON(-37, "Unable to convert to XML/JSON"),
 
     /**
-     * It is only allowed to refresh webPDF server {@link SessionToken}s in this way.
+     * The provided authentication/authorization material is invalid and a session may not be established.
      */
-    FORBIDDEN_TOKEN_REFRESH(-40, "Only SessionToken instances may be refreshed in this way."),
+    INVALID_AUTH_MATERIAL(-40, "Authentication/authorization material invalid"),
+    /**
+     * Authenticating the session failed.
+     */
+    AUTHENTICATION_FAILURE(-41, "The session authentication failed"),
+    /**
+     * Refreshing the session token failed.
+     */
+    SESSION_REFRESH_FAILURE(-42, "Refreshing the session token failed"),
 
     /**
      * The server´s WSDL could not be downloaded, please check, if the server is running and accessible.

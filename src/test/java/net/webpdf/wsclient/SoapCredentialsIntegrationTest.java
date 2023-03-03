@@ -1,5 +1,6 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
@@ -9,7 +10,6 @@ import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.soap.SoapSession;
-import net.webpdf.wsclient.testsuite.server.ServerProtocol;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import net.webpdf.wsclient.testsuite.server.TestServer;
@@ -68,19 +68,6 @@ public class SoapCredentialsIntegrationTest {
 
     @Test
     @IntegrationTest
-    public void testWithUserCredentialsInURL() {
-        assertDoesNotThrow(() -> {
-            try (SoapSession session = SessionFactory.createInstance(
-                    WebServiceProtocol.SOAP, testServer.getServer(
-                            ServerType.LOCAL, ServerProtocol.HTTP,
-                            true))) {
-                executeConverter(session);
-            }
-        });
-    }
-
-    @Test
-    @IntegrationTest
     public void testWithUserCredentials() {
         assertDoesNotThrow(() -> {
             try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
@@ -100,7 +87,8 @@ public class SoapCredentialsIntegrationTest {
 
             try (SoapSession session = SessionFactory.createInstance(
                     WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL));
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider());
                  StringReader stringReader = new StringReader(xml)) {
                 ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         new StreamSource(stringReader));

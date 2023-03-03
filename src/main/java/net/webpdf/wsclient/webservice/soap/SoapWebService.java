@@ -1,7 +1,6 @@
 package net.webpdf.wsclient.webservice.soap;
 
 import jakarta.activation.DataHandler;
-import jakarta.xml.bind.DatatypeConverter;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.handler.MessageContext;
 import jakarta.xml.ws.soap.MTOMFeature;
@@ -14,13 +13,14 @@ import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.schema.operation.SettingsType;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
-import net.webpdf.wsclient.session.auth.token.OAuth2Token;
+import net.webpdf.wsclient.session.auth.material.AuthMaterial;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.webservice.AbstractWebService;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
+import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,6 +93,10 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
 
         } catch (WebServiceException ex) {
             throw new ServerResultException(ex);
+        }
+        // catch unhandled exceptions.
+        catch (Exception ex) {
+            throw new ClientResultException(Error.SOAP_EXECUTION, ex);
         }
     }
 
@@ -189,30 +193,19 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
         BindingProvider bindingProvider = ((BindingProvider) port);
 
         // set auth information
-        if (getSession().getCredentials() != null) {
-
-            boolean tokenCredentials = getSession().getCredentials() instanceof OAuth2Token;
-            if (tokenCredentials) {
-                getHeaders().put(HttpHeaders.AUTHORIZATION,
-                        Collections.singletonList("Bearer" +
-                                getSession().getCredentials().getUserPrincipal().getName()));
-            } else {
-                String basicAuth = "Basic " + DatatypeConverter.printBase64Binary(
-                        (getSession().getCredentials().getUserPrincipal().getName()
-                                + ":" + new String(getSession().getCredentials().getPassword()))
-                                .getBytes());
-                getHeaders().put(HttpHeaders.AUTHORIZATION, Collections.singletonList(basicAuth));
-            }
-
+        AuthMaterial authMaterial = getSession().getAuthMaterial();
+        String authorizationHeader = authMaterial.getRawAuthHeader();
+        if (authorizationHeader != null) {
+            getHeaders().put(HttpHeaders.AUTHORIZATION, Collections.singletonList(authorizationHeader));
             if (!getHeaders().isEmpty()) {
                 Map<String, Object> requestContext = bindingProvider.getRequestContext();
                 requestContext.put(MessageContext.HTTP_REQUEST_HEADERS, getHeaders());
-
-                if (!tokenCredentials) {
+                Credentials credentials = authMaterial.getCredentials();
+                if (credentials != null) {
                     requestContext.put(BindingProvider.USERNAME_PROPERTY,
-                            getSession().getCredentials().getUserPrincipal().getName());
+                            credentials.getUserPrincipal().getName());
                     requestContext.put(BindingProvider.PASSWORD_PROPERTY,
-                            new String(getSession().getCredentials().getPassword()));
+                            new String(credentials.getPassword()));
                 }
             }
         }

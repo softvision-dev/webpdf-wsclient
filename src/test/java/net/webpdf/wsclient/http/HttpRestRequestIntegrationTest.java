@@ -1,6 +1,7 @@
 package net.webpdf.wsclient.http;
 
 import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
@@ -79,7 +80,8 @@ public class HttpRestRequestIntegrationTest {
         assertThrows(ResultException.class,
                 () -> {
                     //noinspection unused
-                    try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
+                    try (RestWebServiceSession session = SessionFactory.createInstance(
+                            WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL),
                             new UserAuthProvider("invalid", "invalid"))) {
                         fail("The login itself shall fail and this line should never be reached.");
@@ -94,7 +96,8 @@ public class HttpRestRequestIntegrationTest {
                 () -> {
                     try (RestWebServiceSession session =
                                  SessionFactory.createInstance(WebServiceProtocol.REST,
-                                         testServer.getServer(ServerType.LOCAL))) {
+                                         testServer.getServer(ServerType.LOCAL),
+                                         new AnonymousAuthProvider())) {
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest,
                                 "HttpRestRequest should have been build.");
@@ -113,7 +116,8 @@ public class HttpRestRequestIntegrationTest {
                     File file = testResources.getResource("test.pdf");
                     try (RestWebServiceSession session =
                                  SessionFactory.createInstance(WebServiceProtocol.REST,
-                                         testServer.getServer(ServerType.LOCAL))) {
+                                         testServer.getServer(ServerType.LOCAL),
+                                         new AnonymousAuthProvider())) {
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest, "HttpRestRequest should have been build.");
                         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -135,7 +139,8 @@ public class HttpRestRequestIntegrationTest {
                     File file = testResources.getResource("test.pdf");
                     try (RestWebServiceSession session =
                                  SessionFactory.createInstance(WebServiceProtocol.REST,
-                                         testServer.getServer(ServerType.LOCAL))) {
+                                         testServer.getServer(ServerType.LOCAL),
+                                         new AnonymousAuthProvider())) {
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest,
                                 "HttpRestRequest should have been build.");
@@ -160,7 +165,8 @@ public class HttpRestRequestIntegrationTest {
                     File file = testResources.getResource("test.pdf");
                     try (RestWebServiceSession session =
                                  SessionFactory.createInstance(WebServiceProtocol.REST,
-                                         testServer.getServer(ServerType.LOCAL))) {
+                                         testServer.getServer(ServerType.LOCAL),
+                                         new AnonymousAuthProvider())) {
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest,
                                 "HttpRestRequest should have been build.");
@@ -182,8 +188,10 @@ public class HttpRestRequestIntegrationTest {
     public void testHttpPathNullOutput() {
         assertThrows(ResultException.class,
                 () -> {
-                    try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                            testServer.getServer(ServerType.LOCAL))) {
+                    try (RestWebServiceSession session = SessionFactory.createInstance(
+                            WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL),
+                            new AnonymousAuthProvider())) {
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest,
                                 "HttpRestRequest should have been build.");

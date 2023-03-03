@@ -1,5 +1,6 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.schema.operation.*;
@@ -32,7 +33,8 @@ public class SoapWebserviceIntegrationTest {
     public void testConverter() {
         assertDoesNotThrow(() -> {
             try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.CONVERTER);
 
@@ -66,7 +68,8 @@ public class SoapWebserviceIntegrationTest {
     public void testToolbox() {
         assertDoesNotThrow(() -> {
             try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 ToolboxWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.TOOLBOX);
 
@@ -119,7 +122,8 @@ public class SoapWebserviceIntegrationTest {
     public void testSignature() {
         assertDoesNotThrow(() -> {
             try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 SignatureWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.SIGNATURE);
 
@@ -166,7 +170,8 @@ public class SoapWebserviceIntegrationTest {
     public void testPdfa() {
         assertDoesNotThrow(() -> {
             try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 PdfaWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.PDFA);
 
@@ -199,7 +204,8 @@ public class SoapWebserviceIntegrationTest {
     public void testOcr() {
         assertDoesNotThrow(() -> {
             try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 OcrWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.OCR);
 
@@ -233,7 +239,8 @@ public class SoapWebserviceIntegrationTest {
     public void testBarcode() {
         assertDoesNotThrow(() -> {
             try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 BarcodeWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.BARCODE);
 
@@ -292,7 +299,8 @@ public class SoapWebserviceIntegrationTest {
     public void testUrlConverter() {
         assertDoesNotThrow(() -> {
             try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 UrlConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);
 
@@ -324,7 +332,8 @@ public class SoapWebserviceIntegrationTest {
     public void testConverterRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 session.setUseLocalWsdl(false);
                 ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.CONVERTER);
@@ -355,7 +364,8 @@ public class SoapWebserviceIntegrationTest {
     public void testToolboxRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 session.setUseLocalWsdl(false);
                 ToolboxWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.TOOLBOX);
@@ -409,7 +419,8 @@ public class SoapWebserviceIntegrationTest {
     public void testSignatureRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 session.setUseLocalWsdl(false);
                 SignatureWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.SIGNATURE);
@@ -454,7 +465,8 @@ public class SoapWebserviceIntegrationTest {
     public void testPdfaRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 session.setUseLocalWsdl(false);
                 PdfaWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.PDFA);
@@ -488,7 +500,8 @@ public class SoapWebserviceIntegrationTest {
     public void testOcrRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 session.setUseLocalWsdl(false);
                 OcrWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.OCR);
@@ -523,7 +536,8 @@ public class SoapWebserviceIntegrationTest {
     public void testBarcodeRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 session.setUseLocalWsdl(false);
                 BarcodeWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.BARCODE);
@@ -583,7 +597,8 @@ public class SoapWebserviceIntegrationTest {
     public void testUrlConverterRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL))) {
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider())) {
                 session.setUseLocalWsdl(false);
                 UrlConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
                         WebServiceType.URLCONVERTER);

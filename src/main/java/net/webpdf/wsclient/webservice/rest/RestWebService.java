@@ -2,6 +2,7 @@ package net.webpdf.wsclient.webservice.rest;
 
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.openapi.*;
+import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
 import net.webpdf.wsclient.session.rest.RestSession;
@@ -13,7 +14,6 @@ import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
-import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.tools.SerializeHelper;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
@@ -87,12 +87,9 @@ public abstract class RestWebService<T_OPERATION_DATA, T_OPERATION_PARAMETER, T_
     private @NotNull HttpEntity getWebServiceOptions() throws ResultException {
         try {
             return new StringEntity(
-                    getSession().getDataFormat() == DataFormat.XML ?
-                            SerializeHelper.toXML(getOperationData(), getOperationData().getClass()) :
-                            SerializeHelper.toJSON(getOperationData()),
-                    getSession().getDataFormat() != null ?
-                            ContentType.create(getSession().getDataFormat().getMimeType(), StandardCharsets.UTF_8) :
-                            null);
+                    SerializeHelper.toJSON(getOperationData()),
+                    ContentType.create(DataFormat.JSON.getMimeType(), StandardCharsets.UTF_8)
+            );
         } catch (UnsupportedCharsetException ex) {
             throw new ClientResultException(Error.TO_XML_JSON, ex);
         }

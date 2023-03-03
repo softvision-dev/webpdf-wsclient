@@ -1,7 +1,8 @@
 package net.webpdf.wsclient.session.rest;
 
 import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.session.connection.http.HttpAuthorizationProvider;
+import net.webpdf.wsclient.session.auth.AuthProvider;
+import net.webpdf.wsclient.session.connection.http.HttpAuthorizationHandler;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
@@ -9,15 +10,10 @@ import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
-import net.webpdf.wsclient.session.Session;
-import net.webpdf.wsclient.session.auth.token.Token;
-import net.webpdf.wsclient.session.auth.token.SessionToken;
 import net.webpdf.wsclient.schema.beans.User;
 import net.webpdf.wsclient.session.AbstractSession;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
-import org.apache.hc.client5.http.auth.Credentials;
-import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.ChainElement;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -36,7 +32,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <p>
@@ -55,12 +50,9 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
 
     private static final @NotNull String INFO_PATH = "authentication/user/info/";
     private static final @NotNull String LOGOUT_PATH = "authentication/user/logout/";
-    private static final @NotNull String LOGIN_PATH = "authentication/user/login/";
-    private static final @NotNull String REFRESH_PATH = "authentication/user/refresh/";
     private final @NotNull HttpClientBuilder httpClientBuilder;
     private final @Nullable User user;
     private final @NotNull CloseableHttpClient httpClient;
-    private final @NotNull AtomicReference<Token> token = new AtomicReference<>(new SessionToken());
     private final @NotNull DocumentManager<T_REST_DOCUMENT> documentManager = createDocumentManager();
     private final @NotNull AdministrationManager<T_REST_DOCUMENT> administrationManager = createAdministrationManager();
 
@@ -68,23 +60,21 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      * Creates a new {@link AbstractRestSession} instance providing connection information, authorization objects and
      * a {@link DocumentManager} for a webPDF server-client {@link RestSession}.
      *
-     * @param url         The {@link URL} of the webPDF server
-     * @param tlsContext  The {@link TLSContext} used for this https {@link RestSession}.
-     *                    ({@code null} in case an unencrypted HTTP {@link RestSession} shall be created.)
-     * @param credentials The {@link Credentials} used for authorization of this session.
+     * @param url          The {@link URL} of the webPDF server
+     * @param tlsContext   The {@link TLSContext} used for this https {@link RestSession}.
+     *                     ({@code null} in case an unencrypted HTTP {@link RestSession} shall be created.)
+     * @param authProvider The {@link AuthProvider} for authentication/authorization of this {@link RestSession}.
      * @throws ResultException Shall be thrown, in case establishing the {@link RestSession} failed.
      */
-    public AbstractRestSession(@NotNull URL url, @Nullable TLSContext tlsContext, Credentials credentials)
+    public AbstractRestSession(@NotNull URL url, @Nullable TLSContext tlsContext, @NotNull AuthProvider authProvider)
             throws ResultException {
-        super(url, WebServiceProtocol.REST, tlsContext, credentials);
-
+        super(url, WebServiceProtocol.REST, tlsContext, authProvider);
         RequestConfig clientConfig = RequestConfig.custom().setAuthenticationEnabled(true).build();
-        HttpAuthorizationProvider authorizationProvider = new HttpAuthorizationProvider(this);
+        HttpAuthorizationHandler requestAuthorization = new HttpAuthorizationHandler(this);
         httpClientBuilder = HttpClients.custom()
                 .setDefaultRequestConfig(clientConfig)
-                .setDefaultCredentialsProvider(getCredentialsProvider())
                 .addExecInterceptorAfter(ChainElement.REDIRECT.name(),
-                        authorizationProvider.getExecChainHandlerName(), authorizationProvider);
+                        requestAuthorization.getExecChainHandlerName(), requestAuthorization);
         if (getTlsContext() != null) {
             LayeredConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
                     getTlsContext().getSslContext(), (hostname, session) -> true);
@@ -95,24 +85,9 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
             httpClientBuilder.setConnectionManager(new PoolingHttpClientConnectionManager(registry));
         }
         this.httpClient = this.httpClientBuilder.build();
-        if (getCredentials() == null || getCredentials() instanceof UsernamePasswordCredentials) {
-            this.token.set(HttpRestRequest.createRequest(this)
-                    .buildRequest(HttpMethod.GET, LOGIN_PATH, null)
-                    .executeRequest(SessionToken.class));
-        }
         this.user = HttpRestRequest.createRequest(this)
                 .buildRequest(HttpMethod.GET, INFO_PATH, null)
                 .executeRequest(User.class);
-    }
-
-    /**
-     * Returns the session {@link Token} of this {@link RestSession}.
-     *
-     * @return The session {@link Token} of this {@link RestSession}.
-     */
-    @Override
-    public @Nullable Token getToken() {
-        return this.token.get();
     }
 
     /**
@@ -143,31 +118,6 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     @Override
     public @NotNull AdministrationManager<T_REST_DOCUMENT> getAdministrationManager() {
         return administrationManager;
-    }
-
-    /**
-     * <p>
-     * Refreshes the {@link RestSession} and prevents it from expiring. Also refreshes the currently set
-     * {@link SessionToken}.
-     * </p>
-     * <p>
-     * <b>Important:</b> This may only be used to refresh {@link SessionToken}s, attempts to refresh {@link Session}s
-     * based on other {@link Token} types in this manner, shall result in a {@link Error#FORBIDDEN_TOKEN_REFRESH}
-     * error.
-     * </p>
-     *
-     * @throws ResultException Shall be thrown, when refreshing the session failed.
-     */
-    @Override
-    public synchronized void refresh() throws ResultException {
-        if (this.token.get() instanceof SessionToken) {
-            this.token.set(((SessionToken) this.token.get()).provideRefreshToken());
-            this.token.set(HttpRestRequest.createRequest(this)
-                    .buildRequest(HttpMethod.POST, REFRESH_PATH, null)
-                    .executeRequest(SessionToken.class));
-        } else {
-            throw new ClientResultException(Error.FORBIDDEN_TOKEN_REFRESH);
-        }
     }
 
     /**
@@ -203,11 +153,9 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     public void close() throws ResultException {
         ResultException resultException = null;
         try {
-            if (!this.token.get().getToken().isEmpty()) {
-                HttpRestRequest.createRequest(this)
-                        .buildRequest(HttpMethod.GET, LOGOUT_PATH, null)
-                        .executeRequest(Object.class);
-            }
+            HttpRestRequest.createRequest(this)
+                    .buildRequest(HttpMethod.GET, LOGOUT_PATH, null)
+                    .executeRequest(Object.class);
         } finally {
             try {
                 this.httpClient.close();

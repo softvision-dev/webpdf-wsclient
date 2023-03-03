@@ -6,6 +6,7 @@ import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.exception.ServerResultException;
 import net.webpdf.wsclient.openapi.WebserviceException;
 import net.webpdf.wsclient.session.DataFormat;
+import net.webpdf.wsclient.session.auth.material.AuthMaterial;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -32,8 +33,7 @@ public class HttpRestRequest {
 
     private final @NotNull CloseableHttpClient httpClient;
     private final @NotNull RestSession<?> session;
-    private final @Nullable DataFormat dataFormat;
-    private @Nullable String acceptHeader;
+    private @Nullable String acceptHeader = DataFormat.JSON.getMimeType();
     private @Nullable HttpUriRequest httpUriRequest;
 
     /**
@@ -45,8 +45,6 @@ public class HttpRestRequest {
     private HttpRestRequest(@NotNull RestSession<?> session) {
         this.session = session;
         this.httpClient = session.getHttpClient();
-        this.acceptHeader = session.getDataFormat() != null ? session.getDataFormat().getMimeType() : null;
-        this.dataFormat = session.getDataFormat();
     }
 
     /**
@@ -88,30 +86,52 @@ public class HttpRestRequest {
     public @NotNull HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable String path,
             @Nullable HttpEntity httpEntity) throws ResultException {
         URI uri = this.session.getURI(path != null ? path : "");
-        return buildRequest(httpMethod, uri, httpEntity);
+        return buildRequest(httpMethod, uri, httpEntity, null);
+    }
+
+    /**
+     * Prepare the {@link HttpRestRequest} to execute the selected {@link HttpMethod} on the given resource path
+     * ({@link URI}) and providing the given {@link HttpEntity} as it´s data transfer object (parameters).
+     *
+     * @param httpMethod   The {@link HttpMethod} to execute.
+     * @param path         The resource path ({@link URI}) to execute the request on.
+     * @param httpEntity   The data transfer object {@link HttpEntity} to include in the request´s content.
+     * @param authMaterial The {@link AuthMaterial} to use for authorization.
+     * @return The {@link HttpRestRequest} instance itself.
+     * @throws ResultException Shall be thrown, if creating initializing the {@link HttpRestRequest} failed for the
+     *                         given parameters.
+     */
+    public @NotNull HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable String path,
+            @Nullable HttpEntity httpEntity, @Nullable AuthMaterial authMaterial) throws ResultException {
+        URI uri = this.session.getURI(path != null ? path : "");
+        return buildRequest(httpMethod, uri, httpEntity, authMaterial);
+    }
+
+    public @NotNull HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable URI uri,
+            @Nullable HttpEntity httpEntity) throws ResultException {
+        return buildRequest(httpMethod, uri, httpEntity, null);
     }
 
     /**
      * Prepare the {@link HttpRestRequest} to execute the selected {@link HttpMethod} on the given ({@link URI}) and
      * providing the given {@link HttpEntity} as it´s data transfer object (parameters).
      *
-     * @param httpMethod The {@link HttpMethod} to execute.
-     * @param uri        The resource ({@link URI}) to execute the request on.
-     * @param httpEntity The data transfer object {@link HttpEntity} to include in the request´s content.
+     * @param httpMethod   The {@link HttpMethod} to execute.
+     * @param uri          The resource ({@link URI}) to execute the request on.
+     * @param httpEntity   The data transfer object {@link HttpEntity} to include in the request´s content.
+     * @param authMaterial The {@link AuthMaterial} to use for authorization.
      * @return The {@link HttpRestRequest} instance itself.
      * @throws ResultException Shall be thrown, if creating initializing the {@link HttpRestRequest} failed for the
      *                         given parameters.
      */
     public @NotNull HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable URI uri,
-            @Nullable HttpEntity httpEntity) throws ResultException {
+            @Nullable HttpEntity httpEntity, @Nullable AuthMaterial authMaterial) throws ResultException {
         if (httpMethod == null) {
             throw new ClientResultException(Error.UNKNOWN_HTTP_METHOD);
         }
-
         if (uri == null) {
             uri = this.session.getURI("");
         }
-
         switch (httpMethod) {
             case GET:
                 httpUriRequest = new HttpGet(uri);
@@ -130,11 +150,11 @@ public class HttpRestRequest {
         }
 
         httpUriRequest.addHeader(HttpHeaders.ACCEPT, this.acceptHeader);
-        Header authorizationHeader = new HttpAuthorizationProvider(this.session).provideAuthorizationHeader();
+        Header authorizationHeader = authMaterial != null ?
+                authMaterial.getAuthHeader() : session.getAuthMaterial().getAuthHeader();
         if (authorizationHeader != null) {
             httpUriRequest.addHeader(authorizationHeader);
         }
-
         if (httpEntity != null) {
             httpUriRequest.setEntity(httpEntity);
         }
@@ -173,11 +193,8 @@ public class HttpRestRequest {
 
         // is this a webPDF server response or a general server error?
         String contentType = httpEntity.getContentType();
-        if (contentType != null && (contentType.equals(DataFormat.XML.getMimeType())
-                || contentType.equals(DataFormat.JSON.getMimeType()))) {
-            WebserviceException wsException = DataFormat.XML.equals(this.dataFormat)
-                    ? SerializeHelper.fromXML(httpEntity, WebserviceException.class)
-                    : SerializeHelper.fromJSON(httpEntity, WebserviceException.class);
+        if (DataFormat.JSON.matches(contentType)) {
+            WebserviceException wsException = SerializeHelper.fromJSON(httpEntity, WebserviceException.class);
             if (wsException.getErrorCode() != 0) {
                 throw new ServerResultException(wsException);
             }
@@ -250,14 +267,12 @@ public class HttpRestRequest {
                     return null;
                 }
 
-                if (mimeType == null || dataFormat == null || !mimeType.equals(dataFormat.getMimeType())) {
+                if (!DataFormat.JSON.matches(mimeType)) {
                     return null;
                 }
                 try (StringReader stringReader = new StringReader(value)) {
                     StreamSource streamSource = new StreamSource(stringReader);
-                    return DataFormat.XML.equals(dataFormat)
-                            ? SerializeHelper.fromXML(streamSource, type)
-                            : SerializeHelper.fromJSON(streamSource, type);
+                    return SerializeHelper.fromJSON(streamSource, type);
                 } catch (ResultException ex) {
                     throw new IOException(ex);
                 }

@@ -1,7 +1,6 @@
 package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.exception.AuthResultException;
 import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.Error;
@@ -9,7 +8,6 @@ import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
 import net.webpdf.wsclient.session.soap.SoapWebServiceSession;
-import org.apache.hc.client5.http.auth.Credentials;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,59 +39,15 @@ public final class SessionFactory {
      *
      * @param webServiceProtocol The {@link WebServiceProtocol} used to communicate with the server.
      * @param url                The {@link URL} of the server.
-     * @return The {@link Session} organizing the communication with the server at the given {@link URL}.
-     * @throws ResultException Shall be thrown in case establishing the {@link Session} failed.
-     */
-    public static <T_SESSION extends Session>
-    @NotNull T_SESSION createInstance(
-            @NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url
-    ) throws ResultException {
-        return createInstance(webServiceProtocol, url, null, null);
-    }
-
-    /**
-     * <p>
-     * Creates a HTTP {@link Session} based on the given {@link WebServiceProtocol} to the server at the given
-     * {@link URL}.
-     * </p>
-     * <p>
-     * This factory will either produce a {@link SoapWebServiceSession} or a {@link RestWebServiceSession}. It is not
-     * fit to produce custom session types.
-     * </p>
-     *
-     * @param webServiceProtocol The {@link WebServiceProtocol} used to communicate with the server.
-     * @param url                The {@link URL} of the server.
      * @param authProvider       The {@link AuthProvider} method to use for authentication/authorization of the
      *                           {@link Session}.
      * @return The {@link Session} organizing the communication with the server at the given {@link URL}.
      * @throws ResultException Shall be thrown in case establishing the {@link Session} failed.
      */
     public static <T_SESSION extends Session> @NotNull T_SESSION createInstance(
-            @NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url, @NotNull AuthProvider<?> authProvider
+            @NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url, @NotNull AuthProvider authProvider
     ) throws ResultException {
         return createInstance(webServiceProtocol, url, null, authProvider);
-    }
-
-    /**
-     * <p>
-     * Creates an encrypted HTTPS {@link Session} based on the given {@link WebServiceProtocol} to the server at the
-     * given {@link URL}.
-     * </p>
-     * <p>
-     * This factory will either produce a {@link SoapWebServiceSession} or a {@link RestWebServiceSession}. It is not
-     * fit to produce custom session types.
-     * </p>
-     *
-     * @param webServiceProtocol The {@link WebServiceProtocol} used to communicate with the server.
-     * @param url                The {@link URL} of the server.
-     * @param tlsContext         {@link TLSContext} configuring an HTTPS {@link Session}.
-     * @return The {@link Session} organizing the communication with the server at the given {@link URL}.
-     * @throws ResultException Shall be thrown in case establishing the {@link Session} failed.
-     */
-    public static <T_SESSION extends Session> @NotNull T_SESSION createInstance(
-            @NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url, @Nullable TLSContext tlsContext
-    ) throws ResultException {
-        return createInstance(webServiceProtocol, url, tlsContext, null);
     }
 
     /**
@@ -117,22 +71,14 @@ public final class SessionFactory {
     @SuppressWarnings("unchecked")
     public static <T_SESSION extends Session> @NotNull T_SESSION createInstance(
             @NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url, @Nullable TLSContext tlsContext,
-            @Nullable AuthProvider<?> authProvider
+            @NotNull AuthProvider authProvider
     ) throws ResultException {
-        Credentials credentials = null;
-        if (authProvider != null) {
-            try {
-                credentials = authProvider.provide();
-            } catch (Exception ex) {
-                throw new AuthResultException(ex);
-            }
-        }
         try {
             switch (webServiceProtocol) {
                 case SOAP:
-                    return (T_SESSION) new SoapWebServiceSession(url, tlsContext, credentials);
+                    return (T_SESSION) new SoapWebServiceSession(url, tlsContext, authProvider);
                 case REST:
-                    return (T_SESSION) new RestWebServiceSession(url, tlsContext, credentials);
+                    return (T_SESSION) new RestWebServiceSession(url, tlsContext, authProvider);
                 default:
                     throw new ClientResultException(Error.SESSION_CREATE);
             }

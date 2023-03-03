@@ -1,10 +1,11 @@
 package net.webpdf.wsclient.session;
 
+import net.webpdf.wsclient.session.auth.AuthProvider;
+import net.webpdf.wsclient.session.auth.material.AuthMaterial;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
-import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.core5.http.NameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,18 +69,40 @@ public interface Session extends AutoCloseable {
     @NotNull URI getURI(@NotNull String subPath, List<NameValuePair> parameters) throws ResultException;
 
     /**
-     * Returns the {@link DataFormat} accepted by this {@link Session}.
+     * Provides {@link AuthMaterial} for the authorization of the {@link Session}´s requests, using the
+     * {@link Session}´s {@link AuthProvider}.
      *
-     * @return The {@link DataFormat} accepted by this {@link Session}.
+     * @return {@link AuthMaterial} for the authorization of the {@link Session}´s requests.
+     * @throws ResultException Shall be thrown, should the determination of {@link AuthMaterial} fail.
      */
-    @Nullable DataFormat getDataFormat();
+    @NotNull AuthMaterial getAuthMaterial() throws ResultException;
 
     /**
-     * Returns the {@link Credentials} authorizing this session.
+     * <p>
+     * Returns the {@link Session}´s skew time.<br>
+     * The skew time helps to avoid using expired tokens. The returned value (in seconds) is subtracted from the
+     * expiry time to avoid issues possibly caused by transfer delays.<br>
+     * It can not be guaranteed, but is recommended, that custom implementations of {@link AuthProvider} handle this
+     * accordingly.
+     * </p>
      *
-     * @return The {@link Credentials} authorizing this session.
+     * @return The {@link Session}´s token refresh skew time in seconds.
      */
-    @Nullable Credentials getCredentials();
+    int getSkewTime();
+
+    /**
+     * <p>
+     * Sets the {@link Session}´s skew time.<br>
+     * The skew time helps to avoid using expired tokens. The returned value (in seconds) is subtracted from the
+     * expiry time to avoid issues possibly caused by transfer delays.<br>
+     * It can not be guaranteed, but is recommended, that custom implementations of {@link AuthProvider} handle this
+     * accordingly.
+     * </p>
+     *
+     * @param skewTime The {@link Session}´s token refresh skew time in seconds.
+     */
+    @SuppressWarnings("unused")
+    void setSkewTime(int skewTime);
 
     /**
      * Close the {@link Session}.

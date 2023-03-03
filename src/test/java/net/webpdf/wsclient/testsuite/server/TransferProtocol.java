@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.testsuite.server;
 
-public enum ServerProtocol {
+public enum TransferProtocol {
 
     HTTP,
     HTTPS

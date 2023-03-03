@@ -1,12 +1,14 @@
 package net.webpdf.wsclient.session;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * {@link DataFormat} enumerates all known formats for a {@link Session}´s data transfer objects.
  *
  * @see #XML
  * @see #JSON
+ * @see #OCTET_STREAM
  */
 public enum DataFormat {
 
@@ -17,7 +19,11 @@ public enum DataFormat {
     /**
      * JavaScript Object Notation
      */
-    JSON("application/json");
+    JSON("application/json"),
+    /**
+     * An unspecified binary stream.
+     */
+    OCTET_STREAM("application/octet-stream");
 
     private final @NotNull String mimeType;
 
@@ -37,6 +43,26 @@ public enum DataFormat {
      */
     public @NotNull String getMimeType() {
         return mimeType;
+    }
+
+    /**
+     * Returns {@code true} should the given MIME-type match the selected {@link DataFormat}.
+     *
+     * @param mimeType The MIME-type to check.
+     * @return {@code true} should the given MIME-type match the selected {@link DataFormat}.
+     */
+    public boolean matches(@Nullable String mimeType) {
+        return this.mimeType.equals(mimeType);
+    }
+
+    /**
+     * Returns a {@link String} representation of the selected {@link DataFormat}.
+     *
+     * @return A {@link String} representation of the selected {@link DataFormat}.
+     */
+    @Override
+    public String toString() {
+        return getMimeType();
     }
 
 }

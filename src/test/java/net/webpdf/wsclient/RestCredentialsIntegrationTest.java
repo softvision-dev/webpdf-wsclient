@@ -2,11 +2,11 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.openapi.OperationConvertPdfa;
 import net.webpdf.wsclient.openapi.OperationPdfa;
+import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.testsuite.server.ServerProtocol;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import net.webpdf.wsclient.testsuite.server.TestServer;
@@ -63,18 +63,6 @@ public class RestCredentialsIntegrationTest {
 
     @Test
     @IntegrationTest
-    public void testWithUserCredentialsInURL() {
-        assertDoesNotThrow(() -> {
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL,
-                            ServerProtocol.HTTP, true))) {
-                executeConverter(session);
-            }
-        });
-    }
-
-    @Test
-    @IntegrationTest
     public void testWithUserCredentials() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
@@ -91,8 +79,10 @@ public class RestCredentialsIntegrationTest {
         assertDoesNotThrow(() -> {
             File resFile = testResources.getResource("convert.json");
             String json = FileUtils.readFileToString(resFile, Charset.defaultCharset());
-            try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL));
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    WebServiceProtocol.REST,
+                    testServer.getServer(ServerType.LOCAL),
+                    new AnonymousAuthProvider());
                  StringReader stringReader = new StringReader(json)) {
                 ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
                         new StreamSource(stringReader));
