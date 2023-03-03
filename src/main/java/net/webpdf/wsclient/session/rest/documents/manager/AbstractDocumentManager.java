@@ -282,9 +282,6 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
         }
         T_REST_DOCUMENT restDocument = getDocument(documentId);
         DocumentFile documentFile = restDocument.getDocumentFile();
-        if (documentFile == null) {
-            throw new ClientResultException(Error.INVALID_DOCUMENT);
-        }
         documentFile.setFileName(fileName);
         documentFile = HttpRestRequest.createRequest(session)
                 .buildRequest(HttpMethod.POST, "documents/" + documentId + "/update",
@@ -431,7 +428,9 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
         DocumentFile documentFile = HttpRestRequest.createRequest(session)
                 .buildRequest(HttpMethod.GET, "documents/" + documentId + "/info", null)
                 .executeRequest(DocumentFile.class);
-
+        if (documentFile == null || (documentId = documentFile.getDocumentId()) == null) {
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
+        }
         T_REST_DOCUMENT restDocument = documentMap.get(documentId);
         restDocument.setDocumentFile(documentFile);
         if (isDocumentHistoryActive()) {

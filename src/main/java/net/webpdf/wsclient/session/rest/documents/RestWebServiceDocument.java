@@ -29,14 +29,14 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
 
     private final @NotNull ConcurrentHashMap<Integer, HistoryEntry> historyMap = new ConcurrentHashMap<>();
     private final @NotNull AtomicReference<DocumentFile> documentFile = new AtomicReference<>();
-    private final @Nullable String documentId;
+    private final @NotNull String documentId;
 
     /**
      * Creates a {@link RestWebServiceDocument} known to the webPDF server by the given document ID.
      *
      * @param documentId The document ID of the managed {@link RestWebServiceDocument}.
      */
-    public RestWebServiceDocument(@Nullable String documentId) {
+    public RestWebServiceDocument(@NotNull String documentId) {
         super(null);
         this.documentId = documentId;
     }
@@ -47,11 +47,8 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      * @return The document ID of the managed {@link RestWebServiceDocument}.
      */
     @Override
-    public @Nullable String getDocumentId() {
-        if (this.documentId != null) {
-            return this.documentId;
-        }
-        return this.documentFile.get() != null ? this.documentFile.get().getDocumentId() : null;
+    public @NotNull String getDocumentId() {
+        return this.documentId;
     }
 
     /**
@@ -60,7 +57,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      * @return The {@link DocumentFile} of the managed {@link RestWebServiceDocument}.
      */
     @Override
-    public @Nullable DocumentFile getDocumentFile() {
+    public @NotNull DocumentFile getDocumentFile() {
         return documentFile.get();
     }
 
@@ -70,7 +67,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      * @param documentFile the new {@link DocumentFile} of the managed {@link RestWebServiceDocument}.
      */
     @Override
-    public void setDocumentFile(@Nullable DocumentFile documentFile) {
+    public void setDocumentFile(@NotNull DocumentFile documentFile) {
         this.documentFile.set(documentFile);
     }
 

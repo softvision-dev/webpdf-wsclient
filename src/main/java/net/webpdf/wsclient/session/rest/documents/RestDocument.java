@@ -26,21 +26,21 @@ public interface RestDocument extends Document {
      *
      * @return The document ID of the managed {@link RestDocument}.
      */
-    @Nullable String getDocumentId();
+    @NotNull String getDocumentId();
 
     /**
      * Returns the {@link DocumentFile} of the managed {@link RestDocument}.
      *
      * @return The {@link DocumentFile} of the managed {@link RestDocument}.
      */
-    @Nullable DocumentFile getDocumentFile();
+    @NotNull DocumentFile getDocumentFile();
 
     /**
      * Sets the {@link DocumentFile} of the managed {@link RestDocument}.
      *
      * @param documentFile the new {@link DocumentFile} of the managed {@link RestDocument}.
      */
-    void setDocumentFile(@Nullable DocumentFile documentFile);
+    void setDocumentFile(@NotNull DocumentFile documentFile);
 
     /**
      * Returns the {@link HistoryEntry}s of the managed {@link RestDocument}.
