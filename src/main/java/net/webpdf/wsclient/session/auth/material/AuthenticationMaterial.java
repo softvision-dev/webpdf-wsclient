@@ -51,7 +51,16 @@ public class AuthenticationMaterial implements AuthMaterial {
      */
     @Override
     public @Nullable String getRawAuthHeader() {
-        return AuthMethod.BASIC_AUTHORIZATION.getKey() + " " + DatatypeConverter.printBase64Binary(
+        return AuthMethod.BASIC_AUTHORIZATION.getKey() + " " + getToken();
+    }
+
+    /**
+     * Returns the raw String token, that shall be passed to the authorization {@link Header}.
+     *
+     * @return The raw String token, that shall be passed to the authorization {@link Header}.
+     */
+    public @NotNull String getToken() {
+        return DatatypeConverter.printBase64Binary(
                 (userName + ":" + new String(password)).getBytes()
         );
     }

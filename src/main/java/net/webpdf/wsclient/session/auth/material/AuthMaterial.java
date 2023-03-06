@@ -5,6 +5,7 @@ import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.message.BasicHeader;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -45,5 +46,12 @@ public interface AuthMaterial {
      * @return The {@link String} value of an authorization header, that shall be used by a {@link Session}.
      */
     @Nullable String getRawAuthHeader();
+
+    /**
+     * Returns the raw String token, that shall be passed to the authorization {@link Header}.
+     *
+     * @return The raw String token, that shall be passed to the authorization {@link Header}.
+     */
+    @NotNull String getToken();
 
 }

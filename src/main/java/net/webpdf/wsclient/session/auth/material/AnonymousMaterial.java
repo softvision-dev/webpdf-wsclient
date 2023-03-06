@@ -4,6 +4,7 @@ import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.core5.http.Header;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -45,6 +46,15 @@ public class AnonymousMaterial implements AuthMaterial {
     @Override
     public @Nullable String getRawAuthHeader() {
         return null;
+    }
+
+    /**
+     * Returns the raw String token, that shall be passed to the authorization {@link Header}.
+     *
+     * @return The raw String token, that shall be passed to the authorization {@link Header}.
+     */
+    public @NotNull String getToken() {
+        return "";
     }
 
 }
