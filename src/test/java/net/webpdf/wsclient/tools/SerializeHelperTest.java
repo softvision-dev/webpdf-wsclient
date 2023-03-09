@@ -136,8 +136,8 @@ public class SerializeHelperTest {
             SerializeHelper.fromXML(entity, OperationData.class);
             fail("ResultException expected");
         } catch (ClientResultException ex) {
-            assertEquals(ex.getWsclientError(), Error.INVALID_OPERATION_DATA,
-                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+            assertEquals(ex.getWsclientError(), Error.INVALID_HTTP_MESSAGE_CONTENT,
+                    String.format("Error-code %s expected.", Error.INVALID_HTTP_MESSAGE_CONTENT.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -147,8 +147,8 @@ public class SerializeHelperTest {
             SerializeHelper.fromJSON(entity, OperationData.class);
             fail("ResultException expected");
         } catch (ClientResultException ex) {
-            assertEquals(ex.getWsclientError(), Error.INVALID_OPERATION_DATA,
-                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+            assertEquals(ex.getWsclientError(), Error.INVALID_HTTP_MESSAGE_CONTENT,
+                    String.format("Error-code %s expected.", Error.INVALID_HTTP_MESSAGE_CONTENT.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -160,8 +160,8 @@ public class SerializeHelperTest {
             SerializeHelper.fromXML((StreamSource) null, OperationData.class);
             fail("ResultException expected");
         } catch (ClientResultException ex) {
-            assertEquals(ex.getWsclientError(), Error.INVALID_OPERATION_DATA,
-                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+            assertEquals(ex.getWsclientError(), Error.INVALID_HTTP_MESSAGE_CONTENT,
+                    String.format("Error-code %s expected.", Error.INVALID_HTTP_MESSAGE_CONTENT.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -170,8 +170,8 @@ public class SerializeHelperTest {
             SerializeHelper.fromXML((HttpEntity) null, OperationData.class);
             fail("ResultException expected");
         } catch (ClientResultException ex) {
-            assertEquals(ex.getWsclientError(), Error.INVALID_OPERATION_DATA,
-                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+            assertEquals(ex.getWsclientError(), Error.INVALID_HTTP_MESSAGE_CONTENT,
+                    String.format("Error-code %s expected.", Error.INVALID_HTTP_MESSAGE_CONTENT.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -180,8 +180,8 @@ public class SerializeHelperTest {
             SerializeHelper.fromJSON((StreamSource) null, OperationData.class);
             fail("ResultException expected");
         } catch (ClientResultException ex) {
-            assertEquals(ex.getWsclientError(), Error.INVALID_OPERATION_DATA,
-                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+            assertEquals(ex.getWsclientError(), Error.INVALID_HTTP_MESSAGE_CONTENT,
+                    String.format("Error-code %s expected.", Error.INVALID_HTTP_MESSAGE_CONTENT.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }
@@ -190,8 +190,8 @@ public class SerializeHelperTest {
             SerializeHelper.fromJSON((HttpEntity) null, OperationData.class);
             fail("ResultException expected");
         } catch (ClientResultException ex) {
-            assertEquals(ex.getWsclientError(), Error.INVALID_OPERATION_DATA,
-                    String.format("Error-code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
+            assertEquals(ex.getWsclientError(), Error.INVALID_HTTP_MESSAGE_CONTENT,
+                    String.format("Error-code %s expected.", Error.INVALID_HTTP_MESSAGE_CONTENT.getCode()));
         } catch (ResultException ex) {
             fail("A ClientResultException had been expected.");
         }

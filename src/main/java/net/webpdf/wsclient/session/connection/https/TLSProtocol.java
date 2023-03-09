@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * @see #TLSV1
  * @see #TLSV1_1
  * @see #TLSV1_2
+ * @see #TLSV1_3
  */
 public enum TLSProtocol {
 
@@ -29,7 +30,11 @@ public enum TLSProtocol {
     /**
      * Transport Layer Security (protocol) version 1.2
      */
-    TLSV1_2("TLSv1.2");
+    TLSV1_2("TLSv1.2"),
+    /**
+     * Transport Layer Security (protocol) version 1.3
+     */
+    TLSV1_3("TLSv1.3");
 
     private final @NotNull String name;
 

@@ -129,7 +129,7 @@ public abstract class RestWebService<T_OPERATION_DATA, T_OPERATION_PARAMETER, T_
                     ContentType.create(DataFormat.JSON.getMimeType(), StandardCharsets.UTF_8)
             );
         } catch (UnsupportedCharsetException ex) {
-            throw new ClientResultException(Error.TO_XML_JSON, ex);
+            throw new ClientResultException(Error.XML_OR_JSON_CONVERSION_FAILURE, ex);
         }
     }
 

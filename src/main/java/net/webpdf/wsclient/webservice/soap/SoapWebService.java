@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.xml.namespace.QName;
+import java.io.File;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -70,7 +72,13 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
 
     /**
      * <p>
-     * Execute the webservice operation and return the resulting {@link T_SOAP_DOCUMENT}.
+     * Execute the webservice operation and return the resulting {@link T_SOAP_DOCUMENT}.<br>
+     * You can write the result of the webservice call via: {@link SoapDocument#writeResult(File)} or
+     * {@link SoapDocument#writeResult(OutputStream)}
+     * </p>
+     * <p>
+     * <b>Be aware:</b> A {@link SoapDocument} is using {@link DataHandler} objects, which might require to be closed,
+     * to avoid resource leaks. You should call {@link SoapDocument#close()} on the hereby provided result document.
      * </p>
      * <p>
      * <b>Be aware:</b> Most webservices require a source {@link T_SOAP_DOCUMENT}, with few exceptions, such as the
@@ -88,7 +96,14 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
     /**
      * <p>
      * Execute the webservice operation for the given source {@link T_SOAP_DOCUMENT} and return the
-     * resulting {@link T_SOAP_DOCUMENT}.
+     * resulting {@link T_SOAP_DOCUMENT}.<br>
+     * You can write the result of the webservice call via: {@link SoapDocument#writeResult(File)} or
+     * {@link SoapDocument#writeResult(OutputStream)} on either the returned or the source document.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> The hereby returned {@link SoapDocument} is identical to the given source document.<br>
+     * <b>Be aware:</b> A {@link SoapDocument} is using {@link DataHandler} objects, which might require to be closed,
+     * to avoid resource leaks. You should call {@link SoapDocument#close()} on the hereby provided result document.
      * </p>
      *
      * @param sourceDocument The source {@link T_SOAP_DOCUMENT}, that shall be processed.

@@ -59,7 +59,7 @@ public class SerializeHelper {
             }
             return response.toString();
         } catch (IOException ex) {
-            throw new ClientResultException(Error.INVALID_OPERATION_DATA, ex);
+            throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT, ex);
         }
     }
 
@@ -76,7 +76,7 @@ public class SerializeHelper {
             throws ResultException {
         try {
             if (httpEntity == null) {
-                throw new ClientResultException(Error.INVALID_OPERATION_DATA);
+                throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT);
             }
             String response = EntityUtils.toString(httpEntity);
 
@@ -85,7 +85,7 @@ public class SerializeHelper {
                 return fromXML(streamSource, type);
             }
         } catch (IOException | ParseException ex) {
-            throw new ClientResultException(Error.INVALID_OPERATION_DATA, ex);
+            throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT, ex);
         }
     }
 
@@ -102,7 +102,7 @@ public class SerializeHelper {
     public static <T> @NotNull T fromXML(@Nullable StreamSource streamSource, @NotNull Class<T> type)
             throws ResultException {
         if (streamSource == null) {
-            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
+            throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT);
         }
         XMLValidationEventHandler xmlValidationEventHandler = new XMLValidationEventHandler();
 
@@ -125,7 +125,7 @@ public class SerializeHelper {
             return type.cast(jaxbElement.getValue());
 
         } catch (SAXException | JAXBException ex) {
-            throw new ClientResultException(Error.INVALID_OPERATION_DATA, ex)
+            throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT, ex)
                     .appendMessage(xmlValidationEventHandler.getMessages());
         }
     }
@@ -142,7 +142,7 @@ public class SerializeHelper {
     public static <T> @NotNull T fromJSON(@Nullable HttpEntity httpEntity, @NotNull Class<T> type)
             throws ResultException {
         if (httpEntity == null) {
-            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
+            throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT);
         }
         String response = SerializeHelper.getResponseContent(httpEntity);
         try (StringReader stringReader = new StringReader(response)) {
@@ -164,7 +164,7 @@ public class SerializeHelper {
     public static <T> @NotNull T fromJSON(@Nullable StreamSource streamSource, @NotNull Class<T> type)
             throws ResultException {
         if (streamSource == null) {
-            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
+            throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT);
         }
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JakartaXmlBindAnnotationModule());
@@ -173,7 +173,7 @@ public class SerializeHelper {
         try (Reader reader = streamSource.getReader()) {
             return objectMapper.readValue(reader, type);
         } catch (IOException ex) {
-            throw new ClientResultException(Error.INVALID_OPERATION_DATA, ex);
+            throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT, ex);
         }
     }
 
@@ -192,7 +192,7 @@ public class SerializeHelper {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException ex) {
-            throw new ClientResultException(Error.TO_XML_JSON, ex);
+            throw new ClientResultException(Error.XML_OR_JSON_CONVERSION_FAILURE, ex);
         }
     }
 
@@ -206,7 +206,7 @@ public class SerializeHelper {
      */
     public static @NotNull String toXML(@Nullable Object object, @NotNull Class<?> type) throws ResultException {
         if (object == null) {
-            throw new ClientResultException(Error.TO_XML_JSON);
+            throw new ClientResultException(Error.XML_OR_JSON_CONVERSION_FAILURE);
         }
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(type);
@@ -220,7 +220,7 @@ public class SerializeHelper {
 
             return stringWriter.toString();
         } catch (JAXBException ex) {
-            throw new ClientResultException(Error.TO_XML_JSON, ex);
+            throw new ClientResultException(Error.XML_OR_JSON_CONVERSION_FAILURE, ex);
         }
     }
 

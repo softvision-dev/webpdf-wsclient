@@ -78,10 +78,10 @@ public final class SessionFactory {
                 case REST:
                     return (T_SESSION) new RestWebServiceSession(serverContext, authProvider);
                 default:
-                    throw new ClientResultException(Error.SESSION_CREATE);
+                    throw new ClientResultException(Error.UNKNOWN_SESSION_TYPE);
             }
         } catch (ClassCastException ex) {
-            throw new ClientResultException(Error.SESSION_CREATE, ex);
+            throw new ClientResultException(Error.UNKNOWN_SESSION_TYPE, ex);
         }
     }
 

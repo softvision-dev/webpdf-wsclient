@@ -36,9 +36,9 @@ public class WebserviceTLSIntegrationTest {
     public TestServer testServer = new TestServer();
 
     private void testSoapSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
-        TLSContext tlsContext = new TLSContext(TLSProtocol.TLSV1_2, selfSigned);
+        TLSContext tlsContext = new TLSContext(TLSProtocol.TLSV1_3, selfSigned);
         if (keystoreFile != null) {
-            tlsContext = new TLSContext(TLSProtocol.TLSV1_2, selfSigned,
+            tlsContext = new TLSContext(TLSProtocol.TLSV1_3, selfSigned,
                     keystoreFile, "");
         }
 
@@ -101,9 +101,9 @@ public class WebserviceTLSIntegrationTest {
     }
 
     private void testRestSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
-        TLSContext tlsContext = new TLSContext(TLSProtocol.TLSV1_2, selfSigned);
+        TLSContext tlsContext = new TLSContext(TLSProtocol.TLSV1_3, selfSigned);
         if (keystoreFile != null) {
-            tlsContext = new TLSContext(TLSProtocol.TLSV1_2, selfSigned,
+            tlsContext = new TLSContext(TLSProtocol.TLSV1_3, selfSigned,
                     keystoreFile, "");
         }
 

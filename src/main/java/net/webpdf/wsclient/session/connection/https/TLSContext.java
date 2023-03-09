@@ -73,12 +73,12 @@ public class TLSContext {
 
     /**
      * Prepares a fresh the {@link TLSContext} for an HTTPS connection.<br>
-     * This empty default constructor defaults to {@link TLSProtocol#TLSV1_2}, does not allow self-signed
+     * This empty default constructor defaults to {@link TLSProtocol#TLSV1_3}, does not allow self-signed
      * {@link X509Certificate}s and will not configure a truststore.
      */
     @SuppressWarnings("unused")
     public TLSContext() {
-        this(TLSProtocol.TLSV1_2, false);
+        this(TLSProtocol.TLSV1_3, false);
     }
 
     /**
@@ -117,7 +117,7 @@ public class TLSContext {
 
             } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException |
                      IOException ex) {
-                throw new ClientResultException(Error.HTTPS_IO_ERROR, ex);
+                throw new ClientResultException(Error.TLS_INITIALIZATION_FAILURE, ex);
             }
         }
         return sslContext;

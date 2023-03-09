@@ -470,7 +470,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
             return new StringEntity(SerializeHelper.toJSON(parameter),
                     ContentType.create(DataFormat.JSON.getMimeType(), StandardCharsets.UTF_8));
         } catch (UnsupportedCharsetException ex) {
-            throw new ClientResultException(Error.TO_XML_JSON, ex);
+            throw new ClientResultException(Error.XML_OR_JSON_CONVERSION_FAILURE, ex);
         }
     }
 
