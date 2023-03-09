@@ -1,20 +1,9 @@
 package net.webpdf.wsclient.session.connection.https;
 
-import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.ResultException;
-import org.apache.hc.core5.ssl.SSLContextBuilder;
-import org.apache.hc.core5.ssl.SSLContexts;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import java.io.File;
-import java.io.IOException;
-import java.security.*;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 /**
@@ -28,13 +17,10 @@ import java.security.cert.X509Certificate;
  */
 public class TLSContext {
 
-    private static final TrustManager[] TRUST_ALL = new TrustManager[]{new AlwaysTrustManager()};
-
     private final @Nullable File trustStore;
     private final @Nullable String trustStorePassword;
     private final boolean allowSelfSigned;
     private final @NotNull TLSProtocol tlsProtocol;
-    private @Nullable SSLContext sslContext;
 
     /**
      * <p>
@@ -82,48 +68,6 @@ public class TLSContext {
     }
 
     /**
-     * <p>
-     * Returns (and initializes) the resulting {@link SSLContext}.
-     * </p>
-     * <p>
-     * <b>Information:</b> Actually this is not exactly a "SSL" context, but a "TLS" context.
-     * TLS is the follow up protocol of the (better known) SSL (Secure Socket Layer) protocol - SSL is no longer
-     * supported by the webPDF wsclient, as it is obsolete and insecure.
-     * </p>
-     *
-     * @return The resulting {@link SSLContext}.
-     */
-    public @NotNull SSLContext getSslContext() throws ResultException {
-        if (sslContext == null) {
-            try {
-                if (this.trustStore != null || allowSelfSigned) {
-                    this.sslContext = trustStore != null ?
-                            new SSLContextBuilder()
-                                    .setProtocol(tlsProtocol.getName())
-                                    .loadTrustMaterial(
-                                            trustStore, trustStorePassword != null ?
-                                                    trustStorePassword.toCharArray() : null, null
-                                    )
-                                    .build() :
-                            new SSLContextBuilder()
-                                    .setProtocol(tlsProtocol.getName())
-                                    .build();
-                    if (allowSelfSigned) {
-                        sslContext.init(new KeyManager[0], TRUST_ALL, new SecureRandom());
-                    }
-                } else {
-                    this.sslContext = SSLContexts.createDefault();
-                }
-
-            } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException |
-                     IOException ex) {
-                throw new ClientResultException(Error.TLS_INITIALIZATION_FAILURE, ex);
-            }
-        }
-        return sslContext;
-    }
-
-    /**
      * Returns {@code true}, if self-signed {@link X509Certificate}s shall be accepted.
      *
      * @return {@code true}, if self-signed {@link X509Certificate}s shall be accepted.
@@ -141,6 +85,24 @@ public class TLSContext {
     @SuppressWarnings("unused")
     public @NotNull TLSProtocol getTlsProtocol() {
         return tlsProtocol;
+    }
+
+    /**
+     * Returns the selected {@link X509Certificate} truststore file
+     *
+     * @return the selected {@link X509Certificate} truststore file
+     */
+    public @Nullable File getTrustStore() {
+        return this.trustStore;
+    }
+
+    /**
+     * Returns the password for the selected {@link X509Certificate} truststore file
+     *
+     * @return The password for the selected {@link X509Certificate} truststore file
+     */
+    public @Nullable String getTrustStorePassword() {
+        return this.trustStorePassword;
     }
 
 }

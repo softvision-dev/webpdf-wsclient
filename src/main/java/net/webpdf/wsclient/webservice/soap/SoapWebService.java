@@ -14,7 +14,6 @@ import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.schema.operation.SettingsType;
 import net.webpdf.wsclient.schema.stubs.WebServiceException;
 import net.webpdf.wsclient.session.auth.material.AuthMaterial;
-import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.webservice.AbstractWebService;
@@ -26,6 +25,7 @@ import org.apache.hc.core5.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.net.ssl.SSLContext;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.OutputStream;
@@ -53,7 +53,6 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
     private final @NotNull QName qname;
     private final @NotNull URI webserviceURL;
     private final @NotNull T_WEBPDF_PORT port;
-    private final @Nullable TLSContext tlsContext;
 
     /**
      * Creates a webservice interface of the given {@link WebServiceType} for the given {@link SoapSession}.
@@ -65,7 +64,6 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
             throws ResultException {
         super(webServiceType, session);
         this.qname = new QName(webServiceType.getSoapNamespaceURI(), webServiceType.getSoapLocalPart());
-        this.tlsContext = getSession().getServerContext().getTlsContext();
         this.webserviceURL = getSession().getURI(webServiceType.getSoapEndpoint());
         this.port = provideWSPort();
     }
@@ -239,9 +237,9 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
 
         // set target URL
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.webserviceURL.toString());
-
+        SSLContext tlsContext = getSession().getTLSContext();
         if (tlsContext != null) {
-            bindingProvider.getRequestContext().put(SSL_SOCKET_FACTORY, tlsContext.getSslContext().getSocketFactory());
+            bindingProvider.getRequestContext().put(SSL_SOCKET_FACTORY, tlsContext.getSocketFactory());
         }
     }
 

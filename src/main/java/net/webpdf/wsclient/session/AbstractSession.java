@@ -5,17 +5,32 @@ import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.session.auth.material.AuthMaterial;
 import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.session.connection.ServerContextSettings;
+import net.webpdf.wsclient.session.connection.https.AlwaysTrustManager;
+import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.rest.AbstractRestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <p>
@@ -25,11 +40,13 @@ import java.util.List;
  */
 public abstract class AbstractSession implements Session {
 
+    private static final TrustManager[] TRUST_ALL = new TrustManager[]{new AlwaysTrustManager()};
     private final @NotNull WebServiceProtocol webServiceProtocol;
     private final @NotNull ServerContextSettings serverContext;
     private final @NotNull AuthProvider authProvider;
     private final @NotNull String basePath;
     private final @NotNull URI baseUrl;
+    private final @NotNull AtomicReference<SSLContext> sslContext = new AtomicReference<>();
 
     /**
      * Creates a new {@link AbstractRestSession} instance providing connection information and authorization objects
@@ -128,6 +145,54 @@ public abstract class AbstractSession implements Session {
         } catch (URISyntaxException ex) {
             throw new ClientResultException(Error.INVALID_URL, ex);
         }
+    }
+
+    /**
+     * <p>
+     * Returns (and initializes) the {@link Session}´s {@link SSLContext}.
+     * </p>
+     * <p>
+     * <b>Information:</b> Actually this is not exactly a "SSL" context, but a "TLS" context.
+     * TLS is the follow up protocol of the (better known) SSL (Secure Socket Layer) protocol - SSL is no longer
+     * supported by the webPDF wsclient, as it is obsolete and insecure.
+     * </p>
+     *
+     * @return The resulting {@link SSLContext}.
+     */
+    public @Nullable SSLContext getTLSContext() throws ResultException {
+        TLSContext tlsContext = getServerContext().getTlsContext();
+        if (sslContext.get() != null) {
+            return sslContext.get();
+        }
+        if (tlsContext == null) {
+            return null;
+        }
+        try {
+            if (tlsContext.getTrustStore() != null || tlsContext.isAllowSelfSigned()) {
+                this.sslContext.set(tlsContext.getTrustStore() != null ?
+                        new SSLContextBuilder()
+                                .setProtocol(tlsContext.getTlsProtocol().getName())
+                                .loadTrustMaterial(
+                                        tlsContext.getTrustStore(),
+                                        tlsContext.getTrustStorePassword() != null ?
+                                                tlsContext.getTrustStorePassword().toCharArray() :
+                                                null, null
+                                )
+                                .build() :
+                        new SSLContextBuilder()
+                                .setProtocol(tlsContext.getTlsProtocol().getName())
+                                .build());
+                if (tlsContext.isAllowSelfSigned()) {
+                    this.sslContext.get().init(new KeyManager[0], TRUST_ALL, new SecureRandom());
+                }
+            } else {
+                this.sslContext.set(SSLContexts.createDefault());
+            }
+        } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException |
+                 IOException ex) {
+            throw new ClientResultException(Error.TLS_INITIALIZATION_FAILURE, ex);
+        }
+        return this.sslContext.get();
     }
 
 }

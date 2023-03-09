@@ -7,7 +7,9 @@ import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
 import org.apache.hc.core5.http.NameValuePair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.net.ssl.SSLContext;
 import java.net.URI;
 import java.util.List;
 
@@ -60,6 +62,20 @@ public interface Session extends AutoCloseable {
      * @throws ResultException a {@link ResultException}
      */
     @NotNull URI getURI(@NotNull String subPath, List<NameValuePair> parameters) throws ResultException;
+
+    /**
+     * <p>
+     * Returns (and initializes) the {@link Session}´s {@link SSLContext}.
+     * </p>
+     * <p>
+     * <b>Information:</b> Actually this is not exactly a "SSL" context, but a "TLS" context.
+     * TLS is the follow up protocol of the (better known) SSL (Secure Socket Layer) protocol - SSL is no longer
+     * supported by the webPDF wsclient, as it is obsolete and insecure.
+     * </p>
+     *
+     * @return The resulting {@link SSLContext}.
+     */
+    @Nullable SSLContext getTLSContext() throws ResultException;
 
     /**
      * Close the {@link Session}.

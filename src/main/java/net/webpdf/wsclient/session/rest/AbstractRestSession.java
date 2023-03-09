@@ -30,6 +30,7 @@ import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 
 /**
@@ -76,9 +77,10 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
             httpClientBuilder.setRoutePlanner(new DefaultProxyRoutePlanner(
                     getServerContext().getProxy().getHost()));
         }
-        if (getServerContext().getTlsContext() != null) {
+        SSLContext tlsContext = getTLSContext();
+        if (tlsContext != null) {
             LayeredConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                    getServerContext().getTlsContext().getSslContext(), (hostname, session) -> true);
+                    tlsContext, (hostname, session) -> true);
             Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
                     .register("http", PlainConnectionSocketFactory.getSocketFactory())
                     .register("https", sslSocketFactory)
