@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.http;
 
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.testsuite.server.ServerType;
@@ -38,7 +38,7 @@ public class HttpRestRequestIntegrationTest {
             File file = testResources.getResource("test.pdf");
             File outputFile = testResources.getTempFolder().newFile();
             try (RestWebServiceSession session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword()));
                  OutputStream fos = Files.newOutputStream(outputFile.toPath())) {
@@ -81,7 +81,7 @@ public class HttpRestRequestIntegrationTest {
                 () -> {
                     //noinspection unused
                     try (RestWebServiceSession session = SessionFactory.createInstance(
-                            new ServerContext(WebServiceProtocol.REST,
+                            new SessionContext(WebServiceProtocol.REST,
                                     testServer.getServer(ServerType.LOCAL)),
                             new UserAuthProvider("invalid", "invalid"))) {
                         fail("The login itself shall fail and this line should never be reached.");
@@ -95,7 +95,7 @@ public class HttpRestRequestIntegrationTest {
         assertThrows(ResultException.class,
                 () -> {
                     try (RestWebServiceSession session = SessionFactory.createInstance(
-                            new ServerContext(WebServiceProtocol.REST,
+                            new SessionContext(WebServiceProtocol.REST,
                                     testServer.getServer(ServerType.LOCAL)))) {
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest,

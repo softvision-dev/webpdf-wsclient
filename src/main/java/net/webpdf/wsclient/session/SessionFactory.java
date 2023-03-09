@@ -2,8 +2,8 @@ package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
-import net.webpdf.wsclient.session.auth.AuthProvider;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.auth.SessionAuthProvider;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  * managing a connection with a webPDF server.<br>
  * </p>
  * <p>
- * <b>Be Aware:</b> Should you not set an {@link AuthProvider} the {@link AnonymousAuthProvider} shall be used by
+ * <b>Be Aware:</b> Should you not set an {@link SessionAuthProvider} the {@link AnonymousAuthProvider} shall be used by
  * default, and "anonymous sessions" may or may not be allowed by your webPDF server.<br>
  * <b>It is never possible to establish a session with the webPDF server without proper authorization.</b>
  * </p>
@@ -32,7 +32,7 @@ public final class SessionFactory {
 
     /**
      * <p>
-     * Creates a HTTP or HTTPS {@link Session} with a webPDF server, based on the given {@link ServerContext}.
+     * Creates a HTTP or HTTPS {@link Session} with a webPDF server, based on the given {@link SessionContext}.
      * </p>
      * <p>
      * This factory will either produce a {@link SoapWebServiceSession} or a {@link RestWebServiceSession}. It is not
@@ -43,34 +43,44 @@ public final class SessionFactory {
      * may not be allowed by your webPDF server - you should check that first, before using this factory method.<br>
      * <b>It is never possible to establish a session with the webPDF server without proper authorization.</b>
      * </p>
+     * <p>
+     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link SessionAuthProvider} are required to serve multiple
+     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link SessionAuthProvider}
+     * per {@link Session} you create.
+     * </p>
      *
-     * @param serverContext The {@link ServerContext} containing advanced options for the session initialization.
+     * @param serverContext The {@link SessionContext} containing advanced options for the session initialization.
      * @return The {@link Session} organizing the communication with the webPDF server.
      * @throws ResultException Shall be thrown in case establishing the {@link Session} failed.
      */
     public static <T_SESSION extends Session> @NotNull T_SESSION createInstance(
-            @NotNull ServerContext serverContext) throws ResultException {
+            @NotNull SessionContext serverContext) throws ResultException {
         return createInstance(serverContext, new AnonymousAuthProvider());
     }
 
     /**
      * <p>
-     * Creates a HTTP or HTTPS {@link Session} with a webPDF server, based on the given {@link ServerContext} and
-     * {@link AuthProvider}.
+     * Creates a HTTP or HTTPS {@link Session} with a webPDF server, based on the given {@link SessionContext} and
+     * {@link SessionAuthProvider}.
      * </p>
      * <p>
      * This factory will either produce a {@link SoapWebServiceSession} or a {@link RestWebServiceSession}. It is not
      * fit to produce custom session types.
      * </p>
+     * <p>
+     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link SessionAuthProvider} are required to serve multiple
+     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link SessionAuthProvider}
+     * per {@link Session} you create.
+     * </p>
      *
-     * @param serverContext The {@link ServerContext} containing advanced options for the {@link Session}.
-     * @param authProvider  The {@link AuthProvider} to use for authentication/authorization of the {@link Session}.
+     * @param serverContext The {@link SessionContext} containing advanced options for the {@link Session}.
+     * @param authProvider  The {@link SessionAuthProvider} to use for authentication/authorization of the {@link Session}.
      * @return The {@link Session} organizing the communication with the webPDF server.
      * @throws ResultException Shall be thrown in case establishing the {@link Session} failed.
      */
     @SuppressWarnings("unchecked")
     public static <T_SESSION extends Session> @NotNull T_SESSION createInstance(
-            @NotNull ServerContext serverContext, @NotNull AuthProvider authProvider) throws ResultException {
+            @NotNull SessionContext serverContext, @NotNull SessionAuthProvider authProvider) throws ResultException {
         try {
             switch (serverContext.getWebServiceProtocol()) {
                 case SOAP:

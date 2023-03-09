@@ -1,6 +1,6 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -30,7 +30,7 @@ public class SoapWebserviceIntegrationTest {
     public void testConverter() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ConverterWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.CONVERTER);
@@ -63,7 +63,7 @@ public class SoapWebserviceIntegrationTest {
     public void testToolbox() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ToolboxWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.TOOLBOX);
@@ -114,7 +114,7 @@ public class SoapWebserviceIntegrationTest {
     public void testSignature() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 SignatureWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.SIGNATURE);
@@ -159,7 +159,7 @@ public class SoapWebserviceIntegrationTest {
     public void testPdfa() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 PdfaWebService<SoapDocument> webService = session.createWSInstance(WebServiceType.PDFA);
 
@@ -190,7 +190,7 @@ public class SoapWebserviceIntegrationTest {
     public void testOcr() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 OcrWebService<SoapDocument> webService = session.createWSInstance(WebServiceType.OCR);
 
@@ -221,7 +221,7 @@ public class SoapWebserviceIntegrationTest {
     public void testBarcode() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 BarcodeWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.BARCODE);
@@ -277,7 +277,7 @@ public class SoapWebserviceIntegrationTest {
     public void testUrlConverter() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 UrlConverterWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.URLCONVERTER);
@@ -306,7 +306,7 @@ public class SoapWebserviceIntegrationTest {
     public void testConverterRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 ConverterWebService<SoapDocument> webService =
@@ -335,7 +335,7 @@ public class SoapWebserviceIntegrationTest {
     public void testToolboxRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 ToolboxWebService<SoapDocument> webService =
@@ -386,7 +386,7 @@ public class SoapWebserviceIntegrationTest {
     public void testSignatureRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 SignatureWebService<SoapDocument> webService =
@@ -429,7 +429,7 @@ public class SoapWebserviceIntegrationTest {
     public void testPdfaRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 PdfaWebService<SoapDocument> webService = session.createWSInstance(WebServiceType.PDFA);
@@ -460,7 +460,7 @@ public class SoapWebserviceIntegrationTest {
     public void testOcrRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 OcrWebService<SoapDocument> webService = session.createWSInstance(WebServiceType.OCR);
@@ -491,7 +491,7 @@ public class SoapWebserviceIntegrationTest {
     public void testBarcodeRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 BarcodeWebService<SoapDocument> webService =
@@ -548,7 +548,7 @@ public class SoapWebserviceIntegrationTest {
     public void testUrlConverterRemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 UrlConverterWebService<SoapDocument> webService =

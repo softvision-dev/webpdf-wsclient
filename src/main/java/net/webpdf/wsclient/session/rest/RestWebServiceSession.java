@@ -1,8 +1,9 @@
 package net.webpdf.wsclient.session.rest;
 
-import net.webpdf.wsclient.session.auth.AuthProvider;
-import net.webpdf.wsclient.session.connection.ServerContext;
-import net.webpdf.wsclient.session.connection.ServerContextSettings;
+import net.webpdf.wsclient.session.Session;
+import net.webpdf.wsclient.session.auth.SessionAuthProvider;
+import net.webpdf.wsclient.session.connection.SessionContext;
+import net.webpdf.wsclient.session.connection.SessionContextSettings;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
 import net.webpdf.wsclient.session.rest.documents.DocumentManager;
@@ -30,16 +31,23 @@ import java.io.InputStream;
 public class RestWebServiceSession extends AbstractRestSession<RestWebServiceDocument> {
 
     /**
+     * <p>
      * Creates a new {@link RestWebServiceSession} instance providing connection information, authorization objects and
      * a {@link RestWebServiceDocumentManager} for a webPDF server-client {@link RestSession}.
+     * </p>
+     * <p>
+     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link SessionAuthProvider} are required to serve multiple
+     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link SessionAuthProvider}
+     * per {@link Session} you create.
+     * </p>
      *
-     * @param serverContext The {@link ServerContext} initializing the {@link ServerContextSettings} of this
+     * @param serverContext The {@link SessionContext} initializing the {@link SessionContextSettings} of this
      *                      {@link RestSession}.
-     * @param authProvider  The {@link AuthProvider} for authentication/authorization of this {@link RestSession}.
+     * @param authProvider  The {@link SessionAuthProvider} for authentication/authorization of this {@link RestSession}.
      * @throws ResultException Shall be thrown, in case establishing the session failed.
      */
     public RestWebServiceSession(
-            @NotNull ServerContext serverContext, @NotNull AuthProvider authProvider) throws ResultException {
+            @NotNull SessionContext serverContext, @NotNull SessionAuthProvider authProvider) throws ResultException {
         super(serverContext, authProvider);
     }
 

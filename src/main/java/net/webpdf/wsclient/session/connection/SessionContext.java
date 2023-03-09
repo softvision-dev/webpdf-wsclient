@@ -2,7 +2,7 @@ package net.webpdf.wsclient.session.connection;
 
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.session.auth.AuthProvider;
+import net.webpdf.wsclient.session.auth.SessionAuthProvider;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
@@ -13,17 +13,21 @@ import java.net.URL;
 
 /**
  * <p>
- * An instance of {@link ServerContext} collects and provides advanced settings for the initialization of
+ * An instance of {@link SessionContext} collects and provides advanced settings for the initialization of
  * a webPDF {@link Session}. During it´s existence a {@link Session} will obey those settings, when making requests
  * to a webPDF server.
  * </p>
  * <p>
- * <b>Be aware:</b> A {@link Session} will deduce it´s {@link ServerContextSettings} from a {@link ServerContext}.
- * The {@link ServerContextSettings} of a running {@link Session} can not be changed.
+ * <b>Be aware:</b> A {@link Session} will deduce it´s {@link SessionContextSettings} from a {@link SessionContext}.
+ * The {@link SessionContextSettings} of a running {@link Session} can not be changed.
+ * </p>
+ * <p>
+ * <b>Be aware:</b> A {@link SessionContext} is not required to serve multiple {@link Session}s at a time. It is
+ * expected to create a new {@link SessionContext} for each existing {@link Session}.
  * </p>
  */
 @SuppressWarnings("unused")
-public class ServerContext {
+public class SessionContext {
 
     private final @NotNull WebServiceProtocol webServiceProtocol;
     private final @NotNull URL url;
@@ -33,19 +37,23 @@ public class ServerContext {
 
     /**
      * <p>
-     * Instantiates a new {@link ServerContext} for {@link Session}s.<br>
+     * Instantiates a new {@link SessionContext} for {@link Session}s.<br>
      * The constructor initializes the non-optional settings, that must be provided. All further settings are optional,
      * and you may or may not require to set them.
      * </p>
      * <p>
-     * <b>Be aware:</b> A {@link Session} will deduce it´s {@link ServerContextSettings} from a {@link ServerContext}.
-     * The {@link ServerContextSettings} of a running {@link Session} can not be changed.
+     * <b>Be aware:</b> A {@link Session} will deduce it´s {@link SessionContextSettings} from a {@link SessionContext}.
+     * The {@link SessionContextSettings} of a running {@link Session} can not be changed.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> A {@link SessionContext} is not required to serve multiple {@link Session}s at a time. It is
+     * expected to create a new {@link SessionContext} for each existing {@link Session}.
      * </p>
      *
      * @param webServiceProtocol The {@link WebServiceProtocol} used to communicate with the server.
      * @param url                The {@link URL} of the server.
      */
-    public ServerContext(@NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url) {
+    public SessionContext(@NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url) {
         this.webServiceProtocol = webServiceProtocol;
         this.url = url;
     }
@@ -77,7 +85,7 @@ public class ServerContext {
      * @param tlsContext The {@link TLSContext}, that shall be used.
      * @return This {@link SessionFactory} itself.
      */
-    public @NotNull ServerContext setTlsContext(@Nullable TLSContext tlsContext) {
+    public @NotNull SessionContext setTlsContext(@Nullable TLSContext tlsContext) {
         this.tlsContext = tlsContext;
         return this;
     }
@@ -103,7 +111,7 @@ public class ServerContext {
      * @param proxyConfiguration The {@link ProxyConfiguration}, that shall be used.
      * @return This {@link SessionFactory} itself.
      */
-    public @NotNull ServerContext setProxy(@Nullable ProxyConfiguration proxyConfiguration) {
+    public @NotNull SessionContext setProxy(@Nullable ProxyConfiguration proxyConfiguration) {
         this.proxyConfiguration = proxyConfiguration;
         return this;
     }
@@ -125,14 +133,14 @@ public class ServerContext {
      * Sets a skew time for the token refresh of {@link Session}s.<br>
      * The skew time helps to avoid using expired authorization tokens. The returned value (in seconds) is subtracted
      * from the expiry time to avoid issues possibly caused by transfer delays.<br>
-     * It can not be guaranteed, but is recommended, that custom implementations of {@link AuthProvider} handle this
+     * It can not be guaranteed, but is recommended, that custom implementations of {@link SessionAuthProvider} handle this
      * accordingly.
      * </p>
      *
      * @param skewTime The skew time in seconds, that shall be used.
      * @return This {@link SessionFactory} itself.
      */
-    public @NotNull ServerContext setSkewTime(int skewTime) {
+    public @NotNull SessionContext setSkewTime(int skewTime) {
         this.skewTime = skewTime;
         return this;
     }
@@ -142,7 +150,7 @@ public class ServerContext {
      * Returns a skew time for the token refresh of {@link Session}s.<br>
      * The skew time helps to avoid using expired authorization tokens. The returned value (in seconds) is subtracted
      * from the expiry time to avoid issues possibly caused by transfer delays.<br>
-     * It can not be guaranteed, but is recommended, that custom implementations of {@link AuthProvider} handle this
+     * It can not be guaranteed, but is recommended, that custom implementations of {@link SessionAuthProvider} handle this
      * accordingly.
      * </p>
      *

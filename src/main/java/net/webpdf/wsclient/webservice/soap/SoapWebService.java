@@ -25,7 +25,6 @@ import org.apache.hc.core5.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.net.ssl.SSLContext;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.OutputStream;
@@ -237,9 +236,9 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
 
         // set target URL
         bindingProvider.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.webserviceURL.toString());
-        SSLContext tlsContext = getSession().getTLSContext();
-        if (tlsContext != null) {
-            bindingProvider.getRequestContext().put(SSL_SOCKET_FACTORY, tlsContext.getSocketFactory());
+        if (getSession().getSessionContext().getTlsContext() != null) {
+            bindingProvider.getRequestContext().put(SSL_SOCKET_FACTORY,
+                    getSession().getSessionContext().getTlsContext().create().getSocketFactory());
         }
     }
 

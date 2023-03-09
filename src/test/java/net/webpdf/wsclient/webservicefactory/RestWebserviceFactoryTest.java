@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.webservicefactory;
 
 import net.webpdf.wsclient.openapi.*;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.rest.RestSession;
@@ -36,7 +36,7 @@ public class RestWebserviceFactoryTest {
     private <T extends RestWebService<?, ?, RestDocument>> T getWebService(WebServiceType webServiceType)
             throws ResultException {
         try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                new ServerContext(WebServiceProtocol.REST,
+                new SessionContext(WebServiceProtocol.REST,
                         testServer.getServer(ServerType.LOCAL)))) {
             return WebServiceFactory.createInstance(session, webServiceType);
         }
@@ -49,7 +49,7 @@ public class RestWebserviceFactoryTest {
         String json = FileUtils.readFileToString(configFile, Charset.defaultCharset());
 
         try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                new ServerContext(WebServiceProtocol.REST,
+                new SessionContext(WebServiceProtocol.REST,
                         testServer.getServer(ServerType.LOCAL)))) {
             try (StringReader stringReader = new StringReader(json)) {
                 StreamSource streamSource = new StreamSource(stringReader);

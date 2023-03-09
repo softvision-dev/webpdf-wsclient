@@ -3,7 +3,7 @@ package net.webpdf.wsclient;
 import net.webpdf.wsclient.openapi.OperationConvertPdfa;
 import net.webpdf.wsclient.openapi.OperationPdfa;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
@@ -40,7 +40,7 @@ public class ThreadSynchronizationIntegrationTest {
         List<File> result = new CopyOnWriteArrayList<>();
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 executor.execute(() -> assertDoesNotThrow(() -> {
                     ConverterRestWebService<RestDocument> webService =

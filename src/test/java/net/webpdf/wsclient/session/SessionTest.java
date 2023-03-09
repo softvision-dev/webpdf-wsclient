@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.session.soap.SoapWebServiceSession;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ public class SessionTest {
         assertDoesNotThrow(() -> {
             URL url = new URL(SOME_URL);
             try (SoapWebServiceSession soapSession = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP, url),
+                    new SessionContext(WebServiceProtocol.SOAP, url),
                     new UserAuthProvider("usr", "pwd"))) {
                 assertNotNull(soapSession,
                         "SOAPSession should have been initialized.");

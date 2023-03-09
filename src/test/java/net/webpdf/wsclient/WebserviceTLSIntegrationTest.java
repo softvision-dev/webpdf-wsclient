@@ -2,7 +2,7 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.https.TLSProtocol;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.soap.SoapSession;
@@ -42,7 +42,7 @@ public class WebserviceTLSIntegrationTest {
         }
 
         try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                new ServerContext(WebServiceProtocol.SOAP, url)
+                new SessionContext(WebServiceProtocol.SOAP, url)
                         .setTlsContext(tlsContext))) {
             ConverterWebService<SoapDocument> webService =
                     session.createWSInstance(WebServiceType.CONVERTER);
@@ -106,7 +106,7 @@ public class WebserviceTLSIntegrationTest {
         }
 
         try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                new ServerContext(WebServiceProtocol.REST, url).
+                new SessionContext(WebServiceProtocol.REST, url).
                         setTlsContext(tlsContext))) {
             ConverterRestWebService<RestDocument> webService =
                     session.createWSInstance(WebServiceType.CONVERTER);

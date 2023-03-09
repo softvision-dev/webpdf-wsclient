@@ -1,7 +1,7 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaLevelType;
@@ -63,7 +63,7 @@ public class SoapCredentialsIntegrationTest {
     public void testWithUserCredentials() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider(
                             testServer.getLocalUser(), testServer.getLocalPassword()))) {
@@ -80,7 +80,7 @@ public class SoapCredentialsIntegrationTest {
             String xml = FileUtils.readFileToString(resFile, Charset.defaultCharset());
 
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)));
                  StringReader stringReader = new StringReader(xml)) {
                 ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,

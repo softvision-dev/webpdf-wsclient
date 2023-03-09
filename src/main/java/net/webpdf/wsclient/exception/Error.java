@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.exception;
 
 import net.webpdf.wsclient.session.Session;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.soap.SoapSession;
@@ -107,13 +107,13 @@ public enum Error {
      * </p>
      * <p>
      * A {@link Session} was unable to create a proper baseURL or subPath from the {@link URL} provided to the
-     * {@link ServerContext} - please check if that URL is correct.
+     * {@link SessionContext} - please check if that URL is correct.
      * </p>
      */
     INVALID_URL(-30, "Invalid URL."),
     /**
      * An error has occurred, while processing your HTTP/HTTPS request. Please check whether the webPDF server is
-     * running and reachable, also you might want to check your configured {@link ServerContext}.
+     * running and reachable, also you might want to check your configured {@link SessionContext}.
      */
     HTTP_IO_ERROR(-31, "HTTP/HTTPS IO error."),
     /**

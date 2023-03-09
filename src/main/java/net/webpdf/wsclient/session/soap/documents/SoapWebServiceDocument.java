@@ -27,6 +27,10 @@ import java.net.URI;
  * Such a {@link SoapWebServiceDocument} defines a source for the document, that shall be processed by a called
  * {@link SoapWebService} and a target resource for the document produced by that webservice.
  * </p>
+ * <p>
+ * <b>Be aware:</b> A {@link SoapDocument} is using {@link DataHandler}s, that might require closing to prevent resource
+ * leaks. You should always {@link #close()} {@link SoapDocument}s.
+ * </p>
  */
 public class SoapWebServiceDocument extends AbstractDocument implements SoapDocument {
 
@@ -43,6 +47,10 @@ public class SoapWebServiceDocument extends AbstractDocument implements SoapDocu
      * <b>Be aware:</b> Most webservices require a source document, with few exceptions. Before using this,
      * make sure that this is valid for the {@link WebService} call you intend to execute.
      * </p>
+     * <p>
+     * <b>Be aware:</b> A {@link SoapDocument} is using {@link DataHandler}s, that might require closing to prevent resource
+     * leaks. You should always {@link #close()} {@link SoapDocument}s.
+     * </p>
      */
     public SoapWebServiceDocument() {
         super(null);
@@ -51,11 +59,17 @@ public class SoapWebServiceDocument extends AbstractDocument implements SoapDocu
 
     /**
      * <p>
-     * Manages a {@link SoapDocument} originating from the given {@link InputStream}.<br>
+     * Manages a {@link SoapDocument} originating from the given {@link InputStream}.
+     * </p>
+     * <p>
      * <b>Be aware:</b> This copies all remaining bytes from the given {@link InputStream} to an array, to create a
      * reusable {@link BinaryDataSource}.<br>
      * Especially for large files using this constructor is ill advised, using the alternative constructors
      * {@link #SoapWebServiceDocument(URI)} or {@link #SoapWebServiceDocument(File)} is always recommended.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> A {@link SoapDocument} is using {@link DataHandler}s, that might require closing to prevent resource
+     * leaks. You should always {@link #close()} {@link SoapDocument}s.
      * </p>
      *
      * @param source The {@link URI} the {@link SoapDocument} is originating from.
@@ -71,7 +85,13 @@ public class SoapWebServiceDocument extends AbstractDocument implements SoapDocu
     }
 
     /**
+     * <p>
      * Manages a {@link SoapDocument} originating from the given {@link URI}.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> A {@link SoapDocument} is using {@link DataHandler}s, that might require closing to prevent resource
+     * leaks. You should always {@link #close()} {@link SoapDocument}s.
+     * </p>
      *
      * @param source The {@link URI} the {@link SoapDocument} is originating from.
      * @throws ResultException Shall be thrown in case loading the source document failed.
@@ -90,7 +110,13 @@ public class SoapWebServiceDocument extends AbstractDocument implements SoapDocu
     }
 
     /**
+     * <p>
      * Manages a {@link SoapDocument} originating from the given {@link File}.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> A {@link SoapDocument} is using {@link DataHandler}s, that might require closing to prevent resource
+     * leaks. You should always {@link #close()} {@link SoapDocument}s.
+     * </p>
      *
      * @param source The {@link File} the {@link SoapDocument} is originating from.
      * @throws ResultException Shall be thrown in case loading the source document failed.

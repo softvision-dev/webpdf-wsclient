@@ -1,12 +1,12 @@
 package net.webpdf.wsclient.exception;
 
-import net.webpdf.wsclient.session.auth.AuthProvider;
+import net.webpdf.wsclient.session.auth.SessionAuthProvider;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>
  * An instance of {@link AuthResultException} indicates some error during the execution of a used
- * {@link AuthProvider} provider.<br>
+ * {@link SessionAuthProvider}.<br>
  * The actual {@link Exception} can be requested by calling {@link #getCause()}.
  * </p>
  */
@@ -15,7 +15,6 @@ public class AuthResultException extends ResultException {
     /**
      * Creates a new {@link AuthResultException}, by wrapping the given {@link Exception} as it´s cause.
      * <p>
-     * * @param wsClientError     The wsclient specific {@link Error}.
      *
      * @param cause The actual {@link Exception}, that caused the {@link AuthResultException}.
      */

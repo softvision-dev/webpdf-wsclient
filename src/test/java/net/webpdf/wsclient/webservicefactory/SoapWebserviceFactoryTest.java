@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.webservicefactory;
 
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.*;
@@ -31,7 +31,7 @@ public class SoapWebserviceFactoryTest {
     private <T extends SoapWebService<?, ?, SoapDocument>> T getWebService(WebServiceType webServiceType)
             throws ResultException {
         try (Session session = SessionFactory.createInstance(
-                new ServerContext(WebServiceProtocol.SOAP,
+                new SessionContext(WebServiceProtocol.SOAP,
                         testServer.getServer(ServerType.LOCAL)))) {
             return WebServiceFactory.createInstance(session, webServiceType);
         }
@@ -43,7 +43,7 @@ public class SoapWebserviceFactoryTest {
         String xml = FileUtils.readFileToString(configFile, Charset.defaultCharset());
 
         try (Session session = SessionFactory.createInstance(
-                new ServerContext(WebServiceProtocol.SOAP,
+                new SessionContext(WebServiceProtocol.SOAP,
                         testServer.getServer(ServerType.LOCAL)))) {
             try (StringReader stringReader = new StringReader(xml)) {
                 StreamSource streamSource = new StreamSource(stringReader);

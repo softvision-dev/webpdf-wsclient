@@ -1,7 +1,7 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.exception.ServerResultException;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.exception.ResultException;
@@ -31,7 +31,7 @@ public class SoapFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/invalid.gif");
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ConverterWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.CONVERTER);
@@ -51,7 +51,7 @@ public class SoapFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 SignatureWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.SIGNATURE);
@@ -77,7 +77,7 @@ public class SoapFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 PdfaWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.PDFA);
@@ -97,7 +97,7 @@ public class SoapFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ToolboxWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.TOOLBOX);
@@ -122,7 +122,7 @@ public class SoapFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 UrlConverterWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.URLCONVERTER);
@@ -142,7 +142,7 @@ public class SoapFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 OcrWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.OCR);

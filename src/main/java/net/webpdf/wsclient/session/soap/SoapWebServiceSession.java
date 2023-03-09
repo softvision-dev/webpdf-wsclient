@@ -1,8 +1,9 @@
 package net.webpdf.wsclient.session.soap;
 
-import net.webpdf.wsclient.session.auth.AuthProvider;
-import net.webpdf.wsclient.session.connection.ServerContext;
-import net.webpdf.wsclient.session.connection.ServerContextSettings;
+import net.webpdf.wsclient.session.Session;
+import net.webpdf.wsclient.session.auth.SessionAuthProvider;
+import net.webpdf.wsclient.session.connection.SessionContext;
+import net.webpdf.wsclient.session.connection.SessionContextSettings;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.datasource.BinaryDataSource;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
@@ -27,15 +28,22 @@ import java.net.URI;
 public class SoapWebServiceSession extends AbstractSoapSession<SoapWebServiceDocument> {
 
     /**
+     * <p>
      * Creates a new {@link SoapWebServiceSession} instance providing connection information, authorization objects for
      * a webPDF server-client {@link SoapSession}.
+     * </p>
+     * <p>
+     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link SessionAuthProvider} are required to serve multiple
+     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link SessionAuthProvider}
+     * per {@link Session} you create.
+     * </p>
      *
-     * @param serverContext The {@link ServerContext} initializing the {@link ServerContextSettings} of this
+     * @param serverContext The {@link SessionContext} initializing the {@link SessionContextSettings} of this
      *                      {@link SoapSession}.
-     * @param authProvider  The {@link AuthProvider} for authentication/authorization of this {@link SoapSession}.
+     * @param authProvider  The {@link SessionAuthProvider} for authentication/authorization of this {@link SoapSession}.
      * @throws ResultException Shall be thrown, in case establishing the session failed.
      */
-    public SoapWebServiceSession(@NotNull ServerContext serverContext, @NotNull AuthProvider authProvider)
+    public SoapWebServiceSession(@NotNull SessionContext serverContext, @NotNull SessionAuthProvider authProvider)
             throws ResultException {
         super(serverContext, authProvider);
     }

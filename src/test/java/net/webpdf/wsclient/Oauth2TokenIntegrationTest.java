@@ -10,7 +10,7 @@ import com.microsoft.aad.msal4j.IAuthenticationResult;
 import net.webpdf.wsclient.exception.AuthResultException;
 import net.webpdf.wsclient.openapi.OperationConvertPdfa;
 import net.webpdf.wsclient.session.auth.material.token.OAuth2Token;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.config.TestConfig;
 import net.webpdf.wsclient.testsuite.integration.annotations.OAuthTest;
@@ -64,7 +64,7 @@ public class Oauth2TokenIntegrationTest {
         assertDoesNotThrow(() -> {
             Auth0Config auth0Config = TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config();
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)),
                     // Implement the Auth0 TokenProvider
                     (auth0Session) -> {
@@ -110,7 +110,7 @@ public class Oauth2TokenIntegrationTest {
         AzureConfig azureConfig = TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig();
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)),
                     // Implement the Azure TokenProvider
                     (azureSession) -> {
@@ -167,7 +167,7 @@ public class Oauth2TokenIntegrationTest {
         Auth0Config auth0Config = TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config();
         assertDoesNotThrow(() -> {
             try (SoapSession<?> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)),
                     // Implement the Auth0 TokenProvider
                     (auth0Session) -> {
@@ -213,7 +213,7 @@ public class Oauth2TokenIntegrationTest {
         AzureConfig azureConfig = TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig();
         assertDoesNotThrow(() -> {
             try (SoapSession<?> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)),
                     // Implement the Azure TokenProvider
                     (azureSession) -> {

@@ -2,7 +2,7 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.exception.ServerResultException;
 import net.webpdf.wsclient.openapi.*;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.rest.RestSession;
@@ -31,7 +31,7 @@ public class RestFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/invalid.gif");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ConverterRestWebService<RestDocument> webService =
                         session.createWSInstance(WebServiceType.CONVERTER);
@@ -50,7 +50,7 @@ public class RestFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 SignatureRestWebService<RestDocument> webService =
                         session.createWSInstance(WebServiceType.SIGNATURE);
@@ -76,7 +76,7 @@ public class RestFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 PdfaRestWebService<RestDocument> webService =
                         session.createWSInstance(WebServiceType.PDFA);
@@ -95,7 +95,7 @@ public class RestFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ToolboxRestWebService<RestDocument> webService =
                         session.createWSInstance(WebServiceType.TOOLBOX);
@@ -121,7 +121,7 @@ public class RestFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 UrlConverterRestWebService<RestDocument> webService =
                         session.createWSInstance(WebServiceType.URLCONVERTER);
@@ -140,7 +140,7 @@ public class RestFailureIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 OcrRestWebService<RestDocument> webService =
                         session.createWSInstance(WebServiceType.OCR);

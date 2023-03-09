@@ -1,9 +1,24 @@
 package net.webpdf.wsclient.session.connection.https;
 
+import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.exception.Error;
+import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.session.Session;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import java.io.File;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 /**
@@ -14,8 +29,15 @@ import java.security.cert.X509Certificate;
  * <b>Information:</b> TLS is the follow up protocol of the (better known) SSL (Secure Socket Layer) protocol - SSL is
  * no longer supported by the webPDF wsclient, as it is obsolete and insecure.
  * </p>
+ * <p>
+ * <b>Be aware:</b> An implementation of {@link TLSContext} is not required to serve multiple {@link Session}s
+ * at a time. It is expected to create a new {@link TLSContext} for each existing {@link Session}
+ * (That shall use HTTPS).
+ * </p>
  */
 public class TLSContext {
+
+    private static final TrustManager[] TRUST_ALL = new TrustManager[]{new AlwaysTrustManager()};
 
     private final @Nullable File trustStore;
     private final @Nullable String trustStorePassword;
@@ -103,6 +125,41 @@ public class TLSContext {
      */
     public @Nullable String getTrustStorePassword() {
         return this.trustStorePassword;
+    }
+
+    /**
+     * <p>
+     * Returns (and/or initializes) the {@link Session}´s {@link SSLContext}.
+     * </p>
+     * <p>
+     * <b>Information:</b> Actually this is not exactly a "SSL" context, but a "TLS" context.
+     * TLS is the follow up protocol of the (better known) SSL (Secure Socket Layer) protocol - SSL is no longer
+     * supported by the webPDF wsclient, as it is obsolete and insecure.
+     * </p>
+     *
+     * @return The resulting {@link SSLContext}.
+     */
+    public @NotNull SSLContext create() throws ResultException {
+        SSLContext tlsContext;
+        try {
+            if (getTrustStore() != null || isAllowSelfSigned()) {
+                tlsContext = (getTrustStore() != null ?
+                        new SSLContextBuilder().setProtocol(getTlsProtocol().getName())
+                                .loadTrustMaterial(getTrustStore(), getTrustStorePassword() != null ?
+                                        getTrustStorePassword().toCharArray() : null, null)
+                                .build() :
+                        new SSLContextBuilder().setProtocol(getTlsProtocol().getName()).build());
+                if (isAllowSelfSigned()) {
+                    tlsContext.init(new KeyManager[0], TRUST_ALL, new SecureRandom());
+                }
+            } else {
+                tlsContext = SSLContexts.createDefault();
+            }
+        } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException |
+                 IOException ex) {
+            throw new ClientResultException(Error.TLS_INITIALIZATION_FAILURE, ex);
+        }
+        return tlsContext;
     }
 
 }

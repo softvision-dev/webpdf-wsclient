@@ -35,8 +35,13 @@ import java.util.concurrent.atomic.AtomicReference;
  * assume it´s current master to have expired and shall, try to reauthorize that new {@link Session} (new master).<br>
  * For that reason an {@link AbstractAuthenticationProvider}s shall be reusable by subsequent {@link Session}s.
  * </p>
+ * <p>
+ * <b>Be aware:</b> However - An implementation of {@link SessionAuthProvider} is not required to serve multiple
+ * {@link Session}s at a time. It is expected to create a new {@link SessionAuthProvider} for each existing
+ * {@link Session}.
+ * </p>
  */
-public abstract class AbstractAuthenticationProvider implements AuthProvider {
+public abstract class AbstractAuthenticationProvider implements SessionAuthProvider {
 
     private static final @NotNull String LOGIN_PATH = "authentication/user/login/";
     private static final @NotNull String REFRESH_PATH = "authentication/user/refresh/";
@@ -68,18 +73,18 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
     }
 
     /**
-     * Returns the current {@link Session} this {@link AuthProvider} provides authorization for.
+     * Returns the current {@link Session} this {@link SessionAuthProvider} provides authorization for.
      *
-     * @return The current {@link Session} this {@link AuthProvider} provides authorization for.
+     * @return The current {@link Session} this {@link SessionAuthProvider} provides authorization for.
      */
     public @Nullable Session getSession() {
         return this.session.get();
     }
 
     /**
-     * Returns the initial {@link AuthMaterial} given to this {@link AuthProvider}.
+     * Returns the initial {@link AuthMaterial} given to this {@link SessionAuthProvider}.
      *
-     * @return The initial {@link AuthMaterial} given to this {@link AuthProvider}.
+     * @return The initial {@link AuthMaterial} given to this {@link SessionAuthProvider}.
      */
     public @NotNull AuthMaterial getInitialAuthMaterial() {
         return this.initialAuthMaterial;
@@ -118,7 +123,7 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
      * </p>
      *
      * @param session The session to provide authorization for.
-     * @return The {@link AuthMaterial} provided by this {@link AuthProvider}.
+     * @return The {@link AuthMaterial} provided by this {@link SessionAuthProvider}.
      * @throws AuthResultException Shall be thrown, should the authentication/authorization fail for some reason.
      */
     @Override
@@ -140,7 +145,7 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
                     setAuthMaterial(authMaterial);
                 }
                 if (getAuthMaterial() instanceof SessionToken &&
-                        ((SessionToken) getAuthMaterial()).isExpired(session.getServerContext().getSkewTime())) {
+                        ((SessionToken) getAuthMaterial()).isExpired(session.getSessionContext().getSkewTime())) {
                     AuthLoginOptions loginOptions = new AuthLoginOptions();
                     loginOptions.setCreateRefreshToken(true);
                     HttpEntity entity = new StringEntity(

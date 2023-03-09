@@ -2,7 +2,7 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.openapi.OperationUrlConverterPage;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.https.TLSProtocol;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
@@ -42,7 +42,7 @@ public class WebserviceProxyTest {
     public void testRESTProxyHTTP() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL))
                             .setProxy(new ProxyConfiguration("127.0.0.1", 8888)),
                     new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
@@ -77,7 +77,7 @@ public class WebserviceProxyTest {
     public void testSOAPProxyHTTP() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.SOAP,
+                    new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL))
                             .setProxy(new ProxyConfiguration("localhost", 8888)),
                     new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
@@ -117,7 +117,7 @@ public class WebserviceProxyTest {
     public void testSOAPProxyHTTPS() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new ServerContext(
+                    new SessionContext(
                             WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL, TransferProtocol.HTTPS))
                             .setTlsContext(new TLSContext(TLSProtocol.TLSV1_2, true,
@@ -158,7 +158,7 @@ public class WebserviceProxyTest {
     public void testRESTProxyHTTPS() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(
+                    new SessionContext(
                             WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL, TransferProtocol.HTTPS))
                             .setTlsContext(new TLSContext(TLSProtocol.TLSV1_2, true,

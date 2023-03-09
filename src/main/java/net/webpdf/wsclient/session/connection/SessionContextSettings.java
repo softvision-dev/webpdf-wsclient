@@ -2,7 +2,7 @@ package net.webpdf.wsclient.session.connection;
 
 
 import net.webpdf.wsclient.session.Session;
-import net.webpdf.wsclient.session.auth.AuthProvider;
+import net.webpdf.wsclient.session.auth.SessionAuthProvider;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
@@ -13,14 +13,18 @@ import java.net.URL;
 
 /**
  * <p>
- * An instance of {@link ServerContextSettings} collects and provides advanced settings for a webPDF {@link Session}.
+ * An instance of {@link SessionContextSettings} collects and provides advanced settings for a webPDF {@link Session}.
  * During it´s existence a {@link Session} will obey those settings, when making requests to a webPDF server.<br>
- * <b>Be aware:</b> {@link ServerContextSettings} can not be changed post initialization. If you want to make such
- * changes, you have to create a new {@link Session} using the {@link ServerContext} of your choice.
+ * <b>Be aware:</b> {@link SessionContextSettings} can not be changed post initialization. If you want to make such
+ * changes, you have to create a new {@link Session} using the {@link SessionContext} of your choice.
+ * </p>
+ * <p>
+ * <b>Be aware:</b> A {@link SessionContextSettings} is not required to serve multiple {@link Session}s at a time.
+ * It is expected to create a new {@link SessionContextSettings} for each existing {@link Session}.
  * </p>
  */
 @SuppressWarnings("unused")
-public class ServerContextSettings {
+public class SessionContextSettings {
 
     private final @NotNull WebServiceProtocol webServiceProtocol;
     private final @NotNull URL url;
@@ -29,15 +33,15 @@ public class ServerContextSettings {
     private final int skewTime;
 
     /**
-     * Creates a new {@link ServerContextSettings} from the provided {@link ServerContext}.
+     * Creates a new {@link SessionContextSettings} from the provided {@link SessionContext}.
      * During it´s existence a {@link Session} will obey those settings, when making requests to a webPDF server.<br>
-     * <b>Be aware:</b> A {@link ServerContextSettings} can not be changed post initialization. You must use a
-     * {@link ServerContext} instance prior to the {@link Session} initialization, to manipulate those
+     * <b>Be aware:</b> A {@link SessionContextSettings} can not be changed post initialization. You must use a
+     * {@link SessionContext} instance prior to the {@link Session} initialization, to manipulate those
      * settings.
      *
-     * @param contextConfiguration The {@link ServerContext} initializing this {@link ServerContextSettings}.
+     * @param contextConfiguration The {@link SessionContext} initializing this {@link SessionContextSettings}.
      */
-    public ServerContextSettings(@NotNull ServerContext contextConfiguration) {
+    public SessionContextSettings(@NotNull SessionContext contextConfiguration) {
         this.webServiceProtocol = contextConfiguration.getWebServiceProtocol();
         this.url = contextConfiguration.getUrl();
         this.tlsContext = contextConfiguration.getTlsContext();
@@ -92,7 +96,7 @@ public class ServerContextSettings {
      * Returns a skew time for the token refresh of {@link Session}s.<br>
      * The skew time helps to avoid using expired authorization tokens. The returned value (in seconds) is subtracted
      * from the expiry time to avoid issues possibly caused by transfer delays.<br>
-     * It can not be guaranteed, but is recommended, that custom implementations of {@link AuthProvider} handle this
+     * It can not be guaranteed, but is recommended, that custom implementations of {@link SessionAuthProvider} handle this
      * accordingly.
      * </p>
      *

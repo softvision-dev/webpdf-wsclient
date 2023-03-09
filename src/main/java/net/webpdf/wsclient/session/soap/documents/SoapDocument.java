@@ -20,6 +20,10 @@ import java.io.OutputStream;
  * Such a {@link SoapDocument} defines a source for the document, that shall be processed by a called
  * {@link SoapWebService} and a target resource for the document produced by that webservice.
  * </p>
+ * <p>
+ * <b>Be aware:</b> A {@link SoapDocument} is using {@link DataHandler}s, that might require closing to prevent resource
+ * leaks. You should always {@link #close()} {@link SoapDocument}s.
+ * </p>
  */
 public interface SoapDocument extends Document, AutoCloseable {
 

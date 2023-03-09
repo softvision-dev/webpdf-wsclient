@@ -3,7 +3,7 @@ package net.webpdf.wsclient;
 import net.webpdf.wsclient.openapi.OperationConvertPdfa;
 import net.webpdf.wsclient.openapi.OperationPdfa;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
-import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -59,7 +59,7 @@ public class RestCredentialsIntegrationTest {
     public void testWithUserCredentials() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(WebServiceProtocol.REST,
+                    new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword()))) {
                 executeConverter(session);
@@ -74,7 +74,7 @@ public class RestCredentialsIntegrationTest {
             File resFile = testResources.getResource("convert.json");
             String json = FileUtils.readFileToString(resFile, Charset.defaultCharset());
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    new ServerContext(
+                    new SessionContext(
                             WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)));
                  StringReader stringReader = new StringReader(json)) {
