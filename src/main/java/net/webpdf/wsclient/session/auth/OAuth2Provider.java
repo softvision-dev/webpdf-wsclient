@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
  * This interface is directly intended to enable you, to implement your own custom authorization provider - refer to the
  * <a href="https://github.com/softvision-dev/webpdf-wsclient/wiki/OAuth2">wiki</a> for examples.
  * </p>
- *
- * @see Session#getSkewTime()
  */
 @SuppressWarnings("unused")
 public interface OAuth2Provider extends AuthProvider {

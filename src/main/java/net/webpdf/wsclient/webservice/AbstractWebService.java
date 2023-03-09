@@ -3,7 +3,6 @@ package net.webpdf.wsclient.webservice;
 import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.session.Session;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,13 +25,12 @@ import java.util.Map;
  */
 public abstract class AbstractWebService<T_SESSION extends Session, T_OPERATION_DATA, T_OPERATION_PARAMETER,
         T_DOCUMENT extends Document, T_BILLING, T_PASSWORD, T_SETTINGS>
-        implements WebService<T_SESSION, T_OPERATION_DATA, T_OPERATION_PARAMETER, T_DOCUMENT, T_BILLING, T_PASSWORD,
+        implements WebService<T_SESSION, T_OPERATION_PARAMETER, T_DOCUMENT, T_BILLING, T_PASSWORD,
         T_SETTINGS> {
 
     private final @NotNull WebServiceType webServiceType;
     private final @NotNull Map<String, List<String>> headers = new HashMap<>();
     private final @NotNull T_SESSION session;
-    private @Nullable T_DOCUMENT document;
     private final @NotNull T_OPERATION_DATA operationData;
 
     /**
@@ -62,29 +60,8 @@ public abstract class AbstractWebService<T_SESSION extends Session, T_OPERATION_
      *
      * @return The {@link T_OPERATION_DATA} of the current webservice.
      */
-    @Override
-    public @NotNull T_OPERATION_DATA getOperationData() {
+    protected @NotNull T_OPERATION_DATA getOperationData() {
         return operationData;
-    }
-
-    /**
-     * Returns the {@link T_DOCUMENT} which contains the source document, that shall be processed.
-     *
-     * @return The {@link T_DOCUMENT} which contains the source document, that shall be processed.
-     */
-    @Override
-    public @Nullable T_DOCUMENT getSourceDocument() {
-        return document;
-    }
-
-    /**
-     * Set the {@link T_DOCUMENT} which contains the source document, that shall be processed.
-     *
-     * @param document The {@link T_DOCUMENT} which contains the source document, that shall be processed.
-     */
-    @Override
-    public void setSourceDocument(@Nullable T_DOCUMENT document) {
-        this.document = document;
     }
 
     /**

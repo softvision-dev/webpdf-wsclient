@@ -17,22 +17,33 @@ import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * <p>
  * A class extending {@link AbstractAuthenticationProvider} shall provide the means to use the webPDF server´s login
  * endpoint to authenticate a user. It shall also organize the automatic refresh of the {@link SessionToken} provided
  * by the login endpoint and shall update it´s used {@link AuthMaterial} accordingly.
+ * </p>
+ * <p>
+ * <b>Be aware:</b> Currently an {@link AbstractAuthenticationProvider} shall only serve one {@link Session} at a time.
+ * An {@link AbstractAuthenticationProvider} being called by another {@link Session} than it´s current master, shall
+ * assume it´s current master to have expired and shall, try to reauthorize that new {@link Session} (new master).<br>
+ * For that reason an {@link AbstractAuthenticationProvider}s shall be reusable by subsequent {@link Session}s.
+ * </p>
  */
 public abstract class AbstractAuthenticationProvider implements AuthProvider {
 
     private static final @NotNull String LOGIN_PATH = "authentication/user/login/";
     private static final @NotNull String REFRESH_PATH = "authentication/user/refresh/";
+    private final @NotNull AuthMaterial initialAuthMaterial;
     private final @NotNull AtomicReference<AuthMaterial> authMaterial = new AtomicReference<>();
     private final @NotNull AtomicBoolean updating = new AtomicBoolean(false);
+    private final @NotNull AtomicReference<Session> session = new AtomicReference<>();
 
     /**
      * <p>
@@ -41,11 +52,37 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
      * <b>Be aware:</b> possibly the given {@link AuthMaterial} will only be used during login and will be replaced
      * with a {@link SessionToken}.
      * </p>
+     * <p>
+     * <b>Be aware:</b> Currently an {@link AbstractAuthenticationProvider} shall only serve one {@link Session} at a
+     * time. An {@link AbstractAuthenticationProvider} being called by another {@link Session} than it´s current master,
+     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
+     * (new master).<br>
+     * For that reason an {@link AbstractAuthenticationProvider}s shall be reusable by subsequent {@link Session}s.
+     * </p>
      *
      * @param authMaterial The {@link AuthMaterial} to initialize the {@link Session} with.
      */
     public AbstractAuthenticationProvider(@NotNull AuthMaterial authMaterial) {
+        this.initialAuthMaterial = authMaterial;
         setAuthMaterial(authMaterial);
+    }
+
+    /**
+     * Returns the current {@link Session} this {@link AuthProvider} provides authorization for.
+     *
+     * @return The current {@link Session} this {@link AuthProvider} provides authorization for.
+     */
+    public @Nullable Session getSession() {
+        return this.session.get();
+    }
+
+    /**
+     * Returns the initial {@link AuthMaterial} given to this {@link AuthProvider}.
+     *
+     * @return The initial {@link AuthMaterial} given to this {@link AuthProvider}.
+     */
+    public @NotNull AuthMaterial getInitialAuthMaterial() {
+        return this.initialAuthMaterial;
     }
 
     /**
@@ -72,6 +109,13 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
      * Will attempt to produce a {@link SessionToken} for {@link RestSession}s.<br>
      * Will also refresh expired {@link SessionToken}s.
      * </p>
+     * <p>
+     * <b>Be aware:</b> Currently an {@link AbstractAuthenticationProvider} shall only serve one {@link Session} at a
+     * time. An {@link AbstractAuthenticationProvider} being called by another {@link Session} than it´s current master,
+     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
+     * (new master).<br>
+     * For that reason an {@link AbstractAuthenticationProvider}s shall be reusable by subsequent {@link Session}s.
+     * </p>
      *
      * @param session The session to provide authorization for.
      * @return The {@link AuthMaterial} provided by this {@link AuthProvider}.
@@ -83,10 +127,12 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
             if (!updating.get() && session instanceof RestSession) {
                 updating.set(true);
                 RestSession<?> restSession = (RestSession<?>) session;
-                if (!(getAuthMaterial() instanceof SessionToken)) {
+                if (this.session.get() == null || !session.equals(this.session.get()) ||
+                        !(getAuthMaterial() instanceof SessionToken)) {
+                    this.session.set(session);
                     AuthMaterial authMaterial = HttpRestRequest.createRequest(restSession)
                             .buildRequest(HttpMethod.POST, LOGIN_PATH, null,
-                                    getAuthMaterial())
+                                    getInitialAuthMaterial())
                             .executeRequest(SessionToken.class);
                     if (authMaterial == null) {
                         throw new ClientResultException(Error.AUTHENTICATION_FAILURE);
@@ -94,7 +140,7 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
                     setAuthMaterial(authMaterial);
                 }
                 if (getAuthMaterial() instanceof SessionToken &&
-                        ((SessionToken) getAuthMaterial()).isExpired(session.getSkewTime())) {
+                        ((SessionToken) getAuthMaterial()).isExpired(session.getServerContext().getSkewTime())) {
                     AuthLoginOptions loginOptions = new AuthLoginOptions();
                     loginOptions.setCreateRefreshToken(true);
                     HttpEntity entity = new StringEntity(

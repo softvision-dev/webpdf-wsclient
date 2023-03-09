@@ -5,7 +5,11 @@ import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.soap.SoapWebService;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.OutputStream;
 
 /**
  * <p>
@@ -20,19 +24,47 @@ import org.jetbrains.annotations.Nullable;
 public interface SoapDocument extends Document, AutoCloseable {
 
     /**
-     * Returns a {@link DataHandler} for the document's source.
+     * Returns a {@link DataHandler} for the document's source - may return {@code null} in case no source document
+     * has been selected.
      *
      * @return A {@link DataHandler} for the document's source.
      */
     @Nullable DataHandler getSourceDataHandler();
 
     /**
-     * Attempts to write the {@link WebServiceProtocol#SOAP} response document to the given {@link DataHandler}.
+     * Sets the result {@link DataHandler}, that represents the current result of a {@link SoapWebService} call for
+     * this {@link SoapDocument}.
      *
-     * @param resultDataHandler The {@link DataHandler} the {@link WebServiceProtocol#SOAP} response document shall be
-     *                          written to.
+     * @param result The result {@link DataHandler}, that represents the current result of a {@link SoapWebService}
+     *               call.
+     */
+    void setResult(@Nullable DataHandler result);
+
+    /**
+     * Returns the result {@link DataHandler}, that represents the current result of a {@link SoapWebService} call for
+     * this {@link SoapDocument}. (May return {@code null}, should such a result not exist.)
+     *
+     * @return The result {@link DataHandler}, that represents the current result of a {@link SoapWebService}
+     * call.
+     */
+    @Nullable DataHandler getResult();
+
+    /**
+     * Attempts to write the {@link WebServiceProtocol#SOAP} response document to the given {@link OutputStream}.
+     *
+     * @param target The target {@link OutputStream} the {@link WebServiceProtocol#SOAP} response document shall be
+     *               written to.
      * @throws ResultException Shall be thrown, should writing the result document fail.
      */
-    void save(@Nullable DataHandler resultDataHandler) throws ResultException;
+    void writeResult(@NotNull OutputStream target) throws ResultException;
+
+    /**
+     * Attempts to write the {@link WebServiceProtocol#SOAP} response document to the given {@link File}.
+     *
+     * @param target The target {@link File} the {@link WebServiceProtocol#SOAP} response document shall be
+     *               written to.
+     * @throws ResultException Shall be thrown, should writing the result document fail.
+     */
+    void writeResult(@NotNull File target) throws ResultException;
 
 }

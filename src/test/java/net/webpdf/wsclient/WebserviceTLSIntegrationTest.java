@@ -2,20 +2,20 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
+import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.https.TLSProtocol;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
+import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.rest.RestSession;
-import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.server.TransferProtocol;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.testsuite.integration.annotations.TLSTest;
-import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.ConverterRestWebService;
@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
 
-import static net.webpdf.wsclient.testsuite.io.TestResources.getDocumentID;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WebserviceTLSIntegrationTest {
@@ -37,27 +36,26 @@ public class WebserviceTLSIntegrationTest {
     public TestServer testServer = new TestServer();
 
     private void testSoapSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
-        TLSContext tlsContext = new TLSContext()
-                .setAllowSelfSigned(selfSigned);
+        TLSContext tlsContext = new TLSContext(TLSProtocol.TLSV1_2, selfSigned);
         if (keystoreFile != null) {
-            tlsContext.setTrustStore(keystoreFile, "");
+            tlsContext = new TLSContext(TLSProtocol.TLSV1_2, selfSigned,
+                    keystoreFile, "");
         }
 
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP, url,
-                tlsContext, new AnonymousAuthProvider())) {
-            ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
-                    WebServiceType.CONVERTER);
+        try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+                new ServerContext(WebServiceProtocol.SOAP, url)
+                        .setTlsContext(tlsContext))) {
+            ConverterWebService<SoapDocument> webService =
+                    session.createWSInstance(WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = testResources.getTempFolder().newFile();
 
-            try (SoapDocument soapDocument = new SoapWebServiceDocument(file.toURI(), fileOut)) {
-                webService.setSourceDocument(soapDocument);
-
-                try (SoapDocument soapDocument2 = webService.process()) {
-                    assertNotNull(soapDocument2);
-                    assertTrue(fileOut.exists());
-                }
+            try (SoapDocument soapDocument = webService.process(
+                    new SoapWebServiceDocument(file.toURI()))) {
+                assertNotNull(soapDocument);
+                soapDocument.writeResult(fileOut);
+                assertTrue(fileOut.exists());
             }
         }
     }
@@ -103,27 +101,24 @@ public class WebserviceTLSIntegrationTest {
     }
 
     private void testRestSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
-
-        TLSContext tlsContext = new TLSContext()
-                .setAllowSelfSigned(selfSigned);
+        TLSContext tlsContext = new TLSContext(TLSProtocol.TLSV1_2, selfSigned);
         if (keystoreFile != null) {
-            tlsContext.setTrustStore(keystoreFile, "");
+            tlsContext = new TLSContext(TLSProtocol.TLSV1_2, selfSigned,
+                    keystoreFile, "");
         }
 
         try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                WebServiceProtocol.REST, url, tlsContext,
-                new AnonymousAuthProvider())) {
-            ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
-                    WebServiceType.CONVERTER);
+                new ServerContext(WebServiceProtocol.REST, url).
+                        setTlsContext(tlsContext))) {
+            ConverterRestWebService<RestDocument> webService =
+                    session.createWSInstance(WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = testResources.getTempFolder().newFile();
 
-            webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
-
-            RestDocument restDocument = webService.process();
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                session.getDocumentManager().downloadDocument(getDocumentID(restDocument), fileOutputStream);
+                webService.process(session.uploadDocument(file))
+                        .downloadDocument(fileOutputStream);
             }
             assertTrue(fileOut.exists());
         }

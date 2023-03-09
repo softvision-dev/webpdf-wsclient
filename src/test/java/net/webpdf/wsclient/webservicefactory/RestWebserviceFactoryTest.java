@@ -1,13 +1,10 @@
 package net.webpdf.wsclient.webservicefactory;
 
-import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.openapi.*;
-import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
+import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
-import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.rest.RestSession;
-import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.testsuite.server.ServerType;
@@ -38,8 +35,9 @@ public class RestWebserviceFactoryTest {
 
     private <T extends RestWebService<?, ?, RestDocument>> T getWebService(WebServiceType webServiceType)
             throws ResultException {
-        try (RestSession<RestDocument> session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                testServer.getServer(ServerType.LOCAL), new AnonymousAuthProvider())) {
+        try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                new ServerContext(WebServiceProtocol.REST,
+                        testServer.getServer(ServerType.LOCAL)))) {
             return WebServiceFactory.createInstance(session, webServiceType);
         }
     }
@@ -51,8 +49,8 @@ public class RestWebserviceFactoryTest {
         String json = FileUtils.readFileToString(configFile, Charset.defaultCharset());
 
         try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL),
-                new AnonymousAuthProvider())) {
+                new ServerContext(WebServiceProtocol.REST,
+                        testServer.getServer(ServerType.LOCAL)))) {
             try (StringReader stringReader = new StringReader(json)) {
                 StreamSource streamSource = new StreamSource(stringReader);
                 webService = WebServiceFactory.createInstance(session, streamSource);
@@ -377,22 +375,6 @@ public class RestWebserviceFactoryTest {
             assertNotNull(ocrWebService, "The ocr webservice should have been initialized.");
             assertNotNull(ocrWebService.getOperationParameters(),
                     "The ocr operation should have been initialized.");
-        });
-    }
-
-    @Test
-    @IntegrationTest
-    public void testNoOperationData() {
-        assertDoesNotThrow(() -> {
-            try (Session session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                WebServiceFactory.createInstance(session, (StreamSource) null);
-                fail("ResultException expected");
-            } catch (ClientResultException ex) {
-                assertEquals(ex.getWsclientError(), Error.INVALID_OPERATION_DATA,
-                        String.format("Error code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
-            }
         });
     }
 

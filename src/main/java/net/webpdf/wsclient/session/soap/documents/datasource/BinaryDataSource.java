@@ -1,28 +1,26 @@
-package net.webpdf.wsclient.session.soap.documents;
+package net.webpdf.wsclient.session.soap.documents.datasource;
 
-import org.apache.commons.io.input.CloseShieldInputStream;
 import org.jetbrains.annotations.NotNull;
 
 import jakarta.activation.DataSource;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
- * An instance of {@link InputStreamDataSource} prepares the data of a given resource for further processing and usage
+ * An instance of {@link BinaryDataSource} prepares the data of a given resource for further processing and usage
  * by a webPDF webservice call.
  */
-public class InputStreamDataSource implements DataSource {
+public class BinaryDataSource implements DataSource {
 
-    private final @NotNull InputStream inputStream;
+    private final byte @NotNull [] data;
 
     /**
-     * Prepares the given resource for further processing.
+     * Prepares the given {@link InputStream} for further processing.
      *
      * @param inputStream an {@link InputStream} containing the resource.
      */
-    public InputStreamDataSource(@NotNull InputStream inputStream) {
-        this.inputStream = inputStream;
+    public BinaryDataSource(@NotNull InputStream inputStream) throws IOException {
+        this.data = inputStream.readAllBytes();
     }
 
     /**
@@ -32,7 +30,7 @@ public class InputStreamDataSource implements DataSource {
      */
     @Override
     public @NotNull InputStream getInputStream() {
-        return CloseShieldInputStream.wrap(this.inputStream);
+        return new ByteArrayInputStream(this.data);
     }
 
     /**
@@ -42,7 +40,7 @@ public class InputStreamDataSource implements DataSource {
      */
     @Override
     public @NotNull OutputStream getOutputStream() {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("A binary data source does not represent a valid output target.");
     }
 
     /**

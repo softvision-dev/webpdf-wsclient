@@ -16,7 +16,6 @@ import net.webpdf.wsclient.tools.SerializeHelper;
 import net.webpdf.wsclient.webservice.rest.*;
 import net.webpdf.wsclient.webservice.soap.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -45,14 +44,14 @@ public final class WebServiceFactory {
      * @throws ResultException Shall be thrown, if the {@link WebService} creation failed.
      */
     @SuppressWarnings("unchecked")
-    public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?, ?>>
+    public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<?, ?, T_DOCUMENT, ?, ?, ?>>
     @NotNull T_WEBSERVICE createInstance(
             @NotNull Session session, @NotNull WebServiceType webServiceType) throws ResultException {
         switch (session.getWebServiceProtocol()) {
             case SOAP:
                 if (session instanceof SoapSession) {
                     return (T_WEBSERVICE) WebServiceFactory
-                            .createSoapInstance((SoapSession) session, webServiceType,
+                            .createSoapInstance((SoapSession<SoapDocument>) session, webServiceType,
                                     createSoapParameters(webServiceType));
                 } else {
                     throw new ClientResultException(Error.INVALID_WEBSERVICE_SESSION);
@@ -177,13 +176,9 @@ public final class WebServiceFactory {
      * @throws ResultException Shall be thrown, if the {@link WebService} creation failed.
      */
     @SuppressWarnings("unchecked")
-    public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?, ?>>
+    public static <T_DOCUMENT extends Document, T_WEBSERVICE extends WebService<?, ?, T_DOCUMENT, ?, ?, ?>>
     @NotNull T_WEBSERVICE createInstance(
-            @Nullable Session session, @Nullable StreamSource streamSource) throws ResultException {
-        if (session == null) {
-            throw new ClientResultException(Error.SESSION_CREATE);
-        }
-
+            @NotNull Session session, @NotNull StreamSource streamSource) throws ResultException {
         // create the web service instance
         switch (session.getWebServiceProtocol()) {
             case SOAP:
@@ -193,7 +188,7 @@ public final class WebServiceFactory {
                 // detect the web service with the operation data
                 if (session instanceof SoapSession) {
                     return (T_WEBSERVICE) WebServiceFactory.createSoapInstance(
-                            (SoapSession) session, determineWebServiceType(soapOperationData),
+                            (SoapSession<SoapDocument>) session, determineWebServiceType(soapOperationData),
                             soapOperationData
                     );
                 } else {
@@ -282,15 +277,10 @@ public final class WebServiceFactory {
      * @throws ResultException Shall be thrown, if the {@link SoapWebService} creation failed.
      */
     @SuppressWarnings("unchecked")
-    private static <T_DOCUMENT extends SoapDocument, T_WEBSERVICE extends WebService<?, ?, ?, T_DOCUMENT, ?, ?, ?>>
+    private static <T_DOCUMENT extends SoapDocument, T_WEBSERVICE extends WebService<?, ?, T_DOCUMENT, ?, ?, ?>>
     @NotNull T_WEBSERVICE createSoapInstance(
-            @NotNull SoapSession session, @NotNull WebServiceType webServiceType,
-            @Nullable OperationData operationData) throws ResultException {
-
-        if (operationData == null) {
-            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
-        }
-
+            @NotNull SoapSession<T_DOCUMENT> session, @NotNull WebServiceType webServiceType,
+            @NotNull OperationData operationData) throws ResultException {
         switch (webServiceType) {
             case CONVERTER:
                 ConverterWebService<T_DOCUMENT> converterWebService = new ConverterWebService<>(session);
@@ -342,12 +332,7 @@ public final class WebServiceFactory {
     private static <T_DOCUMENT extends RestDocument, T_WEBSERVICE extends RestWebService<?, ?, T_DOCUMENT>>
     @NotNull T_WEBSERVICE createRestInstance(
             @NotNull RestSession<T_DOCUMENT> session, @NotNull WebServiceType webServiceType,
-            @Nullable RestOperationData operationData) throws ResultException {
-
-        if (operationData == null) {
-            throw new ClientResultException(Error.INVALID_OPERATION_DATA);
-        }
-
+            @NotNull RestOperationData operationData) throws ResultException {
         switch (webServiceType) {
             case CONVERTER:
                 ConverterRestWebService<T_DOCUMENT> converterWebService = new ConverterRestWebService<>(session);

@@ -1,99 +1,78 @@
 package net.webpdf.wsclient.session.rest.documents;
 
 import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.session.documents.AbstractDocument;
-import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
+import net.webpdf.wsclient.session.documents.AbstractDocument;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.io.*;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <p>
  * An instance of {@link RestWebServiceDocument} represents a document, that has been uploaded to a webPDF server.
  * </p>
- * <p>
- * Such a {@link RestWebServiceDocument} defines a document, that has been uploaded to the webPDF server so that it and
- * it´s history can be accessed via a {@link DocumentManager} by an assigned document ID.
- * </p>
  */
 public class RestWebServiceDocument extends AbstractDocument implements RestDocument {
 
-    private final @NotNull ConcurrentHashMap<Integer, HistoryEntry> historyMap = new ConcurrentHashMap<>();
-    private final @NotNull AtomicReference<DocumentFile> documentFile = new AtomicReference<>();
-    private final @NotNull String documentId;
+    private final @NotNull RestWebServiceDocumentState documentState;
 
     /**
-     * Creates a {@link RestWebServiceDocument} known to the webPDF server by the given document ID.
+     * Creates a {@link RestWebServiceDocument} representing the given {@link RestWebServiceDocumentState} to external
+     * actors. The owning {@link DocumentManager} shall have exclusive rights to instantiate such documents.
      *
-     * @param documentId The document ID of the managed {@link RestWebServiceDocument}.
+     * @param documentState The internal {@link RestWebServiceDocumentState}, that shall be updated by a
+     *                      {@link DocumentManager} and shall be readable via the methods defined by
+     *                      {@link RestDocument}.
      */
-    public RestWebServiceDocument(@NotNull String documentId) {
+    RestWebServiceDocument(@NotNull RestWebServiceDocumentState documentState) {
         super(null);
-        this.documentId = documentId;
+        this.documentState = documentState;
     }
 
     /**
-     * Returns the document ID of the managed {@link RestWebServiceDocument}.
+     * <p>
+     * Returns the internal {@link RestWebServiceDocumentState}, that shall be updated by a {@link DocumentManager}.<br>
+     * The {@link DocumentManager} shall have exclusive rights to access the internal state of a document.
+     * </p>
      *
-     * @return The document ID of the managed {@link RestWebServiceDocument}.
+     * @return the internal {@link RestWebServiceDocumentState}, that shall be updated by a {@link DocumentManager}.
+     */
+    @NotNull RestWebServiceDocumentState accessInternalState() {
+        return this.documentState;
+    }
+
+    /**
+     * Returns the document ID of the managed {@link RestDocument}.
+     *
+     * @return The document ID of the managed {@link RestDocument}.
      */
     @Override
     public @NotNull String getDocumentId() {
-        return this.documentId;
+        return accessInternalState().getDocumentId();
     }
 
     /**
-     * Returns the {@link DocumentFile} of the managed {@link RestWebServiceDocument}.
+     * Returns the {@link DocumentFile} of the managed {@link RestDocument}.
      *
-     * @return The {@link DocumentFile} of the managed {@link RestWebServiceDocument}.
+     * @return The {@link DocumentFile} of the managed {@link RestDocument}.
      */
     @Override
     public @NotNull DocumentFile getDocumentFile() {
-        return documentFile.get();
+        return accessInternalState().getDocumentFile();
     }
 
     /**
-     * Sets the {@link DocumentFile} of the managed {@link RestWebServiceDocument}.
+     * Returns the {@link HistoryEntry}s of the managed {@link RestDocument}.
      *
-     * @param documentFile the new {@link DocumentFile} of the managed {@link RestWebServiceDocument}.
-     */
-    @Override
-    public void setDocumentFile(@NotNull DocumentFile documentFile) {
-        this.documentFile.set(documentFile);
-    }
-
-    /**
-     * Returns the {@link HistoryEntry}s of the managed {@link RestWebServiceDocument}.
-     *
-     * @return The {@link HistoryEntry}s of the managed {@link RestWebServiceDocument}.
+     * @return The {@link HistoryEntry}s of the managed {@link RestDocument}.
      */
     @Override
     public @NotNull List<HistoryEntry> getHistory() {
-        return new ArrayList<>(historyMap.values());
-    }
-
-    /**
-     * Replaces the internally stored {@link HistoryEntry} list of the managed {@link RestDocument}
-     *
-     * @param historyEntries The new {@link HistoryEntry}s to be set.
-     * @throws ResultException Shall be thrown, when updating the document history failed.
-     */
-    @Override
-    public void setHistory(@NotNull HistoryEntry[] historyEntries) throws ResultException {
-        this.historyMap.clear();
-
-        for (HistoryEntry historyEntry : historyEntries) {
-            updateHistoryEntry(historyEntry);
-        }
+        return accessInternalState().getHistory();
     }
 
     /**
@@ -105,55 +84,35 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      */
     @Override
     public @NotNull HistoryEntry getHistoryEntry(int historyId) throws ResultException {
-        if (!this.historyMap.containsKey(historyId)) {
-            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
-        }
-        return this.historyMap.get(historyId);
+        return accessInternalState().getHistoryEntry(historyId);
     }
 
     /**
-     * Updates the given {@link HistoryEntry} in the internally managed document history.
+     * This is a shortcut for {@link DocumentManager#downloadDocument(RestDocument, OutputStream)} and
+     * Attempts to download and write the {@link RestDocument} to the given {@link OutputStream}.
      *
-     * @param historyEntry The {@link HistoryEntry} containing the values to be set.
-     * @throws ResultException Shall be thrown, when updating the document history failed.
+     * @param target The target {@link OutputStream} the {@link RestDocument} shall be
+     *               written to.
+     * @throws ResultException Shall be thrown, should writing the result document fail.
      */
-    public void updateHistoryEntry(@Nullable HistoryEntry historyEntry) throws ResultException {
-        if (historyEntry == null) {
-            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
-        }
-        int historyId = historyEntry.getId();
-
-        // disable active state for all entries, because the new entry is active
-        if (historyEntry.isActive()) {
-            for (Map.Entry<Integer, HistoryEntry> entry : this.historyMap.entrySet()) {
-                entry.getValue().setActive(false);
-            }
-        }
-        this.historyMap.put(historyId, historyEntry);
+    public void downloadDocument(@NotNull OutputStream target) throws ResultException {
+        accessInternalState().getDocumentManager().downloadDocument(this, target);
     }
 
     /**
-     * Returns the most recent {@link HistoryEntry}.
+     * This is a shortcut for {@link DocumentManager#downloadDocument(RestDocument, OutputStream)} and
+     * Attempts to download write the {@link RestDocument} to the given {@link File}.
      *
-     * @return The most recent {@link HistoryEntry}.
-     * @throws ResultException Shall be thrown, when updating the document history failed.
+     * @param target The target {@link File} the {@link RestDocument} shall be
+     *               written to.
+     * @throws ResultException Shall be thrown, should writing the result document fail.
      */
-    @SuppressWarnings("unused")
-    public @NotNull HistoryEntry lastHistory() throws ResultException {
-        if (this.historyMap.isEmpty()) {
-            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
+    public void downloadDocument(@NotNull File target) throws ResultException {
+        try (OutputStream outputStream = new FileOutputStream(target)) {
+            accessInternalState().getDocumentManager().downloadDocument(this, outputStream);
+        } catch (IOException e) {
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
-        return this.historyMap.get(this.historyMap.size());
-    }
-
-    /**
-     * Returns the number of known {@link HistoryEntry}s for this {@link RestWebServiceDocument}.
-     *
-     * @return The number of known {@link HistoryEntry}s for this {@link RestWebServiceDocument}.
-     */
-    @SuppressWarnings("unused")
-    public int getHistorySize() {
-        return this.historyMap.size();
     }
 
 }

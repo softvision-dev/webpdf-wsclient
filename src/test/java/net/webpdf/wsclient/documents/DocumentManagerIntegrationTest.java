@@ -1,9 +1,8 @@
 package net.webpdf.wsclient.documents;
 
-import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
+import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
-import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
@@ -38,11 +37,9 @@ public class DocumentManagerIntegrationTest {
         assertDoesNotThrow(() -> {
             File sourceFile = testResources.getResource("test.pdf");
             File targetFile = testResources.getTempFolder().newFile();
-            try (RestSession<RestDocument> session =
-                         SessionFactory.createInstance(
-                                 WebServiceProtocol.REST,
-                                 testServer.getServer(ServerType.LOCAL),
-                                 new AnonymousAuthProvider());
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)));
                  OutputStream outputStream = Files.newOutputStream(targetFile.toPath())
             ) {
                 assertNotNull(session,
@@ -75,11 +72,9 @@ public class DocumentManagerIntegrationTest {
     public void testDocumentRename() {
         assertDoesNotThrow(() -> {
             File sourceFile = testResources.getResource("test.pdf");
-            try (RestSession<RestDocument> session =
-                         SessionFactory.createInstance(
-                                 WebServiceProtocol.REST,
-                                 testServer.getServer(ServerType.LOCAL),
-                                 new AnonymousAuthProvider())) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
                 assertNotNull(session,
                         "Valid session should have been created.");
                 RestDocument document = session.getDocumentManager().uploadDocument(sourceFile);
@@ -110,9 +105,8 @@ public class DocumentManagerIntegrationTest {
             File sourceFile2 = testResources.getResource("logo.png");
             File sourceFile3 = testResources.getResource("lorem-ipsum.txt");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
                 assertNotNull(session,
                         "Valid session should have been created.");
                 RestDocument document = session.getDocumentManager().uploadDocument(sourceFile1);
@@ -136,10 +130,9 @@ public class DocumentManagerIntegrationTest {
     public void testDocumentHistory() {
         assertDoesNotThrow(() -> {
             File sourceFile = testResources.getResource("logo.png");
-            try (RestSession<RestDocument> session =
-                         SessionFactory.createInstance(WebServiceProtocol.REST,
-                                 testServer.getServer(ServerType.LOCAL),
-                                 new AnonymousAuthProvider())) {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
                 assertNotNull(session,
                         "Valid session should have been created.");
                 session.getDocumentManager().setDocumentHistoryActive(true);
@@ -167,8 +160,7 @@ public class DocumentManagerIntegrationTest {
 
                 ConverterRestWebService<RestDocument> webService =
                         WebServiceFactory.createInstance(session, WebServiceType.CONVERTER);
-                webService.setSourceDocument(document);
-                webService.process();
+                webService.process(document);
                 historyList = session.getDocumentManager().getDocumentHistory(document.getDocumentId());
                 assertEquals(2, historyList.size(), "history list should contain 2 elements.");
 
@@ -199,9 +191,8 @@ public class DocumentManagerIntegrationTest {
             File sourceFile = testResources.getResource("test.pdf");
             File targetFile = testResources.getTempFolder().newFile();
             try (RestWebServiceSession session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider());
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)));
                  OutputStream outputStream = Files.newOutputStream(targetFile.toPath())
             ) {
                 assertNotNull(session, "Valid session should have been created.");
@@ -212,56 +203,6 @@ public class DocumentManagerIntegrationTest {
                         "The content of the uploaded and the downloaded document should have been equal.");
             }
         });
-    }
-
-    @Test
-    @IntegrationTest
-    public void downloadToNullStream() {
-        assertThrows(ResultException.class,
-                () -> {
-                    File sourceFile = testResources.getResource("test.pdf");
-                    try (RestWebServiceSession session =
-                                 SessionFactory.createInstance(WebServiceProtocol.REST,
-                                         testServer.getServer(ServerType.LOCAL),
-                                         new AnonymousAuthProvider())) {
-                        assertNotNull(session,
-                                "Valid session should have been created.");
-                        RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
-                        assertNotNull(document,
-                                "Valid document should have been returned.");
-                        session.getDocumentManager().downloadDocument(getDocumentID(document), null);
-                    }
-                });
-    }
-
-    @Test
-    @IntegrationTest
-    public void uploadNullFile() {
-        assertThrows(ResultException.class,
-                () -> {
-                    try (RestWebServiceSession session =
-                                 SessionFactory.createInstance(WebServiceProtocol.REST,
-                                         testServer.getServer(ServerType.LOCAL),
-                                         new AnonymousAuthProvider())) {
-                        assertNotNull(session, "Valid session should have been created.");
-                        session.getDocumentManager().uploadDocument(null);
-                    }
-                });
-    }
-
-    @Test
-    @IntegrationTest
-    public void testRequestNullDocument() {
-        assertThrows(ResultException.class,
-                () -> {
-                    try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                            WebServiceProtocol.REST,
-                            testServer.getServer(ServerType.LOCAL),
-                            new AnonymousAuthProvider())) {
-                        assertNotNull(session, "Valid session should have been created.");
-                        session.getDocumentManager().getDocument(null);
-                    }
-                });
     }
 
 }

@@ -1,12 +1,7 @@
-package net.webpdf.wsclient.session.rest.documents.manager;
+package net.webpdf.wsclient.session.rest.documents;
 
-import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
-import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.rest.RestSession;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * An instance of {@link RestWebServiceDocumentManager} allows to monitor and interact with the
@@ -28,15 +23,21 @@ public class RestWebServiceDocumentManager extends AbstractDocumentManager<RestW
      *
      * @param documentId The document ID a matching {@link RestWebServiceDocument} shall be created for.
      * @return The created {@link RestWebServiceDocument}.
-     * @throws ResultException Shall be thrown, should creating the document fail.
      */
     @Override
-    protected @NotNull RestWebServiceDocument createDocument(@Nullable String documentId) throws ResultException {
-        if (documentId == null) {
-            throw new ClientResultException(Error.INVALID_DOCUMENT);
-        }
+    protected @NotNull RestWebServiceDocument createDocument(@NotNull String documentId) {
+        return new RestWebServiceDocument(new RestWebServiceDocumentState(documentId, this));
+    }
 
-        return new RestWebServiceDocument(documentId);
+    /**
+     * Requests access to the internal {@link RestDocumentState}.
+     *
+     * @param document The {@link RestDocument} to request access for.
+     * @return The internal {@link RestDocumentState}.
+     */
+    @Override
+    protected @NotNull RestWebServiceDocumentState accessInternalState(@NotNull RestWebServiceDocument document) {
+        return document.accessInternalState();
     }
 
 }

@@ -1,10 +1,9 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.openapi.*;
-import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
+import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
-import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -44,20 +43,15 @@ public class RestWebserviceIntegrationTest {
     public void testConverter() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                ConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.CONVERTER);
-
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                ConverterRestWebService<RestDocument> webService =
+                        session.createWSInstance(WebServiceType.CONVERTER);
                 File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                 assertNotNull(file);
                 File sourceFile = testResources.getTempFolder().newFile();
                 FileUtils.copyFile(file, sourceFile);
                 File fileOut = testResources.getTempFolder().newFile();
-
-                webService.setSourceDocument(session.getDocumentManager().uploadDocument(sourceFile));
-
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
                 webService.getOperationParameters().setPages("1-5");
@@ -69,10 +63,9 @@ public class RestWebserviceIntegrationTest {
                 pdfa.setConvert(convertPdfa);
                 convertPdfa.setLevel(OperationConvertPdfa.LevelEnum._3B);
                 convertPdfa.setErrorReport(OperationConvertPdfa.ErrorReportEnum.MESSAGE);
-
-                RestDocument restDocument = webService.process();
+                RestDocument restDocument = webService.process(session.uploadDocument(sourceFile));
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                    restDocument.downloadDocument(fileOutputStream);
                 }
                 assertNotNull(restDocument,
                         "REST document could not be downloaded.");
@@ -90,17 +83,10 @@ public class RestWebserviceIntegrationTest {
     public void testToolbox() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.TOOLBOX);
-
-                File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-                File fileOut = testResources.getTempFolder().newFile();
-
-                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
-
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                ToolboxRestWebService<RestDocument> webService =
+                        session.createWSInstance(WebServiceType.TOOLBOX);
                 OperationBaseToolbox baseToolbox = new OperationBaseToolbox();
                 OperationToolboxMergeMerge mergeType = new OperationToolboxMergeMerge();
                 baseToolbox.setMerge(mergeType);
@@ -140,9 +126,11 @@ public class RestWebserviceIntegrationTest {
                 securityType.setEncrypt(encryptType);
                 webService.getOperationParameters().add(baseToolbox);
 
-                RestDocument restDocument = webService.process();
+                File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+                File fileOut = testResources.getTempFolder().newFile();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                    webService.process(session.uploadDocument(file))
+                            .downloadDocument(fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -154,19 +142,11 @@ public class RestWebserviceIntegrationTest {
     public void testSignature() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                SignatureRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.SIGNATURE);
-
-                File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-                File fileOut = testResources.getTempFolder().newFile();
-
-                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
-
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                SignatureRestWebService<RestDocument> webService =
+                        session.createWSInstance(WebServiceType.SIGNATURE);
                 GenericCertificate genericCertificate = new GenericCertificate("John Doe");
-
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 OperationAddSignature add = new OperationAddSignature();
                 webService.getOperationParameters().setAdd(add);
@@ -183,12 +163,13 @@ public class RestWebserviceIntegrationTest {
                 privateKeyFileDataType.setValue(genericCertificate.getPrivateKeyAsPEM());
                 privateKeyFileDataType.setSource(OperationPrivateKeyFileData.SourceEnum.VALUE);
                 keyPairType.setPrivateKey(privateKeyFileDataType);
-
                 signer.setKeyPair(keyPairType);
 
-                RestDocument restDocument = webService.process();
+                File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+                File fileOut = testResources.getTempFolder().newFile();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                    webService.process(session.uploadDocument(file))
+                            .downloadDocument(fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -200,16 +181,11 @@ public class RestWebserviceIntegrationTest {
     public void testPdfa() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                PdfaRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.PDFA);
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                PdfaRestWebService<RestDocument> webService =
+                        session.createWSInstance(WebServiceType.PDFA);
 
-                File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-                File fileOut = testResources.getTempFolder().newFile();
-
-                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 OperationConvertPdfa convertPdfa = new OperationConvertPdfa();
                 webService.getOperationParameters().setConvert(convertPdfa);
@@ -226,9 +202,11 @@ public class RestWebserviceIntegrationTest {
                 zugferdType.setXmlFile(zugferdFileDataType);
                 convertPdfa.setZugferd(zugferdType);
 
-                RestDocument restDocument = webService.process();
+                File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+                File fileOut = testResources.getTempFolder().newFile();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                    webService.process(session.uploadDocument(file))
+                            .downloadDocument(fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -240,16 +218,11 @@ public class RestWebserviceIntegrationTest {
     public void testOcr() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                OcrRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.OCR);
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                OcrRestWebService<RestDocument> webService =
+                        session.createWSInstance(WebServiceType.OCR);
 
-                File file = testResources.getResource("integration/files/ocr.png");
-                File fileOut = testResources.getTempFolder().newFile();
-
-                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 webService.getOperationParameters().setLanguage(OperationOcr.LanguageEnum.ENG);
                 webService.getOperationParameters().setOutputFormat(OperationOcr.OutputFormatEnum.PDF);
@@ -262,9 +235,11 @@ public class RestWebserviceIntegrationTest {
                 page.setWidth(148);
                 page.setMetrics(OperationOcrPage.MetricsEnum.MM);
 
-                RestDocument restDocument = webService.process();
+                File file = testResources.getResource("integration/files/ocr.png");
+                File fileOut = testResources.getTempFolder().newFile();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                    webService.process(session.uploadDocument(file))
+                            .downloadDocument(fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -276,16 +251,10 @@ public class RestWebserviceIntegrationTest {
     public void testBarcode() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                BarcodeRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.BARCODE);
-
-                File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-                File fileOut = testResources.getTempFolder().newFile();
-
-                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                BarcodeRestWebService<RestDocument> webService =
+                        session.createWSInstance(WebServiceType.BARCODE);
 
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 OperationAddBarcode addBarcode = new OperationAddBarcode();
@@ -327,9 +296,11 @@ public class RestWebserviceIntegrationTest {
                 ean8BarcodeList.add(ean8BarcodeType);
                 addBarcode.setEan8(ean8BarcodeList);
 
-                RestDocument restDocument = webService.process();
+                File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+                File fileOut = testResources.getTempFolder().newFile();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                    webService.process(session.uploadDocument(file))
+                            .downloadDocument(fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -341,13 +312,10 @@ public class RestWebserviceIntegrationTest {
     public void testUrlConverter() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                UrlConverterRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.URLCONVERTER);
-
-                webService.setSourceDocument(new RestWebServiceDocument(null));
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                UrlConverterRestWebService<RestDocument> webService =
+                        session.createWSInstance(WebServiceType.URLCONVERTER);
 
                 File fileOut = testResources.getTempFolder().newFile();
 
@@ -364,9 +332,8 @@ public class RestWebserviceIntegrationTest {
                 page.setRight(0);
                 page.setBottom(0);
 
-                RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                    webService.process().downloadDocument(fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -381,18 +348,16 @@ public class RestWebserviceIntegrationTest {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             String json = FileUtils.readFileToString(configFile, Charset.defaultCharset());
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider());
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)));
                  StringReader stringReader = new StringReader(json)) {
                 StreamSource streamSource = new StreamSource(stringReader);
                 ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session, streamSource);
-                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
                 File fileOut = testResources.getTempFolder().newFile();
 
-                RestDocument restDocument = webService.process();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                    webService.process(session.uploadDocument(file))
+                            .downloadDocument(fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -404,16 +369,10 @@ public class RestWebserviceIntegrationTest {
     public void testToolboxSwitchToOutputFile() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                ToolboxRestWebService<RestDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.TOOLBOX);
-
-                File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-                File fileOut = testResources.getTempFolder().newFile();
-
-                webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                ToolboxRestWebService<RestDocument> webService =
+                        session.createWSInstance(WebServiceType.TOOLBOX);
 
                 OperationBaseToolbox baseToolbox = new OperationBaseToolbox();
                 webService.getOperationParameters().add(baseToolbox);
@@ -427,9 +386,11 @@ public class RestWebserviceIntegrationTest {
 
                 imageType.setJpeg(jpegType);
 
-                RestDocument restDocument = webService.process();
+                File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
+                File fileOut = testResources.getTempFolder().newFile();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getDocumentManager().downloadDocument(restDocument, fileOutputStream);
+                    webService.process(session.uploadDocument(file))
+                            .downloadDocument(fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
 
@@ -451,9 +412,8 @@ public class RestWebserviceIntegrationTest {
         assertDoesNotThrow(() -> {
             // Anonymous
             try (RestSession<RestDocument> restSession = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)))) {
                 assertNotNull(restSession,
                         "Valid session should have been created.");
                 assertNotNull(restSession.getUser(),
@@ -470,8 +430,8 @@ public class RestWebserviceIntegrationTest {
 
             // User
             try (RestWebServiceSession restSession = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider("user", "user"))) {
                 assertNotNull(restSession,
                         "Valid session should have been created.");
@@ -487,8 +447,8 @@ public class RestWebserviceIntegrationTest {
 
             // Admin
             try (RestWebServiceSession restSession = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider("admin", "admin"))) {
                 assertNotNull(restSession,
                         "Valid session should have been created.");

@@ -1,8 +1,7 @@
-package net.webpdf.wsclient.session.rest.documents.manager;
+package net.webpdf.wsclient.session.rest.documents;
 
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.DataFormat;
-import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
@@ -75,7 +74,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      */
     @Override
     public synchronized @NotNull T_REST_DOCUMENT synchronize(@NotNull DocumentFile documentFile) throws ResultException {
-        if (containsDocument(documentFile.getDocumentId())) {
+        if (documentFile.getDocumentId() != null && containsDocument(documentFile.getDocumentId())) {
             synchronizeDocumentInfo(documentFile);
             return getDocument(documentFile.getDocumentId());
         }
@@ -116,9 +115,9 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown, if requesting the document ID failed.
      */
     @Override
-    public @NotNull String getDocumentID(@Nullable DocumentFile document) throws ResultException {
+    public @NotNull String getDocumentID(@NotNull DocumentFile document) throws ResultException {
         String documentId;
-        if (document != null && (documentId = document.getDocumentId()) != null) {
+        if ((documentId = document.getDocumentId()) != null) {
             return documentId;
         }
         throw new ClientResultException(Error.INVALID_DOCUMENT);
@@ -132,7 +131,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown, if requesting the document failed.
      */
     @Override
-    public @NotNull T_REST_DOCUMENT getDocument(@Nullable String documentId) throws ResultException {
+    public @NotNull T_REST_DOCUMENT getDocument(@NotNull String documentId) throws ResultException {
         if (!containsDocument(documentId)) {
             throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
@@ -154,8 +153,8 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @param documentId The document ID, that shall be checked for existence.
      * @return {@code true}, if this {@link DocumentManager} contains a {@link RestDocument} with the given ID.
      */
-    public boolean containsDocument(@Nullable String documentId) {
-        return documentId != null && this.documentMap.containsKey(documentId);
+    public boolean containsDocument(@NotNull String documentId) {
+        return this.documentMap.containsKey(documentId);
     }
 
     /**
@@ -165,7 +164,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @param outputStream The {@link OutputStream} to write the downloaded {@link RestDocument} to.
      * @throws ResultException Shall be thrown, should the download have failed.
      */
-    public void downloadDocument(@Nullable String documentId, @Nullable OutputStream outputStream)
+    public void downloadDocument(@NotNull String documentId, @NotNull OutputStream outputStream)
             throws ResultException {
         if (!containsDocument(documentId)) {
             throw new ClientResultException(Error.INVALID_DOCUMENT);
@@ -185,9 +184,12 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown, should the download have failed.
      */
     @Override
-    public void downloadDocument(@Nullable RestDocument document, @Nullable OutputStream outputStream)
+    public void downloadDocument(@Nullable RestDocument document, @NotNull OutputStream outputStream)
             throws ResultException {
-        downloadDocument(document != null ? document.getDocumentId() : null, outputStream);
+        if (document == null) {
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
+        }
+        downloadDocument(document.getDocumentId(), outputStream);
     }
 
     /**
@@ -199,14 +201,11 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown, should the upload have failed.
      */
     @Override
-    public @NotNull T_REST_DOCUMENT uploadDocument(@Nullable File file) throws ResultException {
-        if (file == null) {
-            throw new ClientResultException(Error.INVALID_FILE_SOURCE);
-        }
+    public @NotNull T_REST_DOCUMENT uploadDocument(@NotNull File file) throws ResultException {
         try (InputStream data = FileUtils.openInputStream(file)) {
             return uploadDocument(data, file.getName());
         } catch (IOException ex) {
-            throw new ClientResultException(Error.INVALID_FILE_SOURCE, ex);
+            throw new ClientResultException(Error.INVALID_SOURCE_DOCUMENT, ex);
         }
     }
 
@@ -220,11 +219,8 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown, should the upload have failed.
      */
     @Override
-    public @NotNull T_REST_DOCUMENT uploadDocument(@Nullable InputStream data, @Nullable String fileName)
+    public @NotNull T_REST_DOCUMENT uploadDocument(@NotNull InputStream data, @NotNull String fileName)
             throws ResultException {
-        if (data == null || fileName == null) {
-            throw new ClientResultException(Error.INVALID_FILE_SOURCE);
-        }
         try {
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
             builder.setMode(HttpMultipartMode.LEGACY);
@@ -245,7 +241,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
             }
             return synchronize(documentFile);
         } catch (IOException ex) {
-            throw new ClientResultException(Error.INVALID_FILE_SOURCE, ex);
+            throw new ClientResultException(Error.INVALID_SOURCE_DOCUMENT, ex);
         }
     }
 
@@ -256,7 +252,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown, should deleting the document have failed.
      */
     @Override
-    public void deleteDocument(@Nullable String documentId) throws ResultException {
+    public void deleteDocument(@NotNull String documentId) throws ResultException {
         if (!containsDocument(documentId)) {
             throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
@@ -275,7 +271,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown, should renaming the document have failed.
      */
     @Override
-    public @NotNull T_REST_DOCUMENT renameDocument(@Nullable String documentId, @Nullable String fileName)
+    public @NotNull T_REST_DOCUMENT renameDocument(@NotNull String documentId, @NotNull String fileName)
             throws ResultException {
         if (!containsDocument(documentId)) {
             throw new ClientResultException(Error.INVALID_DOCUMENT);
@@ -326,7 +322,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown, should requesting the document history have failed.
      */
     @Override
-    public @NotNull List<HistoryEntry> getDocumentHistory(@Nullable String documentId) throws ResultException {
+    public @NotNull List<HistoryEntry> getDocumentHistory(@NotNull String documentId) throws ResultException {
         if (!this.isDocumentHistoryActive()) {
             throw new ClientResultException(Error.INVALID_HISTORY_DATA);
         }
@@ -343,7 +339,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown, should requesting the document history have failed.
      */
     @Override
-    public @NotNull HistoryEntry getDocumentHistoryEntry(@Nullable String documentId, int historyId)
+    public @NotNull HistoryEntry getDocumentHistoryEntry(@NotNull String documentId, int historyId)
             throws ResultException {
         if (!this.isDocumentHistoryActive()) {
             throw new ClientResultException(Error.INVALID_HISTORY_DATA);
@@ -361,9 +357,9 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      */
     @Override
     public synchronized @Nullable HistoryEntry updateDocumentHistory(
-            @Nullable String documentId, @Nullable HistoryEntry historyEntry
+            @NotNull String documentId, @NotNull HistoryEntry historyEntry
     ) throws ResultException {
-        if (!this.isDocumentHistoryActive() || historyEntry == null) {
+        if (!this.isDocumentHistoryActive()) {
             throw new ClientResultException(Error.INVALID_HISTORY_DATA);
         }
         if (!containsDocument(documentId)) {
@@ -379,7 +375,9 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
                 .executeRequest(HistoryEntry.class);
 
         restDocument = synchronizeDocumentInfo(restDocument.getDocumentFile());
-        restDocument.updateHistoryEntry(resultHistoryBean);
+        if (resultHistoryBean != null) {
+            accessInternalState(restDocument).updateHistoryEntry(resultHistoryBean);
+        }
         return resultHistoryBean;
     }
 
@@ -390,7 +388,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @return The created {@link RestDocument}.
      * @throws ResultException Shall be thrown, should creating the document fail.
      */
-    protected abstract @NotNull T_REST_DOCUMENT createDocument(@Nullable String documentId) throws ResultException;
+    protected abstract @NotNull T_REST_DOCUMENT createDocument(@NotNull String documentId) throws ResultException;
 
     /**
      * Creates a new {@link RestDocument} for the given {@link DocumentFile}.
@@ -399,15 +397,15 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @return The created {@link RestDocument}.
      * @throws ResultException Shall be thrown, should creating the document fail.
      */
-    private @NotNull T_REST_DOCUMENT createDocument(@Nullable DocumentFile documentFile)
+    private @NotNull T_REST_DOCUMENT createDocument(@NotNull DocumentFile documentFile)
             throws ResultException {
         String documentId;
-        if (documentFile == null || (documentId = documentFile.getDocumentId()) == null) {
+        if ((documentId = documentFile.getDocumentId()) == null) {
             throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
 
         T_REST_DOCUMENT restDocument = createDocument(documentId);
-        restDocument.setDocumentFile(documentFile);
+        accessInternalState(restDocument).setDocumentFile(documentFile);
         documentMap.put(documentId, restDocument);
         synchronizeDocumentInfo(documentFile);
 
@@ -421,7 +419,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @return The matching {@link RestDocument}.
      * @throws ResultException Shall be thrown, should the synchronization fail.
      */
-    private synchronized @NotNull T_REST_DOCUMENT synchronizeDocumentInfo(@Nullable DocumentFile DocumentFile)
+    private synchronized @NotNull T_REST_DOCUMENT synchronizeDocumentInfo(@NotNull DocumentFile DocumentFile)
             throws ResultException {
         String documentId = getDocumentID(DocumentFile);
 
@@ -432,7 +430,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
             throw new ClientResultException(Error.INVALID_DOCUMENT);
         }
         T_REST_DOCUMENT restDocument = documentMap.get(documentId);
-        restDocument.setDocumentFile(documentFile);
+        accessInternalState(restDocument).setDocumentFile(documentFile);
         if (isDocumentHistoryActive()) {
             synchronizeDocumentHistory(documentId);
         }
@@ -447,18 +445,15 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @param documentId The document ID of the {@link RestDocument} to synchronize the document history for.
      * @throws ResultException Shall be thrown, should synchronizing the document history have failed.
      */
-    private synchronized void synchronizeDocumentHistory(@Nullable String documentId) throws ResultException {
+    private synchronized void synchronizeDocumentHistory(@NotNull String documentId) throws ResultException {
         T_REST_DOCUMENT restDocument = getDocument(documentId);
         HistoryEntry[] history = HttpRestRequest.createRequest(getSession())
                 .buildRequest(HttpMethod.GET, "documents/" + documentId + "/history", null)
                 .executeRequest(HistoryEntry[].class);
-
-        if (history == null) {
-            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
-        }
-
-        for (HistoryEntry historyEntry : history) {
-            restDocument.updateHistoryEntry(historyEntry);
+        if (history != null) {
+            for (HistoryEntry historyEntry : history) {
+                accessInternalState(restDocument).updateHistoryEntry(historyEntry);
+            }
         }
     }
 
@@ -470,16 +465,21 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @return The resulting state of the data transfer object.
      * @throws ResultException Shall be thrown, should the {@link HttpEntity} creation fail.
      */
-    private <T> @NotNull HttpEntity prepareHttpEntity(@Nullable T parameter) throws ResultException {
+    private <T> @NotNull HttpEntity prepareHttpEntity(@NotNull T parameter) throws ResultException {
         try {
-            if (parameter == null) {
-                throw new ClientResultException(Error.NO_OPERATION_DATA);
-            }
             return new StringEntity(SerializeHelper.toJSON(parameter),
                     ContentType.create(DataFormat.JSON.getMimeType(), StandardCharsets.UTF_8));
         } catch (UnsupportedCharsetException ex) {
             throw new ClientResultException(Error.TO_XML_JSON, ex);
         }
     }
+
+    /**
+     * Requests access to the internal {@link RestDocumentState}.
+     *
+     * @param document The {@link RestDocument} to request access for.
+     * @return The internal {@link RestDocumentState}.
+     */
+    protected abstract @NotNull RestDocumentState<T_REST_DOCUMENT> accessInternalState(@NotNull T_REST_DOCUMENT document);
 
 }

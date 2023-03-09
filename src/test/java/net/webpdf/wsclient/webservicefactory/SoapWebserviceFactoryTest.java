@@ -1,9 +1,7 @@
 package net.webpdf.wsclient.webservicefactory;
 
-import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
+import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
-import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.Session;
@@ -32,9 +30,9 @@ public class SoapWebserviceFactoryTest {
 
     private <T extends SoapWebService<?, ?, SoapDocument>> T getWebService(WebServiceType webServiceType)
             throws ResultException {
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(ServerType.LOCAL),
-                new AnonymousAuthProvider())) {
+        try (Session session = SessionFactory.createInstance(
+                new ServerContext(WebServiceProtocol.SOAP,
+                        testServer.getServer(ServerType.LOCAL)))) {
             return WebServiceFactory.createInstance(session, webServiceType);
         }
     }
@@ -44,9 +42,9 @@ public class SoapWebserviceFactoryTest {
         T webService;
         String xml = FileUtils.readFileToString(configFile, Charset.defaultCharset());
 
-        try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                testServer.getServer(ServerType.LOCAL),
-                new AnonymousAuthProvider())) {
+        try (Session session = SessionFactory.createInstance(
+                new ServerContext(WebServiceProtocol.SOAP,
+                        testServer.getServer(ServerType.LOCAL)))) {
             try (StringReader stringReader = new StringReader(xml)) {
                 StreamSource streamSource = new StreamSource(stringReader);
                 webService = WebServiceFactory.createInstance(session, streamSource);
@@ -350,34 +348,6 @@ public class SoapWebserviceFactoryTest {
             assertNotNull(ocrWebService.getOperationParameters(),
                     "The ocr operation should have been initialized.");
         });
-    }
-
-    @Test
-    public void testNoOperationData() {
-        assertDoesNotThrow(() -> {
-            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                WebServiceFactory.createInstance(session, (StreamSource) null);
-                fail("ResultException expected");
-            } catch (ClientResultException ex) {
-                assertEquals(ex.getWsclientError(), Error.INVALID_OPERATION_DATA,
-                        String.format("Error code %s expected.", Error.INVALID_OPERATION_DATA.getCode()));
-            }
-        });
-    }
-
-    @Test
-    public void testNoSession() {
-        try {
-            WebServiceFactory.createInstance(null, (StreamSource) null);
-            fail("ResultException expected");
-        } catch (ClientResultException ex) {
-            assertEquals(ex.getWsclientError(), Error.SESSION_CREATE,
-                    String.format("Error code %s expected.", Error.SESSION_CREATE.getCode()));
-        } catch (ResultException ex) {
-            fail("A ClientResultException had been expected.");
-        }
     }
 
 }

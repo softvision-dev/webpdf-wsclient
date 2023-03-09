@@ -72,7 +72,7 @@ public class SerializeHelper {
      * @return The deserialized {@link DataFormat#XML} data transfer object.
      * @throws ResultException Shall be thrown upon a deserialization failure.
      */
-    public static <T> @NotNull T fromXML(@Nullable HttpEntity httpEntity, @Nullable Class<T> type)
+    public static <T> @NotNull T fromXML(@Nullable HttpEntity httpEntity, @NotNull Class<T> type)
             throws ResultException {
         try {
             if (httpEntity == null) {
@@ -99,9 +99,9 @@ public class SerializeHelper {
      * @return The deserialized {@link DataFormat#XML} data transfer object.
      * @throws ResultException Shall be thrown upon a deserialization failure.
      */
-    public static <T> @NotNull T fromXML(@Nullable StreamSource streamSource, @Nullable Class<T> type)
+    public static <T> @NotNull T fromXML(@Nullable StreamSource streamSource, @NotNull Class<T> type)
             throws ResultException {
-        if (streamSource == null || type == null) {
+        if (streamSource == null) {
             throw new ClientResultException(Error.INVALID_OPERATION_DATA);
         }
         XMLValidationEventHandler xmlValidationEventHandler = new XMLValidationEventHandler();
@@ -139,7 +139,7 @@ public class SerializeHelper {
      * @return The deserialized {@link DataFormat#JSON} data transfer object.
      * @throws ResultException Shall be thrown upon a deserialization failure.
      */
-    public static <T> @NotNull T fromJSON(@Nullable HttpEntity httpEntity, @Nullable Class<T> type)
+    public static <T> @NotNull T fromJSON(@Nullable HttpEntity httpEntity, @NotNull Class<T> type)
             throws ResultException {
         if (httpEntity == null) {
             throw new ClientResultException(Error.INVALID_OPERATION_DATA);
@@ -161,9 +161,9 @@ public class SerializeHelper {
      * @return The deserialized {@link DataFormat#JSON} data transfer object.
      * @throws ResultException Shall be thrown upon a deserialization failure.
      */
-    public static <T> @NotNull T fromJSON(@Nullable StreamSource streamSource, @Nullable Class<T> type)
+    public static <T> @NotNull T fromJSON(@Nullable StreamSource streamSource, @NotNull Class<T> type)
             throws ResultException {
-        if (streamSource == null || type == null) {
+        if (streamSource == null) {
             throw new ClientResultException(Error.INVALID_OPERATION_DATA);
         }
         ObjectMapper objectMapper = new ObjectMapper();
@@ -204,8 +204,8 @@ public class SerializeHelper {
      * @return The resulting {@link DataFormat#XML} {@link String}.
      * @throws ResultException Shall be thrown upon a serialization failure.
      */
-    public static @NotNull String toXML(@Nullable Object object, @Nullable Class<?> type) throws ResultException {
-        if (object == null || type == null) {
+    public static @NotNull String toXML(@Nullable Object object, @NotNull Class<?> type) throws ResultException {
+        if (object == null) {
             throw new ClientResultException(Error.TO_XML_JSON);
         }
         try {

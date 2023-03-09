@@ -18,6 +18,7 @@ import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.webservice.AbstractWebService;
+import net.webpdf.wsclient.webservice.WebService;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import org.apache.hc.client5.http.auth.Credentials;
@@ -42,7 +43,7 @@ import java.util.Map;
  * @param <T_WEBPDF_PORT>         The interface stub type to operate the webservice endpoint with.
  */
 public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOAP_DOCUMENT extends SoapDocument>
-        extends AbstractWebService<SoapSession, OperationData, T_OPERATION_PARAMETER, T_SOAP_DOCUMENT,
+        extends AbstractWebService<SoapSession<T_SOAP_DOCUMENT>, OperationData, T_OPERATION_PARAMETER, T_SOAP_DOCUMENT,
         BillingType, PdfPasswordType, SettingsType> {
 
     private static final String SSL_SOCKET_FACTORY = "com.sun.xml.ws.transport.https.client.SSLSocketFactory";
@@ -58,39 +59,48 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
      * @param session        The {@link SoapSession} the webservice interface shall be created for.
      * @param webServiceType The {@link WebServiceType} interface, that shall be created.
      */
-    public SoapWebService(@NotNull SoapSession session, @NotNull WebServiceType webServiceType)
+    public SoapWebService(@NotNull SoapSession<T_SOAP_DOCUMENT> session, @NotNull WebServiceType webServiceType)
             throws ResultException {
         super(webServiceType, session);
         this.qname = new QName(webServiceType.getSoapNamespaceURI(), webServiceType.getSoapLocalPart());
-        this.tlsContext = getSession().getTlsContext();
+        this.tlsContext = getSession().getServerContext().getTlsContext();
         this.webserviceURL = getSession().getURI(webServiceType.getSoapEndpoint());
         this.port = provideWSPort();
     }
 
     /**
-     * Execute the webservice operation and returns the resulting {@link SoapDocument}.
+     * <p>
+     * Execute the webservice operation and return the resulting {@link T_SOAP_DOCUMENT}.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> Most webservices require a source {@link T_SOAP_DOCUMENT}, with few exceptions, such as the
+     * URL-converter webservice. Before using this method, make sure that this is valid for
+     * the {@link WebService} call you intend to hereby execute.
+     * </p>
      *
-     * @return The resulting {@link SoapDocument}.
+     * @return The resulting {@link T_SOAP_DOCUMENT}.
+     * @throws ResultException Shall be thrown, upon an execution failure.
+     */
+    public @NotNull T_SOAP_DOCUMENT process() throws ResultException {
+        return process(getSession().createSoapDocumentFactory().createInstance());
+    }
+
+    /**
+     * <p>
+     * Execute the webservice operation for the given source {@link T_SOAP_DOCUMENT} and return the
+     * resulting {@link T_SOAP_DOCUMENT}.
+     * </p>
+     *
+     * @param sourceDocument The source {@link T_SOAP_DOCUMENT}, that shall be processed.
+     * @return The resulting {@link T_SOAP_DOCUMENT}.
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
     @Override
-    public @NotNull T_SOAP_DOCUMENT process() throws ResultException {
-        if (getSourceDocument() == null) {
-            throw new ClientResultException(Error.NO_DOCUMENT);
-        }
-
-        DataHandler resultDataHandler;
+    public @NotNull T_SOAP_DOCUMENT process(@NotNull T_SOAP_DOCUMENT sourceDocument) throws ResultException {
         try {
             applyOptions();
-
-            resultDataHandler = processService();
-
-            if (resultDataHandler != null) {
-                getSourceDocument().save(resultDataHandler);
-            }
-
-            return getSourceDocument();
-
+            sourceDocument.setResult(processService(sourceDocument));
+            return sourceDocument;
         } catch (WebServiceException ex) {
             throw new ServerResultException(ex);
         }
@@ -133,10 +143,12 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
     /**
      * Execute the webservice operation and returns the {@link DataHandler} of the resulting document.
      *
+     * @param sourceDocument The {@link T_SOAP_DOCUMENT} to process.
      * @return The {@link DataHandler} of the resulting document.
      * @throws WebServiceException Shall be thrown, upon an execution failure.
      */
-    protected abstract @Nullable DataHandler processService() throws WebServiceException;
+    protected abstract @Nullable DataHandler processService(@NotNull T_SOAP_DOCUMENT sourceDocument)
+            throws WebServiceException;
 
     /**
      * Returns the {@link QName} of the current SOAP webservice.

@@ -1,8 +1,7 @@
 package net.webpdf.wsclient.http;
 
-import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
+import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.testsuite.server.ServerType;
@@ -38,8 +37,9 @@ public class HttpRestRequestIntegrationTest {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("test.pdf");
             File outputFile = testResources.getTempFolder().newFile();
-            try (RestWebServiceSession session = SessionFactory.createInstance(WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
+            try (RestWebServiceSession session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword()));
                  OutputStream fos = Files.newOutputStream(outputFile.toPath())) {
                 HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
@@ -81,8 +81,8 @@ public class HttpRestRequestIntegrationTest {
                 () -> {
                     //noinspection unused
                     try (RestWebServiceSession session = SessionFactory.createInstance(
-                            WebServiceProtocol.REST,
-                            testServer.getServer(ServerType.LOCAL),
+                            new ServerContext(WebServiceProtocol.REST,
+                                    testServer.getServer(ServerType.LOCAL)),
                             new UserAuthProvider("invalid", "invalid"))) {
                         fail("The login itself shall fail and this line should never be reached.");
                     }
@@ -94,110 +94,15 @@ public class HttpRestRequestIntegrationTest {
     public void testNullEntity() {
         assertThrows(ResultException.class,
                 () -> {
-                    try (RestWebServiceSession session =
-                                 SessionFactory.createInstance(WebServiceProtocol.REST,
-                                         testServer.getServer(ServerType.LOCAL),
-                                         new AnonymousAuthProvider())) {
+                    try (RestWebServiceSession session = SessionFactory.createInstance(
+                            new ServerContext(WebServiceProtocol.REST,
+                                    testServer.getServer(ServerType.LOCAL)))) {
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest,
                                 "HttpRestRequest should have been build.");
                         httpRestRequest.buildRequest(HttpMethod.POST, "documents/", null);
                         DocumentFile response = httpRestRequest.executeRequest(DocumentFile.class);
                         assertNotNull(response);
-                    }
-                });
-    }
-
-    @Test
-    @IntegrationTest
-    public void testNullHttpMethod() {
-        assertThrows(ResultException.class,
-                () -> {
-                    File file = testResources.getResource("test.pdf");
-                    try (RestWebServiceSession session =
-                                 SessionFactory.createInstance(WebServiceProtocol.REST,
-                                         testServer.getServer(ServerType.LOCAL),
-                                         new AnonymousAuthProvider())) {
-                        HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
-                        assertNotNull(httpRestRequest, "HttpRestRequest should have been build.");
-                        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                        builder.setMode(HttpMultipartMode.LEGACY);
-                        builder.addBinaryBody("filedata", file, ContentType.DEFAULT_BINARY,
-                                file.getName());
-                        HttpEntity entity = builder.build();
-                        assertNotNull(entity, "HttpEntity should have been build.");
-                        httpRestRequest.buildRequest(null, "documents/", entity);
-                    }
-                });
-    }
-
-    @Test
-    @IntegrationTest
-    public void testNullHttpPath() {
-        assertThrows(ClientResultException.class,
-                () -> {
-                    File file = testResources.getResource("test.pdf");
-                    try (RestWebServiceSession session =
-                                 SessionFactory.createInstance(WebServiceProtocol.REST,
-                                         testServer.getServer(ServerType.LOCAL),
-                                         new AnonymousAuthProvider())) {
-                        HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
-                        assertNotNull(httpRestRequest,
-                                "HttpRestRequest should have been build.");
-                        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                        builder.setMode(HttpMultipartMode.LEGACY);
-                        builder.addBinaryBody("filedata", file, ContentType.DEFAULT_BINARY,
-                                file.getName());
-                        HttpEntity entity = builder.build();
-                        assertNotNull(entity,
-                                "HttpEntity should have been build.");
-                        httpRestRequest.buildRequest(HttpMethod.GET, (String) null, entity);
-                        httpRestRequest.executeRequest(DocumentFile.class);
-                    }
-                });
-    }
-
-    @Test
-    @IntegrationTest
-    public void testNullTypRequest() {
-        assertThrows(ClientResultException.class,
-                () -> {
-                    File file = testResources.getResource("test.pdf");
-                    try (RestWebServiceSession session =
-                                 SessionFactory.createInstance(WebServiceProtocol.REST,
-                                         testServer.getServer(ServerType.LOCAL),
-                                         new AnonymousAuthProvider())) {
-                        HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
-                        assertNotNull(httpRestRequest,
-                                "HttpRestRequest should have been build.");
-                        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                        builder.setMode(HttpMultipartMode.LEGACY);
-                        builder.addBinaryBody("filedata", file, ContentType.DEFAULT_BINARY,
-                                file.getName());
-                        HttpEntity entity = builder.build();
-                        assertNotNull(entity,
-                                "HttpEntity should have been build.");
-                        httpRestRequest.buildRequest(HttpMethod.GET, "/documents", entity);
-                        httpRestRequest.executeRequest((Class<?>) null);
-                    }
-                });
-    }
-
-    @Test
-    @IntegrationTest
-    public void testHttpPathNullOutput() {
-        assertThrows(ResultException.class,
-                () -> {
-                    try (RestWebServiceSession session = SessionFactory.createInstance(
-                            WebServiceProtocol.REST,
-                            testServer.getServer(ServerType.LOCAL),
-                            new AnonymousAuthProvider())) {
-                        HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
-                        assertNotNull(httpRestRequest,
-                                "HttpRestRequest should have been build.");
-                        httpRestRequest.setAcceptHeader("application/octet-stream");
-                        httpRestRequest.buildRequest(HttpMethod.GET, (String) null, null);
-                        httpRestRequest.executeRequest((OutputStream) null);
                     }
                 });
     }

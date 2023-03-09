@@ -31,24 +31,29 @@ public class ConverterWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @param session The {@link SoapSession} a {@link ConverterWebService} shall be created for.
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
-    public ConverterWebService(@NotNull SoapSession session) throws ResultException {
+    public ConverterWebService(@NotNull SoapSession<T_SOAP_DOCUMENT> session) throws ResultException {
         super(session, WebServiceType.CONVERTER);
     }
 
     /**
+     * <p>
      * Executes the {@link ConverterWebService} operation and returns the {@link DataHandler} of the result document.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> SOAP webservices may not be executed without a {@code sourceDocument}. It is required,
+     * that you at least create a dummy document, such as: new SoapWebServiceDocument() for webservices
+     * not requiring a source document. (Such as the URL-converter.)
+     * </p>
      *
+     * @param sourceDocument The source {@link T_SOAP_DOCUMENT}, that shall be processed.
      * @return The {@link DataHandler} of the result document.
      * @throws WebServiceException Shall be thrown, upon an execution failure.
      */
     @Override
-    protected @Nullable DataHandler processService() throws WebServiceException {
-        if (getSourceDocument() == null) {
-            return null;
-        }
-        return getPort().execute(getOperationData(), getSourceDocument().getSourceDataHandler(),
-                getSourceDocument().isFileSource() || getSourceDocument().getSource() == null ?
-                        null : getSourceDocument().getSource().toString());
+    protected @Nullable DataHandler processService(@NotNull T_SOAP_DOCUMENT sourceDocument) throws WebServiceException {
+        return getPort().execute(getOperationData(), sourceDocument.getSourceDataHandler(),
+                sourceDocument.isFileSource() || sourceDocument.getSource() == null ?
+                        null : sourceDocument.getSource().toString());
     }
 
     /**

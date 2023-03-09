@@ -83,9 +83,9 @@ public class HttpRestRequest {
      * @throws ResultException Shall be thrown, if creating initializing the {@link HttpRestRequest} failed for the
      *                         given parameters.
      */
-    public @NotNull HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable String path,
+    public @NotNull HttpRestRequest buildRequest(@NotNull HttpMethod httpMethod, @NotNull String path,
             @Nullable HttpEntity httpEntity) throws ResultException {
-        URI uri = this.session.getURI(path != null ? path : "");
+        URI uri = this.session.getURI(path);
         return buildRequest(httpMethod, uri, httpEntity, null);
     }
 
@@ -101,13 +101,24 @@ public class HttpRestRequest {
      * @throws ResultException Shall be thrown, if creating initializing the {@link HttpRestRequest} failed for the
      *                         given parameters.
      */
-    public @NotNull HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable String path,
+    public @NotNull HttpRestRequest buildRequest(@NotNull HttpMethod httpMethod, @NotNull String path,
             @Nullable HttpEntity httpEntity, @Nullable AuthMaterial authMaterial) throws ResultException {
-        URI uri = this.session.getURI(path != null ? path : "");
+        URI uri = this.session.getURI(path);
         return buildRequest(httpMethod, uri, httpEntity, authMaterial);
     }
 
-    public @NotNull HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable URI uri,
+    /**
+     * Prepare the {@link HttpRestRequest} to execute the selected {@link HttpMethod} on the given resource path
+     * ({@link URI}) and providing the given {@link HttpEntity} as it´s data transfer object (parameters).
+     *
+     * @param httpMethod The {@link HttpMethod} to execute.
+     * @param uri        The resource path ({@link URI}) to execute the request on.
+     * @param httpEntity The data transfer object {@link HttpEntity} to include in the request´s content.
+     * @return The {@link HttpRestRequest} instance itself.
+     * @throws ResultException Shall be thrown, if creating initializing the {@link HttpRestRequest} failed for the
+     *                         given parameters.
+     */
+    public @NotNull HttpRestRequest buildRequest(@NotNull HttpMethod httpMethod, @NotNull URI uri,
             @Nullable HttpEntity httpEntity) throws ResultException {
         return buildRequest(httpMethod, uri, httpEntity, null);
     }
@@ -124,14 +135,8 @@ public class HttpRestRequest {
      * @throws ResultException Shall be thrown, if creating initializing the {@link HttpRestRequest} failed for the
      *                         given parameters.
      */
-    public @NotNull HttpRestRequest buildRequest(@Nullable HttpMethod httpMethod, @Nullable URI uri,
+    public @NotNull HttpRestRequest buildRequest(@NotNull HttpMethod httpMethod, @NotNull URI uri,
             @Nullable HttpEntity httpEntity, @Nullable AuthMaterial authMaterial) throws ResultException {
-        if (httpMethod == null) {
-            throw new ClientResultException(Error.UNKNOWN_HTTP_METHOD);
-        }
-        if (uri == null) {
-            uri = this.session.getURI("");
-        }
         switch (httpMethod) {
             case GET:
                 httpUriRequest = new HttpGet(uri);
@@ -218,10 +223,7 @@ public class HttpRestRequest {
      * @param outputStream The {@link OutputStream} to write the data transfer object {@link HttpEntity} to.
      * @throws ResultException Shall be thrown, if writing to the {@link OutputStream} failed.
      */
-    public void executeRequest(@Nullable OutputStream outputStream) throws ResultException {
-        if (outputStream == null) {
-            throw new ClientResultException(Error.INVALID_FILE_SOURCE);
-        }
+    public void executeRequest(@NotNull OutputStream outputStream) throws ResultException {
         try {
             this.httpClient.execute(httpUriRequest, response -> {
                 response.getEntity().writeTo(outputStream);
@@ -246,7 +248,7 @@ public class HttpRestRequest {
      * @throws ResultException Shall be thrown, should the {@link HttpResponse} not be readable or should it´s
      *                         validation via {@link #checkResponse(ClassicHttpResponse)} fail.
      */
-    public <T> @Nullable T executeRequest(@Nullable Class<T> type) throws ResultException {
+    public <T> @Nullable T executeRequest(@NotNull Class<T> type) throws ResultException {
         try {
             return this.httpClient.execute(httpUriRequest, response -> {
                 try {

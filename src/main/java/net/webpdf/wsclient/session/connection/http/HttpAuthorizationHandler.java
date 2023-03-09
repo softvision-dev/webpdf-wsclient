@@ -41,8 +41,8 @@ public class HttpAuthorizationHandler implements HttpExecChainHandler {
      * @param execChain          the next element in the request execution chain.
      */
     @Override
-    public ClassicHttpResponse execute(ClassicHttpRequest classicHttpRequest, ExecChain.Scope scope,
-            ExecChain execChain) throws IOException, HttpException {
+    public ClassicHttpResponse execute(@NotNull ClassicHttpRequest classicHttpRequest, @NotNull ExecChain.Scope scope,
+            @NotNull ExecChain execChain) throws IOException, HttpException {
         Header authorizationHeader;
         try {
             if (!classicHttpRequest.containsHeader(HttpHeaders.AUTHORIZATION) &&

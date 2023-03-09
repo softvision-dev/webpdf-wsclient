@@ -1,22 +1,18 @@
 package net.webpdf.wsclient.session.rest.documents;
 
 import net.webpdf.wsclient.session.documents.Document;
-import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
  * <p>
  * A class implementing {@link RestDocument} represents a document, that has been uploaded to a webPDF server.
- * </p>
- * <p>
- * Such a {@link RestDocument} defines a document, that has been uploaded to the webPDF server so that it and it´s
- * history can be accessed via a {@link DocumentManager} by an assigned document ID.
  * </p>
  */
 public interface RestDocument extends Document {
@@ -36,26 +32,11 @@ public interface RestDocument extends Document {
     @NotNull DocumentFile getDocumentFile();
 
     /**
-     * Sets the {@link DocumentFile} of the managed {@link RestDocument}.
-     *
-     * @param documentFile the new {@link DocumentFile} of the managed {@link RestDocument}.
-     */
-    void setDocumentFile(@NotNull DocumentFile documentFile);
-
-    /**
      * Returns the {@link HistoryEntry}s of the managed {@link RestDocument}.
      *
      * @return The {@link HistoryEntry}s of the managed {@link RestDocument}.
      */
     @NotNull List<HistoryEntry> getHistory();
-
-    /**
-     * Replaces the internally stored {@link HistoryEntry} list of the managed {@link RestDocument}
-     *
-     * @param historyEntries The new {@link HistoryEntry}s to be set.
-     * @throws ResultException Shall be thrown, when updating the document history failed.
-     */
-    void setHistory(@NotNull HistoryEntry[] historyEntries) throws ResultException;
 
     /**
      * Returns a {@link HistoryEntry} from the internal history map, by given history ID.
@@ -68,11 +49,23 @@ public interface RestDocument extends Document {
     @NotNull HistoryEntry getHistoryEntry(int historyId) throws ResultException;
 
     /**
-     * Updates the given {@link HistoryEntry} in the internally managed document history.
+     * This is a shortcut for {@link DocumentManager#downloadDocument(RestDocument, OutputStream)} and
+     * Attempts to download and write the {@link RestDocument} to the given {@link OutputStream}.
      *
-     * @param historyEntry The {@link HistoryEntry} containing the values to be set.
-     * @throws ResultException Shall be thrown, when updating the document history failed.
+     * @param target The target {@link OutputStream} the {@link RestDocument} shall be
+     *               written to.
+     * @throws ResultException Shall be thrown, should writing the result document fail.
      */
-    void updateHistoryEntry(@Nullable HistoryEntry historyEntry) throws ResultException;
+    void downloadDocument(@NotNull OutputStream target) throws ResultException;
+
+    /**
+     * This is a shortcut for {@link DocumentManager#downloadDocument(RestDocument, OutputStream)} and
+     * Attempts to download and write the {@link RestDocument} to the given {@link File}.
+     *
+     * @param target The target {@link File} the {@link RestDocument} shall be
+     *               written to.
+     * @throws ResultException Shall be thrown, should writing the result document fail.
+     */
+    void downloadDocument(@NotNull File target) throws ResultException;
 
 }

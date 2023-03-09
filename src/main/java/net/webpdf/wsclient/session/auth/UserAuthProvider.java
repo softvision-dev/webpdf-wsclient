@@ -9,8 +9,17 @@ import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * <p>
  * An instance of {@link UserAuthProvider} shall provide {@link UsernamePasswordCredentials} for the authentication of a
  * webPDF user.
+ * </p>
+ * <p>
+ * <b>Be aware:</b> Currently an {@link UserAuthProvider} shall only serve one {@link Session} at a
+ * time. An {@link UserAuthProvider} being called by another {@link Session} than it´s current master,
+ * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
+ * (new master).<br>
+ * For that reason an {@link UserAuthProvider}s shall be reusable by subsequent {@link Session}s.
+ * </p>
  */
 public class UserAuthProvider extends AbstractAuthenticationProvider {
 
@@ -19,6 +28,13 @@ public class UserAuthProvider extends AbstractAuthenticationProvider {
      * Creates a new {@link UserAuthProvider} for the given userName and password.<br>
      * <b>Be aware:</b> The given values may not be empty. Use the {@link AnonymousAuthProvider} to create anonymous
      * {@link Session}s.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> Currently an {@link UserAuthProvider} shall only serve one {@link Session} at a
+     * time. An {@link UserAuthProvider} being called by another {@link Session} than it´s current master,
+     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
+     * (new master).<br>
+     * For that reason an {@link UserAuthProvider}s shall be reusable by subsequent {@link Session}s.
      * </p>
      *
      * @param userName The name of the user to authenticate.
@@ -33,6 +49,13 @@ public class UserAuthProvider extends AbstractAuthenticationProvider {
      * Creates a new {@link UserAuthProvider} provider for the given userName and password.<br>
      * <b>Be aware:</b> The given values may not be empty. Use the {@link AnonymousAuthProvider} to create anonymous
      * {@link Session}s.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> Currently an {@link UserAuthProvider} shall only serve one {@link Session} at a
+     * time. An {@link UserAuthProvider} being called by another {@link Session} than it´s current master,
+     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
+     * (new master).<br>
+     * For that reason an {@link UserAuthProvider}s shall be reusable by subsequent {@link Session}s.
      * </p>
      *
      * @param userName The name of the user to authenticate.

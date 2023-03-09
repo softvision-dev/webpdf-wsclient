@@ -31,18 +31,26 @@ public class UrlConverterWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @param session The {@link SoapSession} a {@link UrlConverterWebService} shall be created for.
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
-    public UrlConverterWebService(@NotNull SoapSession session) throws ResultException {
+    public UrlConverterWebService(@NotNull SoapSession<T_SOAP_DOCUMENT> session) throws ResultException {
         super(session, WebServiceType.URLCONVERTER);
     }
 
     /**
+     * <p>
      * Executes the {@link UrlConverterWebService} operation and returns the {@link DataHandler} of the result document.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> SOAP webservices may not be executed without a {@code sourceDocument}. It is required,
+     * that you at least create a dummy document, such as: new SoapWebServiceDocument() for webservices
+     * not requiring a source document. (Such as the URL-converter.)
+     * </p>
      *
+     * @param sourceDocument The source {@link T_SOAP_DOCUMENT}, that shall be processed.
      * @return The {@link DataHandler} of the result document.
      * @throws WebServiceException Shall be thrown, upon an execution failure.
      */
     @Override
-    protected @Nullable DataHandler processService() throws WebServiceException {
+    protected @Nullable DataHandler processService(@NotNull T_SOAP_DOCUMENT sourceDocument) throws WebServiceException {
         return getPort().execute(getOperationData());
     }
 

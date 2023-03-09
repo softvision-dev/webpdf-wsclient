@@ -2,17 +2,17 @@ package net.webpdf.wsclient.session.rest;
 
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.auth.AuthProvider;
+import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.connection.ServerContextSettings;
 import net.webpdf.wsclient.session.connection.http.HttpAuthorizationHandler;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
-import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
+import net.webpdf.wsclient.session.rest.documents.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
-import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.schema.beans.User;
 import net.webpdf.wsclient.session.AbstractSession;
-import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.ChainElement;
@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * <p>
@@ -50,7 +49,6 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
 
     private static final @NotNull String INFO_PATH = "authentication/user/info/";
     private static final @NotNull String LOGOUT_PATH = "authentication/user/logout/";
-    private final @NotNull HttpClientBuilder httpClientBuilder;
     private final @Nullable User user;
     private final @NotNull CloseableHttpClient httpClient;
     private final @NotNull DocumentManager<T_REST_DOCUMENT> documentManager = createDocumentManager();
@@ -60,31 +58,34 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      * Creates a new {@link AbstractRestSession} instance providing connection information, authorization objects and
      * a {@link DocumentManager} for a webPDF server-client {@link RestSession}.
      *
-     * @param url          The {@link URL} of the webPDF server
-     * @param tlsContext   The {@link TLSContext} used for this https {@link RestSession}.
-     *                     ({@code null} in case an unencrypted HTTP {@link RestSession} shall be created.)
-     * @param authProvider The {@link AuthProvider} for authentication/authorization of this {@link RestSession}.
+     * @param serverContext The {@link ServerContext} initializing the {@link ServerContextSettings} of this
+     *                      {@link RestSession}.
+     * @param authProvider  The {@link AuthProvider} for authentication/authorization of this {@link RestSession}.
      * @throws ResultException Shall be thrown, in case establishing the {@link RestSession} failed.
      */
-    public AbstractRestSession(@NotNull URL url, @Nullable TLSContext tlsContext, @NotNull AuthProvider authProvider)
-            throws ResultException {
-        super(url, WebServiceProtocol.REST, tlsContext, authProvider);
+    public AbstractRestSession(
+            @NotNull ServerContext serverContext, @NotNull AuthProvider authProvider) throws ResultException {
+        super(WebServiceProtocol.REST, serverContext, authProvider);
         RequestConfig clientConfig = RequestConfig.custom().setAuthenticationEnabled(true).build();
         HttpAuthorizationHandler requestAuthorization = new HttpAuthorizationHandler(this);
-        httpClientBuilder = HttpClients.custom()
+        HttpClientBuilder httpClientBuilder = HttpClients.custom()
                 .setDefaultRequestConfig(clientConfig)
                 .addExecInterceptorAfter(ChainElement.REDIRECT.name(),
                         requestAuthorization.getExecChainHandlerName(), requestAuthorization);
-        if (getTlsContext() != null) {
+        if (getServerContext().getProxy() != null) {
+            httpClientBuilder.setRoutePlanner(new DefaultProxyRoutePlanner(
+                    getServerContext().getProxy().getHost()));
+        }
+        if (getServerContext().getTlsContext() != null) {
             LayeredConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                    getTlsContext().getSslContext(), (hostname, session) -> true);
+                    getServerContext().getTlsContext().getSslContext(), (hostname, session) -> true);
             Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
                     .register("http", PlainConnectionSocketFactory.getSocketFactory())
                     .register("https", sslSocketFactory)
                     .build();
             httpClientBuilder.setConnectionManager(new PoolingHttpClientConnectionManager(registry));
         }
-        this.httpClient = this.httpClientBuilder.build();
+        this.httpClient = httpClientBuilder.build();
         this.user = HttpRestRequest.createRequest(this)
                 .buildRequest(HttpMethod.GET, INFO_PATH, null)
                 .executeRequest(User.class);
@@ -128,20 +129,6 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     @Override
     public @Nullable User getUser() {
         return user;
-    }
-
-    /**
-     * Set a {@link ProxyConfiguration} for this {@link RestSession}.
-     *
-     * @param proxy The {@link ProxyConfiguration}, that shall be set for this {@link RestSession}.
-     * @throws ResultException Shall be thrown, when resolving the {@link ProxyConfiguration} failed.
-     */
-    @Override
-    public synchronized void setProxy(@Nullable ProxyConfiguration proxy) throws ResultException {
-        super.setProxy(proxy);
-        if (proxy != null) {
-            httpClientBuilder.setRoutePlanner(new DefaultProxyRoutePlanner(proxy.getHost()));
-        }
     }
 
     /**

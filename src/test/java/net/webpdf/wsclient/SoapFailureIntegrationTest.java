@@ -1,22 +1,20 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.exception.ServerResultException;
-import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
+import net.webpdf.wsclient.session.connection.ServerContext;
+import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.*;
-import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
-import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.soap.*;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -33,15 +31,13 @@ public class SoapFailureIntegrationTest {
     public void testConverterFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/invalid.gif");
-            File fileOut = testResources.getTempFolder().newFile();
-            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                ConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.CONVERTER);
-                FileUtils.deleteQuietly(fileOut);
-                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
-                fallbackFailAndClose(webService.process());
+            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.SOAP,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                ConverterWebService<SoapDocument> webService =
+                        session.createWSInstance(WebServiceType.CONVERTER);
+                fallbackFailAndClose(webService.process(
+                        new SoapWebServiceDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;
@@ -55,21 +51,19 @@ public class SoapFailureIntegrationTest {
     public void testSignatureFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-            File fileOut = testResources.getTempFolder().newFile();
-            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                SignatureWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.SIGNATURE);
+            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.SOAP,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                SignatureWebService<SoapDocument> webService =
+                        session.createWSInstance(WebServiceType.SIGNATURE);
                 SignatureType.Add add = new SignatureType.Add();
                 SignatureType.Add.Appearance appearance = new SignatureType.Add.Appearance();
                 appearance.setPage(2000);
                 add.setAppearance(appearance);
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 webService.getOperationParameters().setAdd(add);
-                FileUtils.deleteQuietly(fileOut);
-                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
-                fallbackFailAndClose(webService.process());
+                fallbackFailAndClose(webService.process(
+                        new SoapWebServiceDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;
@@ -83,15 +77,13 @@ public class SoapFailureIntegrationTest {
     public void testPdfaFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
-            File fileOut = testResources.getTempFolder().newFile();
-            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                PdfaWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.PDFA);
-                FileUtils.deleteQuietly(fileOut);
-                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
-                fallbackFailAndClose(webService.process());
+            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.SOAP,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                PdfaWebService<SoapDocument> webService =
+                        session.createWSInstance(WebServiceType.PDFA);
+                fallbackFailAndClose(webService.process(
+                        new SoapWebServiceDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;
@@ -105,20 +97,18 @@ public class SoapFailureIntegrationTest {
     public void testToolboxFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
-            File fileOut = testResources.getTempFolder().newFile();
-            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                ToolboxWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.TOOLBOX);
+            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.SOAP,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                ToolboxWebService<SoapDocument> webService =
+                        session.createWSInstance(WebServiceType.TOOLBOX);
                 ExtractionType extractionType = new ExtractionType();
                 ExtractionTextType textType = new ExtractionTextType();
                 textType.setPages("2000");
                 extractionType.setText(textType);
                 webService.getOperationParameters().add(extractionType);
-                FileUtils.deleteQuietly(fileOut);
-                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
-                fallbackFailAndClose(webService.process());
+                fallbackFailAndClose(webService.process(
+                        new SoapWebServiceDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;
@@ -132,16 +122,13 @@ public class SoapFailureIntegrationTest {
     public void testUrlConverterFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
-            File fileOut = testResources.getTempFolder().newFile();
-            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                UrlConverterWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.URLCONVERTER);
-                FileUtils.deleteQuietly(fileOut);
-                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
-                fallbackFailAndClose(webService.process());
-                assertTrue(fileOut.exists());
+            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.SOAP,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                UrlConverterWebService<SoapDocument> webService =
+                        session.createWSInstance(WebServiceType.URLCONVERTER);
+                fallbackFailAndClose(webService.process(
+                        new SoapWebServiceDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;
@@ -155,16 +142,13 @@ public class SoapFailureIntegrationTest {
     public void testOCRFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
-            File fileOut = testResources.getTempFolder().newFile();
-            try (Session session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL),
-                    new AnonymousAuthProvider())) {
-                OcrWebService<SoapDocument> webService = WebServiceFactory.createInstance(session,
-                        WebServiceType.OCR);
-                FileUtils.deleteQuietly(fileOut);
-                webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
-                fallbackFailAndClose(webService.process());
-                assertTrue(fileOut.exists());
+            try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.SOAP,
+                            testServer.getServer(ServerType.LOCAL)))) {
+                OcrWebService<SoapDocument> webService =
+                        session.createWSInstance(WebServiceType.OCR);
+                fallbackFailAndClose(webService.process(
+                        new SoapWebServiceDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;

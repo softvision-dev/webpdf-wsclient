@@ -1,24 +1,27 @@
 package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.session.auth.AnonymousAuthProvider;
 import net.webpdf.wsclient.session.auth.AuthProvider;
-import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
 import net.webpdf.wsclient.session.soap.SoapWebServiceSession;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.net.URL;
 
 /**
  * <p>
- * The {@link SessionFactory} provides the means to create a {@link Session} of a matching type establishing and
- * managing a connection with a webPDF server for the given {@link WebServiceProtocol} and context.
+ * The {@link SessionFactory} provides the means to create a {@link Session} of a matching type, establishing and
+ * managing a connection with a webPDF server.<br>
+ * </p>
+ * <p>
+ * <b>Be Aware:</b> Should you not set an {@link AuthProvider} the {@link AnonymousAuthProvider} shall be used by
+ * default, and "anonymous sessions" may or may not be allowed by your webPDF server.<br>
+ * <b>It is never possible to establish a session with the webPDF server without proper authorization.</b>
  * </p>
  */
+@SuppressWarnings("unused")
 public final class SessionFactory {
 
     /**
@@ -29,56 +32,51 @@ public final class SessionFactory {
 
     /**
      * <p>
-     * Creates a HTTP {@link Session} based on the given {@link WebServiceProtocol} to the server at the given
-     * {@link URL}.
+     * Creates a HTTP or HTTPS {@link Session} with a webPDF server, based on the given {@link ServerContext}.
      * </p>
      * <p>
      * This factory will either produce a {@link SoapWebServiceSession} or a {@link RestWebServiceSession}. It is not
      * fit to produce custom session types.
      * </p>
+     * <p>
+     * <b>Be Aware:</b> This shall implicitly use the {@link AnonymousAuthProvider}, and "anonymous sessions" may or
+     * may not be allowed by your webPDF server - you should check that first, before using this factory method.<br>
+     * <b>It is never possible to establish a session with the webPDF server without proper authorization.</b>
+     * </p>
      *
-     * @param webServiceProtocol The {@link WebServiceProtocol} used to communicate with the server.
-     * @param url                The {@link URL} of the server.
-     * @param authProvider       The {@link AuthProvider} method to use for authentication/authorization of the
-     *                           {@link Session}.
-     * @return The {@link Session} organizing the communication with the server at the given {@link URL}.
+     * @param serverContext The {@link ServerContext} containing advanced options for the session initialization.
+     * @return The {@link Session} organizing the communication with the webPDF server.
      * @throws ResultException Shall be thrown in case establishing the {@link Session} failed.
      */
     public static <T_SESSION extends Session> @NotNull T_SESSION createInstance(
-            @NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url, @NotNull AuthProvider authProvider
-    ) throws ResultException {
-        return createInstance(webServiceProtocol, url, null, authProvider);
+            @NotNull ServerContext serverContext) throws ResultException {
+        return createInstance(serverContext, new AnonymousAuthProvider());
     }
 
     /**
      * <p>
-     * Creates an encrypted HTTPS {@link Session} based on the given {@link WebServiceProtocol} to the server at the
-     * given {@link URL}.
+     * Creates a HTTP or HTTPS {@link Session} with a webPDF server, based on the given {@link ServerContext} and
+     * {@link AuthProvider}.
      * </p>
      * <p>
      * This factory will either produce a {@link SoapWebServiceSession} or a {@link RestWebServiceSession}. It is not
      * fit to produce custom session types.
      * </p>
      *
-     * @param webServiceProtocol The {@link WebServiceProtocol} used to communicate with the server.
-     * @param url                The {@link URL} of the server.
-     * @param tlsContext         {@link TLSContext} configuring an HTTPS {@link Session}.
-     * @param authProvider       The {@link AuthProvider} method to use for authentication/authorization of the
-     *                           {@link Session}.
-     * @return The {@link Session} organizing the communication with the server at the given {@link URL}.
+     * @param serverContext The {@link ServerContext} containing advanced options for the {@link Session}.
+     * @param authProvider  The {@link AuthProvider} to use for authentication/authorization of the {@link Session}.
+     * @return The {@link Session} organizing the communication with the webPDF server.
      * @throws ResultException Shall be thrown in case establishing the {@link Session} failed.
      */
     @SuppressWarnings("unchecked")
     public static <T_SESSION extends Session> @NotNull T_SESSION createInstance(
-            @NotNull WebServiceProtocol webServiceProtocol, @NotNull URL url, @Nullable TLSContext tlsContext,
-            @NotNull AuthProvider authProvider
-    ) throws ResultException {
+            @NotNull ServerContext serverContext, @NotNull AuthProvider authProvider) throws ResultException {
         try {
-            switch (webServiceProtocol) {
+            switch (serverContext.getWebServiceProtocol()) {
                 case SOAP:
-                    return (T_SESSION) new SoapWebServiceSession(url, tlsContext, authProvider);
+                    return (T_SESSION) new SoapWebServiceSession(serverContext, authProvider);
                 case REST:
-                    return (T_SESSION) new RestWebServiceSession(url, tlsContext, authProvider);
+                    return (T_SESSION) new RestWebServiceSession(serverContext, authProvider);
                 default:
                     throw new ClientResultException(Error.SESSION_CREATE);
             }

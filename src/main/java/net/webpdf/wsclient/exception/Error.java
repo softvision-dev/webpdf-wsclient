@@ -36,9 +36,9 @@ public enum Error {
      */
     INVALID_WEBSERVICE_URL(-4, "Invalid URL for web service"),
     /**
-     * The selected file resource could not be read, please check whether it exists and is accessible.
+     * The selected resource could not be read, please check whether it exists and is accessible.
      */
-    INVALID_FILE_SOURCE(-5, "Invalid file source parameter"),
+    INVALID_SOURCE_DOCUMENT(-5, "Invalid file source"),
     /**
      * The operation data could not be translated to valid XML or JSON.
      */
@@ -65,6 +65,10 @@ public enum Error {
      * whether your webPDF server is running and reachable.
      */
     INVALID_WEBSERVICE_SESSION(-11, "Creating the session failed"),
+    /**
+     * The resulting document is invalid.
+     */
+    INVALID_RESULT_DOCUMENT(-12, "The resulting document is invalid"),
 
     /**
      * The given URL (or URI) is not well-formed and does not point to a valid resource.

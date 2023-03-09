@@ -4,9 +4,10 @@ import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
-import net.webpdf.wsclient.session.rest.documents.manager.DocumentManager;
+import net.webpdf.wsclient.session.rest.documents.DocumentManager;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.webservice.AbstractWebService;
+import net.webpdf.wsclient.webservice.WebService;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.exception.Error;
@@ -21,6 +22,7 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 
@@ -48,23 +50,59 @@ public abstract class RestWebService<T_OPERATION_DATA, T_OPERATION_PARAMETER, T_
     }
 
     /**
-     * Execute the webservice operation and returns the resulting {@link RestDocument}.
+     * <p>
+     * Execute the webservice operation and return the resulting {@link T_REST_DOCUMENT}.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> Most webservices require a source {@link T_REST_DOCUMENT}, with few exceptions, such as the
+     * URL-converter webservice. Before using this method, make sure that this is valid for
+     * the {@link WebService} call you intend to hereby execute.
+     * </p>
      *
-     * @return The resulting {@link RestDocument}.
+     * @return The resulting {@link T_REST_DOCUMENT}.
+     * @throws ResultException Shall be thrown, upon an execution failure.
+     */
+    public @NotNull T_REST_DOCUMENT process() throws ResultException {
+        T_REST_DOCUMENT document = process(getWebServiceType().equals(WebServiceType.URLCONVERTER) ?
+                getWebServiceType().getRestEndpoint() : getWebServiceType().getRestEndpoint().replace(
+                WebServiceType.ID_PLACEHOLDER, ""));
+        if (document == null) {
+            throw new ClientResultException(Error.INVALID_RESULT_DOCUMENT);
+        }
+        return document;
+    }
+
+    /**
+     * <p>
+     * Execute the webservice operation for the given source {@link T_REST_DOCUMENT} and return the
+     * resulting {@link T_REST_DOCUMENT}.
+     * </p>
+     *
+     * @param sourceDocument The source {@link T_REST_DOCUMENT}, that shall be processed.
+     * @return The resulting {@link T_REST_DOCUMENT}.
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
     @Override
-    public @Nullable T_REST_DOCUMENT process() throws ResultException {
-        if (getSourceDocument() == null) {
-            return null;
-        }
-
-        String urlPath = getWebServiceType().equals(WebServiceType.URLCONVERTER) ?
+    public @NotNull T_REST_DOCUMENT process(@NotNull T_REST_DOCUMENT sourceDocument) throws ResultException {
+        T_REST_DOCUMENT document = process(getWebServiceType().equals(WebServiceType.URLCONVERTER) ?
                 getWebServiceType().getRestEndpoint() : getWebServiceType().getRestEndpoint().replace(
-                WebServiceType.ID_PLACEHOLDER, getSourceDocument().getDocumentId() != null ?
-                        getSourceDocument().getDocumentId() : ""
-        );
+                WebServiceType.ID_PLACEHOLDER, sourceDocument.getDocumentId()));
+        if (document == null) {
+            throw new ClientResultException(Error.INVALID_RESULT_DOCUMENT);
+        }
+        return document;
+    }
 
+    /**
+     * <p>
+     * Execute the webservice operation for the given urlPath and return the resulting {@link T_REST_DOCUMENT}.
+     * </p>
+     *
+     * @param urlPath The resource path ({@link URI}) to execute the request on.
+     * @return The resulting {@link T_REST_DOCUMENT}.
+     * @throws ResultException Shall be thrown, upon an execution failure.
+     */
+    protected @Nullable T_REST_DOCUMENT process(@NotNull String urlPath) throws ResultException {
         DocumentManager<T_REST_DOCUMENT> documentManager = getSession().getDocumentManager();
 
         HttpRestRequest request = HttpRestRequest.createRequest(getSession())

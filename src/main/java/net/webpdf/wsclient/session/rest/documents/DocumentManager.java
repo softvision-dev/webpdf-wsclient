@@ -1,6 +1,5 @@
-package net.webpdf.wsclient.session.rest.documents.manager;
+package net.webpdf.wsclient.session.rest.documents;
 
-import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
@@ -54,7 +53,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @return The document ID mapped to the given {@link DocumentFile}.
      * @throws ResultException Shall be thrown, if requesting the document ID failed.
      */
-    @NotNull String getDocumentID(@Nullable DocumentFile document) throws ResultException;
+    @NotNull String getDocumentID(@NotNull DocumentFile document) throws ResultException;
 
     /**
      * Returns the {@link RestDocument} that is known to the {@link DocumentManager} for the given document ID.
@@ -63,7 +62,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @return The {@link RestDocument} mapped to the given document ID.
      * @throws ResultException Shall be thrown, if requesting the document failed.
      */
-    @NotNull T_REST_DOCUMENT getDocument(@Nullable String documentId) throws ResultException;
+    @NotNull T_REST_DOCUMENT getDocument(@NotNull String documentId) throws ResultException;
 
     /**
      * Returns a list of all {@link RestDocument}s known to this {@link DocumentManager}.
@@ -78,7 +77,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @param documentId The document ID, that shall be checked for existence.
      * @return {@code true}, if this {@link DocumentManager} contains a {@link RestDocument} with the given ID.
      */
-    boolean containsDocument(@Nullable String documentId);
+    boolean containsDocument(@NotNull String documentId);
 
     /**
      * Downloads the {@link RestDocument} with the given document ID and writes it to the given {@link OutputStream}.
@@ -87,7 +86,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @param outputStream The {@link OutputStream} to write the downloaded {@link RestDocument} to.
      * @throws ResultException Shall be thrown, should the download have failed.
      */
-    void downloadDocument(@NotNull String documentId, @Nullable OutputStream outputStream) throws ResultException;
+    void downloadDocument(@NotNull String documentId, @NotNull OutputStream outputStream) throws ResultException;
 
     /**
      * Downloads the {@link RestDocument} and writes it to the given {@link OutputStream}.
@@ -96,7 +95,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @param outputStream The {@link OutputStream} to write the downloaded {@link RestDocument} to.
      * @throws ResultException Shall be thrown, should the download have failed.
      */
-    void downloadDocument(@Nullable RestDocument document, @Nullable OutputStream outputStream) throws ResultException;
+    void downloadDocument(@Nullable RestDocument document, @NotNull OutputStream outputStream) throws ResultException;
 
     /**
      * Uploads the given {@link File} to the webPDF server, adds it to this {@link DocumentManager} and returns the
@@ -106,7 +105,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @return The resulting {@link RestDocument} handle.
      * @throws ResultException Shall be thrown, should the upload have failed.
      */
-    @NotNull T_REST_DOCUMENT uploadDocument(@Nullable File file) throws ResultException;
+    @NotNull T_REST_DOCUMENT uploadDocument(@NotNull File file) throws ResultException;
 
     /**
      * Uploads the given {@link InputStream} to the webPDF server as a document resource with the given file name, adds
@@ -117,7 +116,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @return The resulting {@link RestDocument} handle.
      * @throws ResultException Shall be thrown, should the upload have failed.
      */
-    @NotNull T_REST_DOCUMENT uploadDocument(@Nullable InputStream data, @Nullable String fileName) throws ResultException;
+    @NotNull T_REST_DOCUMENT uploadDocument(@NotNull InputStream data, @NotNull String fileName) throws ResultException;
 
     /**
      * Deletes the {@link RestDocument} with the given document ID from the webPDF server.
@@ -125,7 +124,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @param documentId The document ID of the {@link RestDocument} to delete.
      * @throws ResultException Shall be thrown, should deleting the document have failed.
      */
-    void deleteDocument(@Nullable String documentId) throws ResultException;
+    void deleteDocument(@NotNull String documentId) throws ResultException;
 
     /**
      * Rename the {@link RestDocument} with the given document ID.
@@ -135,7 +134,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @return The resulting {@link RestDocument} handle.
      * @throws ResultException Shall be thrown, should renaming the document have failed.
      */
-    @NotNull T_REST_DOCUMENT renameDocument(@Nullable String documentId, @Nullable String fileName) throws ResultException;
+    @NotNull T_REST_DOCUMENT renameDocument(@NotNull String documentId, @NotNull String fileName) throws ResultException;
 
     /**
      * Checks whether a document history is collected for managed {@link RestDocument}s.
@@ -158,7 +157,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @return The {@link HistoryEntry}s known for the selected {@link RestDocument}.
      * @throws ResultException Shall be thrown, should requesting the document history have failed.
      */
-    @NotNull List<HistoryEntry> getDocumentHistory(@Nullable String documentId) throws ResultException;
+    @NotNull List<HistoryEntry> getDocumentHistory(@NotNull String documentId) throws ResultException;
 
     /**
      * Returns the {@link HistoryEntry} with the given history ID for the {@link RestDocument} with the given document
@@ -170,7 +169,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @throws ResultException Shall be thrown, should requesting the document history have failed.
      */
     @SuppressWarnings("unused")
-    @NotNull HistoryEntry getDocumentHistoryEntry(@Nullable String documentId, int historyId) throws ResultException;
+    @NotNull HistoryEntry getDocumentHistoryEntry(@NotNull String documentId, int historyId) throws ResultException;
 
     /**
      * Updates the history of the {@link RestDocument} with the given document ID using the given {@link HistoryEntry}.
@@ -180,7 +179,7 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @return The updated {@link HistoryEntry}.
      * @throws ResultException Shall be thrown, should updating the document history have failed.
      */
-    @Nullable HistoryEntry updateDocumentHistory(@Nullable String documentId, HistoryEntry historyEntry)
+    @Nullable HistoryEntry updateDocumentHistory(@NotNull String documentId, @NotNull HistoryEntry historyEntry)
             throws ResultException;
 
 }

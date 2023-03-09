@@ -10,6 +10,7 @@ import com.microsoft.aad.msal4j.IAuthenticationResult;
 import net.webpdf.wsclient.exception.AuthResultException;
 import net.webpdf.wsclient.openapi.OperationConvertPdfa;
 import net.webpdf.wsclient.session.auth.material.token.OAuth2Token;
+import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.config.TestConfig;
 import net.webpdf.wsclient.testsuite.integration.annotations.OAuthTest;
@@ -25,7 +26,6 @@ import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.io.TestResources;
 import net.webpdf.wsclient.testsuite.server.TestServer;
-import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.PdfaRestWebService;
@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
@@ -64,8 +65,8 @@ public class Oauth2TokenIntegrationTest {
         assertDoesNotThrow(() -> {
             Auth0Config auth0Config = TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config();
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)),
                     // Implement the Auth0 TokenProvider
                     (auth0Session) -> {
                         // Request an access token from the Auth0 authorization provider:
@@ -110,8 +111,8 @@ public class Oauth2TokenIntegrationTest {
         AzureConfig azureConfig = TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig();
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
-                    WebServiceProtocol.REST,
-                    testServer.getServer(ServerType.LOCAL),
+                    new ServerContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)),
                     // Implement the Azure TokenProvider
                     (azureSession) -> {
                         // Request an access token from the Azure authorization provider:
@@ -166,8 +167,9 @@ public class Oauth2TokenIntegrationTest {
     public void testSOAPAuth0TokenTest() {
         Auth0Config auth0Config = TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config();
         assertDoesNotThrow(() -> {
-            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL),
+            try (SoapSession<?> session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.SOAP,
+                            testServer.getServer(ServerType.LOCAL)),
                     // Implement the Auth0 TokenProvider
                     (auth0Session) -> {
                         // Request an access token from the Auth0 authorization provider:
@@ -211,8 +213,9 @@ public class Oauth2TokenIntegrationTest {
     public void testSOAPAzureTokenTest() {
         AzureConfig azureConfig = TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig();
         assertDoesNotThrow(() -> {
-            try (SoapSession session = SessionFactory.createInstance(WebServiceProtocol.SOAP,
-                    testServer.getServer(ServerType.LOCAL),
+            try (SoapSession<?> session = SessionFactory.createInstance(
+                    new ServerContext(WebServiceProtocol.SOAP,
+                            testServer.getServer(ServerType.LOCAL)),
                     // Implement the Azure TokenProvider
                     (azureSession) -> {
                         // Request an access token from the Azure authorization provider:
@@ -257,26 +260,18 @@ public class Oauth2TokenIntegrationTest {
      */
     private void executeWSRequest(@NotNull RestSession<RestDocument> session) {
         assertDoesNotThrow(() -> {
-            PdfaRestWebService<RestDocument> webService =
-                    WebServiceFactory.createInstance(session, WebServiceType.PDFA);
-
+            PdfaRestWebService<RestDocument> webService = session.createWSInstance(WebServiceType.PDFA);
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             File fileOut = testResources.getTempFolder().newFile();
-
-            webService.setSourceDocument(session.getDocumentManager().uploadDocument(file));
             assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
             OperationConvertPdfa pdfa = new OperationConvertPdfa();
             webService.getOperationParameters().setConvert(pdfa);
             pdfa.setLevel(OperationConvertPdfa.LevelEnum._3B);
             pdfa.setErrorReport(OperationConvertPdfa.ErrorReportEnum.MESSAGE);
             pdfa.setImageQuality(90);
-
-            RestDocument restDocument = webService.process();
-            assertNotNull(restDocument);
-            String documentID = restDocument.getDocumentId();
-            assertNotNull(documentID);
             try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                session.getDocumentManager().downloadDocument(documentID, fileOutputStream);
+                webService.process(session.uploadDocument(file))
+                        .downloadDocument(fileOutputStream);
             }
             assertTrue(fileOut.exists());
         });
@@ -287,26 +282,21 @@ public class Oauth2TokenIntegrationTest {
      *
      * @param session The {@link SoapSession} to use.
      */
-    private void executeWSRequest(@NotNull SoapSession session) {
+    private void executeWSRequest(@NotNull SoapSession<?> session) {
         assertDoesNotThrow(() -> {
-            PdfaWebService<SoapDocument> webService =
-                    WebServiceFactory.createInstance(session, WebServiceType.PDFA);
-
+            PdfaWebService<SoapDocument> webService = session.createWSInstance(WebServiceType.PDFA);
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             File fileOut = testResources.getTempFolder().newFile();
-
-            webService.setSourceDocument(new SoapWebServiceDocument(file.toURI(), fileOut));
-
             assertNotNull(webService.getOperationParameters(),
                     "Operation should have been initialized");
-
             webService.getOperationParameters().setConvert(new PdfaType.Convert());
             webService.getOperationParameters().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
             webService.getOperationParameters().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
             webService.getOperationParameters().getConvert().setImageQuality(90);
-
-            try (SoapDocument soapDocument = webService.process()) {
-                assertNotNull(soapDocument);
+            try (SoapDocument soapDocument = webService.process(
+                    new SoapWebServiceDocument(file.toURI()));
+                 OutputStream out = new FileOutputStream(fileOut)) {
+                soapDocument.writeResult(out);
                 assertTrue(fileOut.exists());
             }
         });
