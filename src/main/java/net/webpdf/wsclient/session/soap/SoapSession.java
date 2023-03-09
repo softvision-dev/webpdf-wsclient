@@ -5,11 +5,16 @@ import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
-import net.webpdf.wsclient.session.soap.documents.factory.SoapDocumentFactory;
+import net.webpdf.wsclient.session.soap.documents.datasource.BinaryDataSource;
+import net.webpdf.wsclient.webservice.WebService;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.soap.SoapWebService;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
 
 /**
  * <p>
@@ -41,11 +46,47 @@ public interface SoapSession<T_SOAP_DOCUMENT extends SoapDocument> extends Sessi
     void setUseLocalWsdl(boolean useLocalWsdl);
 
     /**
-     * Provides a {@link SoapDocumentFactory} for the creation of session appropriate {@link SoapDocument}s.
-     *
-     * @return A {@link SoapDocumentFactory} for the creation of session appropriate {@link SoapDocument}s.
+     * <p>
+     * Creates a handle for a {@link SoapWebService} output without providing a source document.<br>
+     * This is recommended for webservices, that don't require a source document. (Such as the URL-Converter.)
+     * </p>
+     * <p>
+     * <b>Be aware:</b> Most webservices require a source document, with few exceptions. Before using this,
+     * make sure that this is valid for the {@link WebService} call you intend to execute.
+     * </p>
      */
-    @NotNull SoapDocumentFactory<T_SOAP_DOCUMENT> createSoapDocumentFactory();
+    @NotNull T_SOAP_DOCUMENT createDocument();
+
+    /**
+     * <p>
+     * Creates a {@link SoapDocument} originating from the given {@link InputStream}.<br>
+     * <b>Be aware:</b> This copies all remaining bytes from the given {@link InputStream} to an array, to create a
+     * reusable {@link BinaryDataSource}.<br>
+     * Especially for large files using this is ill advised, using the alternative constructors
+     * {@link #createDocument(URI)} or {@link #createDocument(File)} is always recommended.
+     * </p>
+     *
+     * @param source The {@link URI} the {@link SoapDocument} is originating from.
+     * @throws ResultException Shall be thrown in case loading the source document failed.
+     */
+    @SuppressWarnings("unused")
+    @NotNull T_SOAP_DOCUMENT createDocument(@NotNull InputStream source) throws ResultException;
+
+    /**
+     * Creates a {@link SoapDocument} originating from the given {@link URI}.
+     *
+     * @param source The {@link URI} the {@link SoapDocument} is originating from.
+     * @throws ResultException Shall be thrown in case loading the source document failed.
+     */
+    @NotNull T_SOAP_DOCUMENT createDocument(@NotNull URI source) throws ResultException;
+
+    /**
+     * Creates a {@link SoapDocument} originating from the given {@link File}.
+     *
+     * @param source The {@link File} the {@link SoapDocument} is originating from.
+     * @throws ResultException Shall be thrown in case loading the source document failed.
+     */
+    @NotNull T_SOAP_DOCUMENT createDocument(@NotNull File source) throws ResultException;
 
     /**
      * Creates a matching {@link SoapWebService} instance to execute a webPDF operation for the current session.

@@ -4,7 +4,6 @@ import net.webpdf.wsclient.exception.ServerResultException;
 import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
-import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -37,7 +36,7 @@ public class SoapFailureIntegrationTest {
                 ConverterWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.CONVERTER);
                 fallbackFailAndClose(webService.process(
-                        new SoapWebServiceDocument(file.toURI())));
+                        session.createDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;
@@ -63,7 +62,7 @@ public class SoapFailureIntegrationTest {
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 webService.getOperationParameters().setAdd(add);
                 fallbackFailAndClose(webService.process(
-                        new SoapWebServiceDocument(file.toURI())));
+                        session.createDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;
@@ -83,7 +82,7 @@ public class SoapFailureIntegrationTest {
                 PdfaWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.PDFA);
                 fallbackFailAndClose(webService.process(
-                        new SoapWebServiceDocument(file.toURI())));
+                        session.createDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;
@@ -108,7 +107,7 @@ public class SoapFailureIntegrationTest {
                 extractionType.setText(textType);
                 webService.getOperationParameters().add(extractionType);
                 fallbackFailAndClose(webService.process(
-                        new SoapWebServiceDocument(file.toURI())));
+                        session.createDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;
@@ -128,7 +127,7 @@ public class SoapFailureIntegrationTest {
                 UrlConverterWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.URLCONVERTER);
                 fallbackFailAndClose(webService.process(
-                        new SoapWebServiceDocument(file.toURI())));
+                        session.createDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;
@@ -148,7 +147,7 @@ public class SoapFailureIntegrationTest {
                 OcrWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.OCR);
                 fallbackFailAndClose(webService.process(
-                        new SoapWebServiceDocument(file.toURI())));
+                        session.createDocument(file.toURI())));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
                 ServerResultException exception = (ServerResultException) ex;

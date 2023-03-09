@@ -88,7 +88,7 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
     public @NotNull T_SOAP_DOCUMENT process() throws ResultException {
-        return process(getSession().createSoapDocumentFactory().createInstance());
+        return process(getSession().createDocument());
     }
 
     /**

@@ -3,7 +3,6 @@ package net.webpdf.wsclient;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
-import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
@@ -38,8 +37,6 @@ public class SoapCredentialsIntegrationTest {
         assertDoesNotThrow(() -> {
             try (FileInputStream fileInputStream = new FileInputStream(file);
                  FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                SoapDocument soapDocument = new SoapWebServiceDocument(fileInputStream);
-
                 ConverterWebService<SoapDocument> webService =
                         session.createWSInstance(WebServiceType.CONVERTER);
 
@@ -52,7 +49,8 @@ public class SoapCredentialsIntegrationTest {
                 webService.getOperationParameters().getPdfa().getConvert().setLevel(PdfaLevelType.LEVEL_3B);
                 webService.getOperationParameters().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
-                try (SoapDocument resultDocument = webService.process(soapDocument)) {
+                try (SoapDocument resultDocument = webService.process(
+                        session.createDocument(fileInputStream))) {
                     resultDocument.writeResult(fileOutputStream);
                     assertTrue(fileOut.exists());
                 }
@@ -92,7 +90,7 @@ public class SoapCredentialsIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
 
                 try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()));
+                        session.createDocument(file.toURI()));
                      OutputStream outputStream = new FileOutputStream(fileOut)) {
                     soapDocument.writeResult(outputStream);
                     assertTrue(fileOut.exists());

@@ -2,7 +2,6 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
-import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.soap.SoapSession;
@@ -51,8 +50,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
@@ -103,8 +101,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
@@ -147,8 +144,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
@@ -181,8 +177,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
@@ -213,8 +208,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/ocr.png");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
@@ -270,8 +264,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
@@ -329,8 +322,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
@@ -381,8 +373,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
@@ -425,8 +416,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
@@ -457,8 +447,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
@@ -489,8 +478,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/ocr.png");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
@@ -547,8 +535,7 @@ public class SoapWebserviceIntegrationTest {
 
                 File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
                 File fileOut = testResources.getTempFolder().newFile();
-                try (SoapDocument soapDocument = webService.process(
-                        new SoapWebServiceDocument(file.toURI()))) {
+                try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }

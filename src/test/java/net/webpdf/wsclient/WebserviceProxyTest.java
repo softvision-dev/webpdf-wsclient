@@ -6,7 +6,6 @@ import net.webpdf.wsclient.session.connection.ServerContext;
 import net.webpdf.wsclient.session.connection.https.TLSProtocol;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
-import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
@@ -102,7 +101,7 @@ public class WebserviceProxyTest {
                     webService.getOperationParameters().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
                     try (SoapDocument resultDocument = webService.process(
-                            new SoapWebServiceDocument(fileInputStream))) {
+                            session.createDocument(fileInputStream))) {
                         assertNotNull(resultDocument);
                         resultDocument.writeResult(fileOutputStream);
                         assertTrue(fileOut.exists());
@@ -144,7 +143,7 @@ public class WebserviceProxyTest {
                     webService.getOperationParameters().getPdfa().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
 
                     try (SoapDocument resultDocument = webService.process(
-                            new SoapWebServiceDocument(fileInputStream))) {
+                            session.createDocument(fileInputStream))) {
                         assertNotNull(resultDocument);
                         resultDocument.writeResult(fileOutputStream);
                         assertTrue(fileOut.exists());

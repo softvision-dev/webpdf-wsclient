@@ -7,7 +7,6 @@ import net.webpdf.wsclient.session.connection.https.TLSProtocol;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
-import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
@@ -51,8 +50,7 @@ public class WebserviceTLSIntegrationTest {
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = testResources.getTempFolder().newFile();
 
-            try (SoapDocument soapDocument = webService.process(
-                    new SoapWebServiceDocument(file.toURI()))) {
+            try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                 assertNotNull(soapDocument);
                 soapDocument.writeResult(fileOut);
                 assertTrue(fileOut.exists());

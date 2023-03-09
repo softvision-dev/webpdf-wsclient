@@ -19,7 +19,6 @@ import net.webpdf.wsclient.testsuite.config.integration.oauth.Auth0Config;
 import net.webpdf.wsclient.testsuite.config.integration.oauth.AzureConfig;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
-import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.schema.operation.*;
@@ -294,7 +293,7 @@ public class Oauth2TokenIntegrationTest {
             webService.getOperationParameters().getConvert().setErrorReport(PdfaErrorReportType.MESSAGE);
             webService.getOperationParameters().getConvert().setImageQuality(90);
             try (SoapDocument soapDocument = webService.process(
-                    new SoapWebServiceDocument(file.toURI()));
+                    session.createDocument(file.toURI()));
                  OutputStream out = new FileOutputStream(fileOut)) {
                 soapDocument.writeResult(out);
                 assertTrue(fileOut.exists());
