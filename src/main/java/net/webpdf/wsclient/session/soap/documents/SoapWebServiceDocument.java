@@ -62,12 +62,6 @@ public class SoapWebServiceDocument extends AbstractDocument implements SoapDocu
      * Manages a {@link SoapDocument} originating from the given {@link InputStream}.
      * </p>
      * <p>
-     * <b>Be aware:</b> This copies all remaining bytes from the given {@link InputStream} to an array, to create a
-     * reusable {@link BinaryDataSource}.<br>
-     * Especially for large files using this constructor is ill advised, using the alternative constructors
-     * {@link #SoapWebServiceDocument(URI)} or {@link #SoapWebServiceDocument(File)} is always recommended.
-     * </p>
-     * <p>
      * <b>Be aware:</b> A {@link SoapDocument} is using {@link DataHandler}s, that might require closing to prevent resource
      * leaks. You should always {@link #close()} {@link SoapDocument}s.
      * </p>
@@ -203,10 +197,12 @@ public class SoapWebServiceDocument extends AbstractDocument implements SoapDocu
     }
 
     /**
-     * Closes and abandons a possibly existing result {@link DataHandler}.
+     * Closes the documents {@link DataHandler}s.
+     *
+     * @throws ResultException Shall be thrown, when closing the underlying {@link DataHandler}s failed.
      */
     @Override
-    public void close() {
+    public void close() throws ResultException {
         try {
             if (source instanceof Closeable) {
                 ((Closeable) source).close();
@@ -215,8 +211,8 @@ public class SoapWebServiceDocument extends AbstractDocument implements SoapDocu
                 ((Closeable) result).close();
                 this.result = null;
             }
-        } catch (IOException e) {
-            //IGNORE
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.FAILED_TO_CLOSE_DATA_SOURCE, ex);
         }
     }
 

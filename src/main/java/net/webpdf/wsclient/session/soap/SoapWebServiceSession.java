@@ -5,7 +5,6 @@ import net.webpdf.wsclient.session.auth.SessionAuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.SessionContextSettings;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
-import net.webpdf.wsclient.session.soap.documents.datasource.BinaryDataSource;
 import net.webpdf.wsclient.session.soap.documents.SoapWebServiceDocument;
 import net.webpdf.wsclient.webservice.WebService;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
@@ -80,11 +79,7 @@ public class SoapWebServiceSession extends AbstractSoapSession<SoapWebServiceDoc
 
     /**
      * <p>
-     * Creates a {@link SoapDocument} originating from the given {@link InputStream}.<br>
-     * <b>Be aware:</b> This copies all remaining bytes from the given {@link InputStream} to an array, to create a
-     * reusable {@link BinaryDataSource}.<br>
-     * Especially for large files using this is ill advised, using the alternative constructors
-     * {@link #createDocument(URI)} or {@link #createDocument(File)} is always recommended.
+     * Creates a {@link SoapDocument} originating from the given {@link InputStream}.
      * </p>
      *
      * @param source The {@link URI} the {@link SoapDocument} is originating from.

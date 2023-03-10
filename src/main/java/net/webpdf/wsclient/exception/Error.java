@@ -5,6 +5,7 @@ import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.soap.SoapSession;
+import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.webservice.rest.RestWebService;
@@ -100,6 +101,10 @@ public enum Error {
      * </p>
      */
     INVALID_RESULT_DOCUMENT(-12, "The resulting document is invalid"),
+    /**
+     * The data handlers of a {@link SoapDocument} failed to close.
+     */
+    FAILED_TO_CLOSE_DATA_SOURCE(-13, "The data handlers of a {@link SoapDocument} failed to close."),
 
     /**
      * <p>

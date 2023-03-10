@@ -74,19 +74,4 @@ public class SoapDocumentTest {
         });
     }
 
-    @Test
-    public void testDataSourceGetOutputStream() {
-        assertThrows(UnsupportedOperationException.class,
-                () -> {
-                    File sourceFile = testResources.getResource("test.pdf");
-
-                    try (InputStream inputStream = Files.newInputStream(sourceFile.toPath());
-                         SoapWebServiceDocument soapDocument = new SoapWebServiceDocument(inputStream)) {
-                        assertNotNull(soapDocument.getSourceDataHandler(),
-                                "Source data handler should have been provided.");
-                        soapDocument.getSourceDataHandler().getDataSource().getOutputStream();
-                    }
-                });
-    }
-
 }
