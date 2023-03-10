@@ -1,6 +1,6 @@
 package net.webpdf.wsclient.session;
 
-import net.webpdf.wsclient.session.auth.SessionAuthProvider;
+import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.session.auth.material.AuthMaterial;
 import net.webpdf.wsclient.session.connection.SessionContextSettings;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
@@ -35,7 +35,7 @@ public interface Session extends AutoCloseable {
 
     /**
      * Provides {@link AuthMaterial} for the authorization of the {@link Session}´s requests, using the
-     * {@link Session}´s {@link SessionAuthProvider}.
+     * {@link Session}´s {@link AuthProvider}.
      *
      * @return {@link AuthMaterial} for the authorization of the {@link Session}´s requests.
      * @throws ResultException Shall be thrown, should the determination of {@link AuthMaterial} fail.

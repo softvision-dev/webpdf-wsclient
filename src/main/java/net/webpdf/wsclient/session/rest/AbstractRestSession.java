@@ -2,7 +2,7 @@ package net.webpdf.wsclient.session.rest;
 
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.session.Session;
-import net.webpdf.wsclient.session.auth.SessionAuthProvider;
+import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.SessionContextSettings;
 import net.webpdf.wsclient.session.connection.http.HttpAuthorizationHandler;
@@ -61,18 +61,18 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      * a {@link DocumentManager} for a webPDF server-client {@link RestSession}.
      * </p>
      * <p>
-     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link SessionAuthProvider} are required to serve multiple
-     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link SessionAuthProvider}
+     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link AuthProvider} are required to serve multiple
+     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link AuthProvider}
      * per {@link Session} you create.
      * </p>
      *
      * @param serverContext The {@link SessionContext} initializing the {@link SessionContextSettings} of this
      *                      {@link RestSession}.
-     * @param authProvider  The {@link SessionAuthProvider} for authentication/authorization of this {@link RestSession}.
+     * @param authProvider  The {@link AuthProvider} for authentication/authorization of this {@link RestSession}.
      * @throws ResultException Shall be thrown, in case establishing the {@link RestSession} failed.
      */
     public AbstractRestSession(
-            @NotNull SessionContext serverContext, @NotNull SessionAuthProvider authProvider) throws ResultException {
+            @NotNull SessionContext serverContext, @NotNull AuthProvider authProvider) throws ResultException {
         super(WebServiceProtocol.REST, serverContext, authProvider);
         RequestConfig clientConfig = RequestConfig.custom().setAuthenticationEnabled(true).build();
         HttpAuthorizationHandler requestAuthorization = new HttpAuthorizationHandler(this);

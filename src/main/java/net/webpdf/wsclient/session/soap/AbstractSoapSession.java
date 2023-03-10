@@ -2,7 +2,7 @@ package net.webpdf.wsclient.session.soap;
 
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.Session;
-import net.webpdf.wsclient.session.auth.SessionAuthProvider;
+import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.SessionContextSettings;
 import net.webpdf.wsclient.session.AbstractSession;
@@ -32,17 +32,17 @@ public abstract class AbstractSoapSession<T_SOAP_DOCUMENT extends SoapDocument>
      * for a webPDF server-client {@link SoapSession}.
      * </p>
      * <p>
-     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link SessionAuthProvider} are required to serve multiple
-     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link SessionAuthProvider}
+     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link AuthProvider} are required to serve multiple
+     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link AuthProvider}
      * per {@link Session} you create.
      * </p>
      *
      * @param serverContext The {@link SessionContext} initializing the {@link SessionContextSettings} of this
      *                      {@link SoapSession}.
-     * @param authProvider  The {@link SessionAuthProvider} for authentication/authorization of this {@link SoapSession}.
+     * @param authProvider  The {@link AuthProvider} for authentication/authorization of this {@link SoapSession}.
      * @throws ResultException Shall be thrown, in case establishing the {@link SoapSession} failed.
      */
-    public AbstractSoapSession(@NotNull SessionContext serverContext, @NotNull SessionAuthProvider authProvider)
+    public AbstractSoapSession(@NotNull SessionContext serverContext, @NotNull AuthProvider authProvider)
             throws ResultException {
         super(WebServiceProtocol.SOAP, serverContext, authProvider);
         if (getSessionContext().getProxy() != null) {

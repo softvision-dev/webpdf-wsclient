@@ -36,12 +36,12 @@ import java.util.concurrent.atomic.AtomicReference;
  * For that reason an {@link AbstractAuthenticationProvider}s shall be reusable by subsequent {@link Session}s.
  * </p>
  * <p>
- * <b>Be aware:</b> However - An implementation of {@link SessionAuthProvider} is not required to serve multiple
- * {@link Session}s at a time. It is expected to create a new {@link SessionAuthProvider} for each existing
+ * <b>Be aware:</b> However - An implementation of {@link AuthProvider} is not required to serve multiple
+ * {@link Session}s at a time. It is expected to create a new {@link AuthProvider} for each existing
  * {@link Session}.
  * </p>
  */
-public abstract class AbstractAuthenticationProvider implements SessionAuthProvider {
+public abstract class AbstractAuthenticationProvider implements AuthProvider {
 
     private static final @NotNull String LOGIN_PATH = "authentication/user/login/";
     private static final @NotNull String REFRESH_PATH = "authentication/user/refresh/";
@@ -73,18 +73,18 @@ public abstract class AbstractAuthenticationProvider implements SessionAuthProvi
     }
 
     /**
-     * Returns the current {@link Session} this {@link SessionAuthProvider} provides authorization for.
+     * Returns the current {@link Session} this {@link AuthProvider} provides authorization for.
      *
-     * @return The current {@link Session} this {@link SessionAuthProvider} provides authorization for.
+     * @return The current {@link Session} this {@link AuthProvider} provides authorization for.
      */
     public @Nullable Session getSession() {
         return this.session.get();
     }
 
     /**
-     * Returns the initial {@link AuthMaterial} given to this {@link SessionAuthProvider}.
+     * Returns the initial {@link AuthMaterial} given to this {@link AuthProvider}.
      *
-     * @return The initial {@link AuthMaterial} given to this {@link SessionAuthProvider}.
+     * @return The initial {@link AuthMaterial} given to this {@link AuthProvider}.
      */
     public @NotNull AuthMaterial getInitialAuthMaterial() {
         return this.initialAuthMaterial;
@@ -123,7 +123,7 @@ public abstract class AbstractAuthenticationProvider implements SessionAuthProvi
      * </p>
      *
      * @param session The session to provide authorization for.
-     * @return The {@link AuthMaterial} provided by this {@link SessionAuthProvider}.
+     * @return The {@link AuthMaterial} provided by this {@link AuthProvider}.
      * @throws AuthResultException Shall be thrown, should the authentication/authorization fail for some reason.
      */
     @Override

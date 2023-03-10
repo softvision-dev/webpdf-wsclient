@@ -13,12 +13,12 @@ import org.jetbrains.annotations.NotNull;
  * <a href="https://github.com/softvision-dev/webpdf-wsclient/wiki/OAuth2">wiki</a> for examples.
  * </p>
  * <p>
- * <b>Be aware:</b> An implementation of {@link SessionAuthProvider} is not required to serve multiple {@link Session}s
- * at a time. It is expected to create a new {@link SessionAuthProvider} for each existing {@link Session}.
+ * <b>Be aware:</b> An implementation of {@link AuthProvider} is not required to serve multiple {@link Session}s
+ * at a time. It is expected to create a new {@link AuthProvider} for each existing {@link Session}.
  * </p>
  */
 @SuppressWarnings("unused")
-public interface OAuth2Provider extends SessionAuthProvider {
+public interface OAuth2Provider extends AuthProvider {
 
     /**
      * Provides an {@link OAuth2Token} for the authorization of a {@link Session}.

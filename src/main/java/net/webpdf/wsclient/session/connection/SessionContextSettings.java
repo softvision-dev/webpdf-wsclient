@@ -2,7 +2,7 @@ package net.webpdf.wsclient.session.connection;
 
 
 import net.webpdf.wsclient.session.Session;
-import net.webpdf.wsclient.session.auth.SessionAuthProvider;
+import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.proxy.ProxyConfiguration;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
@@ -96,7 +96,7 @@ public class SessionContextSettings {
      * Returns a skew time for the token refresh of {@link Session}s.<br>
      * The skew time helps to avoid using expired authorization tokens. The returned value (in seconds) is subtracted
      * from the expiry time to avoid issues possibly caused by transfer delays.<br>
-     * It can not be guaranteed, but is recommended, that custom implementations of {@link SessionAuthProvider} handle this
+     * It can not be guaranteed, but is recommended, that custom implementations of {@link AuthProvider} handle this
      * accordingly.
      * </p>
      *

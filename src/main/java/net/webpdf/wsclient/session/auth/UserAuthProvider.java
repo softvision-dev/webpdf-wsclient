@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
  * For that reason an {@link UserAuthProvider}s shall be reusable by subsequent {@link Session}s.
  * </p>
  * <p>
- * <b>Be aware:</b> However - An implementation of {@link SessionAuthProvider} is not required to serve multiple
- * {@link Session}s at a time. It is expected to create a new {@link SessionAuthProvider} for each existing
+ * <b>Be aware:</b> However - An implementation of {@link AuthProvider} is not required to serve multiple
+ * {@link Session}s at a time. It is expected to create a new {@link AuthProvider} for each existing
  * {@link Session}.
  * </p>
  */

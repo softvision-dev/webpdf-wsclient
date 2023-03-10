@@ -71,4 +71,12 @@ public interface SoapDocument extends Document, AutoCloseable {
      */
     void writeResult(@NotNull File target) throws ResultException;
 
+    /**
+     * Closes the documents {@link DataHandler}s.
+     *
+     * @throws ResultException Shall be thrown, when closing the underlying {@link DataHandler}s failed.
+     */
+    @Override
+    void close() throws ResultException;
+
 }

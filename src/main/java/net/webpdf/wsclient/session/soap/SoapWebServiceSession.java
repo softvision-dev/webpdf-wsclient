@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.session.soap;
 
 import net.webpdf.wsclient.session.Session;
-import net.webpdf.wsclient.session.auth.SessionAuthProvider;
+import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.SessionContextSettings;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
@@ -32,17 +32,17 @@ public class SoapWebServiceSession extends AbstractSoapSession<SoapWebServiceDoc
      * a webPDF server-client {@link SoapSession}.
      * </p>
      * <p>
-     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link SessionAuthProvider} are required to serve multiple
-     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link SessionAuthProvider}
+     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link AuthProvider} are required to serve multiple
+     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link AuthProvider}
      * per {@link Session} you create.
      * </p>
      *
      * @param serverContext The {@link SessionContext} initializing the {@link SessionContextSettings} of this
      *                      {@link SoapSession}.
-     * @param authProvider  The {@link SessionAuthProvider} for authentication/authorization of this {@link SoapSession}.
+     * @param authProvider  The {@link AuthProvider} for authentication/authorization of this {@link SoapSession}.
      * @throws ResultException Shall be thrown, in case establishing the session failed.
      */
-    public SoapWebServiceSession(@NotNull SessionContext serverContext, @NotNull SessionAuthProvider authProvider)
+    public SoapWebServiceSession(@NotNull SessionContext serverContext, @NotNull AuthProvider authProvider)
             throws ResultException {
         super(serverContext, authProvider);
     }

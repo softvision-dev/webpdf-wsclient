@@ -1,7 +1,7 @@
 package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.exception.ClientResultException;
-import net.webpdf.wsclient.session.auth.SessionAuthProvider;
+import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.session.auth.material.AuthMaterial;
 import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.SessionContextSettings;
@@ -27,7 +27,7 @@ public abstract class AbstractSession implements Session {
 
     private final @NotNull WebServiceProtocol webServiceProtocol;
     private final @NotNull SessionContextSettings serverContext;
-    private final @NotNull SessionAuthProvider authProvider;
+    private final @NotNull AuthProvider authProvider;
     private final @NotNull String basePath;
     private final @NotNull URI baseUrl;
 
@@ -37,19 +37,19 @@ public abstract class AbstractSession implements Session {
      * for a webPDF server-client {@link Session}.
      * </p>
      * <p>
-     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link SessionAuthProvider} are required to serve multiple
-     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link SessionAuthProvider}
+     * <b>Be Aware:</b> Neither {@link SessionContext}, nor {@link AuthProvider} are required to serve multiple
+     * {@link Session}s at a time. It is expected to create a new {@link SessionContext} and {@link AuthProvider}
      * per {@link Session} you create.
      * </p>
      *
      * @param webServiceProtocol The {@link WebServiceProtocol} used for this {@link Session}.
      * @param serverContext      The {@link SessionContext} initializing the {@link SessionContextSettings} of this
      *                           {@link Session}.
-     * @param authProvider       The {@link SessionAuthProvider} for authentication/authorization of this {@link Session}.
+     * @param authProvider       The {@link AuthProvider} for authentication/authorization of this {@link Session}.
      * @throws ResultException Shall be thrown, in case establishing the {@link Session} failed.
      */
     public AbstractSession(@NotNull WebServiceProtocol webServiceProtocol, @NotNull SessionContext serverContext,
-            @NotNull SessionAuthProvider authProvider) throws ResultException {
+            @NotNull AuthProvider authProvider) throws ResultException {
         this.serverContext = new SessionContextSettings(serverContext);
         this.authProvider = authProvider;
         this.webServiceProtocol = webServiceProtocol;
@@ -69,7 +69,7 @@ public abstract class AbstractSession implements Session {
 
     /**
      * Provides {@link AuthMaterial} for the authorization of the {@link Session}´s requests, using the
-     * {@link Session}´s {@link SessionAuthProvider}.
+     * {@link Session}´s {@link AuthProvider}.
      *
      * @return {@link AuthMaterial} for the authorization of the {@link Session}´s requests.
      * @throws ResultException Shall be thrown, should the determination of {@link AuthMaterial} fail.
