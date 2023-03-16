@@ -49,13 +49,13 @@ public final class SessionFactory {
      * per {@link Session} you create.
      * </p>
      *
-     * @param serverContext The {@link SessionContext} containing advanced options for the session initialization.
+     * @param sessionContext The {@link SessionContext} containing advanced options for the session initialization.
      * @return The {@link Session} organizing the communication with the webPDF server.
      * @throws ResultException Shall be thrown in case establishing the {@link Session} failed.
      */
     public static <T_SESSION extends Session> @NotNull T_SESSION createInstance(
-            @NotNull SessionContext serverContext) throws ResultException {
-        return createInstance(serverContext, new AnonymousAuthProvider());
+            @NotNull SessionContext sessionContext) throws ResultException {
+        return createInstance(sessionContext, new AnonymousAuthProvider());
     }
 
     /**
@@ -73,20 +73,20 @@ public final class SessionFactory {
      * per {@link Session} you create.
      * </p>
      *
-     * @param serverContext The {@link SessionContext} containing advanced options for the {@link Session}.
+     * @param sessionContext The {@link SessionContext} containing advanced options for the {@link Session}.
      * @param authProvider  The {@link AuthProvider} to use for authentication/authorization of the {@link Session}.
      * @return The {@link Session} organizing the communication with the webPDF server.
      * @throws ResultException Shall be thrown in case establishing the {@link Session} failed.
      */
     @SuppressWarnings("unchecked")
     public static <T_SESSION extends Session> @NotNull T_SESSION createInstance(
-            @NotNull SessionContext serverContext, @NotNull AuthProvider authProvider) throws ResultException {
+            @NotNull SessionContext sessionContext, @NotNull AuthProvider authProvider) throws ResultException {
         try {
-            switch (serverContext.getWebServiceProtocol()) {
+            switch (sessionContext.getWebServiceProtocol()) {
                 case SOAP:
-                    return (T_SESSION) new SoapWebServiceSession(serverContext, authProvider);
+                    return (T_SESSION) new SoapWebServiceSession(sessionContext, authProvider);
                 case REST:
-                    return (T_SESSION) new RestWebServiceSession(serverContext, authProvider);
+                    return (T_SESSION) new RestWebServiceSession(sessionContext, authProvider);
                 default:
                     throw new ClientResultException(Error.UNKNOWN_SESSION_TYPE);
             }

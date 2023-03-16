@@ -63,7 +63,7 @@ public interface WebService<T_SESSION extends Session, T_OPERATION_PARAMETER,
      *
      * @return The webservice specific {@link T_OPERATION_PARAMETER}.
      */
-    @Nullable T_OPERATION_PARAMETER getOperationParameters();
+    @NotNull T_OPERATION_PARAMETER getOperationParameters();
 
     /**
      * Sets the webservice specific {@link T_OPERATION_PARAMETER}, which allows setting parameters for

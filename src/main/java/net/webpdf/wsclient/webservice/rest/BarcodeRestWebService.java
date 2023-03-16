@@ -34,7 +34,7 @@ public class BarcodeRestWebService<T_REST_DOCUMENT extends RestDocument>
      * @return The {@link OperationBarcode} operation parameters.
      */
     @Override
-    public @Nullable OperationBarcode getOperationParameters() {
+    public @NotNull OperationBarcode getOperationParameters() {
         return getOperationData().getBarcode();
     }
 
