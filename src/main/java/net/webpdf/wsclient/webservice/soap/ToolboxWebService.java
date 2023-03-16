@@ -89,7 +89,7 @@ public class ToolboxWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
     @Override
-    protected @NotNull Toolbox provideWSPort() throws ResultException {
+    protected @NotNull Toolbox provideWebServicePort() throws ResultException {
         return Service.create(getWsdlDocumentLocation(), getQName()).getPort(
                 new QName(WebServiceType.TOOLBOX.getSoapNamespaceURI(),
                         WebServiceType.TOOLBOX.getSoapLocalPartPort()),

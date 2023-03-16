@@ -44,7 +44,7 @@ public class ThreadSynchronizationIntegrationTest {
                             testServer.getServer(ServerType.LOCAL)))) {
                 executor.execute(() -> assertDoesNotThrow(() -> {
                     ConverterRestWebService<RestDocument> webService =
-                            session.createWSInstance(WebServiceType.CONVERTER);
+                            session.createWebServiceInstance(WebServiceType.CONVERTER);
                     File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                     assertNotNull(file);
                     File sourceFile = testResources.getTempFolder().newFile();
@@ -77,42 +77,7 @@ public class ThreadSynchronizationIntegrationTest {
                 }));
                 executor.execute(() -> assertDoesNotThrow(() -> {
                     ConverterRestWebService<RestDocument> webService =
-                            session.createWSInstance(WebServiceType.CONVERTER);
-                    File file = testResources.getResource("integration/files/lorem-ipsum.docx");
-                    assertNotNull(file);
-                    File sourceFile = testResources.getTempFolder().newFile();
-                    FileUtils.copyFile(file, sourceFile);
-                    File fileOut = testResources.getTempFolder().newFile();
-                    RestDocument restDocument = session.getDocumentManager().uploadDocument(sourceFile);
-
-                    assertNotNull(webService.getOperationParameters(),
-                            "Operation should have been initialized");
-                    webService.getOperationParameters().setPages("1-5");
-                    webService.getOperationParameters().setEmbedFonts(true);
-
-                    OperationPdfa pdfa = new OperationPdfa();
-                    webService.getOperationParameters().setPdfa(pdfa);
-                    OperationConvertPdfa convertPdfa = new OperationConvertPdfa();
-                    pdfa.setConvert(convertPdfa);
-                    convertPdfa.setLevel(OperationConvertPdfa.LevelEnum._3B);
-                    convertPdfa.setErrorReport(OperationConvertPdfa.ErrorReportEnum.MESSAGE);
-
-                    restDocument = webService.process(restDocument);
-                    try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                        restDocument.downloadDocument(fileOutputStream);
-                    }
-                    assertNotNull(restDocument,
-                            "REST document could not be downloaded.");
-                    assertNotNull(restDocument.getDocumentFile(),
-                            "Downloaded REST document is null");
-                    assertEquals(FilenameUtils.removeExtension(sourceFile.getName()),
-                            restDocument.getDocumentFile().getFileName());
-                    assertTrue(fileOut.exists());
-                    result.add(fileOut);
-                }));
-                executor.execute(() -> assertDoesNotThrow(() -> {
-                    ConverterRestWebService<RestDocument> webService =
-                            session.createWSInstance(WebServiceType.CONVERTER);
+                            session.createWebServiceInstance(WebServiceType.CONVERTER);
                     File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                     assertNotNull(file);
                     File sourceFile = testResources.getTempFolder().newFile();
@@ -147,7 +112,42 @@ public class ThreadSynchronizationIntegrationTest {
                 }));
                 executor.execute(() -> assertDoesNotThrow(() -> {
                     ConverterRestWebService<RestDocument> webService =
-                            session.createWSInstance(WebServiceType.CONVERTER);
+                            session.createWebServiceInstance(WebServiceType.CONVERTER);
+                    File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+                    assertNotNull(file);
+                    File sourceFile = testResources.getTempFolder().newFile();
+                    FileUtils.copyFile(file, sourceFile);
+                    File fileOut = testResources.getTempFolder().newFile();
+                    RestDocument restDocument = session.getDocumentManager().uploadDocument(sourceFile);
+
+                    assertNotNull(webService.getOperationParameters(),
+                            "Operation should have been initialized");
+                    webService.getOperationParameters().setPages("1-5");
+                    webService.getOperationParameters().setEmbedFonts(true);
+
+                    OperationPdfa pdfa = new OperationPdfa();
+                    webService.getOperationParameters().setPdfa(pdfa);
+                    OperationConvertPdfa convertPdfa = new OperationConvertPdfa();
+                    pdfa.setConvert(convertPdfa);
+                    convertPdfa.setLevel(OperationConvertPdfa.LevelEnum._3B);
+                    convertPdfa.setErrorReport(OperationConvertPdfa.ErrorReportEnum.MESSAGE);
+
+                    restDocument = webService.process(restDocument);
+                    try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
+                        restDocument.downloadDocument(fileOutputStream);
+                    }
+                    assertNotNull(restDocument,
+                            "REST document could not be downloaded.");
+                    assertNotNull(restDocument.getDocumentFile(),
+                            "Downloaded REST document is null");
+                    assertEquals(FilenameUtils.removeExtension(sourceFile.getName()),
+                            restDocument.getDocumentFile().getFileName());
+                    assertTrue(fileOut.exists());
+                    result.add(fileOut);
+                }));
+                executor.execute(() -> assertDoesNotThrow(() -> {
+                    ConverterRestWebService<RestDocument> webService =
+                            session.createWebServiceInstance(WebServiceType.CONVERTER);
                     File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                     assertNotNull(file);
                     File sourceFile = testResources.getTempFolder().newFile();

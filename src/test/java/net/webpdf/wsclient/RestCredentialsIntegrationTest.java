@@ -34,7 +34,7 @@ public class RestCredentialsIntegrationTest {
     private void executeConverter(RestSession<RestDocument> session) {
         assertDoesNotThrow(() -> {
             ConverterRestWebService<RestDocument> webService =
-                    session.createWSInstance(WebServiceType.CONVERTER);
+                    session.createWebServiceInstance(WebServiceType.CONVERTER);
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = testResources.getTempFolder().newFile();
             assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");

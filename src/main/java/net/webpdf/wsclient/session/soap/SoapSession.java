@@ -96,7 +96,7 @@ public interface SoapSession<T_SOAP_DOCUMENT extends SoapDocument> extends Sessi
      * @return A matching {@link SoapWebService} instance.
      * @throws ResultException Shall be thrown, if the {@link SoapWebService} creation failed.
      */
-    @NotNull <T_WEBSERVICE extends SoapWebService<?, ?, ?>> T_WEBSERVICE createWSInstance(
+    @NotNull <T_WEBSERVICE extends SoapWebService<?, ?, ?>> T_WEBSERVICE createWebServiceInstance(
             @NotNull WebServiceType webServiceType) throws ResultException;
 
 }

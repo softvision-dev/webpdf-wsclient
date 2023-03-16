@@ -44,7 +44,7 @@ public class ResultException extends Exception {
      *
      * @return The wsclient {@link Error} of this {@link ResultException}.
      */
-    public @NotNull Error getWsclientError() {
+    public @NotNull Error getClientError() {
         return wsclientError;
     }
 

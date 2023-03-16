@@ -57,7 +57,7 @@ public class SoapWebServiceSession extends AbstractSoapSession<SoapWebServiceDoc
      */
     @SuppressWarnings("unchecked")
     @Override
-    public @NotNull <T_WEBSERVICE extends SoapWebService<?, ?, ?>> T_WEBSERVICE createWSInstance(
+    public @NotNull <T_WEBSERVICE extends SoapWebService<?, ?, ?>> T_WEBSERVICE createWebServiceInstance(
             @NotNull WebServiceType webServiceType) throws ResultException {
         return (T_WEBSERVICE) WebServiceFactory.createInstance(this, webServiceType);
     }

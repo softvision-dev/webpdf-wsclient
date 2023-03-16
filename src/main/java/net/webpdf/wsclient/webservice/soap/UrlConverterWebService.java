@@ -85,7 +85,7 @@ public class UrlConverterWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
     @Override
-    protected @NotNull URLConverter provideWSPort() throws ResultException {
+    protected @NotNull URLConverter provideWebServicePort() throws ResultException {
         return Service.create(getWsdlDocumentLocation(), getQName()).getPort(
                 new QName(WebServiceType.URLCONVERTER.getSoapNamespaceURI(),
                         WebServiceType.URLCONVERTER.getSoapLocalPartPort()),

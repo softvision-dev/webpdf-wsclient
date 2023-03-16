@@ -45,7 +45,7 @@ public class WebserviceTLSIntegrationTest {
                 new SessionContext(WebServiceProtocol.SOAP, url)
                         .setTlsContext(tlsContext))) {
             ConverterWebService<SoapDocument> webService =
-                    session.createWSInstance(WebServiceType.CONVERTER);
+                    session.createWebServiceInstance(WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = testResources.getTempFolder().newFile();
@@ -109,7 +109,7 @@ public class WebserviceTLSIntegrationTest {
                 new SessionContext(WebServiceProtocol.REST, url).
                         setTlsContext(tlsContext))) {
             ConverterRestWebService<RestDocument> webService =
-                    session.createWSInstance(WebServiceType.CONVERTER);
+                    session.createWebServiceInstance(WebServiceType.CONVERTER);
 
             File file = testResources.getResource("integration/files/lorem-ipsum.docx");
             File fileOut = testResources.getTempFolder().newFile();

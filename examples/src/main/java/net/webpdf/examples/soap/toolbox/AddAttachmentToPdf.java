@@ -65,7 +65,7 @@ public class AddAttachmentToPdf {
             /** Instantiate the {@link WebService} interface type you want to call.
              * (using {@link WebServiceType.TOOLBOX} here): */
             ToolboxWebService<SoapDocument> toolboxWebService =
-                    session.createWSInstance(WebServiceType.TOOLBOX);
+                    session.createWebServiceInstance(WebServiceType.TOOLBOX);
 
             /** Initialize and add a toolbox attachment parameter root: */
             AttachmentType attachment = new AttachmentType();
@@ -107,7 +107,7 @@ public class AddAttachmentToPdf {
             /** Should an exception have occurred, you can use the following methods to request further information
              * about the exception: */
             int errorCode = ex.getErrorCode();
-            Error error = ex.getWsclientError();
+            Error error = ex.getClientError();
             String message = ex.getMessage();
             Throwable cause = ex.getCause();
             String stMessage = ex.getStackTraceMessage();

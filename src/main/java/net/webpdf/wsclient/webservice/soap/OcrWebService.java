@@ -87,7 +87,7 @@ public class OcrWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
     @Override
-    protected @NotNull OCR provideWSPort() throws ResultException {
+    protected @NotNull OCR provideWebServicePort() throws ResultException {
         return Service.create(getWsdlDocumentLocation(), getQName()).getPort(
                 new QName(WebServiceType.OCR.getSoapNamespaceURI(),
                         WebServiceType.OCR.getSoapLocalPartPort()),

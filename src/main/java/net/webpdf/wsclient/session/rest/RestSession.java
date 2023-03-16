@@ -87,7 +87,7 @@ public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Sessi
      * @return A matching {@link RestWebService} instance.
      * @throws ResultException Shall be thrown, if the {@link RestWebService} creation failed.
      */
-    @NotNull <T_WEBSERVICE extends RestWebService<?, ?, ?>> T_WEBSERVICE createWSInstance(
+    @NotNull <T_WEBSERVICE extends RestWebService<?, ?, ?>> T_WEBSERVICE createWebServiceInstance(
             @NotNull WebServiceType webServiceType) throws ResultException;
 
 }

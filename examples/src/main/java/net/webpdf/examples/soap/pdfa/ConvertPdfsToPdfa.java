@@ -71,7 +71,7 @@ public class ConvertPdfsToPdfa {
             /** Instantiate the {@link WebService} interface type you want to call.
              * (using {@link WebServiceType.PDFA} here): */
             PdfaWebService<SoapDocument> pdfaWebService =
-                    session.createWSInstance(WebServiceType.PDFA);
+                    session.createWebServiceInstance(WebServiceType.PDFA);
 
             /** Request the parameter tree root, to begin parameterizing your webservice call: */
             PdfaType pdfa = pdfaWebService.getOperationParameters();
@@ -96,7 +96,7 @@ public class ConvertPdfsToPdfa {
             /** Should an exception have occurred, you can use the following methods to request further information
              * about the exception: */
             int errorCode = ex.getErrorCode();
-            Error error = ex.getWsclientError();
+            Error error = ex.getClientError();
             String message = ex.getMessage();
             Throwable cause = ex.getCause();
             String stMessage = ex.getStackTraceMessage();

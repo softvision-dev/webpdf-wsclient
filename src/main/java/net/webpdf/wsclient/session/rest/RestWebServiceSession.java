@@ -108,7 +108,7 @@ public class RestWebServiceSession extends AbstractRestSession<RestWebServiceDoc
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T_WEBSERVICE extends RestWebService<?, ?, ?>> @NotNull T_WEBSERVICE createWSInstance(
+    public <T_WEBSERVICE extends RestWebService<?, ?, ?>> @NotNull T_WEBSERVICE createWebServiceInstance(
             @NotNull WebServiceType webServiceType) throws ResultException {
         return (T_WEBSERVICE) WebServiceFactory.createInstance(this, webServiceType);
     }

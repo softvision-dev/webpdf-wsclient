@@ -64,7 +64,7 @@ public class ApplyOCRToPdf {
             /** Instantiate the {@link WebService} interface type you want to call.
              * (using {@link WebServiceType.OCR} here): */
             OcrWebService<SoapDocument> ocrWebService =
-                    session.createWSInstance(WebServiceType.OCR);
+                    session.createWebServiceInstance(WebServiceType.OCR);
 
             /** Request the parameter tree root, to begin parameterizing your webservice call: */
             OcrType ocr = ocrWebService.getOperationParameters();
@@ -91,7 +91,7 @@ public class ApplyOCRToPdf {
             /** Should an exception have occurred, you can use the following methods to request further information
              * about the exception: */
             int errorCode = ex.getErrorCode();
-            Error error = ex.getWsclientError();
+            Error error = ex.getClientError();
             String message = ex.getMessage();
             Throwable cause = ex.getCause();
             String stMessage = ex.getStackTraceMessage();

@@ -59,7 +59,7 @@ public class ConvertURLToPdf {
             /** Instantiate the {@link WebService} interface type you want to call.
              * (using {@link WebServiceType.SIGNATURE} here): */
             UrlConverterWebService<SoapDocument> urlConverterWebService =
-                    session.createWSInstance(WebServiceType.URLCONVERTER);
+                    session.createWebServiceInstance(WebServiceType.URLCONVERTER);
 
             /** Request the parameter tree root, to begin parameterizing your webservice call: */
             UrlConverterType urlConverter = urlConverterWebService.getOperationParameters();
@@ -91,7 +91,7 @@ public class ConvertURLToPdf {
             /** Should an exception have occurred, you can use the following methods to request further information
              * about the exception: */
             int errorCode = ex.getErrorCode();
-            Error error = ex.getWsclientError();
+            Error error = ex.getClientError();
             String message = ex.getMessage();
             Throwable cause = ex.getCause();
             String stMessage = ex.getStackTraceMessage();

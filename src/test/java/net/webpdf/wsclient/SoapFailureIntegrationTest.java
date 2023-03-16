@@ -34,7 +34,7 @@ public class SoapFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ConverterWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.CONVERTER);
+                        session.createWebServiceInstance(WebServiceType.CONVERTER);
                 fallbackFailAndClose(webService.process(
                         session.createDocument(file.toURI())));
             } catch (ResultException ex) {
@@ -54,7 +54,7 @@ public class SoapFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 SignatureWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.SIGNATURE);
+                        session.createWebServiceInstance(WebServiceType.SIGNATURE);
                 SignatureType.Add add = new SignatureType.Add();
                 SignatureType.Add.Appearance appearance = new SignatureType.Add.Appearance();
                 appearance.setPage(2000);
@@ -80,7 +80,7 @@ public class SoapFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 PdfaWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.PDFA);
+                        session.createWebServiceInstance(WebServiceType.PDFA);
                 fallbackFailAndClose(webService.process(
                         session.createDocument(file.toURI())));
             } catch (ResultException ex) {
@@ -100,7 +100,7 @@ public class SoapFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ToolboxWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.TOOLBOX);
+                        session.createWebServiceInstance(WebServiceType.TOOLBOX);
                 ExtractionType extractionType = new ExtractionType();
                 ExtractionTextType textType = new ExtractionTextType();
                 textType.setPages("2000");
@@ -125,7 +125,7 @@ public class SoapFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 UrlConverterWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.URLCONVERTER);
+                        session.createWebServiceInstance(WebServiceType.URLCONVERTER);
                 fallbackFailAndClose(webService.process(
                         session.createDocument(file.toURI())));
             } catch (ResultException ex) {
@@ -145,7 +145,7 @@ public class SoapFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 OcrWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.OCR);
+                        session.createWebServiceInstance(WebServiceType.OCR);
                 fallbackFailAndClose(webService.process(
                         session.createDocument(file.toURI())));
             } catch (ResultException ex) {

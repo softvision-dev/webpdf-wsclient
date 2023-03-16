@@ -65,7 +65,7 @@ public class AddSignaturesToPdf {
             /** Instantiate the {@link WebService} interface type you want to call.
              * (using {@link WebServiceType.SIGNATURE} here): */
             SignatureWebService<SoapDocument> signatureWebService =
-                    session.createWSInstance(WebServiceType.SIGNATURE);
+                    session.createWebServiceInstance(WebServiceType.SIGNATURE);
 
             /** Request the parameter tree root, to begin parameterizing your webservice call: */
             SignatureType signature = signatureWebService.getOperationParameters();
@@ -111,7 +111,7 @@ public class AddSignaturesToPdf {
             /** Should an exception have occurred, you can use the following methods to request further information
              * about the exception: */
             int errorCode = ex.getErrorCode();
-            Error error = ex.getWsclientError();
+            Error error = ex.getClientError();
             String message = ex.getMessage();
             Throwable cause = ex.getCause();
             String stMessage = ex.getStackTraceMessage();

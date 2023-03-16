@@ -27,7 +27,7 @@ public class WebServiceException extends Exception {
 
     /**
      * Collects information concerning a webPDF {@link WebServiceException}, that has been encountered, while calling a
-     * webPDF WS.
+     * webPDF webservice.
      *
      * @param faultInfo The fault info containing further information concerning the error.
      * @param message   The message, describing the occurred error.
@@ -39,7 +39,7 @@ public class WebServiceException extends Exception {
 
     /**
      * Collects information concerning a webPDF {@link WebServiceException}, that has been encountered, while calling a
-     * webPDF WS.
+     * webPDF webservice.
      *
      * @param faultInfo The fault info containing further information concerning the error.
      * @param cause     The cause of the error.

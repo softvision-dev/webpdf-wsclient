@@ -59,7 +59,7 @@ public class ClientResultException extends ResultException {
      */
     @Override
     public @Nullable String getMessage() {
-        String errorMessage = getWsclientError().getMessage();
+        String errorMessage = getClientError().getMessage();
         String detailMessage = StringUtils.join(this.messages, "\n");
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -92,7 +92,7 @@ public class ClientResultException extends ResultException {
      */
     @SuppressWarnings("unused")
     boolean equalsError(@Nullable Error error) {
-        return getWsclientError().equals(error);
+        return getClientError().equals(error);
     }
 
     /**

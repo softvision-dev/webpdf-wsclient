@@ -87,7 +87,7 @@ public class Oauth2TokenIntegrationTest {
                     }
             )) {
                 // Execute requests to webPDF webservices using the access token:
-                executeWSRequest(session);
+                executeWebServiceRequest(session);
             }
         });
     }
@@ -144,7 +144,7 @@ public class Oauth2TokenIntegrationTest {
                     }
             )) {
                 // Execute requests to webPDF webservices using the access token:
-                executeWSRequest(session);
+                executeWebServiceRequest(session);
             }
         });
     }
@@ -190,7 +190,7 @@ public class Oauth2TokenIntegrationTest {
                     }
             )) {
                 // Execute requests to webPDF webservices using the access token:
-                executeWSRequest(session);
+                executeWebServiceRequest(session);
             }
         });
     }
@@ -247,7 +247,7 @@ public class Oauth2TokenIntegrationTest {
                     }
             )) {
                 // Execute requests to webPDF webservices using the access token:
-                executeWSRequest(session);
+                executeWebServiceRequest(session);
             }
         });
     }
@@ -257,9 +257,9 @@ public class Oauth2TokenIntegrationTest {
      *
      * @param session The {@link RestSession} to use.
      */
-    private void executeWSRequest(@NotNull RestSession<RestDocument> session) {
+    private void executeWebServiceRequest(@NotNull RestSession<RestDocument> session) {
         assertDoesNotThrow(() -> {
-            PdfaRestWebService<RestDocument> webService = session.createWSInstance(WebServiceType.PDFA);
+            PdfaRestWebService<RestDocument> webService = session.createWebServiceInstance(WebServiceType.PDFA);
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             File fileOut = testResources.getTempFolder().newFile();
             assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
@@ -281,9 +281,9 @@ public class Oauth2TokenIntegrationTest {
      *
      * @param session The {@link SoapSession} to use.
      */
-    private void executeWSRequest(@NotNull SoapSession<?> session) {
+    private void executeWebServiceRequest(@NotNull SoapSession<?> session) {
         assertDoesNotThrow(() -> {
-            PdfaWebService<SoapDocument> webService = session.createWSInstance(WebServiceType.PDFA);
+            PdfaWebService<SoapDocument> webService = session.createWebServiceInstance(WebServiceType.PDFA);
             File file = testResources.getResource("integration/files/lorem-ipsum.pdf");
             File fileOut = testResources.getTempFolder().newFile();
             assertNotNull(webService.getOperationParameters(),

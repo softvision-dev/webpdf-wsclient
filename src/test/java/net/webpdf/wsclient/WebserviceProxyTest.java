@@ -48,7 +48,7 @@ public class WebserviceProxyTest {
                     new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
             )) {
                 UrlConverterRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.URLCONVERTER);
+                        session.createWebServiceInstance(WebServiceType.URLCONVERTER);
 
                 File fileOut = testResources.getTempFolder().newFile();
 
@@ -88,7 +88,7 @@ public class WebserviceProxyTest {
                 try (FileInputStream fileInputStream = new FileInputStream(file);
                      FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                     ConverterWebService<SoapDocument> webService =
-                            session.createWSInstance(WebServiceType.CONVERTER);
+                            session.createWebServiceInstance(WebServiceType.CONVERTER);
 
                     assertNotNull(webService.getOperationParameters(),
                             "Operation should have been initialized");
@@ -131,7 +131,7 @@ public class WebserviceProxyTest {
                 try (FileInputStream fileInputStream = new FileInputStream(file);
                      FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                     ConverterWebService<SoapDocument> webService =
-                            session.createWSInstance(WebServiceType.CONVERTER);
+                            session.createWebServiceInstance(WebServiceType.CONVERTER);
                     assertNotNull(webService.getOperationParameters(),
                             "Operation should have been initialized");
                     webService.getOperationParameters().setPages("1-5");
@@ -167,7 +167,7 @@ public class WebserviceProxyTest {
                     new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
             )) {
                 UrlConverterRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.URLCONVERTER);
+                        session.createWebServiceInstance(WebServiceType.URLCONVERTER);
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
                 webService.getOperationParameters().setUrl("https://www.webpdf.de");

@@ -34,7 +34,7 @@ public class RestFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ConverterRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.CONVERTER);
+                        session.createWebServiceInstance(WebServiceType.CONVERTER);
                 webService.process(session.getDocumentManager().uploadDocument(file));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
@@ -53,7 +53,7 @@ public class RestFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 SignatureRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.SIGNATURE);
+                        session.createWebServiceInstance(WebServiceType.SIGNATURE);
                 OperationAddSignature add = new OperationAddSignature();
                 OperationAppearanceAdd appearance = new OperationAppearanceAdd();
                 appearance.setPage(2000);
@@ -79,7 +79,7 @@ public class RestFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 PdfaRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.PDFA);
+                        session.createWebServiceInstance(WebServiceType.PDFA);
                 webService.process(session.getDocumentManager().uploadDocument(file));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
@@ -98,7 +98,7 @@ public class RestFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ToolboxRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.TOOLBOX);
+                        session.createWebServiceInstance(WebServiceType.TOOLBOX);
                 OperationBaseToolbox baseToolbox = new OperationBaseToolbox();
                 webService.getOperationParameters().add(baseToolbox);
                 OperationToolboxExtractionExtraction extractionType = new OperationToolboxExtractionExtraction();
@@ -124,7 +124,7 @@ public class RestFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 UrlConverterRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.URLCONVERTER);
+                        session.createWebServiceInstance(WebServiceType.URLCONVERTER);
                 webService.process(session.getDocumentManager().uploadDocument(file));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);
@@ -143,7 +143,7 @@ public class RestFailureIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 OcrRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.OCR);
+                        session.createWebServiceInstance(WebServiceType.OCR);
                 webService.process(session.getDocumentManager().uploadDocument(file));
             } catch (ResultException ex) {
                 assertTrue(ex instanceof ServerResultException);

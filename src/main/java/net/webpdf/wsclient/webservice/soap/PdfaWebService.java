@@ -87,7 +87,7 @@ public class PdfaWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
     @Override
-    protected @NotNull Pdfa provideWSPort() throws ResultException {
+    protected @NotNull Pdfa provideWebServicePort() throws ResultException {
         return Service.create(getWsdlDocumentLocation(), getQName()).getPort(
                 new QName(WebServiceType.PDFA.getSoapNamespaceURI(),
                         WebServiceType.PDFA.getSoapLocalPartPort()),

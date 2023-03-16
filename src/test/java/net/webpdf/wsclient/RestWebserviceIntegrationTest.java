@@ -46,7 +46,7 @@ public class RestWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ConverterRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.CONVERTER);
+                        session.createWebServiceInstance(WebServiceType.CONVERTER);
                 File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                 assertNotNull(file);
                 File sourceFile = testResources.getTempFolder().newFile();
@@ -86,7 +86,7 @@ public class RestWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ToolboxRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.TOOLBOX);
+                        session.createWebServiceInstance(WebServiceType.TOOLBOX);
                 OperationBaseToolbox baseToolbox = new OperationBaseToolbox();
                 OperationToolboxMergeMerge mergeType = new OperationToolboxMergeMerge();
                 baseToolbox.setMerge(mergeType);
@@ -145,7 +145,7 @@ public class RestWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 SignatureRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.SIGNATURE);
+                        session.createWebServiceInstance(WebServiceType.SIGNATURE);
                 GenericCertificate genericCertificate = new GenericCertificate("John Doe");
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 OperationAddSignature add = new OperationAddSignature();
@@ -184,7 +184,7 @@ public class RestWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 PdfaRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.PDFA);
+                        session.createWebServiceInstance(WebServiceType.PDFA);
 
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 OperationConvertPdfa convertPdfa = new OperationConvertPdfa();
@@ -221,7 +221,7 @@ public class RestWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 OcrRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.OCR);
+                        session.createWebServiceInstance(WebServiceType.OCR);
 
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 webService.getOperationParameters().setLanguage(OperationOcr.LanguageEnum.ENG);
@@ -254,7 +254,7 @@ public class RestWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 BarcodeRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.BARCODE);
+                        session.createWebServiceInstance(WebServiceType.BARCODE);
 
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 OperationAddBarcode addBarcode = new OperationAddBarcode();
@@ -315,7 +315,7 @@ public class RestWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 UrlConverterRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.URLCONVERTER);
+                        session.createWebServiceInstance(WebServiceType.URLCONVERTER);
 
                 File fileOut = testResources.getTempFolder().newFile();
 
@@ -372,7 +372,7 @@ public class RestWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ToolboxRestWebService<RestDocument> webService =
-                        session.createWSInstance(WebServiceType.TOOLBOX);
+                        session.createWebServiceInstance(WebServiceType.TOOLBOX);
 
                 OperationBaseToolbox baseToolbox = new OperationBaseToolbox();
                 webService.getOperationParameters().add(baseToolbox);

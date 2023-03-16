@@ -64,7 +64,7 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
         super(webServiceType, session);
         this.qname = new QName(webServiceType.getSoapNamespaceURI(), webServiceType.getSoapLocalPart());
         this.webserviceURL = getSession().getURI(webServiceType.getSoapEndpoint());
-        this.port = provideWSPort();
+        this.port = provideWebServicePort();
     }
 
     /**
@@ -248,7 +248,7 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
      * @return The webservice port, that shall be used for executions.
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
-    protected abstract @NotNull T_WEBPDF_PORT provideWSPort() throws ResultException;
+    protected abstract @NotNull T_WEBPDF_PORT provideWebServicePort() throws ResultException;
 
     /**
      * Returns a matching webservice port for future executions of this {@link SoapWebService}.

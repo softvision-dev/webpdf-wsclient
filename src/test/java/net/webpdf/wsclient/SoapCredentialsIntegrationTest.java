@@ -38,7 +38,7 @@ public class SoapCredentialsIntegrationTest {
             try (FileInputStream fileInputStream = new FileInputStream(file);
                  FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                 ConverterWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.CONVERTER);
+                        session.createWebServiceInstance(WebServiceType.CONVERTER);
 
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 webService.getOperationParameters().setPages("1-5");

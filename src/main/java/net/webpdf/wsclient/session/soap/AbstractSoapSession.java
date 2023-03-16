@@ -24,7 +24,7 @@ public abstract class AbstractSoapSession<T_SOAP_DOCUMENT extends SoapDocument>
         extends AbstractSession implements SoapSession<T_SOAP_DOCUMENT> {
 
     private final @NotNull AtomicBoolean useLocalWsdl = new AtomicBoolean(true);
-    private final @NotNull AtomicReference<WSClientProxySelector> proxySelector = new AtomicReference<>();
+    private final @NotNull AtomicReference<ClientProxySelector> proxySelector = new AtomicReference<>();
 
     /**
      * <p>
@@ -51,7 +51,7 @@ public abstract class AbstractSoapSession<T_SOAP_DOCUMENT extends SoapDocument>
                 this.proxySelector.set(null);
             }
             this.proxySelector.set(
-                    new WSClientProxySelector(new URI[]{getURI("")},
+                    new ClientProxySelector(new URI[]{getURI("")},
                             getSessionContext().getProxy().getHost())
             );
         }

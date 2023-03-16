@@ -87,7 +87,7 @@ public class SignatureWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
     @Override
-    protected @NotNull Signature provideWSPort() throws ResultException {
+    protected @NotNull Signature provideWebServicePort() throws ResultException {
         return Service.create(getWsdlDocumentLocation(), getQName()).getPort(
                 new QName(WebServiceType.SIGNATURE.getSoapNamespaceURI(),
                         WebServiceType.SIGNATURE.getSoapLocalPartPort()),

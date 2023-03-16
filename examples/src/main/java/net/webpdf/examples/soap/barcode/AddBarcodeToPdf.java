@@ -63,7 +63,7 @@ public class AddBarcodeToPdf {
             /** Instantiate the {@link WebService} interface type you want to call.
              * (using {@link WebServiceType.BARCODE} here): */
             BarcodeWebService<SoapDocument> barcodeWebService =
-                    session.createWSInstance(WebServiceType.BARCODE);
+                    session.createWebServiceInstance(WebServiceType.BARCODE);
 
             /** Request the parameter tree root, to begin parameterizing your webservice call: */
             BarcodeType barcode = barcodeWebService.getOperationParameters();
@@ -101,7 +101,7 @@ public class AddBarcodeToPdf {
             /** Should an exception have occurred, you can use the following methods to request further information
              * about the exception: */
             int errorCode = ex.getErrorCode();
-            Error error = ex.getWsclientError();
+            Error error = ex.getClientError();
             String message = ex.getMessage();
             Throwable cause = ex.getCause();
             String stMessage = ex.getStackTraceMessage();

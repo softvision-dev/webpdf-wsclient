@@ -59,7 +59,7 @@ public class AddAttachmentToPdf {
             /** Instantiate the {@link WebService} interface type you want to call.
              * (using {@link WebServiceType.TOOLBOX} here): */
             ToolboxRestWebService<RestDocument> toolboxWebService =
-                    session.createWSInstance(WebServiceType.TOOLBOX);
+                    session.createWebServiceInstance(WebServiceType.TOOLBOX);
 
             /** Upload your document to the REST sessions´s document storage.
              * You may upload/download/delete/rename/etc. as many {@link RestDocument}s as you wish and at any time,
@@ -111,7 +111,7 @@ public class AddAttachmentToPdf {
             /** Should an exception have occurred, you can use the following methods to request further information
              * about the exception: */
             int errorCode = ex.getErrorCode();
-            Error error = ex.getWsclientError();
+            Error error = ex.getClientError();
             String message = ex.getMessage();
             Throwable cause = ex.getCause();
             String stMessage = ex.getStackTraceMessage();

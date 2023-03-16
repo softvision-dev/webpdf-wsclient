@@ -9,13 +9,13 @@ import java.net.*;
 import java.util.*;
 
 /**
- * An instance of {@link WSClientProxySelector} initializes a custom proxy selector, that prepares proxy settings for
+ * An instance of {@link ClientProxySelector} initializes a custom proxy selector, that prepares proxy settings for
  * webPDF calls. It shall fall back to the default proxy selector, when a processed {@link URI} is not pointing to a
  * webPDF endpoint. It will restore the previously set proxy selector, when closed. The default proxy selector shall
  * also be used as a fallback, when a resource path shall be routed, that is not based on one of the given
  * routedResources.
  */
-public class WSClientProxySelector extends ProxySelector implements AutoCloseable {
+public class ClientProxySelector extends ProxySelector implements AutoCloseable {
 
     private static final @NotNull String[] SUPPORTED_SCHEMES = new String[]{"http", "https"};
     private final @NotNull Map<SocketAddress, Proxy> proxies = new HashMap<>();
@@ -32,7 +32,7 @@ public class WSClientProxySelector extends ProxySelector implements AutoCloseabl
      * @param routedResources A list of all base {@link URI}s, that shall be routed via this selector. All URIs a proxy
      *                        is requested for, shall start with one of the hereby given {@link URI}s.
      */
-    public WSClientProxySelector(@NotNull URI[] routedResources, @NotNull HttpHost... proxies) {
+    public ClientProxySelector(@NotNull URI[] routedResources, @NotNull HttpHost... proxies) {
         this.routedResources = Arrays.asList(routedResources);
         this.defaultProxySelector = ProxySelector.getDefault();
         ProxySelector.setDefault(this);

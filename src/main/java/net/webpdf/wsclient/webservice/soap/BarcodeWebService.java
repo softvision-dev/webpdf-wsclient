@@ -87,7 +87,7 @@ public class BarcodeWebService<T_SOAP_DOCUMENT extends SoapDocument>
      * @throws ResultException Shall be thrown, upon an execution failure.
      */
     @Override
-    protected @NotNull Barcode provideWSPort() throws ResultException {
+    protected @NotNull Barcode provideWebServicePort() throws ResultException {
         return Service.create(getWsdlDocumentLocation(), getQName()).getPort(
                 new QName(WebServiceType.BARCODE.getSoapNamespaceURI(),
                         WebServiceType.BARCODE.getSoapLocalPartPort()),

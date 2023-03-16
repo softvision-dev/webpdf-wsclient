@@ -33,7 +33,7 @@ public class SoapWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ConverterWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.CONVERTER);
+                        session.createWebServiceInstance(WebServiceType.CONVERTER);
 
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 webService.getOperationParameters().setPages("1-5");
@@ -66,7 +66,7 @@ public class SoapWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ToolboxWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.TOOLBOX);
+                        session.createWebServiceInstance(WebServiceType.TOOLBOX);
 
                 MergeType mergeType = new MergeType();
                 mergeType.setPage(1);
@@ -117,7 +117,7 @@ public class SoapWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 SignatureWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.SIGNATURE);
+                        session.createWebServiceInstance(WebServiceType.SIGNATURE);
 
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
@@ -161,7 +161,7 @@ public class SoapWebserviceIntegrationTest {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
-                PdfaWebService<SoapDocument> webService = session.createWSInstance(WebServiceType.PDFA);
+                PdfaWebService<SoapDocument> webService = session.createWebServiceInstance(WebServiceType.PDFA);
 
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
@@ -192,7 +192,7 @@ public class SoapWebserviceIntegrationTest {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
-                OcrWebService<SoapDocument> webService = session.createWSInstance(WebServiceType.OCR);
+                OcrWebService<SoapDocument> webService = session.createWebServiceInstance(WebServiceType.OCR);
 
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
@@ -224,7 +224,7 @@ public class SoapWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 BarcodeWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.BARCODE);
+                        session.createWebServiceInstance(WebServiceType.BARCODE);
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
                 webService.getOperationParameters().setAdd(new BarcodeType.Add());
@@ -280,7 +280,7 @@ public class SoapWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 UrlConverterWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.URLCONVERTER);
+                        session.createWebServiceInstance(WebServiceType.URLCONVERTER);
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
                 webService.getOperationParameters().setUrl("https://www.webpdf.de");
@@ -310,7 +310,7 @@ public class SoapWebserviceIntegrationTest {
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 ConverterWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.CONVERTER);
+                        session.createWebServiceInstance(WebServiceType.CONVERTER);
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
                 webService.getOperationParameters().setPages("1-5");
                 webService.getOperationParameters().setEmbedFonts(true);
@@ -339,7 +339,7 @@ public class SoapWebserviceIntegrationTest {
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 ToolboxWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.TOOLBOX);
+                        session.createWebServiceInstance(WebServiceType.TOOLBOX);
                 MergeType mergeType = new MergeType();
                 mergeType.setPage(1);
                 mergeType.setSourceIsZip(false);
@@ -390,7 +390,7 @@ public class SoapWebserviceIntegrationTest {
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 SignatureWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.SIGNATURE);
+                        session.createWebServiceInstance(WebServiceType.SIGNATURE);
 
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
@@ -432,7 +432,7 @@ public class SoapWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
-                PdfaWebService<SoapDocument> webService = session.createWSInstance(WebServiceType.PDFA);
+                PdfaWebService<SoapDocument> webService = session.createWebServiceInstance(WebServiceType.PDFA);
 
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
@@ -463,7 +463,7 @@ public class SoapWebserviceIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
-                OcrWebService<SoapDocument> webService = session.createWSInstance(WebServiceType.OCR);
+                OcrWebService<SoapDocument> webService = session.createWebServiceInstance(WebServiceType.OCR);
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
                 webService.getOperationParameters().setLanguage(OcrLanguageType.ENG);
@@ -495,7 +495,7 @@ public class SoapWebserviceIntegrationTest {
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 BarcodeWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.BARCODE);
+                        session.createWebServiceInstance(WebServiceType.BARCODE);
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
                 webService.getOperationParameters().setAdd(new BarcodeType.Add());
@@ -552,7 +552,7 @@ public class SoapWebserviceIntegrationTest {
                             testServer.getServer(ServerType.LOCAL)))) {
                 session.setUseLocalWsdl(false);
                 UrlConverterWebService<SoapDocument> webService =
-                        session.createWSInstance(WebServiceType.URLCONVERTER);
+                        session.createWebServiceInstance(WebServiceType.URLCONVERTER);
 
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
