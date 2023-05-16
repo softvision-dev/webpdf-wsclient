@@ -133,6 +133,16 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
     }
 
     /**
+     * Sets the {@link PdfPasswordType} for the current webservice.
+     *
+     * @param password The {@link PdfPasswordType} for the current webservice.
+     */
+    @Override
+    public void setPassword(@Nullable PdfPasswordType password) {
+        this.getOperationData().setPassword(password);
+    }
+
+    /**
      * Returns the {@link BillingType} of the current webservice.
      *
      * @return the {@link BillingType} of the current webservice.
@@ -143,6 +153,16 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
     }
 
     /**
+     * Sets the {@link BillingType} for the current webservice.
+     *
+     * @param billing The {@link BillingType} for the current webservice.
+     */
+    @Override
+    public void setBilling(@Nullable BillingType billing) {
+        this.getOperationData().setBilling(billing);
+    }
+
+    /**
      * Returns the {@link SettingsType} of the current webservice.
      *
      * @return the {@link SettingsType} of the current webservice.
@@ -150,6 +170,16 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
     @Override
     public @Nullable SettingsType getSettings() {
         return getOperationData().getSettings();
+    }
+
+    /**
+     * Sets the {@link SettingsType} for the current webservice.
+     *
+     * @param settings The {@link SettingsType} for the current webservice.
+     */
+    @Override
+    public void setSettings(@Nullable SettingsType settings) {
+        this.getOperationData().setSettings(settings);
     }
 
     /**
@@ -217,7 +247,7 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
         BindingProvider bindingProvider = ((BindingProvider) port);
 
         // set auth information
-        AuthMaterial authMaterial = getSession().getAuthMaterial();
+        AuthMaterial authMaterial = getSession().getAuthProvider().provide(getSession());
         String authorizationHeader = authMaterial.getRawAuthHeader();
         if (authorizationHeader != null) {
             getHeaders().put(HttpHeaders.AUTHORIZATION, Collections.singletonList(authorizationHeader));

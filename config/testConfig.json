@@ -38,6 +38,13 @@
     },
     "tls": {
       "enabled": false
+    },
+    "ldap": {
+      "enabled": false
+    },
+    "license": {
+      "licensee": "Insert the licensee here",
+      "key": "Insert the license key here"
     }
   }
 }

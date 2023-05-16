@@ -27,7 +27,6 @@ import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HttpRestRequestIntegrationTest {
-
     private final TestResources testResources = new TestResources(HttpRestRequestIntegrationTest.class);
     public TestServer testServer = new TestServer();
 
@@ -38,8 +37,7 @@ public class HttpRestRequestIntegrationTest {
             File file = testResources.getResource("test.pdf");
             File outputFile = testResources.getTempFolder().newFile();
             try (RestWebServiceSession session = SessionFactory.createInstance(
-                    new SessionContext(WebServiceProtocol.REST,
-                            testServer.getServer(ServerType.LOCAL)),
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword()));
                  OutputStream fos = Files.newOutputStream(outputFile.toPath())) {
                 HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
@@ -100,11 +98,10 @@ public class HttpRestRequestIntegrationTest {
                         HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                         assertNotNull(httpRestRequest,
                                 "HttpRestRequest should have been build.");
-                        httpRestRequest.buildRequest(HttpMethod.POST, "documents/", null);
+                        httpRestRequest.buildRequest(HttpMethod.POST, "documents/");
                         DocumentFile response = httpRestRequest.executeRequest(DocumentFile.class);
                         assertNotNull(response);
                     }
                 });
     }
-
 }

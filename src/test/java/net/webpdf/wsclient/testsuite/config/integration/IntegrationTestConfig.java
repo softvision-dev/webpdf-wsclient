@@ -37,6 +37,9 @@ public class IntegrationTestConfig extends ConfigNodeContainer {
         return getBoolean("/tls/enabled", false);
     }
 
+    public boolean isLdapTestsActive() {
+        return getBoolean("/ldap/enabled", false);
+    }
 
     public @NotNull Auth0Config getAuth0Config() {
         return auth0Config;
@@ -46,4 +49,11 @@ public class IntegrationTestConfig extends ConfigNodeContainer {
         return azureConfig;
     }
 
+    public @NotNull String getLicensee() {
+        return getString("/license/licensee", "");
+    }
+
+    public @NotNull String getLicenseKey() {
+        return getString("/license/key", "");
+    }
 }

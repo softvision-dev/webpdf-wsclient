@@ -24,6 +24,8 @@ import java.io.StringReader;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An instance of {@link HttpRestRequest} monitors and executes a webPDF wsclient request executed within a
@@ -35,6 +37,7 @@ public class HttpRestRequest {
     private final @NotNull RestSession<?> session;
     private @Nullable String acceptHeader = DataFormat.JSON.getMimeType();
     private @Nullable HttpUriRequest httpUriRequest;
+    private final @NotNull Map<String, String> headers = new HashMap<>();
 
     /**
      * Creates a {@link HttpRestRequest} preparing and executing a request for a given {@link RestSession} to provide
@@ -60,7 +63,7 @@ public class HttpRestRequest {
     }
 
     /**
-     * Selects the MIME type  of the data transfer object ({@link HttpEntity}) that shall be accepted as a valid
+     * Selects the MIME type of the data transfer object ({@link HttpEntity}) that shall be accepted as a valid
      * response payload for this {@link HttpRestRequest}.
      *
      * @param mimeType The MIME type  of the transfer data object that shall be accepted as a valid response payload for
@@ -70,6 +73,33 @@ public class HttpRestRequest {
     public @NotNull HttpRestRequest setAcceptHeader(@NotNull String mimeType) {
         this.acceptHeader = mimeType;
         return this;
+    }
+
+    /**
+     * sets an additional {@link HttpHeaders} for this {@link HttpRestRequest}
+     *
+     * @param key   The {@link HttpHeaders} to set
+     * @param value The value of the header
+     * @return The {@link HttpRestRequest} instance itself.
+     */
+    public @NotNull HttpRestRequest setAdditionalHeader(String key, String value) {
+        headers.put(key, value);
+        return this;
+    }
+
+    /**
+     * Prepare the {@link HttpRestRequest} to execute the selected {@link HttpMethod} on the given resource path
+     * ({@link URI}) and providing the given {@link HttpEntity} as it´s data transfer object (parameters).
+     *
+     * @param httpMethod   The {@link HttpMethod} to execute.
+     * @param path         The resource path ({@link URI}) to execute the request on.
+     * @return The {@link HttpRestRequest} instance itself.
+     * @throws ResultException Shall be thrown, if creating initializing the {@link HttpRestRequest} failed for the
+     *                         given parameters.
+     */
+    public @NotNull HttpRestRequest buildRequest(@NotNull HttpMethod httpMethod, @NotNull String path) throws ResultException {
+        URI uri = this.session.getURI(path);
+        return buildRequest(httpMethod, uri, null, null);
     }
 
     /**
@@ -84,7 +114,7 @@ public class HttpRestRequest {
      *                         given parameters.
      */
     public @NotNull HttpRestRequest buildRequest(@NotNull HttpMethod httpMethod, @NotNull String path,
-            @Nullable HttpEntity httpEntity) throws ResultException {
+                                                 @Nullable HttpEntity httpEntity) throws ResultException {
         URI uri = this.session.getURI(path);
         return buildRequest(httpMethod, uri, httpEntity, null);
     }
@@ -102,7 +132,7 @@ public class HttpRestRequest {
      *                         given parameters.
      */
     public @NotNull HttpRestRequest buildRequest(@NotNull HttpMethod httpMethod, @NotNull String path,
-            @Nullable HttpEntity httpEntity, @Nullable AuthMaterial authMaterial) throws ResultException {
+                                                 @Nullable HttpEntity httpEntity, @Nullable AuthMaterial authMaterial) throws ResultException {
         URI uri = this.session.getURI(path);
         return buildRequest(httpMethod, uri, httpEntity, authMaterial);
     }
@@ -119,8 +149,22 @@ public class HttpRestRequest {
      *                         given parameters.
      */
     public @NotNull HttpRestRequest buildRequest(@NotNull HttpMethod httpMethod, @NotNull URI uri,
-            @Nullable HttpEntity httpEntity) throws ResultException {
+                                                 @Nullable HttpEntity httpEntity) throws ResultException {
         return buildRequest(httpMethod, uri, httpEntity, null);
+    }
+
+    /**
+     * Prepare the {@link HttpRestRequest} to execute the selected {@link HttpMethod} on the given resource path
+     * ({@link URI}) and providing the given {@link HttpEntity} as it´s data transfer object (parameters).
+     *
+     * @param httpMethod The {@link HttpMethod} to execute.
+     * @param uri        The resource path ({@link URI}) to execute the request on.
+     * @return The {@link HttpRestRequest} instance itself.
+     * @throws ResultException Shall be thrown, if creating initializing the {@link HttpRestRequest} failed for the
+     *                         given parameters.
+     */
+    public @NotNull HttpRestRequest buildRequest(@NotNull HttpMethod httpMethod, @NotNull URI uri) throws ResultException {
+        return buildRequest(httpMethod, uri, null, null);
     }
 
     /**
@@ -136,7 +180,7 @@ public class HttpRestRequest {
      *                         given parameters.
      */
     public @NotNull HttpRestRequest buildRequest(@NotNull HttpMethod httpMethod, @NotNull URI uri,
-            @Nullable HttpEntity httpEntity, @Nullable AuthMaterial authMaterial) throws ResultException {
+                                                 @Nullable HttpEntity httpEntity, @Nullable AuthMaterial authMaterial) throws ResultException {
         switch (httpMethod) {
             case GET:
                 httpUriRequest = new HttpGet(uri);
@@ -150,13 +194,20 @@ public class HttpRestRequest {
             case PUT:
                 httpUriRequest = new HttpPut(uri);
                 break;
+            case HEAD:
+                httpUriRequest = new HttpHead(uri);
+                break;
             default:
                 throw new ClientResultException(Error.UNKNOWN_HTTP_METHOD);
         }
 
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            httpUriRequest.setHeader(header.getKey(), header.getValue());
+        }
+
         httpUriRequest.addHeader(HttpHeaders.ACCEPT, this.acceptHeader);
         Header authorizationHeader = authMaterial != null ?
-                authMaterial.getAuthHeader() : session.getAuthMaterial().getAuthHeader();
+                authMaterial.getAuthHeader() : session.getAuthProvider().provide(session).getAuthHeader();
         if (authorizationHeader != null) {
             httpUriRequest.addHeader(authorizationHeader);
         }
@@ -184,7 +235,7 @@ public class HttpRestRequest {
 
         // any error?
         int code = httpResponse.getCode();
-        if (code == HttpStatus.SC_OK) {
+        if (code == HttpStatus.SC_OK || code == HttpStatus.SC_PARTIAL_CONTENT) {
             return;
         }
 
@@ -230,6 +281,34 @@ public class HttpRestRequest {
                 return null;
             });
         } catch (IOException ex) {
+            if (ex.getCause() instanceof ResultException) {
+                throw (ResultException) ex.getCause();
+            }
+            throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
+        }
+    }
+
+    /**
+     * Executes this {@link HttpRestRequest}.
+     *
+     * @return The resulting {@link ClassicHttpResponse}.
+     * @throws ResultException Shall be thrown, if writing to the {@link OutputStream} failed.
+     */
+    public ClassicHttpResponse executeRequest() throws ResultException {
+        try {
+            return this.httpClient.execute(httpUriRequest, response -> {
+                try {
+                    checkResponse(response);
+                } catch (ResultException ex) {
+                    throw new IOException(ex);
+                }
+
+                return response;
+            });
+        } catch (IOException ex) {
+            if (ex.getCause() instanceof ResultException) {
+                throw (ResultException) ex.getCause();
+            }
             throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
         }
     }
@@ -259,8 +338,18 @@ public class HttpRestRequest {
 
                 HttpEntity httpEntity = response.getEntity();
 
-                ContentType contentType = httpEntity.getContentType() == null ? ContentType.DEFAULT_TEXT :
-                        ContentType.create(httpEntity.getContentType(), StandardCharsets.UTF_8);
+                ContentType contentType = ContentType.DEFAULT_TEXT;
+                String responseContentType = httpEntity.getContentType();
+
+                if (responseContentType != null) {
+                    int mimetypeIndex = responseContentType.indexOf(';');
+                    if (mimetypeIndex != -1) {
+                        responseContentType = responseContentType.substring(0, mimetypeIndex);
+                    }
+
+                    contentType = ContentType.create(responseContentType, StandardCharsets.UTF_8);
+                }
+
                 String mimeType = contentType.getMimeType();
                 Charset charset = contentType.getCharset() != null ? contentType.getCharset() : StandardCharsets.UTF_8;
 
@@ -269,6 +358,9 @@ public class HttpRestRequest {
                     return null;
                 }
 
+                if (type.isInstance(value)) {
+                    return type.cast(value);
+                }
                 if (!DataFormat.JSON.matches(mimeType)) {
                     return null;
                 }

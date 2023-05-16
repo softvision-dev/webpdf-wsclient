@@ -18,13 +18,17 @@ import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.tools.SerializeHelper;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An instance of {@link RestWebService} wraps a wsclient connection to a specific webPDF webservice endpoint
@@ -65,10 +69,12 @@ public abstract class RestWebService<T_OPERATION_DATA, T_OPERATION_PARAMETER, T_
     public @NotNull T_REST_DOCUMENT process() throws ResultException {
         T_REST_DOCUMENT document = process(getWebServiceType().equals(WebServiceType.URLCONVERTER) ?
                 getWebServiceType().getRestEndpoint() : getWebServiceType().getRestEndpoint().replace(
-                WebServiceType.ID_PLACEHOLDER, ""));
+                WebServiceType.ID_PLACEHOLDER, "new"));
+
         if (document == null) {
             throw new ClientResultException(Error.INVALID_RESULT_DOCUMENT);
         }
+
         return document;
     }
 
@@ -87,9 +93,11 @@ public abstract class RestWebService<T_OPERATION_DATA, T_OPERATION_PARAMETER, T_
         T_REST_DOCUMENT document = process(getWebServiceType().equals(WebServiceType.URLCONVERTER) ?
                 getWebServiceType().getRestEndpoint() : getWebServiceType().getRestEndpoint().replace(
                 WebServiceType.ID_PLACEHOLDER, sourceDocument.getDocumentId()));
+
         if (document == null) {
             throw new ClientResultException(Error.INVALID_RESULT_DOCUMENT);
         }
+
         return document;
     }
 
@@ -105,14 +113,20 @@ public abstract class RestWebService<T_OPERATION_DATA, T_OPERATION_PARAMETER, T_
     protected @Nullable T_REST_DOCUMENT process(@NotNull String urlPath) throws ResultException {
         DocumentManager<T_REST_DOCUMENT> documentManager = getSession().getDocumentManager();
 
-        HttpRestRequest request = HttpRestRequest.createRequest(getSession())
-                .buildRequest(HttpMethod.POST, urlPath, getWebServiceOptions());
-        DocumentFile documentFile = request.executeRequest(DocumentFile.class);
+        List<NameValuePair> parameters = new ArrayList<>();
+        parameters.add(new BasicNameValuePair("history", Boolean.toString(documentManager.isDocumentHistoryActive())));
+        parameters.addAll(this.getAdditionalParameter());
+
+        DocumentFile documentFile = HttpRestRequest.createRequest(getSession())
+                .buildRequest(HttpMethod.POST, getSession().getURI(urlPath, parameters), getWebServiceOptions())
+                .executeRequest(DocumentFile.class);
 
         T_REST_DOCUMENT restDocument = null;
+
         if (documentFile != null) {
-            restDocument = documentManager.synchronize(documentFile);
+            restDocument = documentManager.synchronizeDocument(documentFile);
         }
+
         return restDocument;
     }
 

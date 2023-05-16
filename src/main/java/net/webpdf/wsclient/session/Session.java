@@ -1,10 +1,9 @@
 package net.webpdf.wsclient.session;
 
+import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.auth.AuthProvider;
-import net.webpdf.wsclient.session.auth.material.AuthMaterial;
 import net.webpdf.wsclient.session.connection.SessionContextSettings;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
-import net.webpdf.wsclient.exception.ResultException;
 import org.apache.hc.core5.http.NameValuePair;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,13 +33,11 @@ public interface Session extends AutoCloseable {
     @NotNull SessionContextSettings getSessionContext();
 
     /**
-     * Provides {@link AuthMaterial} for the authorization of the {@link Session}´s requests, using the
-     * {@link Session}´s {@link AuthProvider}.
+     * Provides the {@link AuthProvider} for the authorization of the {@link Session}´s requests.
      *
-     * @return {@link AuthMaterial} for the authorization of the {@link Session}´s requests.
-     * @throws ResultException Shall be thrown, should the determination of {@link AuthMaterial} fail.
+     * @return {@link AuthProvider} for the authorization of the {@link Session}´s requests.
      */
-    @NotNull AuthMaterial getAuthMaterial() throws ResultException;
+    @NotNull AuthProvider getAuthProvider();
 
     /**
      * Returns an {@link URI} pointing to the webservice interface of the session.

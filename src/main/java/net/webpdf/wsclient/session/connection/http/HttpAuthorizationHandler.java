@@ -46,7 +46,7 @@ public class HttpAuthorizationHandler implements HttpExecChainHandler {
         Header authorizationHeader;
         try {
             if (!classicHttpRequest.containsHeader(HttpHeaders.AUTHORIZATION) &&
-                    (authorizationHeader = this.session.getAuthMaterial().getAuthHeader()) != null) {
+                    (authorizationHeader = session.getAuthProvider().provide(session).getAuthHeader()) != null) {
                 classicHttpRequest.addHeader(authorizationHeader);
             }
         } catch (ResultException ex) {

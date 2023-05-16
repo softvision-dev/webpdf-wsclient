@@ -418,11 +418,9 @@ public class RestWebserviceIntegrationTest {
                         "Valid session should have been created.");
                 assertNotNull(restSession.getUser(),
                         "UserCredentials should have been initialized.");
-                assertTrue(restSession.getUser().isUser(),
+                assertTrue(restSession.getUser().getIsUser(),
                         "User should be user");
-                assertFalse(restSession.getUser().isAuthenticated(),
-                        "User should not be authenticated");
-                assertFalse(restSession.getUser().isAdmin(),
+                assertFalse(restSession.getUser().getIsAdmin(),
                         "User should not be admin");
                 assertEquals("", restSession.getUser().getUserName(),
                         "Username should be empty.");
@@ -437,9 +435,9 @@ public class RestWebserviceIntegrationTest {
                         "Valid session should have been created.");
                 assertNotNull(restSession.getUser(),
                         "UserInfo should have been initialized.");
-                assertTrue(restSession.getUser().isUser(),
+                assertTrue(restSession.getUser().getIsUser(),
                         "User should be user");
-                assertFalse(restSession.getUser().isAdmin(),
+                assertFalse(restSession.getUser().getIsAdmin(),
                         "User should not be admin");
                 assertEquals("user", restSession.getUser().getUserName(),
                         "Username should be user.");
@@ -454,9 +452,9 @@ public class RestWebserviceIntegrationTest {
                         "Valid session should have been created.");
                 assertNotNull(restSession.getUser(),
                         "UserInfo should have been initialized.");
-                assertTrue(restSession.getUser().isUser(),
+                assertTrue(restSession.getUser().getIsUser(),
                         "User should be user");
-                assertTrue(restSession.getUser().isAdmin(),
+                assertTrue(restSession.getUser().getIsAdmin(),
                         "User should not be admin");
                 assertEquals("admin", restSession.getUser().getUserName(),
                         "Username should be admin.");

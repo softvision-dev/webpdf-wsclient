@@ -2,8 +2,9 @@ package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
-import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.session.soap.SoapWebServiceSession;
+import net.webpdf.wsclient.webservice.WebServiceProtocol;
+import org.apache.hc.client5.http.auth.Credentials;
 import org.junit.jupiter.api.Test;
 
 import java.net.URL;
@@ -35,12 +36,11 @@ public class SessionTest {
                         "SOAPSession should not be using local wsdl after modification.");
                 assertEquals(WebServiceProtocol.SOAP, soapSession.getWebServiceProtocol(),
                         "WebserviceProtocol should have been SOAP.");
-                assertNotNull(soapSession.getAuthMaterial().getCredentials());
-                assertEquals("usr", soapSession.getAuthMaterial().getCredentials()
-                                .getUserPrincipal().getName(),
+                Credentials credentials = soapSession.getAuthProvider().provide(soapSession).getCredentials();
+                assertNotNull(credentials);
+                assertEquals("usr", credentials.getUserPrincipal().getName(),
                         "Credentials should define usr for authentication.");
-                assertEquals("pwd",
-                        new String(soapSession.getAuthMaterial().getCredentials().getPassword()),
+                assertEquals("pwd", new String(credentials.getPassword()),
                         "Credentials should define pwd as the authentication password.");
 
                 assertEquals(SOME_URL + "/soap/sub", soapSession.getURI("sub").toString(),

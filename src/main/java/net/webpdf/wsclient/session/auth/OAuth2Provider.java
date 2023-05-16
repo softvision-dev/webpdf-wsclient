@@ -3,6 +3,7 @@ package net.webpdf.wsclient.session.auth;
 import net.webpdf.wsclient.exception.AuthResultException;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.auth.material.token.OAuth2Token;
+import net.webpdf.wsclient.session.auth.material.token.SessionToken;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,4 +33,13 @@ public interface OAuth2Provider extends AuthProvider {
     @Override
     @NotNull OAuth2Token provide(@NotNull Session session) throws AuthResultException;
 
+    /**
+     * Refresh authorization {@link SessionToken} for an active {@link Session}.
+     *
+     * @param session The session to refresh the authorization for.
+     * @return The {@link OAuth2Token} refreshed by this {@link OAuth2Provider}.
+     * @throws AuthResultException Shall be thrown, should the authentication/authorization fail for some reason.
+     */
+    @Override
+    @NotNull OAuth2Token refresh(@NotNull Session session) throws AuthResultException;
 }

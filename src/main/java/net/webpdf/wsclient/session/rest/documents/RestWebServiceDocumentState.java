@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicReference;
  * </p>
  */
 public class RestWebServiceDocumentState implements RestDocumentState<RestWebServiceDocument> {
-
     private final @NotNull ConcurrentHashMap<Integer, HistoryEntry> historyMap = new ConcurrentHashMap<>();
     private final @NotNull AtomicReference<DocumentFile> documentFile = new AtomicReference<>();
     private final @NotNull String documentId;
@@ -40,7 +39,7 @@ public class RestWebServiceDocumentState implements RestDocumentState<RestWebSer
      * @param documentManager The owning {@link DocumentManager}
      */
     public RestWebServiceDocumentState(@NotNull String documentId,
-            @NotNull RestWebServiceDocumentManager documentManager) {
+                                       @NotNull RestWebServiceDocumentManager documentManager) {
         this.documentId = documentId;
         this.documentManager = documentManager;
     }
@@ -139,7 +138,6 @@ public class RestWebServiceDocumentState implements RestDocumentState<RestWebSer
      * @return The most recent {@link HistoryEntry}.
      * @throws ResultException Shall be thrown, when updating the document history failed.
      */
-    @SuppressWarnings("unused")
     public @NotNull HistoryEntry lastHistory() throws ResultException {
         if (this.historyMap.isEmpty()) {
             throw new ClientResultException(Error.INVALID_HISTORY_DATA);
@@ -152,9 +150,32 @@ public class RestWebServiceDocumentState implements RestDocumentState<RestWebSer
      *
      * @return The number of known {@link HistoryEntry}s for this {@link RestWebServiceDocument}.
      */
-    @SuppressWarnings("unused")
+    @Override
     public int getHistorySize() {
         return this.historyMap.size();
+    }
+
+    /**
+     * Returns the currently active {@link HistoryEntry}.
+     *
+     * @return The currently active {@link HistoryEntry}.
+     * @throws ResultException Shall be thrown, when updating the document history failed.
+     */
+    @Override
+    public @NotNull HistoryEntry activeHistory() throws ResultException {
+        if (this.historyMap.isEmpty()) {
+            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
+        }
+
+        Map.Entry<Integer, HistoryEntry> historyEntry = this.historyMap.entrySet().stream().filter(
+                entry -> entry.getValue().isActive()
+        ).findFirst().orElse(null);
+
+        if (historyEntry == null) {
+            throw new ClientResultException(Error.INVALID_HISTORY_DATA);
+        }
+
+        return historyEntry.getValue();
     }
 
     /**

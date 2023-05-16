@@ -77,10 +77,35 @@ public interface RestDocumentState<T_DOCUMENT extends RestDocument> {
     void updateHistoryEntry(@NotNull HistoryEntry historyEntry) throws ResultException;
 
     /**
+     * Returns the most recent {@link HistoryEntry}.
+     *
+     * @return The most recent {@link HistoryEntry}.
+     * @throws ResultException Shall be thrown, when updating the document history failed.
+     */
+    @SuppressWarnings("unused")
+    @NotNull HistoryEntry lastHistory() throws ResultException;
+
+    /**
+     * Returns the number of known {@link HistoryEntry}s for this {@link RestWebServiceDocument}.
+     *
+     * @return The number of known {@link HistoryEntry}s for this {@link RestWebServiceDocument}.
+     */
+    @SuppressWarnings("unused")
+    int getHistorySize();
+
+    /**
+     * Returns the currently active {@link HistoryEntry}.
+     *
+     * @return The currently active {@link HistoryEntry}.
+     * @throws ResultException Shall be thrown, when updating the document history failed.
+     */
+    @SuppressWarnings("unused")
+    @NotNull HistoryEntry activeHistory() throws ResultException;
+
+    /**
      * Returns the owning {@link DocumentManager}.
      *
      * @return The owning {@link DocumentManager}.
      */
     @NotNull DocumentManager<T_DOCUMENT> getDocumentManager();
-
 }

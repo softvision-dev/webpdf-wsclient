@@ -1,10 +1,13 @@
 package net.webpdf.wsclient.webservice;
 
+import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.documents.Document;
-import net.webpdf.wsclient.exception.ResultException;
+import org.apache.hc.core5.http.NameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * A class implementing {@link WebServiceType} wraps a wsclient connection to a specific webPDF webservice endpoint
@@ -81,11 +84,25 @@ public interface WebService<T_SESSION extends Session, T_OPERATION_PARAMETER,
     @Nullable T_PASSWORD getPassword();
 
     /**
+     * Sets the {@link T_PASSWORD} for the current webservice.
+     *
+     * @param password The {@link T_PASSWORD} for the current webservice.
+     */
+    void setPassword(@Nullable T_PASSWORD password);
+
+    /**
      * Returns the {@link T_BILLING} of the current webservice.
      *
      * @return the {@link T_BILLING} of the current webservice.
      */
     @Nullable T_BILLING getBilling();
+
+    /**
+     * Sets the {@link T_BILLING} for the current webservice.
+     *
+     * @param billing The {@link T_BILLING} for the current webservice.
+     */
+    void setBilling(@Nullable T_BILLING billing);
 
     /**
      * Returns the {@link T_SETTINGS} of the current webservice.
@@ -94,4 +111,17 @@ public interface WebService<T_SESSION extends Session, T_OPERATION_PARAMETER,
      */
     @Nullable T_SETTINGS getSettings();
 
+    /**
+     * Sets the {@link T_SETTINGS} for the current webservice.
+     *
+     * @param settings The {@link T_SETTINGS} for the current webservice.
+     */
+    void setSettings(@Nullable T_SETTINGS settings);
+
+    /**
+     * Returns additional url search parameter for this webservice call.
+     *
+     * @return additional url search parameter for this webservice call.
+     */
+    @NotNull List<NameValuePair> getAdditionalParameter();
 }

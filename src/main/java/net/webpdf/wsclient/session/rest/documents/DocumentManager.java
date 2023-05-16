@@ -1,8 +1,11 @@
 package net.webpdf.wsclient.session.rest.documents;
 
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.openapi.DocumentInfo;
+import net.webpdf.wsclient.openapi.DocumentInfoType;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
+import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.session.rest.RestSession;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +37,18 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @return The synchronized {@link RestDocument}.
      * @throws ResultException Shall be thrown upon a synchronization failure.
      */
-    @NotNull T_REST_DOCUMENT synchronize(@NotNull DocumentFile documentFile) throws ResultException;
+    @NotNull T_REST_DOCUMENT synchronizeDocument(@NotNull DocumentFile documentFile) throws ResultException;
+
+    /**
+     * Synchronizes the {@link RestDocument}s of this {@link DocumentManager} with the actually uploaded documents of
+     * the webPDF server or with the given fileList.
+     *
+     * @param fileList A {@link DocumentFile} list to sync this {@link DocumentManager} with
+     * @return A list of the synchronized {@link RestDocument}s.
+     * @throws ResultException Shall be thrown upon a synchronization failure.
+     */
+    @SuppressWarnings("unused")
+    @NotNull List<T_REST_DOCUMENT> synchronize(@NotNull List<DocumentFile> fileList) throws ResultException;
 
     /**
      * Synchronizes the {@link RestDocument}s of this {@link DocumentManager} with the actually uploaded documents of
@@ -182,4 +196,24 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
     @Nullable HistoryEntry updateDocumentHistory(@NotNull String documentId, @NotNull HistoryEntry historyEntry)
             throws ResultException;
 
+    /**
+     * Updates the security information of a selected document in the server´s document storage.
+     *
+     * @param documentId   The unique documentId of the document in the server´s document storage.
+     * @param passwordType The security information to update the document with
+     * @return The updated {@link RestDocument}.
+     * @throws ResultException Shall be thrown, should updating the document security have failed.
+     */
+    @NotNull T_REST_DOCUMENT updateDocumentSecurity(String documentId, PdfPasswordType passwordType) throws ResultException;
+
+    /**
+     * Returns information about the document selected by documentId in the document storage.
+     *
+     * @param documentId   The unique documentId of the document in the server´s document storage.
+     * @param infoType     Detailed information for the document referenced by the unique documentId
+     *                     in the server´s document storage.
+     * @return The requested document {@link DocumentInfo}
+     * @throws ResultException Shall be thrown, should fetching the document info have failed.
+     */
+    @NotNull DocumentInfo getDocumentInfo(String documentId, DocumentInfoType infoType) throws ResultException;
 }

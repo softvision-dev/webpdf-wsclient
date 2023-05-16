@@ -2,8 +2,10 @@ package net.webpdf.wsclient.webservice;
 
 import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.session.Session;
+import org.apache.hc.core5.http.NameValuePair;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,7 @@ public abstract class AbstractWebService<T_SESSION extends Session, T_OPERATION_
     private final @NotNull Map<String, List<String>> headers = new HashMap<>();
     private final @NotNull T_SESSION session;
     private final @NotNull T_OPERATION_DATA operationData;
+    private final @NotNull List<NameValuePair> additionalParameter = new ArrayList<>();
 
     /**
      * Creates a webservice interface of the given {@link WebServiceType} for the given {@link T_SESSION}.
@@ -89,4 +92,13 @@ public abstract class AbstractWebService<T_SESSION extends Session, T_OPERATION_
      */
     protected abstract @NotNull T_OPERATION_DATA initOperation();
 
+    /**
+     * Returns additional url search parameter for this webservice call.
+     *
+     * @return additional url search parameter for this webservice call.
+     */
+    @Override
+    public @NotNull List<NameValuePair> getAdditionalParameter() {
+        return this.additionalParameter;
+    }
 }

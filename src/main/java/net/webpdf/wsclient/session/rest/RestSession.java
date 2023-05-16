@@ -1,10 +1,13 @@
 package net.webpdf.wsclient.session.rest;
 
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.session.rest.documents.RestDocument;
-import net.webpdf.wsclient.session.rest.documents.DocumentManager;
-import net.webpdf.wsclient.schema.beans.User;
+import net.webpdf.wsclient.openapi.AuthUserCertificates;
+import net.webpdf.wsclient.openapi.AuthUserCredentials;
+import net.webpdf.wsclient.openapi.KeyStorePassword;
 import net.webpdf.wsclient.session.Session;
+import net.webpdf.wsclient.session.rest.administration.AdministrationManager;
+import net.webpdf.wsclient.session.rest.documents.DocumentManager;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.RestWebService;
@@ -73,11 +76,31 @@ public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Sessi
     @NotNull AdministrationManager<T_REST_DOCUMENT> getAdministrationManager();
 
     /**
-     * Returns the {@link User} logged in via this {@link RestSession}.
+     * Returns the {@link AuthUserCredentials} logged in via this {@link RestSession}.
      *
-     * @return The {@link User} logged in via this {@link RestSession}.
+     * @return The {@link AuthUserCredentials} logged in via this {@link RestSession}.
      */
-    @Nullable User getUser();
+    @Nullable AuthUserCredentials getUser();
+
+    /**
+     * Returns the {@link AuthUserCertificates} of the currently logged-in user of this {@link RestSession}.
+     *
+     * @return The {@link AuthUserCertificates} of the currently logged-in user of this {@link RestSession}.
+     */
+    @Nullable AuthUserCertificates getCertificates();
+
+    /**
+     * Updates the {@link KeyStorePassword}s for specific keystore and returns the
+     * {@link AuthUserCertificates} for the currently logged-in user afterward.
+     *
+     * @param keystoreName     The name of the keystore to be updated.
+     * @param keyStorePassword The {@link KeyStorePassword} to unlock the certificates with.
+     * @return The {@link AuthUserCertificates} of the logged-in user in this {@link RestSession}.
+     * @throws ResultException Shall be thrown, if the request failed.
+     */
+    @Nullable AuthUserCertificates updateCertificates(
+            String keystoreName, KeyStorePassword keyStorePassword
+    ) throws ResultException;
 
     /**
      * Creates a matching {@link RestWebService} instance to execute a webPDF operation for the current session.

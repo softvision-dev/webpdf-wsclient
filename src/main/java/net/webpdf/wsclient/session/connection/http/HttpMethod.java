@@ -7,6 +7,7 @@ package net.webpdf.wsclient.session.connection.http;
  * @see #POST
  * @see #PUT
  * @see #DELETE
+ * @see #HEAD
  */
 public enum HttpMethod {
 
@@ -25,6 +26,9 @@ public enum HttpMethod {
     /**
      * Replaces all current representations of a specified resource.
      */
-    PUT
-
+    PUT,
+    /**
+     * Requests informational headers for the specified resource
+     */
+    HEAD
 }

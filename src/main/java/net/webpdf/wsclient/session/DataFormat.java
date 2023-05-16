@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
  * @see #XML
  * @see #JSON
  * @see #OCTET_STREAM
+ * @see #PLAIN
+ * @see #ANY
  */
 public enum DataFormat {
 
@@ -23,7 +25,15 @@ public enum DataFormat {
     /**
      * An unspecified binary stream.
      */
-    OCTET_STREAM("application/octet-stream");
+    OCTET_STREAM("application/octet-stream"),
+    /**
+     * A plain text.
+     */
+    PLAIN("text/plain"),
+    /**
+     * unspecified file format.
+     */
+    ANY("*/*");
 
     private final @NotNull String mimeType;
 

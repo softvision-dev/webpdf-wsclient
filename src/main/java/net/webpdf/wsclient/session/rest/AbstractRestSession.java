@@ -1,19 +1,24 @@
 package net.webpdf.wsclient.session.rest;
 
 import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.openapi.AuthUserCertificates;
+import net.webpdf.wsclient.openapi.AuthUserCredentials;
+import net.webpdf.wsclient.openapi.KeyStorePassword;
+import net.webpdf.wsclient.session.DataFormat;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.SessionContextSettings;
 import net.webpdf.wsclient.session.connection.http.HttpAuthorizationHandler;
+import net.webpdf.wsclient.session.rest.administration.AdministrationManager;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.DocumentManager;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
-import net.webpdf.wsclient.schema.beans.User;
 import net.webpdf.wsclient.session.AbstractSession;
+import net.webpdf.wsclient.tools.SerializeHelper;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.ChainElement;
@@ -26,12 +31,17 @@ import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
 import org.apache.hc.client5.http.socket.LayeredConnectionSocketFactory;
 import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.config.Registry;
 import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
 
 /**
  * <p>
@@ -50,10 +60,12 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
 
     private static final @NotNull String INFO_PATH = "authentication/user/info/";
     private static final @NotNull String LOGOUT_PATH = "authentication/user/logout/";
-    private final @Nullable User user;
+    private static final @NotNull String CERTIFICATES_PATH = "authentication/user/certificates/";
+    private final @Nullable AuthUserCredentials user;
     private final @NotNull CloseableHttpClient httpClient;
     private final @NotNull DocumentManager<T_REST_DOCUMENT> documentManager = createDocumentManager();
     private final @NotNull AdministrationManager<T_REST_DOCUMENT> administrationManager = createAdministrationManager();
+    private @Nullable AuthUserCertificates certificates;
 
     /**
      * <p>
@@ -95,8 +107,11 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
         }
         this.httpClient = httpClientBuilder.build();
         this.user = HttpRestRequest.createRequest(this)
-                .buildRequest(HttpMethod.GET, INFO_PATH, null)
-                .executeRequest(User.class);
+                .buildRequest(HttpMethod.GET, INFO_PATH)
+                .executeRequest(AuthUserCredentials.class);
+        this.certificates = HttpRestRequest.createRequest(this)
+                .buildRequest(HttpMethod.GET, CERTIFICATES_PATH)
+                .executeRequest(AuthUserCertificates.class);
     }
 
     /**
@@ -130,13 +145,44 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
-     * Returns the {@link User} logged in via this {@link RestSession}.
+     * Returns the {@link AuthUserCredentials} logged in via this {@link RestSession}.
      *
-     * @return The {@link User} logged in via this {@link RestSession}.
+     * @return The {@link AuthUserCredentials} logged in via this {@link RestSession}.
      */
     @Override
-    public @Nullable User getUser() {
+    public @Nullable AuthUserCredentials getUser() {
         return user;
+    }
+
+    /**
+     * Returns the {@link AuthUserCertificates} of the currently logged-in user of this {@link RestSession}.
+     *
+     * @return The {@link AuthUserCertificates} of the currently logged-in user of this {@link RestSession}.
+     */
+    @Override
+    public @Nullable AuthUserCertificates getCertificates() {
+        return certificates;
+    }
+
+    /**
+     * Updates the {@link KeyStorePassword}s for specific keystore and returns the
+     * {@link AuthUserCertificates} for the currently logged-in user afterward.
+     *
+     * @param keystoreName     The name of the keystore to be updated.
+     * @param keyStorePassword The {@link KeyStorePassword} to unlock the certificates with.
+     * @return The {@link AuthUserCertificates} of the logged-in user in this {@link RestSession}.
+     * @throws ResultException Shall be thrown, if the request failed.
+     */
+    @Override
+    public @Nullable AuthUserCertificates updateCertificates(
+            String keystoreName, KeyStorePassword keyStorePassword
+    ) throws ResultException {
+        this.certificates = HttpRestRequest.createRequest(this)
+                .buildRequest(HttpMethod.PUT, "authentication/user/certificates/passwords/" + keystoreName,
+                        prepareHttpEntity(keyStorePassword))
+                .executeRequest(AuthUserCertificates.class);
+
+        return this.certificates;
     }
 
     /**
@@ -149,7 +195,7 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
         ResultException resultException = null;
         try {
             HttpRestRequest.createRequest(this)
-                    .buildRequest(HttpMethod.GET, LOGOUT_PATH, null)
+                    .buildRequest(HttpMethod.GET, LOGOUT_PATH)
                     .executeRequest(Object.class);
         } finally {
             try {
@@ -160,6 +206,23 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
         }
         if (resultException != null) {
             throw resultException;
+        }
+    }
+
+    /**
+     * Prepares a {@link HttpEntity} for internal requests to the webPDF server.
+     *
+     * @param parameter The parameters, that shall be used for the request.
+     * @param <T>       The parameter type (data transfer object/bean) that shall be used.
+     * @return The resulting state of the data transfer object.
+     * @throws ResultException Shall be thrown, should the {@link HttpEntity} creation fail.
+     */
+    private <T> @NotNull HttpEntity prepareHttpEntity(@NotNull T parameter) throws ResultException {
+        try {
+            return new StringEntity(SerializeHelper.toJSON(parameter),
+                    ContentType.create(DataFormat.JSON.getMimeType(), StandardCharsets.UTF_8));
+        } catch (UnsupportedCharsetException ex) {
+            throw new ClientResultException(Error.XML_OR_JSON_CONVERSION_FAILURE, ex);
         }
     }
 

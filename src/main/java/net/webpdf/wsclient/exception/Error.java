@@ -190,7 +190,11 @@ public enum Error {
      * An {@link Exception} has occurred during the authentication/authorization step.
      * (look at the providing {@link AuthResultException}´s cause for more details.)
      */
-    AUTH_ERROR(-54, "Authentication/Authorization failure.");
+    AUTH_ERROR(-54, "Authentication/Authorization failure."),
+    /**
+     * User access violation. An Administration role user is required.
+     */
+    ADMIN_PERMISSION_ERROR(-55, "Admin permission required.");
 
     private final int code;
     private final @NotNull String message;

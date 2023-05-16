@@ -62,6 +62,16 @@ public class ConverterRestWebService<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
+     * Sets the {@link OperationPdfPassword} for the current webservice.
+     *
+     * @param password The {@link OperationPdfPassword} for the current webservice.
+     */
+    @Override
+    public void setPassword(@Nullable OperationPdfPassword password) {
+        this.getOperationData().setPassword(password);
+    }
+
+    /**
      * Returns the {@link OperationBilling} of the current webservice.
      *
      * @return the {@link OperationBilling} of the current webservice.
@@ -69,6 +79,16 @@ public class ConverterRestWebService<T_REST_DOCUMENT extends RestDocument>
     @Override
     public @Nullable OperationBilling getBilling() {
         return getOperationData().getBilling();
+    }
+
+    /**
+     * Sets the {@link OperationBilling} for the current webservice.
+     *
+     * @param billing The {@link OperationBilling} for the current webservice.
+     */
+    @Override
+    public void setBilling(@Nullable OperationBilling billing) {
+        this.getOperationData().setBilling(billing);
     }
 
     /**
@@ -82,6 +102,16 @@ public class ConverterRestWebService<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
+     * Sets the {@link OperationSettings} for the current webservice.
+     *
+     * @param settings The {@link OperationSettings} for the current webservice.
+     */
+    @Override
+    public void setSettings(@Nullable OperationSettings settings) {
+        this.getOperationData().setSettings(settings);
+    }
+
+    /**
      * Initializes and prepares the execution of this {@link ConverterRestWebService}.
      *
      * @return The prepared {@link OperationConverterOperation}.
@@ -89,9 +119,6 @@ public class ConverterRestWebService<T_REST_DOCUMENT extends RestDocument>
     @Override
     protected @NotNull OperationConverterOperation initOperation() {
         OperationConverterOperation operationData = new OperationConverterOperation();
-        operationData.setBilling(new OperationBilling());
-        operationData.setPassword(new OperationPdfPassword());
-        operationData.setSettings(new OperationSettings());
         operationData.setConverter(new OperationConverter());
         return operationData;
     }

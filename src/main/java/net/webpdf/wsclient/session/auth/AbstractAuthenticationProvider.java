@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -73,6 +74,27 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
     }
 
     /**
+     * <p>
+     * Resumes an existing authentication provider, that shall resume a {@link Session} if a {@link SessionToken} is
+     * provided.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> Currently an {@link AbstractAuthenticationProvider} shall only serve one {@link Session} at a
+     * time. An {@link AbstractAuthenticationProvider} being called by another {@link Session} than it´s current master,
+     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
+     * (new master).<br>
+     * For that reason an {@link AbstractAuthenticationProvider}s shall be reusable by subsequent {@link Session}s.
+     * </p>
+     *
+     * @param authMaterial The {@link AuthMaterial} to initialize the {@link Session} with.
+     * @param resumeAuthMaterial The {@link AuthMaterial} to resume the {@link Session} with.
+     */
+    public AbstractAuthenticationProvider(@NotNull AuthMaterial authMaterial, AuthMaterial resumeAuthMaterial) {
+        this.initialAuthMaterial = authMaterial;
+        setAuthMaterial(resumeAuthMaterial);
+    }
+
+    /**
      * Returns the current {@link Session} this {@link AuthProvider} provides authorization for.
      *
      * @return The current {@link Session} this {@link AuthProvider} provides authorization for.
@@ -109,6 +131,88 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
     }
 
     /**
+     * Refresh authorization {@link SessionToken} for an active {@link Session}.
+     *
+     * @param session The session to refresh the authorization for.
+     * @return The {@link AuthMaterial} refreshed by this {@link AuthProvider}.
+     * @throws AuthResultException Shall be thrown, should the authentication/authorization fail for some reason.
+     */
+    @Override
+    public @NotNull AuthMaterial refresh(Session session) throws AuthResultException {
+        if (updating.get() || !(session instanceof RestSession)) {
+            return this.getAuthMaterial();
+        }
+
+        if (!(getAuthMaterial() instanceof SessionToken)) {
+            return this.provide(session);
+        }
+
+        try {
+            updating.set(true);
+            this.session.set(session);
+            RestSession<?> restSession = (RestSession<?>) session;
+
+            ((SessionToken) this.getAuthMaterial()).refresh();
+
+            AuthLoginOptions loginOptions = new AuthLoginOptions();
+            loginOptions.setCreateRefreshToken(true);
+
+            AuthMaterial authMaterial = HttpRestRequest.createRequest(restSession)
+                    .buildRequest(HttpMethod.POST, REFRESH_PATH, prepareHttpEntity(loginOptions))
+                    .executeRequest(SessionToken.class);
+
+            if (authMaterial == null) {
+                throw new ClientResultException(Error.AUTHENTICATION_FAILURE);
+            }
+
+            setAuthMaterial(authMaterial);
+            this.updating.set(false);
+        } catch (ResultException ex) {
+            throw new AuthResultException(ex);
+        }
+
+        return this.getAuthMaterial();
+    }
+
+    /**
+     * Login and provide authorization {@link SessionToken} for a {@link Session}.
+     *
+     * @param session The session to provide the authorization for.
+     * @return The {@link AuthMaterial} provided by this {@link AuthProvider}.
+     * @throws AuthResultException Shall be thrown, should the authentication/authorization fail for some reason.
+     */
+    protected @NotNull AuthMaterial login(@NotNull Session session) throws AuthResultException {
+        if (updating.get() || !(session instanceof RestSession) || getAuthMaterial() instanceof SessionToken) {
+            return this.getAuthMaterial();
+        }
+
+        try {
+            updating.set(true);
+            this.session.set(session);
+            RestSession<?> restSession = (RestSession<?>) session;
+
+            AuthLoginOptions loginOptions = new AuthLoginOptions();
+            loginOptions.setCreateRefreshToken(true);
+
+            AuthMaterial authMaterial = HttpRestRequest.createRequest(restSession)
+                    .buildRequest(HttpMethod.POST, LOGIN_PATH, prepareHttpEntity(loginOptions), getInitialAuthMaterial())
+                    .executeRequest(SessionToken.class);
+
+            if (authMaterial == null) {
+                throw new ClientResultException(Error.AUTHENTICATION_FAILURE);
+            }
+
+            setAuthMaterial(authMaterial);
+            this.updating.set(false);
+        } catch (ResultException ex) {
+            throw new AuthResultException(ex);
+        }
+
+        return this.getAuthMaterial();
+    }
+
+
+    /**
      * <p>
      * Provides {@link AuthMaterial} for the authorization of a {@link Session}.<br>
      * Will attempt to produce a {@link SessionToken} for {@link RestSession}s.<br>
@@ -127,46 +231,38 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
      * @throws AuthResultException Shall be thrown, should the authentication/authorization fail for some reason.
      */
     @Override
-    public synchronized @NotNull AuthMaterial provide(@NotNull Session session) throws AuthResultException {
-        try {
-            if (!updating.get() && session instanceof RestSession) {
-                updating.set(true);
-                RestSession<?> restSession = (RestSession<?>) session;
-                if (this.session.get() == null || !session.equals(this.session.get()) ||
-                        !(getAuthMaterial() instanceof SessionToken)) {
-                    this.session.set(session);
-                    AuthMaterial authMaterial = HttpRestRequest.createRequest(restSession)
-                            .buildRequest(HttpMethod.POST, LOGIN_PATH, null,
-                                    getInitialAuthMaterial())
-                            .executeRequest(SessionToken.class);
-                    if (authMaterial == null) {
-                        throw new ClientResultException(Error.AUTHENTICATION_FAILURE);
-                    }
-                    setAuthMaterial(authMaterial);
-                }
-                if (getAuthMaterial() instanceof SessionToken &&
-                        ((SessionToken) getAuthMaterial()).isExpired(session.getSessionContext().getSkewTime())) {
-                    AuthLoginOptions loginOptions = new AuthLoginOptions();
-                    loginOptions.setCreateRefreshToken(true);
-                    HttpEntity entity = new StringEntity(
-                            SerializeHelper.toJSON(loginOptions),
-                            ContentType.create(DataFormat.JSON.getMimeType(),
-                                    StandardCharsets.UTF_8));
-                    ((SessionToken) getAuthMaterial()).refresh();
-                    AuthMaterial authMaterial = HttpRestRequest.createRequest(restSession)
-                            .buildRequest(HttpMethod.POST, REFRESH_PATH, entity)
-                            .executeRequest(SessionToken.class);
-                    if (authMaterial == null) {
-                        throw new ClientResultException(Error.SESSION_REFRESH_FAILURE);
-                    }
-                    setAuthMaterial(authMaterial);
-                }
-                updating.set(false);
-            }
-        } catch (ResultException ex) {
-            throw new AuthResultException(ex);
+    public @NotNull AuthMaterial provide(@NotNull Session session) throws AuthResultException {
+        if (updating.get() || !(session instanceof RestSession)) {
+            return getAuthMaterial();
         }
-        return getAuthMaterial();
+
+        if (!(getAuthMaterial() instanceof SessionToken)) {
+            this.login(session);
+        }
+
+        if (getAuthMaterial() instanceof SessionToken && (
+                ((SessionToken) getAuthMaterial()).isExpired(session.getSessionContext().getSkewTime())
+        )) {
+            this.refresh(session);
+        }
+
+        return this.getAuthMaterial();
     }
 
+    /**
+     * Prepares a {@link HttpEntity} for internal requests to the webPDF server.
+     *
+     * @param parameter The parameters, that shall be used for the request.
+     * @param <T>       The parameter type (data transfer object/bean) that shall be used.
+     * @return The resulting state of the data transfer object.
+     * @throws ResultException Shall be thrown, should the {@link HttpEntity} creation fail.
+     */
+    private <T> @NotNull HttpEntity prepareHttpEntity(@NotNull T parameter) throws ResultException {
+        try {
+            return new StringEntity(SerializeHelper.toJSON(parameter),
+                    ContentType.create(DataFormat.JSON.getMimeType(), StandardCharsets.UTF_8));
+        } catch (UnsupportedCharsetException ex) {
+            throw new ClientResultException(Error.XML_OR_JSON_CONVERSION_FAILURE, ex);
+        }
+    }
 }

@@ -1,14 +1,13 @@
 package net.webpdf.wsclient.session;
 
 import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.exception.Error;
+import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.auth.AuthProvider;
-import net.webpdf.wsclient.session.auth.material.AuthMaterial;
 import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.SessionContextSettings;
 import net.webpdf.wsclient.session.rest.AbstractRestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
-import net.webpdf.wsclient.exception.Error;
-import net.webpdf.wsclient.exception.ResultException;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -68,15 +67,13 @@ public abstract class AbstractSession implements Session {
     }
 
     /**
-     * Provides {@link AuthMaterial} for the authorization of the {@link Session}´s requests, using the
-     * {@link Session}´s {@link AuthProvider}.
+     * Provides the {@link AuthProvider} for the authorization of the {@link Session}´s requests.
      *
-     * @return {@link AuthMaterial} for the authorization of the {@link Session}´s requests.
-     * @throws ResultException Shall be thrown, should the determination of {@link AuthMaterial} fail.
+     * @return {@link AuthProvider} for the authorization of the {@link Session}´s requests.
      */
     @Override
-    public synchronized @NotNull AuthMaterial getAuthMaterial() throws ResultException {
-        return this.authProvider.provide(this);
+    public @NotNull AuthProvider getAuthProvider() {
+        return authProvider;
     }
 
     /**

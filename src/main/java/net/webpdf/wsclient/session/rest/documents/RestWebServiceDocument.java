@@ -111,7 +111,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
         try (OutputStream outputStream = new FileOutputStream(target)) {
             accessInternalState().getDocumentManager().downloadDocument(this, outputStream);
         } catch (IOException e) {
-            throw new ClientResultException(Error.INVALID_DOCUMENT);
+            throw new ClientResultException(Error.REST_EXECUTION);
         }
     }
 

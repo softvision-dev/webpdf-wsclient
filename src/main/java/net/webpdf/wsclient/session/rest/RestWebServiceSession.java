@@ -4,6 +4,8 @@ import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.SessionContextSettings;
+import net.webpdf.wsclient.session.rest.administration.AdministrationManager;
+import net.webpdf.wsclient.session.rest.administration.RestAdministrationManager;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
 import net.webpdf.wsclient.session.rest.documents.DocumentManager;
@@ -95,7 +97,7 @@ public class RestWebServiceSession extends AbstractRestSession<RestWebServiceDoc
      */
     @Override
     protected @NotNull AdministrationManager<RestWebServiceDocument> createAdministrationManager() {
-        return new AdministrationManager<>(this);
+        return new RestAdministrationManager(this);
     }
 
     /**

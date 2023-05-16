@@ -27,4 +27,12 @@ public interface AuthProvider {
      */
     @NotNull AuthMaterial provide(@NotNull Session session) throws AuthResultException;
 
+    /**
+     * Refresh authorization {@link SessionToken} for an active {@link Session}.
+     *
+     * @param session The session to refresh the authorization for.
+     * @return The {@link AuthMaterial} refreshed by this {@link AuthProvider}.
+     * @throws AuthResultException Shall be thrown, should the authentication/authorization fail for some reason.
+     */
+    @NotNull AuthMaterial refresh(Session session) throws AuthResultException;
 }

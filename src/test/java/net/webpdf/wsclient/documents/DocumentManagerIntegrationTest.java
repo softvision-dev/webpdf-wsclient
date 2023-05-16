@@ -1,26 +1,34 @@
 package net.webpdf.wsclient.documents;
 
-import net.webpdf.wsclient.session.connection.SessionContext;
-import net.webpdf.wsclient.session.rest.documents.RestDocument;
-import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
+import net.webpdf.wsclient.exception.ServerResultException;
+import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
+import net.webpdf.wsclient.schema.operation.*;
+import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.session.auth.UserAuthProvider;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
-import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.testsuite.server.ServerType;
-import net.webpdf.wsclient.testsuite.io.TestResources;
-import net.webpdf.wsclient.testsuite.server.TestServer;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
+import net.webpdf.wsclient.session.rest.documents.RestWebServiceDocument;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
+import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.ServerType;
+import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.ConverterRestWebService;
+import net.webpdf.wsclient.webservice.rest.ToolboxRestWebService;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.webpdf.wsclient.testsuite.io.TestResources.getDocumentID;
@@ -205,4 +213,200 @@ public class DocumentManagerIntegrationTest {
         });
     }
 
+    @Test
+    @IntegrationTest
+    public void testDocumentSecurityTextPassword() {
+        assertDoesNotThrow(() -> {
+            File sourceFile = testResources.getResource("password.pdf");
+            try (RestWebServiceSession session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)))) {
+                assertNotNull(session, "Valid session should have been created.");
+                RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+                assertNotNull(document, "Valid document should have been returned.");
+                assertNotNull(document.getDocumentFile().getError(), "document error should be set.");
+                assertEquals(-5009, document.getDocumentFile().getError().getErrorCode(), "errorcode should be -5009");
+
+                PdfPasswordType passwordType = new PdfPasswordType();
+                passwordType.setOpen("a");
+
+                document = session.getDocumentManager().updateDocumentSecurity(document.getDocumentId(), passwordType);
+                assertNotNull(document, "Valid document should have been returned.");
+                assertNotNull(document.getDocumentFile().getError(), "document error should be set.");
+                assertEquals(0, document.getDocumentFile().getError().getErrorCode(), "errorcode should be 0");
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testDocumentSecurityCertificate() {
+        assertDoesNotThrow(() -> {
+            File sourceFile = testResources.getResource("protected_certificate.pdf");
+            File certificateFile = testResources.getResource("heinz_mustermann_certificate.pem");
+            File privateKeyFile = testResources.getResource("heinz_mustermann_private.pem");
+            try (RestWebServiceSession session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)))) {
+                assertNotNull(session, "Valid session should have been created.");
+                RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+                assertNotNull(document, "Valid document should have been returned.");
+                assertNotNull(document.getDocumentFile().getError(), "document error should be set.");
+                assertEquals(-5055, document.getDocumentFile().getError().getErrorCode(), "errorcode should be -5055");
+
+                PdfPasswordType passwordType = new PdfPasswordType();
+                KeyPairType keyPairType = new KeyPairType();
+                CertificateFileDataType certificateFileDataType = new CertificateFileDataType();
+                certificateFileDataType.setSource(FileDataSourceType.VALUE);
+                certificateFileDataType.setValue(FileUtils.readFileToString(certificateFile, StandardCharsets.UTF_8));
+                keyPairType.setCertificate(certificateFileDataType);
+                PrivateKeyFileDataType privateKeyFileDataType = new PrivateKeyFileDataType();
+                privateKeyFileDataType.setSource(FileDataSourceType.VALUE);
+                privateKeyFileDataType.setValue(FileUtils.readFileToString(privateKeyFile, StandardCharsets.UTF_8));
+                privateKeyFileDataType.setPassword("geheim");
+                keyPairType.setPrivateKey(privateKeyFileDataType);
+                passwordType.setKeyPair(keyPairType);
+
+                document = session.getDocumentManager().updateDocumentSecurity(document.getDocumentId(), passwordType);
+                assertNotNull(document, "Valid document should have been returned.");
+                assertNotNull(document.getDocumentFile().getError(), "document error should be set.");
+                assertEquals(0, document.getDocumentFile().getError().getErrorCode(), "errorcode should be 0");
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testDocumentListFromSession() {
+        assertDoesNotThrow(() -> {
+            File sourceFile = testResources.getResource("test.pdf");
+            RestWebServiceSession session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
+                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+            );
+            assertNotNull(session, "Valid session should have been created.");
+            RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+            assertNotNull(document, "Valid document should have been returned.");
+            List<RestWebServiceDocument> fileList = session.getDocumentManager().getDocuments();
+            assertEquals(1, fileList.size(), "file list should contain 1 document.");
+
+            RestWebServiceSession resumedSession = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
+                    new UserAuthProvider(
+                            testServer.getLocalUser(), testServer.getLocalPassword(), session.getAuthProvider().provide(session)
+                    )
+            );
+            resumedSession.getAuthProvider().refresh(resumedSession);
+            fileList = resumedSession.getDocumentManager().getDocuments();
+            assertEquals(0, fileList.size(), "file list should contain 0 documents.");
+            fileList = resumedSession.getDocumentManager().synchronize();
+            assertEquals(1, fileList.size(), "file list should contain 1 document.");
+            resumedSession.close();
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testDocumentPasswordHandling() {
+        assertDoesNotThrow(() -> {
+            File sourceFile = testResources.getResource("test.pdf");
+            try (RestWebServiceSession session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)))) {
+                assertNotNull(session, "Valid session should have been created.");
+                RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+                assertNotNull(document, "Valid document should have been returned.");
+
+                String openPassword = "open";
+                String permissionPassword = "permission";
+
+                // encrypt document
+                OperationPasswordEncrypt password = new OperationPasswordEncrypt();
+                password.setOpen(openPassword);
+                password.setPermission(permissionPassword);
+                OperationEncrypt encryptType = new OperationEncrypt();
+                encryptType.setPassword(password);
+                OperationToolboxSecuritySecurity securityType = new OperationToolboxSecuritySecurity();
+                securityType.setEncrypt(encryptType);
+                OperationBaseToolbox baseToolbox = new OperationBaseToolbox();
+                baseToolbox.setSecurity(securityType);
+                List<OperationBaseToolbox> parameters = new ArrayList<>();
+                parameters.add(baseToolbox);
+                ToolboxRestWebService<RestDocument> encryptWebService =
+                        WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
+                encryptWebService.setOperationParameters(parameters);
+
+                RestDocument encryptedDocument = encryptWebService.process(document);
+                assertNotNull(encryptedDocument.getDocumentFile().getError(), "The document error should be set.");
+                assertEquals(0, encryptedDocument.getDocumentFile().getError().getErrorCode(),
+                        "The document password should be set.");
+                assertNotNull(encryptedDocument.getDocumentFile().getMetadata(), "The metadata should be set.");
+                assertNotNull(encryptedDocument.getDocumentFile().getMetadata().getInformation(),
+                        "The metadata information should be readable.");
+
+                // rotate pages with initially set password
+                OperationToolboxRotateRotate operationToolboxRotate = new OperationToolboxRotateRotate();
+                operationToolboxRotate.setDegrees(90);
+                baseToolbox = new OperationBaseToolbox();
+                baseToolbox.setRotate(operationToolboxRotate);
+                parameters = new ArrayList<>();
+                parameters.add(baseToolbox);
+                ToolboxRestWebService<RestDocument> rotateWebService = WebServiceFactory.createInstance(session, WebServiceType.TOOLBOX);
+                rotateWebService.setOperationParameters(parameters);
+                rotateWebService.process(encryptedDocument);
+
+                // set wrong password
+                PdfPasswordType wrongPasswordType = new PdfPasswordType();
+                wrongPasswordType.setOpen("wrong");
+                final RestDocument updatedLockedDocument = session.getDocumentManager().updateDocumentSecurity(
+                        encryptedDocument.getDocumentId(), wrongPasswordType
+                );
+                assertNotNull(updatedLockedDocument.getDocumentFile().getError(), "The document error should be set.");
+                assertEquals(-5008, updatedLockedDocument.getDocumentFile().getError().getErrorCode(),
+                        "The document password should be wrong.");
+                assertNotNull(updatedLockedDocument.getDocumentFile().getMetadata(), "The metadata should be set.");
+                assertNull(updatedLockedDocument.getDocumentFile().getMetadata().getInformation(),
+                        "The metadata information should not be readable.");
+
+                // rotate pages with wrong password
+                assertThrows(ServerResultException.class, () -> rotateWebService.process(updatedLockedDocument));
+
+                // rotate pages with correct temporary password
+                OperationPdfPassword correctOperationPdfPassword = new OperationPdfPassword();
+                correctOperationPdfPassword.setOpen(openPassword);
+                correctOperationPdfPassword.setPermission(permissionPassword);
+                rotateWebService.setPassword(correctOperationPdfPassword);
+
+                // set correct password
+                PdfPasswordType correctPasswordType = new PdfPasswordType();
+                correctPasswordType.setOpen(openPassword);
+                correctPasswordType.setPermission(permissionPassword);
+                RestDocument updatedOpenedDocument = session.getDocumentManager().updateDocumentSecurity(
+                        encryptedDocument.getDocumentId(), correctPasswordType
+                );
+
+                // rotate pages with correct password
+                rotateWebService.setPassword(null);
+                rotateWebService.process(updatedOpenedDocument);
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testDocumentInfo() {
+        assertDoesNotThrow(() -> {
+            File sourceFile = testResources.getResource("form.pdf");
+            try (RestWebServiceSession session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)))) {
+                assertNotNull(session, "Valid session should have been created.");
+                RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+                assertNotNull(document, "Valid document should have been returned.");
+
+                DocumentInfoForm documentInfo = (DocumentInfoForm) session.getDocumentManager().getDocumentInfo(
+                        document.getDocumentId(), DocumentInfoType.FORM
+                );
+                assertNotNull(documentInfo, "Form info should have been fetched.");
+                assertEquals(DocumentInfoType.FORM, documentInfo.getInfoType(), "Info type should be form.");
+                assertFalse(new String(documentInfo.getValue(), Charset.defaultCharset()).isEmpty(), "There should be a value.");
+            }
+        });
+    }
 }

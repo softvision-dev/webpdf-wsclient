@@ -10,8 +10,11 @@
       "url" : "https://www.webpdf.de/en/license-agreement.html"
     },
     "title" : "webPDF",
-    "version" : "TEST"
+    "version" : "webPDF 9.0.0.2906 (2023-05-16T16:21:53Z) "
   },
+  "servers" : [ {
+    "url" : "/webPDF/rest"
+  } ],
   "tags" : [ {
     "description" : "Operations for user authentication",
     "name" : "authentication"
@@ -139,7 +142,9 @@
                 "$ref" : "#/components/schemas/Admin_FileDataStore"
               }
             }
-          }
+          },
+          "description" : "Specifies the file type and settings that should be updated for the file.",
+          "required" : true
         },
         "responses" : {
           "200" : {
@@ -617,13 +622,14 @@
         } ],
         "requestBody" : {
           "content" : {
-            "*/*" : {
+            "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/KeyStore_Password"
               }
             }
           },
-          "description" : "Password that allows access to the keystore and all passwords to access the private keys it contains."
+          "description" : "Password information for accessing the keystore and the entries in the keystore.",
+          "required" : true
         },
         "responses" : {
           "200" : {
@@ -1017,6 +1023,52 @@
         "tags" : [ "documents" ]
       }
     },
+    "/documents/compress" : {
+      "post" : {
+        "description" : "Compresses a list of documents selected by `documentId` or file filter into a new archive document in the **document storage**.\n\n* The list of documents that should be in the archive are selected via the `documentId` or a file filter.\n* The selection specifications can be made individually or together and act additively in the order `documentId` and then file filter.\n* If the id is invalid for documents selected via `documentId` or documents are locked, then the call is aborted with an error.\n* The created archive is stored as a new document with a new `documentId` in the **document storage**.",
+        "operationId" : "compressDocument",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Document_FileCompress"
+              }
+            }
+          },
+          "description" : "The settings for creating the archive document and for selecting and filtering the documents to be added to the archive.",
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Document_FileCompress"
+                  }
+                }
+              }
+            },
+            "description" : "The archive document has been created successfully. The response contains the `DocumentFile` with the `documentId` of the created archive document in the **document storage**."
+          },
+          "303" : {
+            "$ref" : "#/components/responses/303SeeOther"
+          },
+          "400" : {
+            "$ref" : "#/components/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/components/responses/401Unauthorized"
+          }
+        },
+        "security" : [ {
+          "BearerAuth" : [ ]
+        } ],
+        "summary" : "Compresses the selected documents into a new archive document within the document store.",
+        "tags" : [ "documents" ]
+      }
+    },
     "/documents/list" : {
       "get" : {
         "description" : "Returns a list of all documents currently stored in the server´s **document storage**.\n\n* Returns a `DocumentFile` for each document in the storage, providing further information, such as the document´s MIME type, file name, `documentId`, structure etc.\n",
@@ -1033,7 +1085,48 @@
                 }
               }
             },
-            "description" : "A list of all documents stored in the server´s **document storage** has been returned. Use the `documentId` contained in the returned `DocumentFile`s to reference documents."
+            "description" : "A list of all documents stored in the server´s **document storage** has been returned. Use the list of `DocumentFile` and the `documentId` contained in `DocumentFile` to access documents."
+          },
+          "400" : {
+            "$ref" : "#/components/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/components/responses/401Unauthorized"
+          }
+        },
+        "security" : [ {
+          "BearerAuth" : [ ]
+        } ],
+        "summary" : "Returns a list of all documents in the document storage",
+        "tags" : [ "documents" ]
+      }
+    },
+    "/documents/list/{parentDocumentId}" : {
+      "get" : {
+        "description" : "Returns a list of all documents currently stored in the server´s **document storage**.\n\n* Returns a `DocumentFile` for each document in the storage, providing further information, such as the document´s MIME type, file name, `documentId`, structure etc.\n* The list contains only documents that have `{parentDocumentId}` as parent ID",
+        "operationId" : "getDocumentInfoListWithParentId",
+        "parameters" : [ {
+          "description" : "The unique `documentId` of the document known in the server's **document storage** and whose id is to be used as the parent filter for the list of documents.",
+          "in" : "path",
+          "name" : "parentDocumentId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Document_File"
+                  }
+                }
+              }
+            },
+            "description" : "A list of all documents stored in the server´s **document storage** has been returned. Use the list of `DocumentFile` and the `documentId` contained in `DocumentFile` to access documents."
           },
           "400" : {
             "$ref" : "#/components/responses/400BadRequest"
@@ -1124,6 +1217,61 @@
           "BearerAuth" : [ ]
         } ],
         "summary" : "Returns the binary data of a document",
+        "tags" : [ "documents" ]
+      }
+    },
+    "/documents/{documentId}/extract" : {
+      "post" : {
+        "description" : "Extracts a document selected by the `documentId` in the **document storage**.\n\n* The document referenced by `documentId` must be a valid archive. If not, the operation will be aborted.\n* For each file in the archive, a new `DocumentFile` is created in the **document storage** with a new `documentId`.\n* Each newly created `DocumentFile` holds as `parentDocumentId` the `documentId` of the archive.",
+        "operationId" : "extractDocument",
+        "parameters" : [ {
+          "description" : "The unique `documentId` of the archive document in the server´s **document storage**.",
+          "in" : "path",
+          "name" : "documentId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Document_FileExtract"
+              }
+            }
+          },
+          "description" : "The settings for unpacking the archive document",
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Document_File"
+                  }
+                }
+              }
+            },
+            "description" : "The document has been extracted successfully. The response contains the list of unpacked documents as `DocumentFile` with the new `documentId` and `parentDocumentId` (id of the archive)."
+          },
+          "303" : {
+            "$ref" : "#/components/responses/303SeeOther"
+          },
+          "400" : {
+            "$ref" : "#/components/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/components/responses/401Unauthorized"
+          }
+        },
+        "security" : [ {
+          "BearerAuth" : [ ]
+        } ],
+        "summary" : "Extracts the selected archive document in the document storage.",
         "tags" : [ "documents" ]
       }
     },
@@ -1242,7 +1390,9 @@
                 "$ref" : "#/components/schemas/Document_HistoryEntry"
               }
             }
-          }
+          },
+          "description" : "The settings to apply to the selected history entry.",
+          "required" : true
         },
         "responses" : {
           "200" : {
@@ -1381,7 +1531,9 @@
                 "$ref" : "#/components/schemas/Operation_PdfPassword"
               }
             }
-          }
+          },
+          "description" : "The security settings to apply to the selected document.",
+          "required" : true
         },
         "responses" : {
           "200" : {
@@ -1431,7 +1583,9 @@
                 "$ref" : "#/components/schemas/Document_File"
               }
             }
-          }
+          },
+          "description" : "The settings to be applied to the selected document.",
+          "required" : true
         },
         "responses" : {
           "200" : {
@@ -4016,6 +4170,12 @@
             "default" : "",
             "description" : "File name for the document (without extension)"
           },
+          "filePath" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "File path for the document",
+            "readOnly" : true
+          },
           "fileSize" : {
             "type" : "integer",
             "format" : "int64",
@@ -4034,6 +4194,13 @@
             "format" : "int32",
             "default" : 0,
             "description" : "An internal unique id for the file type",
+            "readOnly" : true
+          },
+          "historyId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0,
+            "description" : "History id of the file entry",
             "readOnly" : true
           },
           "isFileLocked" : {
@@ -4062,6 +4229,77 @@
           }
         },
         "required" : [ "documentId" ]
+      },
+      "Document_FileCompress" : {
+        "type" : "object",
+        "description" : "Contains the instructions for creating the new archive document and the documents to be added to the archive.",
+        "properties" : {
+          "archiveFileName" : {
+            "type" : "string",
+            "default" : "archive.zip",
+            "description" : "Sets the file name for the archive document."
+          },
+          "documentIdList" : {
+            "type" : "array",
+            "description" : "Sets the list of `documentId`s to be added to the archive document.",
+            "items" : {
+              "type" : "string",
+              "description" : "Sets the list of `documentId`s to be added to the archive document."
+            }
+          },
+          "fileFilter" : {
+            "$ref" : "#/components/schemas/Document_FileFilter"
+          }
+        }
+      },
+      "Document_FileExtract" : {
+        "type" : "object",
+        "description" : "Contains the instructions when an archive is to be extracted in the document storage.",
+        "properties" : {
+          "fileFilter" : {
+            "$ref" : "#/components/schemas/Document_FileFilter"
+          }
+        }
+      },
+      "Document_FileFilter" : {
+        "type" : "object",
+        "description" : "Defines a file filter with a list of \"include\" and \"exclude\" filter rules. First, the \"include rules\" are applied. If a file matches, the \"exclude rules\" are applied. Only if both rules apply, the file will be passed through the filter.",
+        "properties" : {
+          "excludeRules" : {
+            "type" : "array",
+            "description" : "Sets the list of rules for files to be excluded (black list)",
+            "items" : {
+              "$ref" : "#/components/schemas/Document_FileFilterRule"
+            }
+          },
+          "includeRules" : {
+            "type" : "array",
+            "description" : "Sets the list of rules for files to be included (white list)",
+            "items" : {
+              "$ref" : "#/components/schemas/Document_FileFilterRule"
+            }
+          }
+        }
+      },
+      "Document_FileFilterRule" : {
+        "type" : "object",
+        "description" : "Defines a single filter rule for a file filter.",
+        "properties" : {
+          "rulePattern" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "Defines the pattern of this rule. The syntax depends on the selected `ruleType`."
+          },
+          "ruleType" : {
+            "$ref" : "#/components/schemas/Document_FileFilterType"
+          }
+        }
+      },
+      "Document_FileFilterType" : {
+        "type" : "string",
+        "default" : "suffix",
+        "description" : "Defines the type of rule and how to interpret the pattern.",
+        "enum" : [ "suffix", "regex", "glob" ]
       },
       "Document_HistoryEntry" : {
         "type" : "object",
