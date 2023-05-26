@@ -10,7 +10,7 @@
       "url" : "https://www.webpdf.de/en/license-agreement.html"
     },
     "title" : "webPDF",
-    "version" : "webPDF 9.0.0.2906 (2023-05-16T16:21:53Z) "
+    "version" : "webPDF 9.0.0.2906 (2023-05-17T09:00:18Z) "
   },
   "servers" : [ {
     "url" : "/webPDF/rest"
@@ -14880,8 +14880,8 @@
           "version" : {
             "type" : "string",
             "default" : "v10Comfort",
-            "description" : "Used to define the version of the ZUGFeRD XML file that should be embedded with \"xmlFile\". Versions 1.0, 2.0 and 2.1.x are supported. Only the \"Comfort\" profile is available for version 1.0. Meanwhile, the \"Minimum\", \"Basic WL\", \"Basic\", \"EN16931\" (Comfort), and \"Extended\" profiles are supported for version 2.0. Version 2.1.x contains the same profiles as version 2.0 and additionally defines the profile \"X-Rechnung\". List of versions with the corresponding profiles:\n\n*   v10Comfort\n*   v20Minimum\n*   v20BasicWL\n*   v20Basic\n*   v20EN16931\n*   v20Extended\n*   v21Minimum\n*   v21BasicWL\n*   v21Basic\n*   v21EN16931\n*   v21Extended\n*   v21XRechnung",
-            "enum" : [ "v10Comfort", "v20Minimum", "v20BasicWL", "v20Basic", "v20EN16931", "v20Extended", "v21Minimum", "v21BasicWL", "v21Basic", "v21EN16931", "v21Extended", "v21XRechnung" ],
+            "description" : "Used to define the version of the ZUGFeRD XML file that should be embedded with \"xmlFile\". Versions 1.0, 2.0, 2.1.x and 2.2 are supported. Only the \"Comfort\" profile is available for version 1.0. Meanwhile, the \"Minimum\", \"Basic WL\", \"Basic\", \"EN16931\" (Comfort), and \"Extended\" profiles are supported for version 2.0.\n\n**Note:** Since version 2.x, the referenced profile \"XRECHNUNG\" is additionally available. This profile has been included specifically to include invoices for Germany, based on and under the sole responsibility of KoSIT, Germany's central coordination agency for IT's e-invoice CIUS \"XRechnung\". It is defined as the Standard for electronic invoices issued to public administrations, and essentially adds specific business rules to EN 16931 in order to comply with national laws and regulations.\n\n**Note:** Since version 2.1.1 ZUGFeRD and Factur-X are technically identical and both formats use Factur-X as common identification.\n\nList of versions with the corresponding profiles:\n\n*   v10Comfort\n*   v20Minimum\n*   v20BasicWL\n*   v20Basic\n*   v20EN16931\n*   v20Extended\n*   v21Minimum\n*   v21BasicWL\n*   v21Basic\n*   v21EN16931\n*   v21Extended\n*   v21XRechnung\n*   v22Minimum\n*   v22BasicWL\n*   v22Basic\n*   v22EN16931\n*   v22Extended\n*   v22XRechnung",
+            "enum" : [ "v10Comfort", "v20Minimum", "v20BasicWL", "v20Basic", "v20EN16931", "v20Extended", "v21Minimum", "v21BasicWL", "v21Basic", "v21EN16931", "v21Extended", "v21XRechnung", "v22Minimum", "v22BasicWL", "v22Basic", "v22EN16931", "v22Extended", "v22XRechnung" ],
             "x-webpdf-codegen" : {
               "enumName" : "Operation_ZugferdVersion"
             }
@@ -15325,6 +15325,9 @@
             "default" : 2048,
             "description" : "Sets the minimum amount of bytes a message must reach before GZIP compression shall be applied."
           },
+          "configuration" : {
+            "$ref" : "#/components/schemas/ServerConfig_ConnectorConfiguration"
+          },
           "enabled" : {
             "type" : "boolean",
             "default" : true,
@@ -15351,6 +15354,34 @@
           },
           "ssl" : {
             "$ref" : "#/components/schemas/ServerConfig_SSL"
+          }
+        }
+      },
+      "ServerConfig_ConnectorAttribute" : {
+        "type" : "object",
+        "description" : "Defines a single configuration setting via a name-value pair.",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "Defines the name of the configuration setting"
+          },
+          "value" : {
+            "type" : "string",
+            "default" : "",
+            "description" : "Defines the value of the configuration setting"
+          }
+        }
+      },
+      "ServerConfig_ConnectorConfiguration" : {
+        "type" : "object",
+        "description" : "Allows setting the configuration values for the \"HTTP Connector\" as described in the [Tomcat manual](https://tomcat.apache.org/tomcat-10.1-doc/config/http.html).\n\n*   [Attributes](https://tomcat.apache.org/tomcat-10.1-doc/config/http.html#Attributes)\n*   [SSL Support - SSLHostConfig](https://tomcat.apache.org/tomcat-10.1-doc/config/http.html#SSL_Support_-_SSLHostConfig)",
+        "properties" : {
+          "attribute" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ServerConfig_ConnectorAttribute"
+            }
           }
         }
       },
@@ -15687,6 +15718,9 @@
             "type" : "boolean",
             "default" : false,
             "description" : "Whether a client must provide a valid certificate before being accepted by the connector."
+          },
+          "configuration" : {
+            "$ref" : "#/components/schemas/ServerConfig_ConnectorConfiguration"
           },
           "keystore" : {
             "$ref" : "#/components/schemas/ServerConfig_KeystoreSSL"
