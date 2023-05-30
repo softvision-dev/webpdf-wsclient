@@ -3,3 +3,5 @@
 /files
 /.idea/libraries
 /config/testConfig.json
+/.idea/azure/azureSettings.xml
+/.idea/php.xml

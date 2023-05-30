@@ -38,7 +38,7 @@ public class HttpRestRequestIntegrationTest {
             File outputFile = testResources.getTempFolder().newFile();
             try (RestWebServiceSession session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword()));
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword()));
                  OutputStream fos = Files.newOutputStream(outputFile.toPath())) {
                 HttpRestRequest httpRestRequest = HttpRestRequest.createRequest(session);
                 assertNotNull(httpRestRequest,

@@ -27,15 +27,15 @@ public class OAuthTestConditionExt extends IntegrationTestConditionExt {
                 case AZURE:
                     return TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig().isEnabled() ?
                             ConditionEvaluationResult.enabled(
-                                    "Test is enabled via 'config/testConfig.json'.") :
+                                    "OAuth2 (Azure) tests are enabled via 'config/testConfig.json'.") :
                             ConditionEvaluationResult.disabled(
-                                    "Test is disabled via 'config/testConfig.json'.");
+                                    "OAuth2 (Azure) tests are disabled via 'config/testConfig.json'.");
                 case AUTH_0:
                     return TestConfig.getInstance().getIntegrationTestConfig().getAuth0Config().isEnabled() ?
                             ConditionEvaluationResult.enabled(
-                                    "Test is enabled via 'config/testConfig.json'.") :
+                                    "OAuth2 (Auth0) tests are enabled via 'config/testConfig.json'.") :
                             ConditionEvaluationResult.disabled(
-                                    "Test is disabled via 'config/testConfig.json'.");
+                                    "OAuth2 (Auth0) tests are disabled via 'config/testConfig.json'.");
                 default:
                     return ConditionEvaluationResult.disabled(
                             "Test is disabled, the selected OAuth provider is unknown.");

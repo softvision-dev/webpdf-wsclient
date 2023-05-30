@@ -280,7 +280,7 @@ public class DocumentManagerIntegrationTest {
             File sourceFile = testResources.getResource("test.pdf");
             RestWebServiceSession session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             );
             assertNotNull(session, "Valid session should have been created.");
             RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
@@ -291,7 +291,7 @@ public class DocumentManagerIntegrationTest {
             RestWebServiceSession resumedSession = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider(
-                            testServer.getLocalUser(), testServer.getLocalPassword(), session.getAuthProvider().provide(session)
+                            testServer.getLocalAdminName(), testServer.getLocalAdminPassword(), session.getAuthProvider().provide(session)
                     )
             );
             resumedSession.getAuthProvider().refresh(resumedSession);

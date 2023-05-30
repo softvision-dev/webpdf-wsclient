@@ -2,19 +2,19 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.connection.SessionContext;
+import net.webpdf.wsclient.session.connection.https.TLSContext;
 import net.webpdf.wsclient.session.connection.https.TLSProtocol;
+import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
-import net.webpdf.wsclient.session.connection.https.TLSContext;
-import net.webpdf.wsclient.session.rest.RestSession;
-import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.testsuite.server.TransferProtocol;
-import net.webpdf.wsclient.testsuite.server.ServerType;
-import net.webpdf.wsclient.testsuite.io.TestResources;
-import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.testsuite.integration.annotations.TLSTest;
+import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.ServerType;
+import net.webpdf.wsclient.testsuite.server.TestServer;
+import net.webpdf.wsclient.testsuite.server.TransferProtocol;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.ConverterRestWebService;
@@ -127,10 +127,15 @@ public class WebserviceTLSIntegrationTest {
     @CsvSource(delimiter = '|', value = {
             "LOCAL|HTTPS|0|false|true",
             "LOCAL|HTTPS|-54|true|false",
-            "LOCAL|HTTPS|0|true|true"
+            "LOCAL|HTTPS|0|true|true",
+            "LOCAL|HTTPS|-54|false|false",
+            "PUBLIC|HTTPS|0|false|true",
+            "PUBLIC|HTTPS|0|true|false",
+            "PUBLIC|HTTPS|0|true|true",
+            "PUBLIC|HTTPS|0|false|false"
     })
     public void testRestSSL(String type, String protocol, int expectedErrorCode, boolean setKeystoreFile,
-            boolean selfSigned) {
+                            boolean selfSigned) {
         assertDoesNotThrow(() -> {
             ServerType serverType = ServerType.valueOf(type);
             TransferProtocol serverProtocol = TransferProtocol.valueOf(protocol);

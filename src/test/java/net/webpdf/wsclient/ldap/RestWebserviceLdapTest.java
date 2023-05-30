@@ -6,6 +6,7 @@ import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
+import net.webpdf.wsclient.testsuite.config.TestConfig;
 import net.webpdf.wsclient.testsuite.integration.annotations.LdapTest;
 import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.server.TestServer;
@@ -26,7 +27,8 @@ public class RestWebserviceLdapTest {
         assertDoesNotThrow(() -> {
             try (RestWebServiceSession session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider("bmi", "billymiller"))) {
+                    new UserAuthProvider(TestConfig.getInstance().getServerConfig().getLocalUserName(),
+                            TestConfig.getInstance().getServerConfig().getLocalUserPassword()))) {
                 // check User
                 AuthUserCredentials user = session.getUser();
                 assertNotNull(user, "User should be set.");

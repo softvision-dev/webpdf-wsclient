@@ -47,7 +47,7 @@ public class RestAdministrationIntegrationTest {
             // User
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider("user", "user")
+                    new UserAuthProvider(TestConfig.getInstance().getServerConfig().getLocalUserName(), TestConfig.getInstance().getServerConfig().getLocalUserPassword())
             )) {
                 assertThrows(ClientResultException.class, () -> session.getAdministrationManager().getApplicationConfiguration());
             }
@@ -55,7 +55,7 @@ public class RestAdministrationIntegrationTest {
             // Admin
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 assertDoesNotThrow(() -> session.getAdministrationManager().getApplicationConfiguration());
             }
@@ -68,7 +68,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 UserConfigUsers userConfiguration = session.getAdministrationManager().getUserConfiguration();
 
@@ -108,7 +108,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 AdminLogFileConfiguration logConfiguration = session.getAdministrationManager().getLogConfiguration();
                 assertNotNull(logConfiguration, "Log configuration should exist.");
@@ -133,7 +133,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 ServerConfigServer serverConfiguration = session.getAdministrationManager().getServerConfiguration();
                 assertNotNull(serverConfiguration, "Server configuration should exist.");
@@ -159,7 +159,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 ApplicationConfigApplication applicationConfiguration = session.getAdministrationManager().getApplicationConfiguration();
                 assertNotNull(applicationConfiguration, "Application configuration should exist.");
@@ -196,20 +196,20 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 ApplicationConfigApplication applicationConfiguration = session.getAdministrationManager().getApplicationConfiguration();
                 assertNotNull(applicationConfiguration, "Application configuration should exist.");
 
-                ApplicationConfigLicense license = new ApplicationConfigLicense();
-                license.setLicensee(TestConfig.getInstance().getIntegrationTestConfig().getLicensee());
-                license.setKey(TestConfig.getInstance().getIntegrationTestConfig().getLicenseKey());
-                applicationConfiguration.setLicense(license);
-
-                AdminLicenseApplicationCheck licenseCheck = new AdminLicenseApplicationCheck();
-                licenseCheck.setCheckType(AdminApplicationCheckMode.LICENSE);
                 List<AdminApplicationCheck> applicationChecks = new ArrayList<>();
-                applicationChecks.add(licenseCheck);
+
+                AdminTsaApplicationCheck tsaApplicationCheck = new AdminTsaApplicationCheck();
+                ApplicationConfigTsa configTsa = new ApplicationConfigTsa();
+                configTsa.setUrl("http://timestamp.comodoca.com");
+                configTsa.setHashAlgorithm(ApplicationConfigTsa.HashAlgorithmEnum.SHA_256);
+                applicationConfiguration.setTsa(configTsa);
+
+                applicationChecks.add(tsaApplicationCheck);
 
                 AdminConfigurationResult result = session.getAdministrationManager().validateApplicationConfiguration(
                         applicationConfiguration, applicationChecks
@@ -226,7 +226,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 ApplicationConfigApplication applicationConfiguration = session.getAdministrationManager().getApplicationConfiguration();
                 assertNotNull(applicationConfiguration, "Application configuration should exist.");
@@ -251,7 +251,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 ApplicationConfigApplication applicationConfiguration = session.getAdministrationManager().getApplicationConfiguration();
                 assertNotNull(applicationConfiguration, "Application configuration should exist.");
@@ -276,7 +276,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 AdminServerStatus serverStatus = session.getAdministrationManager().getStatus();
                 assertNotNull(serverStatus.getWebservices(), "Webservices should exist.");
@@ -296,7 +296,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 int logLength = session.getAdministrationManager().getLogLength();
                 String logContents = session.getAdministrationManager().getLog("0-" + logLength);
@@ -312,7 +312,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
@@ -331,7 +331,7 @@ public class RestAdministrationIntegrationTest {
             File logoFile = testResources.getResource("logo.png");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 AdminLogoFileDataStore fileDataStore = new AdminLogoFileDataStore();
                 fileDataStore.setFileContent(DatatypeConverter.printBase64Binary(
@@ -376,7 +376,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 ServerConfigServer serverConfiguration = session.getAdministrationManager().getServerConfiguration();
                 assertNotNull(serverConfiguration, "Server configuration should exist.");
@@ -420,7 +420,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 ApplicationConfigApplication applicationConfiguration = session.getAdministrationManager().getApplicationConfiguration();
                 assertNotNull(applicationConfiguration, "Application configuration should exist.");
@@ -469,7 +469,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 ServerConfigServer serverConfiguration = session.getAdministrationManager().getServerConfiguration();
                 assertNotNull(serverConfiguration, "Server configuration should exist.");
@@ -534,7 +534,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 Date currentDate = new Date();
                 Date yesterday = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
@@ -559,7 +559,7 @@ public class RestAdministrationIntegrationTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 SessionTable sessions = session.getAdministrationManager().getSessionTable();
                 assertNotNull(sessions, "There should be a session table.");

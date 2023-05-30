@@ -1,17 +1,17 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.session.auth.UserAuthProvider;
-import net.webpdf.wsclient.session.connection.SessionContext;
-import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.schema.operation.PdfaErrorReportType;
 import net.webpdf.wsclient.schema.operation.PdfaLevelType;
 import net.webpdf.wsclient.schema.operation.PdfaType;
 import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.session.auth.UserAuthProvider;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.soap.SoapSession;
-import net.webpdf.wsclient.testsuite.server.ServerType;
-import net.webpdf.wsclient.testsuite.io.TestResources;
-import net.webpdf.wsclient.testsuite.server.TestServer;
+import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
+import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.ServerType;
+import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -66,7 +66,7 @@ public class SoapCredentialsIntegrationTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider(
-                            testServer.getLocalUser(), testServer.getLocalPassword()))) {
+                            testServer.getLocalAdminName(), testServer.getLocalAdminPassword()))) {
                 executeConverter(session);
             }
         });

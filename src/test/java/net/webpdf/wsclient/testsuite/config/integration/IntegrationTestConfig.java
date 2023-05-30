@@ -48,12 +48,4 @@ public class IntegrationTestConfig extends ConfigNodeContainer {
     public @NotNull AzureConfig getAzureConfig() {
         return azureConfig;
     }
-
-    public @NotNull String getLicensee() {
-        return getString("/license/licensee", "");
-    }
-
-    public @NotNull String getLicenseKey() {
-        return getString("/license/key", "");
-    }
 }

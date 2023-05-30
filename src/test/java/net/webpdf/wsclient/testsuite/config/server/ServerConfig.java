@@ -17,12 +17,20 @@ public class ServerConfig extends ConfigNodeContainer {
         return getString("/local/url", "");
     }
 
-    public @NotNull String getLocalUser() {
-        return getString("/local/user", "");
+    public @NotNull String getLocalAdminName() {
+        return getString("/local/adminName", "");
     }
 
-    public @NotNull String getLocalPassword() {
-        return getString("/local/password", "");
+    public @NotNull String getLocalAdminPassword() {
+        return getString("/local/adminPassword", "");
+    }
+
+    public @NotNull String getLocalUserName() {
+        return getString("/local/userName", "");
+    }
+
+    public @NotNull String getLocalUserPassword() {
+        return getString("/local/userPassword", "");
     }
 
     public int getLocalHttpPort() {

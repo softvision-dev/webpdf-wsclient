@@ -1,18 +1,19 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.openapi.*;
+import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
-import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
-import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
+import net.webpdf.wsclient.testsuite.config.TestConfig;
+import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.testsuite.integration.certificate.GenericCertificate;
 import net.webpdf.wsclient.testsuite.io.ImageHelper;
-import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.server.TestServer;
-import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -321,7 +322,7 @@ public class RestWebserviceIntegrationTest {
 
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperationParameters().setUrl("https://www.webpdf.de");
+                webService.getOperationParameters().setUrl("https://docs.webpdf.de");
 
                 OperationUrlConverterPage page = new OperationUrlConverterPage();
                 webService.getOperationParameters().setPage(page);
@@ -430,7 +431,7 @@ public class RestWebserviceIntegrationTest {
             try (RestWebServiceSession restSession = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider("user", "user"))) {
+                    new UserAuthProvider(TestConfig.getInstance().getServerConfig().getLocalUserName(), TestConfig.getInstance().getServerConfig().getLocalUserPassword()))) {
                 assertNotNull(restSession,
                         "Valid session should have been created.");
                 assertNotNull(restSession.getUser(),
@@ -439,7 +440,7 @@ public class RestWebserviceIntegrationTest {
                         "User should be user");
                 assertFalse(restSession.getUser().getIsAdmin(),
                         "User should not be admin");
-                assertEquals("user", restSession.getUser().getUserName(),
+                assertEquals(TestConfig.getInstance().getServerConfig().getLocalUserName(), restSession.getUser().getUserName(),
                         "Username should be user.");
             }
 
@@ -447,7 +448,7 @@ public class RestWebserviceIntegrationTest {
             try (RestWebServiceSession restSession = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider("admin", "admin"))) {
+                    new UserAuthProvider(TestConfig.getInstance().getServerConfig().getLocalAdminName(), TestConfig.getInstance().getServerConfig().getLocalAdminPassword()))) {
                 assertNotNull(restSession,
                         "Valid session should have been created.");
                 assertNotNull(restSession.getUser(),
@@ -456,7 +457,7 @@ public class RestWebserviceIntegrationTest {
                         "User should be user");
                 assertTrue(restSession.getUser().getIsAdmin(),
                         "User should not be admin");
-                assertEquals("admin", restSession.getUser().getUserName(),
+                assertEquals(TestConfig.getInstance().getServerConfig().getLocalAdminName(), restSession.getUser().getUserName(),
                         "Username should be admin.");
             }
         });

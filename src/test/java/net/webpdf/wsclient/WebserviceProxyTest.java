@@ -45,7 +45,7 @@ public class WebserviceProxyTest {
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL))
                             .setProxy(new ProxyConfiguration("127.0.0.1", 8888)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 UrlConverterRestWebService<RestDocument> webService =
                         session.createWebServiceInstance(WebServiceType.URLCONVERTER);
@@ -53,7 +53,7 @@ public class WebserviceProxyTest {
                 File fileOut = testResources.getTempFolder().newFile();
 
                 assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
-                webService.getOperationParameters().setUrl("https://www.webpdf.de");
+                webService.getOperationParameters().setUrl("https://docs.webpdf.de");
 
                 OperationUrlConverterPage page = new OperationUrlConverterPage();
                 page.setWidth(150);
@@ -80,7 +80,7 @@ public class WebserviceProxyTest {
                     new SessionContext(WebServiceProtocol.SOAP,
                             testServer.getServer(ServerType.LOCAL))
                             .setProxy(new ProxyConfiguration("localhost", 8888)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                 File fileOut = testResources.getTempFolder().newFile();
@@ -123,7 +123,7 @@ public class WebserviceProxyTest {
                             .setTlsContext(new TLSContext(TLSProtocol.TLSV1_2, true,
                                     testServer.getDemoKeystoreFile(keystoreFile), ""))
                             .setProxy(new ProxyConfiguration("localhost", 8888)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 File file = testResources.getResource("integration/files/lorem-ipsum.docx");
                 File fileOut = testResources.getTempFolder().newFile();
@@ -164,13 +164,13 @@ public class WebserviceProxyTest {
                             .setTlsContext(new TLSContext(TLSProtocol.TLSV1_2, true,
                                     testServer.getDemoKeystoreFile(keystoreFile), ""))
                             .setProxy(new ProxyConfiguration("127.0.0.1", 8888)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword())
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
                 UrlConverterRestWebService<RestDocument> webService =
                         session.createWebServiceInstance(WebServiceType.URLCONVERTER);
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperationParameters().setUrl("https://www.webpdf.de");
+                webService.getOperationParameters().setUrl("https://docs.webpdf.de");
 
                 OperationUrlConverterPage page = new OperationUrlConverterPage();
                 page.setWidth(150);

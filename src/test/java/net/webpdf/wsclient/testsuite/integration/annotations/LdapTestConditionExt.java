@@ -14,8 +14,8 @@ public class LdapTestConditionExt extends IntegrationTestConditionExt {
 
         return TestConfig.getInstance().getIntegrationTestConfig().isLdapTestsActive() ?
                 ConditionEvaluationResult.enabled(
-                        "Proxy Tests are enabled via 'config/testConfig.json'.") :
+                        "Proxy tests are enabled via 'config/testConfig.json'.") :
                 ConditionEvaluationResult.disabled(
-                        "Proxy Tests are disabled via 'config/testConfig.json'.");
+                        "Proxy tests are disabled via 'config/testConfig.json'.");
     }
 }

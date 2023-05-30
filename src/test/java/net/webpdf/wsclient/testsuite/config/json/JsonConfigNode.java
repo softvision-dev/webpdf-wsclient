@@ -36,7 +36,7 @@ public class JsonConfigNode implements ConfigNode {
             return defaultValue;
         }
         JsonNode valueNode = getNode(key);
-        return valueNode != null ? valueNode.asInt() : defaultValue;
+        return valueNode == null || valueNode.asText().isEmpty() ? defaultValue : valueNode.asInt();
     }
 
     private @Nullable JsonNode getNode(@NotNull String key) {

@@ -1,15 +1,15 @@
 package net.webpdf.wsclient;
 
-import net.webpdf.wsclient.session.connection.SessionContext;
-import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.schema.operation.*;
 import net.webpdf.wsclient.session.SessionFactory;
+import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.soap.SoapSession;
-import net.webpdf.wsclient.testsuite.integration.certificate.GenericCertificate;
-import net.webpdf.wsclient.testsuite.server.ServerType;
-import net.webpdf.wsclient.testsuite.io.TestResources;
-import net.webpdf.wsclient.testsuite.server.TestServer;
+import net.webpdf.wsclient.session.soap.documents.SoapDocument;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
+import net.webpdf.wsclient.testsuite.integration.certificate.GenericCertificate;
+import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.ServerType;
+import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.soap.*;
@@ -283,7 +283,7 @@ public class SoapWebserviceIntegrationTest {
                         session.createWebServiceInstance(WebServiceType.URLCONVERTER);
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperationParameters().setUrl("https://www.webpdf.de");
+                webService.getOperationParameters().setUrl("https://docs.webpdf.de");
                 webService.getOperationParameters().setPage(new UrlConverterPageType());
                 webService.getOperationParameters().getPage().setWidth(150);
                 webService.getOperationParameters().getPage().setHeight(200);
@@ -556,7 +556,7 @@ public class SoapWebserviceIntegrationTest {
 
                 assertNotNull(webService.getOperationParameters(),
                         "Operation should have been initialized");
-                webService.getOperationParameters().setUrl("https://www.webpdf.de");
+                webService.getOperationParameters().setUrl("https://docs.webpdf.de");
                 webService.getOperationParameters().setPage(new UrlConverterPageType());
                 webService.getOperationParameters().getPage().setWidth(150);
                 webService.getOperationParameters().getPage().setHeight(200);

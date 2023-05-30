@@ -80,12 +80,12 @@ public final class TestServer {
         return uriBuilder.build().toURL();
     }
 
-    public String getLocalUser() {
-        return TestConfig.getInstance().getServerConfig().getLocalUser();
+    public String getLocalAdminName() {
+        return TestConfig.getInstance().getServerConfig().getLocalAdminName();
     }
 
-    public char[] getLocalPassword() {
-        return TestConfig.getInstance().getServerConfig().getLocalPassword().toCharArray();
+    public char[] getLocalAdminPassword() {
+        return TestConfig.getInstance().getServerConfig().getLocalAdminPassword().toCharArray();
     }
 
     public File getDemoKeystoreFile(File keystoreFile) throws Exception {

@@ -2,15 +2,15 @@ package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.openapi.OperationConvertPdfa;
 import net.webpdf.wsclient.openapi.OperationPdfa;
+import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
-import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.RestSession;
-import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.testsuite.server.ServerType;
-import net.webpdf.wsclient.testsuite.io.TestResources;
-import net.webpdf.wsclient.testsuite.server.TestServer;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
+import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.ServerType;
+import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceFactory;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -61,7 +61,7 @@ public class RestCredentialsIntegrationTest {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)),
-                    new UserAuthProvider(testServer.getLocalUser(), testServer.getLocalPassword()))) {
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword()))) {
                 executeConverter(session);
             }
         });
