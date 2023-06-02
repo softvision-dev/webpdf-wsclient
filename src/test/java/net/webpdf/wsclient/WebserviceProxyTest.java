@@ -14,22 +14,19 @@ import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
+import net.webpdf.wsclient.testsuite.config.TestConfig;
 import net.webpdf.wsclient.testsuite.integration.annotations.ProxyTest;
 import net.webpdf.wsclient.testsuite.io.TestResources;
-import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.server.TestServer;
-import net.webpdf.wsclient.testsuite.server.TransferProtocol;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.UrlConverterRestWebService;
 import net.webpdf.wsclient.webservice.soap.ConverterWebService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,14 +38,11 @@ public class WebserviceProxyTest {
 
     @Test
     @ProxyTest
-    @Disabled("Test fails with TinyProxy (Unknown reason and possibly caused by TinyProxy). Test works with Fiddler2.")
     public void testRESTProxyHTTP() {
         assertDoesNotThrow(() -> {
-            URL url = testServer.getServer(ServerType.LOCAL);
-            System.out.println(url);
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST,
-                            testServer.getServer(ServerType.LOCAL, TransferProtocol.HTTP))
+                            TestConfig.getInstance().getIntegrationTestConfig().getProxyURL(false))
                             .setProxy(new ProxyConfiguration("127.0.0.1", 8888)),
                     new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
@@ -80,8 +74,7 @@ public class WebserviceProxyTest {
     public void testSOAPProxyHTTP() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
-                    new SessionContext(WebServiceProtocol.SOAP,
-                            testServer.getServer(ServerType.LOCAL))
+                    new SessionContext(WebServiceProtocol.SOAP, TestConfig.getInstance().getIntegrationTestConfig().getProxyURL(false))
                             .setProxy(new ProxyConfiguration("127.0.0.1", 8888)),
                     new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
@@ -121,8 +114,7 @@ public class WebserviceProxyTest {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
                     new SessionContext(
-                            WebServiceProtocol.SOAP,
-                            testServer.getServer(ServerType.LOCAL, TransferProtocol.HTTPS))
+                            WebServiceProtocol.SOAP, TestConfig.getInstance().getIntegrationTestConfig().getProxyURL(true))
                             .setTlsContext(new TLSContext(TLSProtocol.TLSV1_2, true,
                                     testServer.getDemoKeystoreFile(keystoreFile), ""))
                             .setProxy(new ProxyConfiguration("127.0.0.1", 8888)),
@@ -162,8 +154,7 @@ public class WebserviceProxyTest {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(
-                            WebServiceProtocol.REST,
-                            testServer.getServer(ServerType.LOCAL, TransferProtocol.HTTPS))
+                            WebServiceProtocol.REST, TestConfig.getInstance().getIntegrationTestConfig().getProxyURL(true))
                             .setTlsContext(new TLSContext(TLSProtocol.TLSV1_2, true,
                                     testServer.getDemoKeystoreFile(keystoreFile), ""))
                             .setProxy(new ProxyConfiguration("127.0.0.1", 8888)),
