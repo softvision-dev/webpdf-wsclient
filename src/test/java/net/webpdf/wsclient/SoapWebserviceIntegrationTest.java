@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SoapWebserviceIntegrationTest {
 
     private final TestResources testResources = new TestResources(SoapWebserviceIntegrationTest.class);
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
 
     @Test
     @IntegrationTest

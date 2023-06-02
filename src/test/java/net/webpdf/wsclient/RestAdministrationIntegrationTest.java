@@ -30,7 +30,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RestAdministrationIntegrationTest {
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
     private final TestResources testResources = new TestResources(RestAdministrationIntegrationTest.class);
 
     @Test

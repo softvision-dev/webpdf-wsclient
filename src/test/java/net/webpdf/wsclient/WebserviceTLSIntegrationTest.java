@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WebserviceTLSIntegrationTest {
     private final TestResources testResources = new TestResources(WebserviceTLSIntegrationTest.class);
     private final File keystoreFile = testResources.getResource("integration/files/ks.jks");
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
 
     private void testSoapSSL(URL url, File keystoreFile, boolean selfSigned) throws Exception {
         TLSContext tlsContext = new TLSContext(TLSProtocol.TLSV1_3, selfSigned);

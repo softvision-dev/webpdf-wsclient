@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SoapWebserviceFactoryTest {
 
     private final TestResources testResources = new TestResources(SoapWebserviceFactoryTest.class);
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
 
     private <T extends SoapWebService<?, ?, SoapDocument>> T getWebService(WebServiceType webServiceType)
             throws ResultException {

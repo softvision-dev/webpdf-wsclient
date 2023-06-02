@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HttpRestRequestIntegrationTest {
     private final TestResources testResources = new TestResources(HttpRestRequestIntegrationTest.class);
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
 
     @Test
     @IntegrationTest

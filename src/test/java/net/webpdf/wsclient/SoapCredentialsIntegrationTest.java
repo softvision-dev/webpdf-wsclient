@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SoapCredentialsIntegrationTest {
 
     private final TestResources testResources = new TestResources(SoapCredentialsIntegrationTest.class);
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
 
     private void executeConverter(SoapSession<SoapDocument> session) {
         File file = testResources.getResource("integration/files/lorem-ipsum.docx");

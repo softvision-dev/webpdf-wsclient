@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ThreadSynchronizationIntegrationTest {
 
     private final TestResources testResources = new TestResources(ThreadSynchronizationIntegrationTest.class);
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
 
     @Test
     @IntegrationTest

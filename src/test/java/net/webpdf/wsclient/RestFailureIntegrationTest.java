@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RestFailureIntegrationTest {
 
     private final TestResources testResources = new TestResources(RestFailureIntegrationTest.class);
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
 
     @Test
     @IntegrationTest

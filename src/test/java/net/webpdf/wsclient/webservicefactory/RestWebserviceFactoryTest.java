@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RestWebserviceFactoryTest {
 
     private final TestResources testResources = new TestResources(RestWebserviceFactoryTest.class);
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
 
     private <T extends RestWebService<?, ?, RestDocument>> T getWebService(WebServiceType webServiceType)
             throws ResultException {

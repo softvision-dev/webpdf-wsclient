@@ -2,7 +2,12 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/build/extra" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/build/generated-sources/openapi/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/build/generated-sources/xjc-extraction" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/build/generated-sources/xjc-extraction-barcode" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/build/generated-sources/xjc-extraction-info" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/build/generated-sources/xjc-extraction-text" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/build/generated-sources/xjc-operation" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/examples/src/main/java" charset="UTF-8" />

@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class Oauth2TokenIntegrationTest {
     private final TestResources testResources = new TestResources(Oauth2TokenIntegrationTest.class);
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
 
     /**
      * <p>

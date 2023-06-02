@@ -48,4 +48,8 @@ public class IntegrationTestConfig extends ConfigNodeContainer {
     public @NotNull AzureConfig getAzureConfig() {
         return azureConfig;
     }
+
+    public boolean useContainer() {
+        return getBoolean("useContainer", false);
+    }
 }

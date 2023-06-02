@@ -2,13 +2,10 @@ version: '3'
 services:
 
   LDAP:
-    container_name: testapp-webpdf-wsclient-ldap
     image: testapp/webpdf-wsclient-ldap:latest
     build:
       context: ./ldap
       dockerfile: Dockerfile
-      args:
-        LDAP_SERVER_ID: ldap-1
     environment:
       - PORT=10389
     ports:
@@ -19,7 +16,6 @@ services:
       true
 
   webPDF:
-    container_name: testapp-webpdf-wsclient-server
     image: testapp/webpdf-wsclient-server:latest
     build:
       context: ./server
@@ -30,6 +26,7 @@ services:
     ports:
       - "8080:8080"
       - "8443:8443"
+      - "8888:8888"
     tty:
       true
     stdin_open:

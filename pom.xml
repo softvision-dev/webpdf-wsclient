@@ -19,7 +19,7 @@
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
 
@@ -59,7 +59,7 @@
         <server.public.url>https://portal.webpdf.de</server.public.url>
 
         <!-- DEPENDENCY VERSIONS -->
-        <jetbrains.annotations.version>24.0.0</jetbrains.annotations.version> <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+        <jetbrains.annotations.version>24.0.0</jetbrains.annotations.version>  <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
         <httpcomponents.httpclient.version>5.2.1</httpcomponents.httpclient.version> <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
         <commons.io.version>2.11.0</commons.io.version> <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <commons.lang.version>3.12.0</commons.lang.version> <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
@@ -80,9 +80,10 @@
         <maven.javadoc.plugin.version>3.4.1</maven.javadoc.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
         <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
         <maven.dependency.plugin.version>3.5.0</maven.dependency.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
-        <maven.release.plugin.version>3.0.0-M7</maven.release.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
+        <maven.release.plugin.version>3.0.0</maven.release.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
         <maven.surefire.plugin.version>3.0.0-M9</maven.surefire.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
         <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+        <maven.resources.plugin>3.3.1</maven.resources.plugin> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
 
         <!-- PLUGIN-ONLY DEPENDENCY VERSIONS -->
         <glassfish.jaxb.xjc.version>4.0.2</glassfish.jaxb.xjc.version> <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-xjc -->
@@ -92,9 +93,12 @@
         <!-- TEST DEPENDENCY VERSIONS -->
         <junit.jupiter.params.version>5.9.2</junit.jupiter.params.version> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
         <junit.jupiter.engine.version>5.9.2</junit.jupiter.engine.version> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
-        <microsoft.azure.msal4j.version>1.13.4</microsoft.azure.msal4j.version> <!-- https://mvnrepository.com/artifact/com.microsoft.azure/msal4j -->
+        <microsoft.azure.msal4j.version>1.13.8</microsoft.azure.msal4j.version> <!-- https://mvnrepository.com/artifact/com.microsoft.azure/msal4j -->
         <auth0.version>1.44.2</auth0.version> <!-- https://mvnrepository.com/artifact/com.auth0/auth0 -->
         <bouncycastle.bcmail.version>1.72</bouncycastle.bcmail.version> <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcmail-jdk18on -->
+        <testcontainers.version>1.18.1</testcontainers.version> <!-- https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter -->
+        <log4j.version>2.20.0</log4j.version> <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+        <slf4j.version>2.0.7</slf4j.version> <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
     </properties>
 
     <profiles>
@@ -304,6 +308,39 @@
             <version>${bouncycastle.bcmail.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>${log4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -566,6 +603,36 @@
                 </configuration>
             </plugin>
 
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven.resources.plugin}</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/META-INF</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>LICENSE</include>
+                                        <include>README.md</include>
+                                        <include>CHANGES.md</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -611,28 +678,6 @@
                 <version>${maven.release.plugin.version}</version>
             </plugin>
         </plugins>
-
-        <resources>
-            <resource>
-                <directory>./</directory>
-                <targetPath>META-INF/</targetPath>
-                <filtering>false</filtering>
-                <includes>
-                    <include>LICENSE</include>
-                    <include>README.md</include>
-                    <include>CHANGES</include>
-                </includes>
-            </resource>
-
-            <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
-                <targetPath>.</targetPath>
-                <filtering>false</filtering>
-                <includes>
-                    <include>*/**</include>
-                </includes>
-            </resource>
-        </resources>
     </build>
 
 </project>

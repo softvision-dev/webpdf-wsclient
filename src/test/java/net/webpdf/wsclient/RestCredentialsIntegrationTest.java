@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RestCredentialsIntegrationTest {
 
     private final TestResources testResources = new TestResources(RestCredentialsIntegrationTest.class);
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
 
     private void executeConverter(RestSession<RestDocument> session) {
         assertDoesNotThrow(() -> {

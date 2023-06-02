@@ -19,6 +19,7 @@
   },
   "integrationTests": {
     "enabled": false,
+    "useContainer": false,
     "oAuth": {
       "azureClient": {
         "enabled": false,

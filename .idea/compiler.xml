@@ -5,14 +5,12 @@
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="./build/generated-sources/annotations" />
         <sourceTestOutputDir name="./build/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="false" />
-        <module name="examples" />
       </profile>
       <profile name="Annotation profile for webPDF - Web service client library" enabled="true">
         <sourceOutputDir name="build/generated-sources/annotations" />
         <sourceTestOutputDir name="build/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="wsclient" />
+        <module name="webpdf-wsclient" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

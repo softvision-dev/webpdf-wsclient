@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DocumentManagerIntegrationTest {
 
     private final TestResources testResources = new TestResources(DocumentManagerIntegrationTest.class);
-    public TestServer testServer = new TestServer();
+    public TestServer testServer = TestServer.getInstance();
 
     @Test
     @IntegrationTest
