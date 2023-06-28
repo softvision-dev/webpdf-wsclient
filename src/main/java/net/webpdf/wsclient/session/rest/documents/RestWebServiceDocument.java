@@ -3,12 +3,19 @@ package net.webpdf.wsclient.session.rest.documents;
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.openapi.DocumentFileFilter;
+import net.webpdf.wsclient.openapi.DocumentInfo;
+import net.webpdf.wsclient.openapi.DocumentInfoType;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
+import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.session.documents.AbstractDocument;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -17,7 +24,6 @@ import java.util.List;
  * </p>
  */
 public class RestWebServiceDocument extends AbstractDocument implements RestDocument {
-
     private final @NotNull RestWebServiceDocumentState documentState;
 
     /**
@@ -88,7 +94,7 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
     }
 
     /**
-     * This is a shortcut for {@link DocumentManager#downloadDocument(RestDocument, OutputStream)} and
+     * This is a shortcut for {@link DocumentManager#downloadDocument(String, OutputStream)} and
      * Attempts to download and write the {@link RestDocument} to the given {@link OutputStream}.
      *
      * @param target The target {@link OutputStream} the {@link RestDocument} shall be
@@ -96,11 +102,11 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      * @throws ResultException Shall be thrown, should writing the result document fail.
      */
     public void downloadDocument(@NotNull OutputStream target) throws ResultException {
-        accessInternalState().getDocumentManager().downloadDocument(this, target);
+        accessInternalState().getDocumentManager().downloadDocument(this.getDocumentId(), target);
     }
 
     /**
-     * This is a shortcut for {@link DocumentManager#downloadDocument(RestDocument, OutputStream)} and
+     * This is a shortcut for {@link DocumentManager#downloadDocument(String, OutputStream)} and
      * Attempts to download write the {@link RestDocument} to the given {@link File}.
      *
      * @param target The target {@link File} the {@link RestDocument} shall be
@@ -109,10 +115,79 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      */
     public void downloadDocument(@NotNull File target) throws ResultException {
         try (OutputStream outputStream = new FileOutputStream(target)) {
-            accessInternalState().getDocumentManager().downloadDocument(this, outputStream);
+            accessInternalState().getDocumentManager().downloadDocument(this.getDocumentId(), outputStream);
         } catch (IOException e) {
             throw new ClientResultException(Error.REST_EXECUTION);
         }
     }
 
+    /**
+     * This is a shortcut for {@link DocumentManager#deleteDocument} and deletes the {@link RestDocument}.
+     *
+     * @throws ResultException Shall be thrown, should deleting the document fail.
+     */
+    public void deleteDocument() throws ResultException {
+        accessInternalState().getDocumentManager().deleteDocument(this.getDocumentId());
+    }
+
+    /**
+     * This is a shortcut for {@link DocumentManager#renameDocument} and renames the {@link RestDocument}.
+     *
+     * @param fileName The new name for the {@link RestDocument}.
+     * @return The resulting {@link RestDocument} handle.
+     * @throws ResultException Shall be thrown, should renaming the document have failed.
+     */
+    public @NotNull RestDocument renameDocument(@NotNull String fileName) throws ResultException {
+        return accessInternalState().getDocumentManager().renameDocument(this.getDocumentId(), fileName);
+    }
+
+    /**
+     * This is a shortcut for {@link DocumentManager#renameDocument} and updates the security information the
+     * {@link RestDocument}.
+     *
+     * @param passwordType The security information to update the document with
+     * @return The updated {@link RestDocument}.
+     * @throws ResultException Shall be thrown, should updating the document security have failed.
+     */
+    public RestDocument updateDocumentSecurity(@NotNull PdfPasswordType passwordType) throws ResultException {
+        return accessInternalState().getDocumentManager().updateDocumentSecurity(this.getDocumentId(), passwordType);
+    }
+
+    /**
+     * This is a shortcut for {@link DocumentManager#renameDocument} and returns {@link DocumentInfo} about the
+     * {@link RestDocument}.
+     *
+     * @param infoType Detailed information for the document referenced by the unique documentId
+     *                 in the server´s document storage.
+     * @return The requested document {@link DocumentInfo}
+     * @throws ResultException Shall be thrown, should fetching the document info have failed.
+     */
+    public DocumentInfo getDocumentInfo(@NotNull DocumentInfoType infoType) throws ResultException {
+        return accessInternalState().getDocumentManager().getDocumentInfo(this.getDocumentId(), infoType);
+    }
+
+    /**
+     * This is a shortcut for {@link DocumentManager#extractDocument} and extracts the {@link RestDocument}.
+     *
+     * @param fileFilter A {@link DocumentFileFilter} with a list of "include" and "exclude" filter rules. First, the
+     *                   "include rules" are applied. If a file matches, the "exclude rules" are applied. Only if
+     *                   both rules apply, the file will be passed through the filter.
+     * @return A list of the extracted {@link RestDocument}s.
+     * @throws ResultException Shall be thrown, should the extraction have failed.
+     */
+    @Override
+    public List<RestWebServiceDocument> extractDocument(@NotNull DocumentFileFilter fileFilter) throws ResultException {
+        return accessInternalState().getDocumentManager().extractDocument(this.getDocumentId(), fileFilter);
+    }
+
+    /**
+     * This is a shortcut for {@link DocumentManager#extractDocument} and extracts the {@link RestDocument}.
+     *
+     * @return A list of the extracted {@link RestDocument}s.
+     * @throws ResultException Shall be thrown, should the extraction have failed.
+     */
+    @Override
+    public List<RestWebServiceDocument> extractDocument() throws ResultException {
+        return accessInternalState().getDocumentManager().extractDocument(this.getDocumentId());
+    }
 }

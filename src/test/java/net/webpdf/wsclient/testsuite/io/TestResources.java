@@ -1,6 +1,5 @@
 package net.webpdf.wsclient.testsuite.io;
 
-import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,19 +48,4 @@ public class TestResources {
         }
         fail("Resource creation should have failed with an Exception.");
     }
-
-    /**
-     * This method returns the document ID from the given {@link RestDocument}, it will automatically detect and fail,
-     * if either the document or the ID equal {@code null}.
-     *
-     * @param document The {@link RestDocument} to return the ID for.
-     * @return The ID of the given {@link RestDocument}.
-     */
-    public static @NotNull String getDocumentID(@Nullable RestDocument document) {
-        assertNotNull(document);
-        String documentID = document.getDocumentId();
-        assertNotNull(documentID);
-        return documentID;
-    }
-
 }
