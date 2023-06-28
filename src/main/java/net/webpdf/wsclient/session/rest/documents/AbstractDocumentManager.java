@@ -3,6 +3,8 @@ package net.webpdf.wsclient.session.rest.documents;
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.openapi.DocumentFileCompress;
+import net.webpdf.wsclient.openapi.DocumentFileFilter;
 import net.webpdf.wsclient.openapi.DocumentInfo;
 import net.webpdf.wsclient.openapi.DocumentInfoType;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
@@ -221,6 +223,7 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @throws ResultException Shall be thrown, should the download have failed.
      */
     @Override
+    @Deprecated
     public void downloadDocument(@Nullable RestDocument document, @NotNull OutputStream outputStream)
             throws ResultException {
         if (document == null) {
@@ -568,10 +571,12 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * @param infoType   Detailed information for the document referenced by the unique documentId
      *                   in the server´s document storage.
      * @return The requested document {@link DocumentInfo}
-     * @throws ResultException Shall be thrown, should fetching the document info have failed.
+     * @throws ResultException Shall be thrown, should fetching the document info has failed.
      */
     @Override
-    public @NotNull DocumentInfo getDocumentInfo(String documentId, DocumentInfoType infoType) throws ResultException {
+    public @NotNull DocumentInfo getDocumentInfo(
+            @NotNull String documentId, @NotNull DocumentInfoType infoType
+    ) throws ResultException {
         DocumentInfo information = HttpRestRequest.createRequest(getSession())
                 .buildRequest(HttpMethod.GET, "documents/" + documentId + "/info/" + infoType.getValue())
                 .executeRequest(DocumentInfo.class);
@@ -581,5 +586,142 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
         }
 
         return information;
+    }
+
+    /**
+     * <p>
+     * Extracts the {@link RestDocument} with the given document ID in the document storage.
+     * <ul>
+     * <li>The document referenced by documentId must be a valid archive. If not, the operation will be aborted.</li>
+     * <li>For each file in the archive, a new DocumentFile is created in the document storage with a new documentId.</li>
+     * <li>Each newly created DocumentFile holds as parentDocumentId the documentId of the archive.</li>
+     * </ul>
+     * </p>
+     *
+     * @param documentId The document ID of the {@link RestDocument} to extract.
+     * @param fileFilter An optional {@link DocumentFileFilter} with a list of "include" and "exclude" filter rules. First,
+     *                   the "include rules" are applied. If a file matches, the "exclude rules" are applied. Only if
+     *                   both rules apply, the file will be passed through the filter.
+     * @return A list of the extracted {@link RestDocument}s.
+     * @throws ResultException Shall be thrown, should the extraction has failed.
+     */
+    @Override
+    public @NotNull List<T_REST_DOCUMENT> extractDocument(
+            @NotNull String documentId, @NotNull DocumentFileFilter fileFilter
+    ) throws ResultException {
+        if (!containsDocument(documentId)) {
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
+        }
+
+        DocumentFile[] documentFileList = HttpRestRequest.createRequest(getSession())
+                .buildRequest(
+                        HttpMethod.POST, "documents/" + documentId + "/extract", prepareHttpEntity(fileFilter)
+                )
+                .executeRequest(DocumentFile[].class);
+
+        if (documentFileList == null) {
+            throw new ClientResultException(Error.HTTP_IO_ERROR);
+        }
+
+        List<T_REST_DOCUMENT> resultDocuments = new ArrayList<>();
+        for (DocumentFile documentFile : documentFileList) {
+            resultDocuments.add(this.synchronizeDocument(documentFile));
+        }
+
+        return resultDocuments;
+    }
+
+    /**
+     * <p>
+     * Extracts the {@link RestDocument} with the given document ID in the document storage.
+     * <ul>
+     * <li>The document referenced by documentId must be a valid archive. If not, the operation will be aborted.</li>
+     * <li>For each file in the archive, a new DocumentFile is created in the document storage with a new documentId.</li>
+     * <li>Each newly created DocumentFile holds as parentDocumentId the documentId of the archive.</li>
+     * </ul>
+     * </p>
+     *
+     * @param documentId The document ID of the {@link RestDocument} to extract.
+     * @return A list of the extracted {@link RestDocument}s.
+     * @throws ResultException Shall be thrown, should the extraction has failed.
+     */
+    @Override
+    public @NotNull List<T_REST_DOCUMENT> extractDocument(@NotNull String documentId) throws ResultException {
+        return this.extractDocument(documentId, new DocumentFileFilter());
+    }
+
+    /**
+     * <p>
+     * Compresses a list of {@link RestDocument}s selected by documentId or file filter into a new archive document
+     * in the document storage.
+     * <ul>
+     * <li>The list of documents that should be in the archive are selected via the documentId or a file filter.</li>
+     * <li>The selection specifications can be made individually or together and act additively in the order documentId
+     * and then file filter.</li>
+     * <li>If the id is invalid for documents selected via documentId or documents are locked, then the call is aborted
+     * with an error.</li>
+     * <li>The created archive is stored as a new document with a new documentId in the document storage.</li>
+     * </ul>
+     * </p>
+     *
+     * @param documentIdList  The list of documentIds to be added to the archive document.
+     * @param archiveFileName the file name for the archive document.
+     * @param fileFilter      Defines a {@link DocumentFileFilter} with a list of "include" and "exclude" filter
+     *                        rules. First, the "include rules" are applied. If a file matches, the "exclude rules"
+     *                        are applied. Only if both rules apply, the file will be passed through the filter.
+     * @return The compressed {@link RestDocument}.
+     * @throws ResultException Shall be thrown, should the compression have failed.
+     */
+    @Override
+    public @NotNull T_REST_DOCUMENT compressDocuments(
+            @NotNull List<String> documentIdList, @NotNull String archiveFileName,
+            @NotNull DocumentFileFilter fileFilter
+    ) throws ResultException {
+        for (String documentId : documentIdList) {
+            if (!this.containsDocument(documentId)) {
+                throw new ClientResultException(Error.INVALID_DOCUMENT);
+            }
+        }
+
+        DocumentFileCompress parameter = new DocumentFileCompress();
+        parameter.setDocumentIdList(documentIdList);
+        parameter.setArchiveFileName(archiveFileName);
+        parameter.setFileFilter(fileFilter);
+
+        DocumentFile documentFile = HttpRestRequest.createRequest(getSession())
+                .buildRequest(HttpMethod.POST, "documents/compress", prepareHttpEntity(parameter))
+                .executeRequest(DocumentFile.class);
+
+        if (documentFile == null) {
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
+        }
+
+        return this.synchronizeDocument(documentFile);
+    }
+
+    /**
+     * <p>
+     * Compresses a list of {@link RestDocument}s selected by documentId or file filter into a new archive document
+     * in the document storage.
+     * <ul>
+     * <li>The list of documents that should be in the archive are selected via the documentId or a file filter.</li>
+     * <li>The selection specifications can be made individually or together and act additively in the order documentId
+     * and then file filter.</li>
+     * <li>If the id is invalid for documents selected via documentId or documents are locked, then the call is aborted
+     * with an error.</li>
+     * <li>The created archive is stored as a new document with a new documentId in the document storage.</li>
+     * </ul>
+     * </p>
+     *
+     * @param documentIdList  The list of documentIds to be added to the archive document.
+     * @param archiveFileName the file name for the archive document.
+     * @return The compressed {@link RestDocument}.
+     * @throws ResultException Shall be thrown, should the compression have failed.
+     */
+    @Override
+    public @NotNull T_REST_DOCUMENT compressDocuments(
+            @NotNull List<String> documentIdList, @NotNull String archiveFileName
+    ) throws ResultException {
+        return this.compressDocuments(documentIdList, archiveFileName, new DocumentFileFilter());
     }
 }

@@ -31,7 +31,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.webpdf.wsclient.testsuite.io.TestResources.getDocumentID;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DocumentManagerIntegrationTest {
@@ -60,14 +59,14 @@ public class DocumentManagerIntegrationTest {
                 assertNotNull(document,
                         "Valid document should have been returned.");
                 assertNotNull(document.getDocumentId());
-                session.getDocumentManager().downloadDocument(document.getDocumentId(), outputStream);
+                document.downloadDocument(outputStream);
                 assertTrue(FileUtils.contentEquals(sourceFile, targetFile),
                         "The content of the uploaded and the downloaded document should have been equal.");
                 List<RestDocument> fileList = session.getDocumentManager().getDocuments();
                 assertEquals(1, fileList.size(),
                         "file list should contain 1 document.");
                 assertNotNull(document.getDocumentId());
-                session.getDocumentManager().deleteDocument(document.getDocumentId());
+                document.deleteDocument();
                 fileList = session.getDocumentManager().getDocuments();
                 assertTrue(fileList.isEmpty(),
                         "file list should be empty.");
@@ -94,7 +93,7 @@ public class DocumentManagerIntegrationTest {
                         document.getDocumentFile().getFileName(),
                         "Filename should be test");
                 assertNotNull(document.getDocumentId());
-                document = session.getDocumentManager().renameDocument(document.getDocumentId(), "new");
+                document.renameDocument("new");
                 assertNotNull(document,
                         "Valid document should have been returned.");
                 assertNotNull(document.getDocumentFile(),
@@ -206,7 +205,7 @@ public class DocumentManagerIntegrationTest {
                 assertNotNull(session, "Valid session should have been created.");
                 RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                 assertNotNull(document, "Valid document should have been returned.");
-                session.getDocumentManager().downloadDocument(getDocumentID(document), outputStream);
+                document.downloadDocument(outputStream);
                 assertTrue(FileUtils.contentEquals(sourceFile, targetFile),
                         "The content of the uploaded and the downloaded document should have been equal.");
             }
@@ -229,7 +228,7 @@ public class DocumentManagerIntegrationTest {
                 PdfPasswordType passwordType = new PdfPasswordType();
                 passwordType.setOpen("a");
 
-                document = session.getDocumentManager().updateDocumentSecurity(document.getDocumentId(), passwordType);
+                document = (RestWebServiceDocument) document.updateDocumentSecurity(passwordType);
                 assertNotNull(document, "Valid document should have been returned.");
                 assertNotNull(document.getDocumentFile().getError(), "document error should be set.");
                 assertEquals(0, document.getDocumentFile().getError().getErrorCode(), "errorcode should be 0");
@@ -265,7 +264,7 @@ public class DocumentManagerIntegrationTest {
                 keyPairType.setPrivateKey(privateKeyFileDataType);
                 passwordType.setKeyPair(keyPairType);
 
-                document = session.getDocumentManager().updateDocumentSecurity(document.getDocumentId(), passwordType);
+                document = (RestWebServiceDocument) document.updateDocumentSecurity(passwordType);
                 assertNotNull(document, "Valid document should have been returned.");
                 assertNotNull(document.getDocumentFile().getError(), "document error should be set.");
                 assertEquals(0, document.getDocumentFile().getError().getErrorCode(), "errorcode should be 0");
@@ -355,9 +354,7 @@ public class DocumentManagerIntegrationTest {
                 // set wrong password
                 PdfPasswordType wrongPasswordType = new PdfPasswordType();
                 wrongPasswordType.setOpen("wrong");
-                final RestDocument updatedLockedDocument = session.getDocumentManager().updateDocumentSecurity(
-                        encryptedDocument.getDocumentId(), wrongPasswordType
-                );
+                final RestDocument updatedLockedDocument = encryptedDocument.updateDocumentSecurity(wrongPasswordType);
                 assertNotNull(updatedLockedDocument.getDocumentFile().getError(), "The document error should be set.");
                 assertEquals(-5008, updatedLockedDocument.getDocumentFile().getError().getErrorCode(),
                         "The document password should be wrong.");
@@ -378,9 +375,7 @@ public class DocumentManagerIntegrationTest {
                 PdfPasswordType correctPasswordType = new PdfPasswordType();
                 correctPasswordType.setOpen(openPassword);
                 correctPasswordType.setPermission(permissionPassword);
-                RestDocument updatedOpenedDocument = session.getDocumentManager().updateDocumentSecurity(
-                        encryptedDocument.getDocumentId(), correctPasswordType
-                );
+                RestDocument updatedOpenedDocument = encryptedDocument.updateDocumentSecurity(correctPasswordType);
 
                 // rotate pages with correct password
                 rotateWebService.setPassword(null);
@@ -400,12 +395,59 @@ public class DocumentManagerIntegrationTest {
                 RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                 assertNotNull(document, "Valid document should have been returned.");
 
-                DocumentInfoForm documentInfo = (DocumentInfoForm) session.getDocumentManager().getDocumentInfo(
-                        document.getDocumentId(), DocumentInfoType.FORM
-                );
+                DocumentInfoForm documentInfo = (DocumentInfoForm) document.getDocumentInfo(DocumentInfoType.FORM);
                 assertNotNull(documentInfo, "Form info should have been fetched.");
                 assertEquals(DocumentInfoType.FORM, documentInfo.getInfoType(), "Info type should be form.");
                 assertFalse(new String(documentInfo.getValue(), Charset.defaultCharset()).isEmpty(), "There should be a value.");
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testDocumentExtract() {
+        assertDoesNotThrow(() -> {
+            File sourceFile = testResources.getResource("files.zip");
+            try (RestWebServiceSession session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)))) {
+                assertNotNull(session, "Valid session should have been created.");
+                RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+                assertNotNull(document, "Valid document should have been returned.");
+                List<RestWebServiceDocument> unzippedFiles = document.extractDocument();
+                assertNotNull(unzippedFiles, "Valid documents should have been returned.");
+                assertEquals(3, unzippedFiles.size(), "There should be 3 result documents.");
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testDocumentCompress() {
+        assertDoesNotThrow(() -> {
+            File[] sourceFiles = {
+                    testResources.getResource("test.pdf"),
+                    testResources.getResource("logo.png"),
+                    testResources.getResource("lorem-ipsum.txt")
+            };
+            try (RestWebServiceSession session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)))) {
+                assertNotNull(session, "Valid session should have been created.");
+
+                List<String> documentIdList = new ArrayList<>();
+                for (File sourceFile : sourceFiles) {
+                    RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+                    assertNotNull(document, "Valid document should have been returned.");
+                    documentIdList.add(document.getDocumentId());
+                }
+
+                RestDocument archive = session.getDocumentManager().compressDocuments(
+                        documentIdList, "archive"
+                );
+                assertNotNull(archive, "Valid document should have been returned.");
+                assertEquals(
+                        "application/zip", archive.getDocumentFile().getMimeType(),
+                        "The result document should be a zip file"
+                );
             }
         });
     }

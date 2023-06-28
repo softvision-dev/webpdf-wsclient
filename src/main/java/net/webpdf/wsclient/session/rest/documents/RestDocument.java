@@ -1,5 +1,9 @@
 package net.webpdf.wsclient.session.rest.documents;
 
+import net.webpdf.wsclient.openapi.DocumentFileFilter;
+import net.webpdf.wsclient.openapi.DocumentInfo;
+import net.webpdf.wsclient.openapi.DocumentInfoType;
+import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.session.documents.Document;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
@@ -68,4 +72,59 @@ public interface RestDocument extends Document {
      */
     void downloadDocument(@NotNull File target) throws ResultException;
 
+    /**
+     * This is a shortcut for {@link DocumentManager#deleteDocument} and deletes the {@link RestDocument}.
+     *
+     * @throws ResultException Shall be thrown, should deleting the document fail.
+     */
+    void deleteDocument() throws ResultException;
+
+    /**
+     * This is a shortcut for {@link DocumentManager#renameDocument} and renames the {@link RestDocument}.
+     *
+     * @param fileName   The new name for the {@link RestDocument}.
+     * @return The resulting {@link RestDocument} handle.
+     * @throws ResultException Shall be thrown, should renaming the document have failed.
+     */
+    @NotNull RestDocument renameDocument(@NotNull String fileName) throws ResultException;
+
+    /**
+     * This is a shortcut for {@link DocumentManager#renameDocument} and updates the security information the
+     * {@link RestDocument}.
+     *
+     * @param passwordType The security information to update the document with
+     * @return The updated {@link RestDocument}.
+     * @throws ResultException Shall be thrown, should updating the document security have failed.
+     */
+    RestDocument updateDocumentSecurity(@NotNull PdfPasswordType passwordType) throws ResultException;
+
+    /**
+     * This is a shortcut for {@link DocumentManager#renameDocument} and returns {@link DocumentInfo} about the
+     * {@link RestDocument}.
+     *
+     * @param infoType     Detailed information for the document referenced by the unique documentId
+     *                     in the server´s document storage.
+     * @return The requested document {@link DocumentInfo}
+     * @throws ResultException Shall be thrown, should fetching the document info have failed.
+     */
+    DocumentInfo getDocumentInfo(@NotNull DocumentInfoType infoType) throws ResultException;
+
+    /**
+     * This is a shortcut for {@link DocumentManager#extractDocument} and extracts the {@link RestDocument}.
+     *
+     * @param fileFilter   A {@link DocumentFileFilter} with a list of "include" and "exclude" filter rules. First, the
+     * 					   "include rules" are applied. If a file matches, the "exclude rules" are applied. Only if
+     * 					   both rules apply, the file will be passed through the filter.
+     * @return A list of the extracted {@link RestDocument}s.
+     * @throws ResultException Shall be thrown, should the extraction have failed.
+     */
+    List<? extends RestDocument> extractDocument(@NotNull DocumentFileFilter fileFilter) throws ResultException;
+
+    /**
+     * This is a shortcut for {@link DocumentManager#extractDocument} and extracts the {@link RestDocument}.
+     *
+     * @return A list of the extracted {@link RestDocument}s.
+     * @throws ResultException Shall be thrown, should the extraction have failed.
+     */
+    List<? extends RestDocument> extractDocument() throws ResultException;
 }
