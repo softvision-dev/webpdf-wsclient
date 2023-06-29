@@ -405,7 +405,7 @@ public class DocumentManagerIntegrationTest {
 
     @Test
     @IntegrationTest
-    public void testDocumentExtract() {
+    public void testDocumentExtractAll() {
         assertDoesNotThrow(() -> {
             File sourceFile = testResources.getResource("files.zip");
             try (RestWebServiceSession session = SessionFactory.createInstance(
@@ -413,9 +413,37 @@ public class DocumentManagerIntegrationTest {
                 assertNotNull(session, "Valid session should have been created.");
                 RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                 assertNotNull(document, "Valid document should have been returned.");
-                List<RestWebServiceDocument> unzippedFiles = document.extractDocument();
+                List<RestWebServiceDocument> unzippedFiles = document.extractDocument(new DocumentFileExtract());
                 assertNotNull(unzippedFiles, "Valid documents should have been returned.");
                 assertEquals(3, unzippedFiles.size(), "There should be 3 result documents.");
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testDocumentExtractWithFilter() {
+        assertDoesNotThrow(() -> {
+            File sourceFile = testResources.getResource("files.zip");
+            try (RestWebServiceSession session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)))) {
+                assertNotNull(session, "Valid session should have been created.");
+                RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+                assertNotNull(document, "Valid document should have been returned.");
+
+                DocumentFileFilterRule fileFilterRule = new DocumentFileFilterRule();
+                fileFilterRule.setRuleType(DocumentFileFilterType.GLOB);
+                fileFilterRule.setRulePattern("logo.png");
+
+                DocumentFileFilter fileFilter = new DocumentFileFilter();
+                fileFilter.addIncludeRulesItem(fileFilterRule);
+
+                DocumentFileExtract fileExtract = new DocumentFileExtract();
+                fileExtract.setFileFilter(fileFilter);
+
+                List<RestWebServiceDocument> unzippedFiles = document.extractDocument(fileExtract);
+                assertNotNull(unzippedFiles, "Valid documents should have been returned.");
+                assertEquals(1, unzippedFiles.size(), "There should be 1 result document.");
             }
         });
     }
@@ -440,9 +468,11 @@ public class DocumentManagerIntegrationTest {
                     documentIdList.add(document.getDocumentId());
                 }
 
-                RestDocument archive = session.getDocumentManager().compressDocuments(
-                        documentIdList, "archive"
-                );
+                DocumentFileCompress fileCompress = new DocumentFileCompress();
+                fileCompress.setDocumentIdList(documentIdList);
+                fileCompress.setArchiveFileName("archive");
+
+                RestDocument archive = session.getDocumentManager().compressDocuments(fileCompress);
                 assertNotNull(archive, "Valid document should have been returned.");
                 assertEquals(
                         "application/zip", archive.getDocumentFile().getMimeType(),

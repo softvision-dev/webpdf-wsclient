@@ -3,7 +3,7 @@ package net.webpdf.wsclient.session.rest.documents;
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.openapi.DocumentFileFilter;
+import net.webpdf.wsclient.openapi.DocumentFileExtract;
 import net.webpdf.wsclient.openapi.DocumentInfo;
 import net.webpdf.wsclient.openapi.DocumentInfoType;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
@@ -169,25 +169,14 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
     /**
      * This is a shortcut for {@link DocumentManager#extractDocument} and extracts the {@link RestDocument}.
      *
-     * @param fileFilter A {@link DocumentFileFilter} with a list of "include" and "exclude" filter rules. First, the
-     *                   "include rules" are applied. If a file matches, the "exclude rules" are applied. Only if
-     *                   both rules apply, the file will be passed through the filter.
+     * @param fileExtract {@link DocumentFileExtract} settings for unpacking the archive document.
      * @return A list of the extracted {@link RestDocument}s.
      * @throws ResultException Shall be thrown, should the extraction have failed.
      */
     @Override
-    public List<RestWebServiceDocument> extractDocument(@NotNull DocumentFileFilter fileFilter) throws ResultException {
-        return accessInternalState().getDocumentManager().extractDocument(this.getDocumentId(), fileFilter);
-    }
-
-    /**
-     * This is a shortcut for {@link DocumentManager#extractDocument} and extracts the {@link RestDocument}.
-     *
-     * @return A list of the extracted {@link RestDocument}s.
-     * @throws ResultException Shall be thrown, should the extraction have failed.
-     */
-    @Override
-    public List<RestWebServiceDocument> extractDocument() throws ResultException {
-        return accessInternalState().getDocumentManager().extractDocument(this.getDocumentId());
+    public List<RestWebServiceDocument> extractDocument(
+            @NotNull DocumentFileExtract fileExtract
+    ) throws ResultException {
+        return accessInternalState().getDocumentManager().extractDocument(this.getDocumentId(), fileExtract);
     }
 }

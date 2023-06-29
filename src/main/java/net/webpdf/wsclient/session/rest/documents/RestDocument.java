@@ -1,13 +1,13 @@
 package net.webpdf.wsclient.session.rest.documents;
 
-import net.webpdf.wsclient.openapi.DocumentFileFilter;
+import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.openapi.DocumentFileExtract;
 import net.webpdf.wsclient.openapi.DocumentInfo;
 import net.webpdf.wsclient.openapi.DocumentInfoType;
-import net.webpdf.wsclient.schema.operation.PdfPasswordType;
-import net.webpdf.wsclient.session.documents.Document;
-import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.schema.beans.DocumentFile;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
+import net.webpdf.wsclient.schema.operation.PdfPasswordType;
+import net.webpdf.wsclient.session.documents.Document;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -82,7 +82,7 @@ public interface RestDocument extends Document {
     /**
      * This is a shortcut for {@link DocumentManager#renameDocument} and renames the {@link RestDocument}.
      *
-     * @param fileName   The new name for the {@link RestDocument}.
+     * @param fileName The new name for the {@link RestDocument}.
      * @return The resulting {@link RestDocument} handle.
      * @throws ResultException Shall be thrown, should renaming the document have failed.
      */
@@ -102,8 +102,8 @@ public interface RestDocument extends Document {
      * This is a shortcut for {@link DocumentManager#renameDocument} and returns {@link DocumentInfo} about the
      * {@link RestDocument}.
      *
-     * @param infoType     Detailed information for the document referenced by the unique documentId
-     *                     in the server´s document storage.
+     * @param infoType Detailed information for the document referenced by the unique documentId
+     *                 in the server´s document storage.
      * @return The requested document {@link DocumentInfo}
      * @throws ResultException Shall be thrown, should fetching the document info have failed.
      */
@@ -112,19 +112,9 @@ public interface RestDocument extends Document {
     /**
      * This is a shortcut for {@link DocumentManager#extractDocument} and extracts the {@link RestDocument}.
      *
-     * @param fileFilter   A {@link DocumentFileFilter} with a list of "include" and "exclude" filter rules. First, the
-     * 					   "include rules" are applied. If a file matches, the "exclude rules" are applied. Only if
-     * 					   both rules apply, the file will be passed through the filter.
+     * @param fileExtract {@link DocumentFileExtract} settings for unpacking the archive document.
      * @return A list of the extracted {@link RestDocument}s.
      * @throws ResultException Shall be thrown, should the extraction have failed.
      */
-    List<? extends RestDocument> extractDocument(@NotNull DocumentFileFilter fileFilter) throws ResultException;
-
-    /**
-     * This is a shortcut for {@link DocumentManager#extractDocument} and extracts the {@link RestDocument}.
-     *
-     * @return A list of the extracted {@link RestDocument}s.
-     * @throws ResultException Shall be thrown, should the extraction have failed.
-     */
-    List<? extends RestDocument> extractDocument() throws ResultException;
+    List<? extends RestDocument> extractDocument(@NotNull DocumentFileExtract fileExtract) throws ResultException;
 }
