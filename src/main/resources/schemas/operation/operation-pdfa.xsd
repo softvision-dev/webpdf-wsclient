@@ -161,7 +161,26 @@
     <xs:simpleType name="ZugferdVersionType">
         <xs:annotation>
             <xs:documentation>
-                <p>Used to define the version of the ZUGFeRD XML file that should be embedded with "xmlFile". Versions 1.0, 2.0 and 2.1.x are supported. Only the "Comfort" profile is available for version 1.0. Meanwhile, the "Minimum", "Basic WL", "Basic", "EN16931" (Comfort), and "Extended" profiles are supported for version 2.0. Version 2.1.x contains the same profiles as version 2.0 and additionally defines the profile "X-Rechnung".
+                <p>Used to define the version of the ZUGFeRD XML file that should be embedded with "xmlFile". Versions
+                    1.0, 2.0, 2.1.x and 2.2 are supported. Only the "Comfort" profile is available for version 1.0.
+                    Meanwhile, the "Minimum", "Basic WL", "Basic", "EN16931" (Comfort), and "Extended" profiles are
+                    supported for version 2.0.
+                </p>
+                <p>
+                    <b>Note:</b>
+                    Since version 2.x, the referenced profile "XRECHNUNG" is additionally available. This profile has
+                    been included specifically to include invoices for Germany, based on and under the sole
+                    responsibility of KoSIT, Germany's central coordination agency for IT's e-invoice CIUS "XRechnung".
+                    It is defined as the Standard for electronic invoices issued to public administrations, and
+                    essentially adds specific business rules to EN 16931 in order to comply with national laws and
+                    regulations.
+                </p>
+                <p>
+                    <b>Note:</b>
+                    Since version 2.1.1 ZUGFeRD and Factur-X are technically identical and both formats use Factur-X as
+                    common identification.
+                </p>
+                <p>
                     List of versions with the corresponding profiles:
                     <ul>
                         <li>v10Comfort</li>
@@ -176,6 +195,12 @@
                         <li>v21EN16931</li>
                         <li>v21Extended</li>
                         <li>v21XRechnung</li>
+                        <li>v22Minimum</li>
+                        <li>v22BasicWL</li>
+                        <li>v22Basic</li>
+                        <li>v22EN16931</li>
+                        <li>v22Extended</li>
+                        <li>v22XRechnung</li>
                     </ul>
                 </p>
             </xs:documentation>
@@ -193,6 +218,12 @@
             <xs:enumeration value="v21EN16931"/>
             <xs:enumeration value="v21Extended"/>
             <xs:enumeration value="v21XRechnung"/>
+            <xs:enumeration value="v22Minimum"/>
+            <xs:enumeration value="v22BasicWL"/>
+            <xs:enumeration value="v22Basic"/>
+            <xs:enumeration value="v22EN16931"/>
+            <xs:enumeration value="v22Extended"/>
+            <xs:enumeration value="v22XRechnung"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="ZugferdType">
