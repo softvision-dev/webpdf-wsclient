@@ -47,6 +47,18 @@
             </roles>
             <timezone>Europe/Berlin</timezone>
         </developer>
+
+        <developer>
+            <id>cap</id>
+            <name>Sebastian Appl</name>
+            <email>sebastian.appl@softvision.de</email>
+            <organization>SoftVision Development</organization>
+            <organizationUrl>https://www.softvision.de/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>Europe/Berlin</timezone>
+        </developer>
     </developers>
 
     <properties>
@@ -59,44 +71,44 @@
         <server.public.url>https://portal.webpdf.de</server.public.url>
 
         <!-- DEPENDENCY VERSIONS -->
-        <jetbrains.annotations.version>24.0.0</jetbrains.annotations.version>  <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+        <jetbrains.annotations.version>24.0.1</jetbrains.annotations.version>  <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
         <httpcomponents.httpclient.version>5.2.1</httpcomponents.httpclient.version> <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
-        <commons.io.version>2.11.0</commons.io.version> <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
-        <commons.lang.version>3.12.0</commons.lang.version> <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-        <jackson.core.databind.version>2.14.2</jackson.core.databind.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-        <jackson.core.annotations.version>2.14.2</jackson.core.annotations.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
-        <jackson.module.xmlbind.annotations.version>2.14.2</jackson.module.xmlbind.annotations.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jakarta-xmlbind-annotations -->
+        <commons.io.version>2.13.0</commons.io.version> <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <commons.lang.version>3.13.0</commons.lang.version> <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <jackson.core.databind.version>2.15.2</jackson.core.databind.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <jackson.core.annotations.version>2.15.2</jackson.core.annotations.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+        <jackson.module.xmlbind.annotations.version>2.15.2</jackson.module.xmlbind.annotations.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jakarta-xmlbind-annotations -->
         <jax-ws-rt.version>4.0.1</jax-ws-rt.version> <!-- https://mvnrepository.com/artifact/com.sun.xml.ws/jaxws-rt -->
-        <fasterxml-woodstox.version>6.5.0</fasterxml-woodstox.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.woodstox/woodstox-core -->
-        <swagger.core.jakarta.annotations.version>2.2.8</swagger.core.jakarta.annotations.version> <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations-jakarta -->
+        <fasterxml-woodstox.version>6.5.1</fasterxml-woodstox.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.woodstox/woodstox-core -->
+        <swagger.core.jakarta.annotations.version>2.2.15</swagger.core.jakarta.annotations.version> <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations-jakarta -->
 
         <!-- PLUGIN VERSIONS -->
         <nexus.staging.plugin.version>1.6.13</nexus.staging.plugin.version> <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
         <openapi.generator.maven.plugin.version>6.3.0</openapi.generator.maven.plugin.version> <!-- https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin -->
         <jaxb.maven.plugin.version>3.1.0-SNAPSHOT</jaxb.maven.plugin.version> <!-- https://mvnrepository.com/artifact/com.evolvedbinary.maven.mojohaus/jaxb-maven-plugin -->
-        <buildnumber.maven.plugin.version>3.0.0</buildnumber.maven.plugin.version> <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/buildnumber-maven-plugin -->
-        <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
-        <maven.source.plugin.version>3.2.1</maven.source.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
-        <maven.javadoc.plugin.version>3.4.1</maven.javadoc.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+        <buildnumber.maven.plugin.version>3.2.0</buildnumber.maven.plugin.version> <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/buildnumber-maven-plugin -->
+        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+        <maven.source.plugin.version>3.3.0</maven.source.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
+        <maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
         <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
-        <maven.dependency.plugin.version>3.5.0</maven.dependency.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
-        <maven.release.plugin.version>3.0.0</maven.release.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
-        <maven.surefire.plugin.version>3.0.0-M9</maven.surefire.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
-        <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+        <maven.dependency.plugin.version>3.6.0</maven.dependency.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
+        <maven.release.plugin.version>3.0.1</maven.release.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
+        <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+        <maven.gpg.plugin.version>3.1.0</maven.gpg.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
         <maven.resources.plugin>3.3.1</maven.resources.plugin> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
 
         <!-- PLUGIN-ONLY DEPENDENCY VERSIONS -->
-        <glassfish.jaxb.xjc.version>4.0.2</glassfish.jaxb.xjc.version> <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-xjc -->
+        <glassfish.jaxb.xjc.version>4.0.3</glassfish.jaxb.xjc.version> <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-xjc -->
         <jaxb2.basics.version>0.12.1-SNAPSHOT</jaxb2.basics.version> <!-- https://github.com/highsource/jaxb2-basics -->
         <jaxb2.basics.annotate.version>1.1.0</jaxb2.basics.annotate.version> <!-- https://mvnrepository.com/artifact/org.jvnet.jaxb2_commons/jaxb2-basics-annotate -->
 
         <!-- TEST DEPENDENCY VERSIONS -->
-        <junit.jupiter.params.version>5.9.2</junit.jupiter.params.version> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
-        <junit.jupiter.engine.version>5.9.2</junit.jupiter.engine.version> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
-        <microsoft.azure.msal4j.version>1.13.8</microsoft.azure.msal4j.version> <!-- https://mvnrepository.com/artifact/com.microsoft.azure/msal4j -->
-        <auth0.version>1.44.2</auth0.version> <!-- https://mvnrepository.com/artifact/com.auth0/auth0 -->
-        <bouncycastle.bcmail.version>1.72</bouncycastle.bcmail.version> <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcmail-jdk18on -->
-        <testcontainers.version>1.18.1</testcontainers.version> <!-- https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter -->
+        <junit.jupiter.params.version>5.10.0</junit.jupiter.params.version> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
+        <junit.jupiter.engine.version>5.10.0</junit.jupiter.engine.version> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+        <microsoft.azure.msal4j.version>1.13.10</microsoft.azure.msal4j.version> <!-- https://mvnrepository.com/artifact/com.microsoft.azure/msal4j -->
+        <auth0.version>1.45.0</auth0.version> <!-- https://mvnrepository.com/artifact/com.auth0/auth0 -->
+        <bouncycastle.bcmail.version>1.76</bouncycastle.bcmail.version> <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcmail-jdk18on -->
+        <testcontainers.version>1.19.0</testcontainers.version> <!-- https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter -->
         <log4j.version>2.20.0</log4j.version> <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
         <slf4j.version>2.0.7</slf4j.version> <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
     </properties>
