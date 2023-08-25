@@ -2,7 +2,7 @@ FROM softvisiondev/webpdf:9.0
 
 USER root
 
-RUN DEBIAN_FRONTEND=nointeractive apt-get install -y --no-install-recommends htop joe ldap-utils
+RUN apt-get update && DEBIAN_FRONTEND=nointeractive apt-get install -y --no-install-recommends htop joe ldap-utils
 
 ADD run.sh /opt/webpdf/run.sh
 ADD ldap-check.sh /opt/webpdf/ldap-check.sh

@@ -8,9 +8,12 @@ import org.jetbrains.annotations.Nullable;
 public class ServerConfig extends ConfigNodeContainer {
 
     public static final @NotNull String SERVER_CONFIG_NODE = "/server";
+    private final Boolean useLdap;
 
-    public ServerConfig(@Nullable JsonNode node) {
+    public ServerConfig(@Nullable JsonNode node, @NotNull Boolean useLdap) {
         super(node);
+
+        this.useLdap = useLdap;
     }
 
     public @NotNull String getLocalURL() {
@@ -18,18 +21,34 @@ public class ServerConfig extends ConfigNodeContainer {
     }
 
     public @NotNull String getLocalAdminName() {
+        if (this.useLdap) {
+            return getString("/local/ldapAdminName", "");
+        }
+
         return getString("/local/adminName", "");
     }
 
     public @NotNull String getLocalAdminPassword() {
+        if (this.useLdap) {
+            return getString("/local/ldapAdminPassword", "");
+        }
+
         return getString("/local/adminPassword", "");
     }
 
     public @NotNull String getLocalUserName() {
+        if (this.useLdap) {
+            return getString("/local/ldapUserName", "");
+        }
+
         return getString("/local/userName", "");
     }
 
     public @NotNull String getLocalUserPassword() {
+        if (this.useLdap) {
+            return getString("/local/ldapUserPassword", "");
+        }
+
         return getString("/local/userPassword", "");
     }
 

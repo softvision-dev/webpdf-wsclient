@@ -38,10 +38,13 @@ public class TestConfig {
             }
         }
 
-        this.serverConfig = new ServerConfig(configNode != null ?
-                configNode.at(SERVER_CONFIG_NODE) : null);
-        this.integrationTestConfig = new IntegrationTestConfig(configNode != null ?
-                configNode.at(INTEGRATION_TEST_CONFIG) : null);
+        this.integrationTestConfig = new IntegrationTestConfig(
+                configNode != null ? configNode.at(INTEGRATION_TEST_CONFIG) : null
+        );
+        this.serverConfig = new ServerConfig(
+                configNode != null ? configNode.at(SERVER_CONFIG_NODE) : null,
+                this.integrationTestConfig.isLdapTestsActive()
+        );
     }
 
     public @NotNull ServerConfig getServerConfig() {

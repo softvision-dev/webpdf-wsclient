@@ -1,11 +1,15 @@
 
 package net.webpdf.wsclient.schema.stubs;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>
- * An instance of {@link FaultInfo} will be encountered in case the webPDF server´s response indicates the
+ * An instance of {@link PdfaFaultInfo} will be encountered in case the webPDF server´s response indicates the
  * failure of a webservice call. <br>
  * It shall describe the failure, by providing an error code, an error message and an optional exception describing the
  * issue.
@@ -29,16 +33,34 @@ import org.jetbrains.annotations.Nullable;
  * &lt;/complexType&gt;
  * </pre>
  */
-public interface FaultInfo {
+@XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings({"unused", "JavadocLinkAsPlainText"})
+@XmlType(name = "FaultInfo", propOrder = {
+        "errorCode",
+        "errorMessage",
+        "stackTrace"
+})
+public class PdfaFaultInfo implements FaultInfo {
+    @XmlElement(namespace = "http://schema.webpdf.de/1.0/soap/pdfa")
+    private int errorCode;
+    @XmlElement(namespace = "http://schema.webpdf.de/1.0/soap/pdfa")
+    private @Nullable String errorMessage;
+    @XmlElement(namespace = "http://schema.webpdf.de/1.0/soap/pdfa")
+    private @Nullable String stackTrace;
+
     /**
      * Return the errorCode.
      */
-    int getErrorCode();
+    public int getErrorCode() {
+        return errorCode;
+    }
 
     /**
      * Set the errorCode.
      */
-    void setErrorCode(int value);
+    public void setErrorCode(int value) {
+        this.errorCode = value;
+    }
 
     /**
      * Return the errorMessage.
@@ -46,7 +68,9 @@ public interface FaultInfo {
      * @return possible object is
      * {@link String }
      */
-    @Nullable String getErrorMessage();
+    public @Nullable String getErrorMessage() {
+        return errorMessage;
+    }
 
     /**
      * Set the errorMessage.
@@ -54,7 +78,9 @@ public interface FaultInfo {
      * @param value allowed object is
      *              {@link String }
      */
-    void setErrorMessage(@Nullable String value);
+    public void setErrorMessage(@Nullable String value) {
+        this.errorMessage = value;
+    }
 
     /**
      * Return the stacktrace.
@@ -62,7 +88,9 @@ public interface FaultInfo {
      * @return possible object is
      * {@link String }
      */
-    @Nullable String getStackTrace();
+    public @Nullable String getStackTrace() {
+        return stackTrace;
+    }
 
     /**
      * Set the stacktrace.
@@ -70,5 +98,8 @@ public interface FaultInfo {
      * @param value allowed object is
      *              {@link String }
      */
-    void setStackTrace(@Nullable String value);
+    public void setStackTrace(@Nullable String value) {
+        this.stackTrace = value;
+    }
+
 }

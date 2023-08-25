@@ -1,16 +1,18 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.exception.ServerResultException;
+import net.webpdf.wsclient.schema.operation.ExtractionTextType;
+import net.webpdf.wsclient.schema.operation.ExtractionType;
+import net.webpdf.wsclient.schema.operation.SignatureType;
+import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
-import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.operation.*;
-import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.testsuite.server.ServerType;
-import net.webpdf.wsclient.testsuite.io.TestResources;
-import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
+import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.ServerType;
+import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.soap.*;

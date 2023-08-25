@@ -12,7 +12,7 @@ import net.webpdf.wsclient.schema.operation.BillingType;
 import net.webpdf.wsclient.schema.operation.OperationData;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.schema.operation.SettingsType;
-import net.webpdf.wsclient.schema.stubs.WebServiceException;
+import net.webpdf.wsclient.schema.stubs.*;
 import net.webpdf.wsclient.session.auth.material.AuthMaterial;
 import net.webpdf.wsclient.session.soap.SoapSession;
 import net.webpdf.wsclient.session.soap.documents.SoapDocument;
