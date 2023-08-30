@@ -51,7 +51,7 @@ public class RestartServer {
             AdministrationManager<RestDocument> administrationManager = session.getAdministrationManager();
 
             /** restart the server */
-            administrationManager.restart();
+            administrationManager.restartServer();
         } catch (ResultException ex) {
             /** Should an exception have occurred, you can use the following methods to request further information
              * about the exception: */

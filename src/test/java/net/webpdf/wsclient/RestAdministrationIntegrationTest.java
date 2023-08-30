@@ -278,7 +278,7 @@ public class RestAdministrationIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
-                AdminServerStatus serverStatus = session.getAdministrationManager().getStatus();
+                AdminServerStatus serverStatus = session.getAdministrationManager().fetchServerStatus();
                 assertNotNull(serverStatus.getWebservices(), "Webservices should exist.");
                 assertNotNull(serverStatus.getWebservices().get("toolbox"), "Webservice toolbox should exist.");
                 assertEquals(
@@ -298,8 +298,8 @@ public class RestAdministrationIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
-                int logLength = session.getAdministrationManager().getLogLength();
-                String logContents = session.getAdministrationManager().getLog("0-" + logLength);
+                int logLength = session.getAdministrationManager().fetchLogLength();
+                String logContents = session.getAdministrationManager().fetchLog("0-" + logLength);
                 assertNotNull(logContents, "Log contents should exist.");
                 assertTrue(logContents.length() > 0, "Content size should be > 0.");
             }
@@ -316,7 +316,7 @@ public class RestAdministrationIntegrationTest {
             )) {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
-                    session.getAdministrationManager().getSupport(fileOutputStream);
+                    session.getAdministrationManager().buildSupportPackage(fileOutputStream);
                 }
                 assertTrue(fileOut.exists());
             }
@@ -339,7 +339,7 @@ public class RestAdministrationIntegrationTest {
                 ));
                 fileDataStore.setFileGroup(AdminFileGroupDataStore.LOGO);
 
-                AdminLogoFileDataStore currentLogo = (AdminLogoFileDataStore) session.getAdministrationManager().getDatastore(
+                AdminLogoFileDataStore currentLogo = (AdminLogoFileDataStore) session.getAdministrationManager().fetchDatastore(
                         AdminFileGroupDataStore.LOGO
                 );
                 assertNotEquals(
@@ -348,7 +348,7 @@ public class RestAdministrationIntegrationTest {
                 );
 
                 session.getAdministrationManager().updateDatastore(fileDataStore);
-                currentLogo = (AdminLogoFileDataStore) session.getAdministrationManager().getDatastore(
+                currentLogo = (AdminLogoFileDataStore) session.getAdministrationManager().fetchDatastore(
                         AdminFileGroupDataStore.LOGO
                 );
                 assertEquals(
@@ -357,7 +357,7 @@ public class RestAdministrationIntegrationTest {
                 );
 
                 session.getAdministrationManager().deleteDatastore(AdminFileGroupDataStore.LOGO);
-                currentLogo = (AdminLogoFileDataStore) session.getAdministrationManager().getDatastore(
+                currentLogo = (AdminLogoFileDataStore) session.getAdministrationManager().fetchDatastore(
                         AdminFileGroupDataStore.LOGO
                 );
                 assertNotEquals(
@@ -541,7 +541,7 @@ public class RestAdministrationIntegrationTest {
                 List<Webservice> webservices = new ArrayList<>();
                 webservices.add(Webservice.CONVERTER);
 
-                AdminStatistic statistic = session.getAdministrationManager().getStatistic(
+                AdminStatistic statistic = session.getAdministrationManager().fetchServerStatistic(
                         AdminDataSourceServerState.REALTIME, AdminAggregationServerState.MONTH,
                         webservices, yesterday, currentDate
                 );
@@ -561,7 +561,7 @@ public class RestAdministrationIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
-                SessionTable sessions = session.getAdministrationManager().getSessionTable();
+                SessionTable sessions = session.getAdministrationManager().fetchSessionTable();
                 assertNotNull(sessions, "There should be a session table.");
                 assertNotNull(sessions.getActiveSessions(), "There should be active sessions.");
                 assertTrue(sessions.getActiveSessions() > 0, "There should be at least 1 active session.");

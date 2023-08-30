@@ -18,6 +18,7 @@ import java.util.Map;
  *
  * @param <T_REST_DOCUMENT> The {@link RestDocument} used by the currently active {@link RestSession}.
  */
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
     /**
      * Returns the {@link RestSession} used by this {@link AdministrationManager}.
@@ -34,7 +35,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @return number the length of the requested log
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @NotNull Integer getLogLength(@Nullable Date date) throws ResultException;
+    @NotNull Integer fetchLogLength(@Nullable Date date) throws ResultException;
 
     /**
      * Returns the byte size of the current log file of the server.
@@ -42,7 +43,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @return number the length of the requested log
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @NotNull Integer getLogLength() throws ResultException;
+    @NotNull Integer fetchLogLength() throws ResultException;
 
     /**
      * Returns the contents of the current log or a specific log file of the server. If the date query parameter
@@ -53,7 +54,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @return number The contents of the current log or a specific log file of the server
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @NotNull String getLog(@NotNull String range, @Nullable Date date) throws ResultException;
+    @NotNull String fetchLog(@NotNull String range, @Nullable Date date) throws ResultException;
 
     /**
      * Returns the contents of the current log file of the server.
@@ -62,7 +63,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @return number The contents of the current log or a specific log file of the server
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @NotNull String getLog(@NotNull String range) throws ResultException;
+    @NotNull String fetchLog(@NotNull String range) throws ResultException;
 
     /**
      * Returns the contents of the current log file of the server.
@@ -70,7 +71,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @return number The contents of the current log or a specific log file of the server
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @NotNull String getLog() throws ResultException;
+    @NotNull String fetchLog() throws ResultException;
 
     /**
      * Provides status information about the server, the JVM and the Web services.
@@ -78,20 +79,20 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @return {@link AdminServerStatus} The status information about the server.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @NotNull AdminServerStatus getStatus() throws ResultException;
+    @NotNull AdminServerStatus fetchServerStatus() throws ResultException;
 
     /**
      * Collects a set of support information, that may simplify finding the cause and solution of issues.
      *
      * @param outputStream The target {@link OutputStream} the support information shall be written to.
-     * @param group  List of components to be included in the support information.
-     * @param start  Start {@link Date} from when the logs will be included (if logs is included in group).
-     *               If empty, then current date.
-     * @param end    End {@link Date} until when the logs will be included (if logs is included in group).
-     *               If empty, then current date.
+     * @param group        List of components to be included in the support information.
+     * @param start        Start {@link Date} from when the logs will be included (if logs is included in group).
+     *                     If empty, then current date.
+     * @param end          End {@link Date} until when the logs will be included (if logs is included in group).
+     *                     If empty, then current date.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    void getSupport(
+    void buildSupportPackage(
             @NotNull OutputStream outputStream, @Nullable AdminSupportEntryGroup[] group, @Nullable Date start, @Nullable Date end
     ) throws ResultException;
 
@@ -99,11 +100,10 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * Collects a set of support information, that may simplify finding the cause and solution of issues.
      *
      * @param outputStream The target {@link OutputStream} the support information shall be written to.
-     * @param group  List of components to be included in the support information.
+     * @param group        List of components to be included in the support information.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @SuppressWarnings("unused")
-    void getSupport(@NotNull OutputStream outputStream, @Nullable AdminSupportEntryGroup[] group) throws ResultException;
+    void buildSupportPackage(@NotNull OutputStream outputStream, @Nullable AdminSupportEntryGroup[] group) throws ResultException;
 
     /**
      * Collects a set of support information, that may simplify finding the cause and solution of issues.
@@ -111,7 +111,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @param outputStream The target {@link OutputStream} the support information shall be written to.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    void getSupport(@NotNull OutputStream outputStream) throws ResultException;
+    void buildSupportPackage(@NotNull OutputStream outputStream) throws ResultException;
 
     /**
      * Collects a set of support information, that may simplify finding the cause and solution of issues.
@@ -124,7 +124,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      *               If empty, then current date.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    void getSupport(
+    void buildSupportPackage(
             @NotNull File target, @Nullable AdminSupportEntryGroup[] group, @Nullable Date start, @Nullable Date end
     ) throws ResultException;
 
@@ -135,8 +135,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @param group  List of components to be included in the support information.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @SuppressWarnings("unused")
-    void getSupport(@NotNull File target, @Nullable AdminSupportEntryGroup[] group) throws ResultException;
+    void buildSupportPackage(@NotNull File target, @Nullable AdminSupportEntryGroup[] group) throws ResultException;
 
     /**
      * Collects a set of support information, that may simplify finding the cause and solution of issues.
@@ -144,15 +143,14 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @param target The target {@link File} the support information shall be written to.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @SuppressWarnings("unused")
-    void getSupport(@NotNull File target) throws ResultException;
+    void buildSupportPackage(@NotNull File target) throws ResultException;
 
     /**
      * Restarts the server.
      *
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    void restart() throws ResultException;
+    void restartServer() throws ResultException;
 
     /**
      * Gets the {@link ApplicationConfigApplication} configuration from the server updating the cached configuration.
@@ -173,7 +171,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
      * <p>
-     * Updates the {@link ApplicationConfigApplication} configuration if no {@link AdminConfigurationResult#getError()} occured.
+     * Updates the {@link ApplicationConfigApplication} configuration if no {@link AdminConfigurationResult#getError()} occurred.
      * </p>
      * <p>
      * Optionally also validates the {@link ApplicationConfigApplication} configuration with additional {@link AdminApplicationCheck}s.
@@ -195,7 +193,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
      * <p>
-     * Updates the {@link ApplicationConfigApplication} configuration if no {@link AdminConfigurationResult#getError()} occured.
+     * Updates the {@link ApplicationConfigApplication} configuration if no {@link AdminConfigurationResult#getError()} occurred.
      * </p>
      * <p>
      * <b>Be Aware:</b> Some of these changes might require a server restart to take effect.
@@ -246,7 +244,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
      * <p>
-     * Updates the {@link ServerConfigServer} configuration if no {@link AdminConfigurationResult#getError()} occured.
+     * Updates the {@link ServerConfigServer} configuration if no {@link AdminConfigurationResult#getError()} occurred.
      * </p>
      * <p>
      * Optionally also validates the {@link ServerConfigServer} configuration with additional {@link AdminServerCheck}s.
@@ -268,7 +266,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
      * <p>
-     * Updates the {@link ServerConfigServer} configuration if no {@link AdminConfigurationResult#getError()} occured.
+     * Updates the {@link ServerConfigServer} configuration if no {@link AdminConfigurationResult#getError()} occurred.
      * </p>
      * <p>
      * <b>Be Aware:</b> Some of these changes might require a server restart to take effect.
@@ -296,7 +294,6 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * when the {@link ServerConfigServer} configuration is validated.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @SuppressWarnings("unused")
     @NotNull AdminConfigurationResult validateServerConfiguration(
             @NotNull ServerConfigServer configuration, @NotNull List<AdminServerCheck> checks
     ) throws ResultException;
@@ -320,7 +317,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
      * <p>
-     * Updates the {@link UserConfigUsers} configuration if no {@link AdminConfigurationResult#getError()} occured.
+     * Updates the {@link UserConfigUsers} configuration if no {@link AdminConfigurationResult#getError()} occurred.
      * </p>
      * <p>
      * Optionally also validates the {@link UserConfigUsers} configuration with additional {@link AdminUserCheck}s.
@@ -341,7 +338,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
      * <p>
-     * Updates the {@link UserConfigUsers} configuration if no {@link AdminConfigurationResult#getError()} occured.
+     * Updates the {@link UserConfigUsers} configuration if no {@link AdminConfigurationResult#getError()} occurred.
      * </p>
      * <p>
      * <b>Be Aware:</b> Some of these changes might require a server restart to take effect.
@@ -352,7 +349,6 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * when the {@link UserConfigUsers} configuration is updated.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @SuppressWarnings("UnusedReturnValue")
     @NotNull AdminConfigurationResult updateUserConfiguration(
             @NotNull UserConfigUsers configuration
     ) throws ResultException;
@@ -369,7 +365,6 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * when the {@link UserConfigUsers} configuration is validated.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @SuppressWarnings("unused")
     @NotNull AdminConfigurationResult validateUserConfiguration(
             @NotNull UserConfigUsers configuration, @NotNull List<AdminUserCheck> checks
     ) throws ResultException;
@@ -393,7 +388,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
      * <p>
-     * Updates the {@link AdminLogFileConfiguration} if no {@link AdminConfigurationResult#getError()} occured.
+     * Updates the {@link AdminLogFileConfiguration} if no {@link AdminConfigurationResult#getError()} occurred.
      * </p>
      * <p>
      * Optionally also validates the {@link AdminLogFileConfiguration} with additional {@link AdminLogCheck}s.
@@ -415,7 +410,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
      * <p>
-     * Updates the {@link AdminLogFileConfiguration} if no {@link AdminConfigurationResult#getError()} occured.
+     * Updates the {@link AdminLogFileConfiguration} if no {@link AdminConfigurationResult#getError()} occurred.
      * </p>
      * <p>
      * <b>Be Aware:</b> Some of these changes might require a server restart to take effect.
@@ -427,7 +422,6 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * when the {@link AdminLogFileConfiguration} is updated.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @SuppressWarnings("UnusedReturnValue")
     @NotNull AdminConfigurationResult updateLogConfiguration(
             @NotNull AdminLogFileConfiguration configuration
     ) throws ResultException;
@@ -444,7 +438,6 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * when the {@link AdminLogFileConfiguration} configuration is validated.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @SuppressWarnings("unused")
     @NotNull AdminConfigurationResult validateLogConfiguration(
             @NotNull AdminLogFileConfiguration configuration, @NotNull List<AdminLogCheck> checks
     ) throws ResultException;
@@ -563,18 +556,18 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @return The requested {@link AdminFileDataStore}.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    AdminFileDataStore getDatastore(@NotNull AdminFileGroupDataStore group, @Nullable String filename) throws ResultException;
+    AdminFileDataStore fetchDatastore(@NotNull AdminFileGroupDataStore group, @Nullable String filename) throws ResultException;
 
     /**
      * Retrieves a file, depending on the selected {@link AdminFileGroupDataStore}, from the server's data store.
      * If {@link AdminFileGroupDataStore#GENERIC} is set, the file to get is referenced by the optional
      * filename parameter.
      *
-     * @param group    The group of datastore files to search for the file.
+     * @param group The group of datastore files to search for the file.
      * @return The requested {@link AdminFileDataStore}.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    AdminFileDataStore getDatastore(@NotNull AdminFileGroupDataStore group) throws ResultException;
+    AdminFileDataStore fetchDatastore(@NotNull AdminFileGroupDataStore group) throws ResultException;
 
     /**
      * Updates a file in the server's data store.
@@ -598,7 +591,7 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
     /**
      * Deletes a file, depending on the selected {@link AdminFileGroupDataStore}, from the server's data store.
      *
-     * @param group    The group of datastore files to search for the file.
+     * @param group The group of datastore files to search for the file.
      * @throws ResultException Shall be thrown, if the request failed.
      */
     void deleteDatastore(@NotNull AdminFileGroupDataStore group) throws ResultException;
@@ -621,18 +614,18 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @return The requested {@link AdminStatistic}.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @NotNull AdminStatistic getStatistic(
+    @NotNull AdminStatistic fetchServerStatistic(
             @NotNull AdminDataSourceServerState dataSource, @NotNull AdminAggregationServerState aggregation,
             @NotNull List<Webservice> webservices, @NotNull Date start, @NotNull Date end
     ) throws ResultException;
 
     /**
-     * Returns the session table with detailed status information about each session.
+     * Returns the session table from server with detailed status information about each session.
      *
      * @return The requested {@link SessionTable}.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @NotNull SessionTable getSessionTable() throws ResultException;
+    @NotNull SessionTable fetchSessionTable() throws ResultException;
 
     /**
      * Closes the session with the specified ID, by activating the session expiration. After the call, any access

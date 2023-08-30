@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("EmptyTryBlock")
 public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
         implements AdministrationManager<T_REST_DOCUMENT> {
     private final @NotNull RestSession<T_REST_DOCUMENT> session;
@@ -80,7 +81,7 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @throws ResultException Shall be thrown, if the request failed.
      */
     @Override
-    public @NotNull Integer getLogLength(@Nullable Date date) throws ResultException {
+    public @NotNull Integer fetchLogLength(@Nullable Date date) throws ResultException {
         this.validateUser();
 
         List<NameValuePair> searchParams = new ArrayList<>();
@@ -88,11 +89,10 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
             searchParams.add(new BasicNameValuePair("date", DateFormatUtils.format(date, "yyyy-MM-dd")));
         }
 
-        try {
-            ClassicHttpResponse response = HttpRestRequest.createRequest(this.session)
+        try( ClassicHttpResponse response = HttpRestRequest.createRequest(this.session)
                     .setAcceptHeader(DataFormat.ANY.getMimeType())
                     .buildRequest(HttpMethod.HEAD, this.session.getURI("admin/server/log", searchParams))
-                    .executeRequest();
+                    .executeRequest()){
 
             int contentLength = 0;
 
@@ -102,7 +102,7 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
             }
 
             return contentLength;
-        } catch (ProtocolException ex) {
+        } catch (IOException | ProtocolException ex) {
             throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
         }
     }
@@ -113,8 +113,8 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @return number the length of the requested log
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    public @NotNull Integer getLogLength() throws ResultException {
-        return this.getLogLength(null);
+    public @NotNull Integer fetchLogLength() throws ResultException {
+        return this.fetchLogLength(null);
     }
 
     /**
@@ -127,7 +127,7 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @throws ResultException Shall be thrown, if the request failed.
      */
     @Override
-    public @NotNull String getLog(@NotNull String range, @Nullable Date date) throws ResultException {
+    public @NotNull String fetchLog(@NotNull String range, @Nullable Date date) throws ResultException {
         this.validateUser();
 
         List<NameValuePair> searchParams = new ArrayList<>();
@@ -155,8 +155,8 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @return number The contents of the current log or a specific log file of the server
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    public @NotNull String getLog(@NotNull String range) throws ResultException {
-        return this.getLog(range, null);
+    public @NotNull String fetchLog(@NotNull String range) throws ResultException {
+        return this.fetchLog(range, null);
     }
 
     /**
@@ -165,8 +165,8 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @return number The contents of the current log or a specific log file of the server
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    public @NotNull String getLog() throws ResultException {
-        return this.getLog("0-");
+    public @NotNull String fetchLog() throws ResultException {
+        return this.fetchLog("0-");
     }
 
     /**
@@ -176,7 +176,7 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @throws ResultException Shall be thrown, if the request failed.
      */
     @Override
-    public @NotNull AdminServerStatus getStatus() throws ResultException {
+    public @NotNull AdminServerStatus fetchServerStatus() throws ResultException {
         this.validateUser();
 
         AdminServerStatus status = HttpRestRequest.createRequest(this.session)
@@ -202,7 +202,7 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @throws ResultException Shall be thrown, if the request failed.
      */
     @Override
-    public void getSupport(
+    public void buildSupportPackage(
             @NotNull OutputStream outputStream, @Nullable AdminSupportEntryGroup[] group, @Nullable Date start, @Nullable Date end
     ) throws ResultException {
         this.validateUser();
@@ -238,8 +238,8 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @param group        List of components to be included in the support information.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    public void getSupport(@NotNull OutputStream outputStream, @Nullable AdminSupportEntryGroup[] group) throws ResultException {
-        this.getSupport(outputStream, group, null, null);
+    public void buildSupportPackage(@NotNull OutputStream outputStream, @Nullable AdminSupportEntryGroup[] group) throws ResultException {
+        this.buildSupportPackage(outputStream, group, null, null);
     }
 
     /**
@@ -248,8 +248,8 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @param outputStream The target {@link OutputStream} the support information shall be written to.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    public void getSupport(@NotNull OutputStream outputStream) throws ResultException {
-        this.getSupport(outputStream, null, null, null);
+    public void buildSupportPackage(@NotNull OutputStream outputStream) throws ResultException {
+        this.buildSupportPackage(outputStream, null, null, null);
     }
 
     /**
@@ -264,11 +264,11 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @throws ResultException Shall be thrown, if the request failed.
      */
     @Override
-    public void getSupport(
+    public void buildSupportPackage(
             @NotNull File target, @Nullable AdminSupportEntryGroup[] group, @Nullable Date start, @Nullable Date end
     ) throws ResultException {
         try (OutputStream outputStream = new FileOutputStream(target)) {
-            this.getSupport(outputStream, group, start, end);
+            this.buildSupportPackage(outputStream, group, start, end);
         } catch (IOException ex) {
             throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
         }
@@ -281,8 +281,8 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @param group  List of components to be included in the support information.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    public void getSupport(@NotNull File target, @Nullable AdminSupportEntryGroup[] group) throws ResultException {
-        this.getSupport(target, group, null, null);
+    public void buildSupportPackage(@NotNull File target, @Nullable AdminSupportEntryGroup[] group) throws ResultException {
+        this.buildSupportPackage(target, group, null, null);
     }
 
     /**
@@ -291,8 +291,8 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @param target The target {@link File} the support information shall be written to.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    public void getSupport(@NotNull File target) throws ResultException {
-        this.getSupport(target, null, null, null);
+    public void buildSupportPackage(@NotNull File target) throws ResultException {
+        this.buildSupportPackage(target, null, null, null);
     }
 
     /**
@@ -301,12 +301,15 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @throws ResultException Shall be thrown, if the request failed.
      */
     @Override
-    public void restart() throws ResultException {
+    public void restartServer() throws ResultException {
         this.validateUser();
 
-        HttpRestRequest.createRequest(this.session)
+        try (ClassicHttpResponse ignored = HttpRestRequest.createRequest(this.session)
                 .buildRequest(HttpMethod.GET, "admin/server/restart")
-                .executeRequest();
+                .executeRequest()) {
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
+        }
     }
 
     /**
@@ -1073,7 +1076,7 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @throws ResultException Shall be thrown, if the request failed.
      */
     @Override
-    public AdminFileDataStore getDatastore(
+    public AdminFileDataStore fetchDatastore(
             @NotNull AdminFileGroupDataStore group, @Nullable String filename
     ) throws ResultException {
         this.validateUser();
@@ -1101,13 +1104,13 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * If {@link AdminFileGroupDataStore#GENERIC} is set, the file to get is referenced by the optional
      * filename parameter.
      *
-     * @param group    The group of datastore files to search for the file.
+     * @param group The group of datastore files to search for the file.
      * @return The requested {@link AdminFileDataStore}.
      * @throws ResultException Shall be thrown, if the request failed.
      */
     @Override
-    public AdminFileDataStore getDatastore(@NotNull AdminFileGroupDataStore group) throws ResultException {
-        return this.getDatastore(group, null);
+    public AdminFileDataStore fetchDatastore(@NotNull AdminFileGroupDataStore group) throws ResultException {
+        return this.fetchDatastore(group, null);
     }
 
     /**
@@ -1143,17 +1146,20 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
             searchParams.add(new BasicNameValuePair("name", filename));
         }
 
-        HttpRestRequest.createRequest(this.session)
+        try (ClassicHttpResponse ignored = HttpRestRequest.createRequest(this.session)
                 .buildRequest(
                         HttpMethod.DELETE, this.session.getURI("admin/datastore/" + group, searchParams), null
                 )
-                .executeRequest();
+                .executeRequest()) {
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
+        }
     }
 
     /**
      * Deletes a file, depending on the selected {@link AdminFileGroupDataStore}, from the server's data store.
      *
-     * @param group    The group of datastore files to search for the file.
+     * @param group The group of datastore files to search for the file.
      * @throws ResultException Shall be thrown, if the request failed.
      */
     public void deleteDatastore(@NotNull AdminFileGroupDataStore group) throws ResultException {
@@ -1179,7 +1185,7 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * @throws ResultException Shall be thrown, if the request failed.
      */
     @Override
-    public @NotNull AdminStatistic getStatistic(
+    public @NotNull AdminStatistic fetchServerStatistic(
             @NotNull AdminDataSourceServerState dataSource, @NotNull AdminAggregationServerState aggregation,
             @NotNull List<Webservice> webservices, @NotNull Date start, @NotNull Date end
     ) throws ResultException {
@@ -1211,13 +1217,13 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
-     * Returns the session table with detailed status information about each session.
+     * Returns the session table from server with detailed status information about each session.
      *
      * @return The requested {@link SessionTable}.
      * @throws ResultException Shall be thrown, if the request failed.
      */
     @Override
-    public @NotNull SessionTable getSessionTable() throws ResultException {
+    public @NotNull SessionTable fetchSessionTable() throws ResultException {
         this.validateUser();
 
         SessionTable sessionTable = HttpRestRequest.createRequest(this.session)
@@ -1242,9 +1248,12 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
     public void closeSession(@NotNull String sessionId) throws ResultException {
         this.validateUser();
 
-        HttpRestRequest.createRequest(this.session)
+        try (ClassicHttpResponse ignored = HttpRestRequest.createRequest(this.session)
                 .buildRequest(HttpMethod.POST, "admin/session/" + sessionId + "/close")
-                .executeRequest();
+                .executeRequest()) {
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
+        }
     }
 
     /**
