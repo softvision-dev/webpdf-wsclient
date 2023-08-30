@@ -4,15 +4,15 @@ The library implements the required stubs and session management in ready-to-use
 
 ![webPDF Logo](images/logo.png)
 
-[webPDF](https://www.webpdf.de/) is a commercial multi-platform server solution for creating and processing PDF documents. To use the webPDF wsclient library for webservice calls, a running webPDF installation is required. A demo version as Windows installation, Linux package or as a virtual machine can be downloaded from the [product page](https://docs.webpdf.de/docs/download/).
+[webPDF](https://www.webpdf.de/) is a commercial multi-platform server solution for creating and processing PDF documents. To use the webPDF wsclient library for webservice calls, a running webPDF installation is required. A demo version as Windows installation, Linux package or container image can be downloaded from the [product page](https://docs.webpdf.de/docs/download/).
 
 > **Note**: Unless otherwise marked, the following is based on webPDF version 9 or newer. If you are using an older version please update to use all parameters for the current release of the library. You will always find the newest version at the product [download page](https://docs.webpdf.de/docs/download/).
 
 ## Download
 
-> **Note:** The version 9.0.0 requires at least webPDF server version **9.0.0** and JDK 11.
+> **Note:** The version 9.0.1 requires at least webPDF server version **[9.0.0.3081](https://docs.webpdf.de/changelog/9.0.0.3081)** and JDK 11.
 
-> **Note:** Starting with wsclient 9.0.0 the wsclient´s and webPDF server´s version numbers have been synchronized, to simplify finding the proper wsclient for your webPDF server.
+> **Note:** Starting with wsclient 9.x the wsclient´s and webPDF server´s version numbers have been synchronized, to simplify finding the proper wsclient for your webPDF server.
 
 You can use this library, by adding this dependency to your project:
 ```
@@ -20,7 +20,7 @@ You can use this library, by adding this dependency to your project:
 <dependency>
     <groupId>net.webpdf</groupId>
     <artifactId>webpdf-wsclient</artifactId>
-    <version>9.0.0</version>
+    <version>9.0.1</version>
 </dependency>
 ```
 
@@ -28,7 +28,7 @@ You can use this library, by adding this dependency to your project:
 You will find some [usage examples](https://github.com/softvision-dev/webpdf-wsclient/wiki/Usage) in the wiki.
 
 ## Migration
-**Be aware:** With version 9.0.0 this library also has undergone major changes to the logic, structure and naming of it´s packages and classes. If you already used prior versions of wsclient, you should expect having to adapt your imports and code accordingly. You will find further information in our [migration guide](https://github.com/softvision-dev/webpdf-wsclient/wiki/Migration).
+**Be aware:** With version 9.x this library also has undergone major changes to the logic, structure and naming of it´s packages and classes. If you already used prior versions of wsclient, you should expect having to adapt your imports and code accordingly. You will find further information in our [migration guide](https://github.com/softvision-dev/webpdf-wsclient/wiki/Migration).
 
 ## Documentation
 Have a look at our [wiki](https://github.com/softvision-dev/webpdf-wsclient/wiki) for examples and details.
@@ -45,5 +45,5 @@ Learn even more about our product in our [webPDF Documentation](https://www.webp
 Please, see the [license](LICENSE) file for more information.
 
 ## Changes
-The current version 9.0.0 is optimized for webPDF version 9. When using webPDF 7 or 8 you might prefer earlier versions of this library.
+The current version 9.0.1 is for webPDF version 9. When using webPDF 7 or 8 you might prefer earlier versions of this library.
 You might want to have a look at the [changes](CHANGES.md) file for further information.
