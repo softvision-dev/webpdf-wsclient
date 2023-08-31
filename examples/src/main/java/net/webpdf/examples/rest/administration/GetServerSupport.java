@@ -53,7 +53,7 @@ public class GetServerSupport {
 
             try (FileOutputStream fileOutputStream = new FileOutputStream(targetDocument)) {
                 /** download the support information */
-                administrationManager.getSupport(fileOutputStream /** optionally add filter here */);
+                administrationManager.buildSupportPackage(fileOutputStream /** optionally add filter here */);
             }
         } catch (ResultException ex) {
             /** Should an exception have occurred, you can use the following methods to request further information

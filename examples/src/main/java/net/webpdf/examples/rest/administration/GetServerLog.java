@@ -48,10 +48,10 @@ public class GetServerLog {
             AdministrationManager<RestDocument> administrationManager = session.getAdministrationManager();
 
             /** Get the current length of the log */
-            int logLength = administrationManager.getLogLength();
+            int logLength = administrationManager.fetchLogLength();
 
             /** Get the contents of the current log from byte 0 to log length */
-            String logContents = session.getAdministrationManager().getLog("0-" + logLength);
+            String logContents = session.getAdministrationManager().fetchLog("0-" + logLength);
         } catch (ResultException ex) {
             /** Should an exception have occurred, you can use the following methods to request further information
              * about the exception: */

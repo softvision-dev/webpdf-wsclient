@@ -53,7 +53,7 @@ public class UseSessionTable {
             AdministrationManager<RestDocument> administrationManager = session.getAdministrationManager();
 
             /** Get {@link SessionTable} from {@link AdministrationManager} */
-            SessionTable sessionTable = administrationManager.getSessionTable();
+            SessionTable sessionTable = administrationManager.fetchSessionTable();
 
             /** get the {@link List<SessionTableEntry>} */
             List<SessionTableEntry> sessionTableEntries = sessionTable.getSessionList();

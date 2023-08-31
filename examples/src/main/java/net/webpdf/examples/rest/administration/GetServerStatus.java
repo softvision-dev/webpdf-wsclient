@@ -49,7 +49,7 @@ public class GetServerStatus {
             AdministrationManager<RestDocument> administrationManager = session.getAdministrationManager();
 
             /** Get {@link AdminServerStatus} from {@link AdministrationManager} */
-            AdminServerStatus serverStatus = administrationManager.getStatus();
+            AdminServerStatus serverStatus = administrationManager.fetchServerStatus();
         } catch (ResultException ex) {
             /** Should an exception have occurred, you can use the following methods to request further information
              * about the exception: */

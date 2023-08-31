@@ -63,7 +63,7 @@ public class UpdateDatastore {
             AdministrationManager<RestDocument> administrationManager = session.getAdministrationManager();
 
             /** get the currently set logo file */
-            AdminLogoFileDataStore currentLogo = (AdminLogoFileDataStore) administrationManager.getDatastore(
+            AdminLogoFileDataStore currentLogo = (AdminLogoFileDataStore) administrationManager.fetchDatastore(
                     AdminFileGroupDataStore.LOGO
             );
 
