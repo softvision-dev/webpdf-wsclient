@@ -53,14 +53,25 @@ public final class TestServer {
         this.uriBuilderLocalServer = assertDoesNotThrow(() ->
                 new URIBuilder(TestConfig.getInstance().getServerConfig().getLocalURL())
                         .setPath(TestConfig.getInstance().getServerConfig().getLocalPath()));
+
         if (!uriBuilderLocalServer.isAbsolute()) {
-            fail("Invalid URL '" + TestConfig.getInstance().getServerConfig().getLocalURL() + "'");
+            if (TestConfig.getInstance().getIntegrationTestConfig().isIntegrationTestsActive()) {
+                fail("Invalid URL '" + TestConfig.getInstance().getServerConfig().getLocalURL() + "'");
+            } else {
+                this.uriBuilderLocalServer.setScheme("http").setHost("localhost").setPort(8080).setPath("/webPDF");
+            }
         }
+
         this.uriBuilderPublicServer = assertDoesNotThrow(() ->
                 new URIBuilder(TestConfig.getInstance().getServerConfig().getPublicURL())
                         .setPath(TestConfig.getInstance().getServerConfig().getPublicPath()));
+
         if (!uriBuilderPublicServer.isAbsolute()) {
-            fail("Invalid URL '" + TestConfig.getInstance().getServerConfig().getPublicURL() + "'");
+            if (TestConfig.getInstance().getIntegrationTestConfig().isIntegrationTestsActive()) {
+                fail("Invalid URL '" + TestConfig.getInstance().getServerConfig().getPublicURL() + "'");
+            } else {
+                this.uriBuilderPublicServer.setScheme("https").setHost("portal.webpdf.de").setPath("/webPDF");
+            }
         }
     }
 
