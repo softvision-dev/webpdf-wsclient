@@ -1,6 +1,7 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.openapi.*;
+import net.webpdf.wsclient.schema.extraction.info.DocumentType;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
@@ -28,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +74,85 @@ public class RestWebserviceIntegrationTest {
                         "REST document could not be downloaded.");
                 assertNotNull(restDocument.getDocumentFile(),
                         "Downloaded REST document is null");
+                assertEquals(FilenameUtils.removeExtension(sourceFile.getName()),
+                        restDocument.getDocumentFile().getFileName());
+                assertTrue(fileOut.exists());
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testConverterTemplate() {
+        assertDoesNotThrow(() -> {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)))) {
+                File resourceFile = testResources.getResource("integration/files/bigFive.html");
+                assertNotNull(resourceFile);
+                File templateFile = testResources.getResource("integration/files/bigFive.json");
+                assertNotNull(templateFile);
+                File headerFile = testResources.getResource("integration/files/bigFive-header.html");
+                assertNotNull(headerFile);
+                File footerFile = testResources.getResource("integration/files/bigFive-footer.html");
+                assertNotNull(footerFile);
+                File fileOut = testResources.getTempFolder().newFile();
+
+                File sourceFile = testResources.getTempFolder().newFile();
+                FileUtils.copyFile(resourceFile, sourceFile);
+
+                String json = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
+
+                ConverterRestWebService<RestDocument> webService =
+                        session.createWebServiceInstance(WebServiceType.CONVERTER);
+                assertNotNull(webService.getOperationParameters(), "Operation should have been initialized");
+
+                OperationConverterHtml converterHtmlType = new OperationConverterHtml();
+                converterHtmlType.setImageMode(OperationConverterHtml.ImageModeEnum.FILE);
+                converterHtmlType.setPreferCSSPageSize(true);
+                converterHtmlType.setUseAsTemplate(true);
+                converterHtmlType.setDownloadImages(true);
+                converterHtmlType.setBaseURL("https://upload.wikimedia.org/");
+                converterHtmlType.setTemplateData(new OperationTemplateData());
+                assertNotNull(converterHtmlType.getTemplateData());
+                converterHtmlType.getTemplateData().setSource(OperationTemplateData.SourceEnum.VALUE);
+                converterHtmlType.getTemplateData().setValue(json.getBytes());
+                webService.getOperationParameters().setHtml(converterHtmlType);
+
+                OperationConverterPage converterPageType = new OperationConverterPage();
+                converterPageType.setHeader(new OperationConverterHeader());
+                assertNotNull(converterPageType.getHeader());
+                converterPageType.getHeader().setValue(FileUtils.readFileToByteArray(headerFile));
+                converterPageType.setFooter(new OperationConverterFooter());
+                assertNotNull(converterPageType.getFooter());
+                converterPageType.getFooter().setValue(FileUtils.readFileToByteArray(footerFile));
+                webService.getOperationParameters().setPage(converterPageType);
+
+                RestDocument restDocument = webService.process(session.uploadDocument(sourceFile));
+                try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
+                    restDocument.downloadDocument(fileOutputStream);
+                }
+                assertNotNull(restDocument, "REST document could not be downloaded.");
+                assertNotNull(restDocument.getDocumentFile(), "Downloaded REST document is null");
+                assertNotNull(restDocument.getDocumentFile().getMetadata(), "REST Document should have metadata");
+                assertNotNull(restDocument.getDocumentFile().getMetadata().getPages(), "REST Document should have pages");
+
+                int pageCount = 0;
+                for(DocumentType.Pages.Page page : restDocument.getDocumentFile().getMetadata().getPages().getPage()) {
+                    pageCount++;
+
+                    switch (pageCount) {
+                        case 1:
+                            assertEquals(595, Math.round(page.getBoxes().getMediaBox().getHeight()));
+                            assertEquals(842, Math.round(page.getBoxes().getMediaBox().getWidth()));
+                            break;
+                        case 2:
+                            assertEquals(842, Math.round(page.getBoxes().getMediaBox().getHeight()));
+                            assertEquals(595, Math.round(page.getBoxes().getMediaBox().getWidth()));
+                            break;
+                    }
+                }
+
+                assertEquals(2, pageCount);
                 assertEquals(FilenameUtils.removeExtension(sourceFile.getName()),
                         restDocument.getDocumentFile().getFileName());
                 assertTrue(fileOut.exists());

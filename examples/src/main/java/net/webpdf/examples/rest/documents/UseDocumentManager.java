@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Here you will find a usage example for the webPDF {@link AdministrationManager} demonstrating how you can
+ * Here you will find a usage example for the webPDF {@link DocumentManager} demonstrating how you can
  * manage documents from the server using the REST API.
  */
 @SuppressWarnings({"DuplicatedCode", "DanglingJavadoc", "unused"})
@@ -36,7 +36,7 @@ public class UseDocumentManager {
 
     /**
      * <p>
-     * This usage example for the webPDF {@link AdministrationManager} shall demonstrate:
+     * This usage example for the webPDF {@link DocumentManager} shall demonstrate:
      * <ul>
      * <li>how to upload a document</li>
      * <li>how to get a list of uploaded</li>
