@@ -105,7 +105,7 @@
         <!-- TEST DEPENDENCY VERSIONS -->
         <junit.jupiter.params.version>5.10.0</junit.jupiter.params.version> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
         <junit.jupiter.engine.version>5.10.0</junit.jupiter.engine.version> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
-        <microsoft.azure.msal4j.version>1.13.10</microsoft.azure.msal4j.version> <!-- https://mvnrepository.com/artifact/com.microsoft.azure/msal4j -->
+        <microsoft.azure.msal4j.version>1.15.1</microsoft.azure.msal4j.version> <!-- https://mvnrepository.com/artifact/com.microsoft.azure/msal4j -->
         <auth0.version>1.45.0</auth0.version> <!-- https://mvnrepository.com/artifact/com.auth0/auth0 -->
         <bouncycastle.bcmail.version>1.76</bouncycastle.bcmail.version> <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcmail-jdk18on -->
         <testcontainers.version>1.19.0</testcontainers.version> <!-- https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter -->
