@@ -10,7 +10,7 @@ The library implements the required stubs and session management in ready-to-use
 
 ## Download
 
-> **Note:** The version 9.0.1 requires at least webPDF server version **[9.0.0.3081](https://docs.webpdf.de/changelog/9.0.0.3081)** and JDK 11.
+> **Note:** The version 9.0.2 requires at least webPDF server version **[9.0.0.3479](https://docs.webpdf.de/changelog/9.0.0.3479)** and JDK 11.
 
 > **Note:** Starting with wsclient 9.x the wsclient´s and webPDF server´s version numbers have been synchronized, to simplify finding the proper wsclient for your webPDF server.
 
@@ -20,7 +20,7 @@ You can use this library, by adding this dependency to your project:
 <dependency>
     <groupId>net.webpdf</groupId>
     <artifactId>webpdf-wsclient</artifactId>
-    <version>9.0.1</version>
+    <version>9.0.2</version>
 </dependency>
 ```
 
@@ -45,5 +45,5 @@ Learn even more about our product in our [webPDF Documentation](https://www.webp
 Please, see the [license](LICENSE) file for more information.
 
 ## Changes
-The current version 9.0.1 is for webPDF version 9. When using webPDF 7 or 8 you might prefer earlier versions of this library.
+The current version 9.0.2 is for webPDF version 9. When using webPDF 7 or 8 you might prefer earlier versions of this library.
 You might want to have a look at the [changes](CHANGES.md) file for further information.
