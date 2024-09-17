@@ -1208,6 +1208,7 @@
             <xs:element name="line" type="LineType" minOccurs="0"/>
             <xs:element name="border" type="BorderStyle" minOccurs="0"/>
             <xs:element name="drawStyle" type="DrawStyleType" minOccurs="0"/>
+            <xs:element name="field" type="FieldAnnotationType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="objectKey" default="" type="xs:string">
             <xs:annotation>
@@ -2835,4 +2836,51 @@
             <xs:enumeration value="none"/>
         </xs:restriction>
     </xs:simpleType>
+    <xs:complexType name="FieldAnnotationType">
+        <xs:annotation>
+            <xs:documentation>Defines a set of attributes for field annotations.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="signature" type="SignatureType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Relates this field to a signature. Should this element be present, the annotation is representing a signature.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The partial name of the annotation´s field.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mappingName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The mapping name of the annotation´s field.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="alternateName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The alternate name of the annotation´s field.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="type" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Indicates the type of the annotation´s field.
+                        <ul>
+                            <li>Btn = Button</li>
+                            <li>Tx = Textfield</li>
+                            <li>Ch = Choicefield</li>
+                            <li>Sig = Signaturefield</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
 </xs:schema>

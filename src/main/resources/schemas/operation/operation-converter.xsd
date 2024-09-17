@@ -71,12 +71,9 @@
         <xs:attribute name="embedFonts" default="false" type="xs:boolean">
             <xs:annotation>
                 <xs:documentation>
-                    <p>If "true," fonts will be embedded in the PDF document that is created.
-
-                    </p>
+                    <p>If "true," fonts will be embedded in the PDF document that is created.</p>
                     <p>
                         <b>Important:</b>: If the original fonts are not available on the conversion system, substitute fonts may be embedded instead.
-
                     </p>
                     <p>
                         <b>Important:</b>: If, after the conversion, you want to convert the PDF document to PDF/A, you should not embed any of the fonts, but should instead let the "Pdfa" web service do this.
@@ -87,9 +84,7 @@
         <xs:attribute name="accessPassword" default="" type="xs:string">
             <xs:annotation>
                 <xs:documentation>
-                    <p>This parameter can be used to declare a password that will be used to open the source document if it is protected.
-
-                    </p>
+                    <p>This parameter can be used to declare a password that will be used to open the source document if it is protected.</p>
                     <p>
                         <b>Important:</b>
                         This option is currently only supported for Microsoft Office 97-2003 binary documents and Microsoft Office 2007 documents. Only the default password methods are supported. Encryption based on digital certificates is not supported.
@@ -100,8 +95,7 @@
         <xs:attribute name="fileExtension" default="" type="xs:string">
             <xs:annotation>
                 <xs:documentation>
-                    <p>If you use this attribute to enter an extension for the file (e.g., "doc") that is currently being processed, automatic file format detection will be disabled. Normally, webPDF does not detect file formats based on the corresponding file extension, but on the file contents instead. Accordingly, webPDF will analyze the file and assign the file the appropriate "mime-type" so that the appropriate file converter can then be selected.
-                    </p>
+                    <p>If you use this attribute to enter an extension for the file (e.g., "doc") that is currently being processed, automatic file format detection will be disabled. Normally, webPDF does not detect file formats based on the corresponding file extension, but on the file contents instead. Accordingly, webPDF will analyze the file and assign the file the appropriate "mime-type" so that the appropriate file converter can then be selected.</p>
                     <p>
                         <b>Important:</b>: You should only set a file extension in exceptional cases, as this will completely disable automatic detection. If, for instance, you specify an extension for which webPDF does not have a "mime-type," the conversion will fail.
                     </p>
@@ -111,9 +105,7 @@
         <xs:attribute name="maxRecursion" default="1">
             <xs:annotation>
                 <xs:documentation>
-                    <p>Sets the maximum recursions, that may occur when converting a document's attachments.
-
-                    </p>
+                    <p>Sets the maximum recursions, that may occur when converting a document's attachments.</p>
                     <p>
                         <b>Important:</b>
                         This parameter is intended for internal use only. Please only use this, if you really are sure you need to do so.
@@ -150,7 +142,7 @@
         <xs:attribute name="downloadImages" default="false" type="xs:boolean">
             <xs:annotation>
                 <xs:documentation>
-                    <p>If "true", then the images of an e-mail or an HTML document are downloaded automatically. This option could slow down the conversion considerably if there are many images contained or if, for example, e-mail documents are converted in which the images can no longer be invoked.</p>
+                    <p>If "true", then externally referenced images in the HTML content of the e-mail are downloaded and inserted into the document. If false, the images are not downloaded and the external references to the image are removed, leaving already embedded images intact. This option can slow down the conversion if many images are included or if, for example, e-mail documents are converted in which the images can no longer be retrieved.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -220,6 +212,22 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="reduceImageSize" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If "true", then all images are reduced in their pixel size so that they fit into the maximum page width.
+                        This only applies to images that have been resized using the <code>resizeImages</code> option.
+                        These images are reduced to the maximum number of pixels required to fit the page width.
+                        Images that are not affected by the <code>resizeImages</code> option are not resized.
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        If you activate the <code>reduceImageSize</code> option, you must also activate <code>resizeImages</code> and only resized images will be affected by this option.
+                        This option also leads to a significant reduction in the number of pixels in images, which can lead to an improved document size.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ConverterHtmlType">
         <xs:annotation>
@@ -229,11 +237,24 @@
         </xs:annotation>
         <xs:all>
             <xs:element name="templateData" type="tns:TemplateDataType" minOccurs="0"/>
+            <xs:element name="errorReport" type="tns:ConverterHtmlErrorReportType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>
+                            This parameter specifies whether HTML content errors should be detected and, if so, whether a report should be provided along with the error code. The report is created only if at least one error was found. If the parameter is not specified, then any errors that may occur in the HTML document will not be detected and will be silently ignored.
+                            <p>
+                                <b>Important:</b>
+                                This parameter refers only to the content of the passed HTML document and not to the web service call itself.
+                            </p>
+                        </p>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:all>
         <xs:attribute name="downloadImages" default="false" type="xs:boolean">
             <xs:annotation>
                 <xs:documentation>
-                    <p>If "true", then the images of an e-mail or an HTML document are downloaded automatically. This option could slow down the conversion considerably if there are many images contained or if, for example, e-mail documents are converted in which the images can no longer be invoked.</p>
+                    <p>If "true", then externally referenced images of the HTML document are downloaded and inserted into the document. If false, the images are not downloaded and the external references to the image are removed, leaving already embedded images intact.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -247,7 +268,7 @@
         <xs:attribute name="baseURL" default="" type="xs:anyURI">
             <xs:annotation>
                 <xs:documentation>
-                    <p>Used to define the URL used as a basis for all URLs in the HTML document that are not defined as absolute URLs.</p>
+                    <p>Used to define the URL that will be the base for all URLs in the HTML document that are not defined as absolute URLs. The URL must be absolute and contain a scheme (e.g. 'http' or 'https'); the scheme 'file' is not allowed.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -265,7 +286,34 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="preferCSSPageSize" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If "true", then the page size and margins are preferentially used from the CSS. Otherwise, the sizes from the passed page parameter are used.
+                        The values can also be only partially overwritten, so that e.g. the page size is determined by the parameter values and the page margins are defined in the CSS.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="imageMode" default="base64" type="tns:ConverterHtmlImageModeType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>This defines how downloaded images are inserted into the HTML content (with reference to the <code>&lt;downloadImages&gt;</code> parameter). When referencing large images in the HTML content, it is recommended to use <code>&lt;file&gt;</code> to reduce the size of the HTML file and speed up the rendering of the HTML.
+                        <ul>
+                            <li>base64 = embed images as BASE64 content</li>
+                            <li>file = embed images as file links to local temporary files</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
+    <xs:simpleType name="ConverterHtmlImageModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="base64"/>
+            <xs:enumeration value="file"/>
+        </xs:restriction>
+    </xs:simpleType>
     <xs:complexType name="ConverterReportType">
         <xs:annotation>
             <xs:documentation>
@@ -317,7 +365,6 @@
                         <li>Serial Vector Format (svg)</li>
                         <li>Text document (txt)</li>
                     </ul>
-
                     In addition, you can replace the default template with a custom template of your own in "file". You can also use your own variables in this custom template. These variables would then need to be passed with a JSON structure (Base64-encoded) in "data".
                 </p>
             </xs:documentation>
@@ -1125,4 +1172,44 @@
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
+    <xs:complexType name="ConverterHtmlErrorReportType">
+        <xs:attribute name="mode" default="none" type="tns:ConverterHtmlErrorReportModeType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        This parameter specifies whether HTML content errors should be detected and, if so, how to provide a report with the errors. A detected error can be a failed download of a resource (for example, an image) or a script or CSS syntax error.
+                        <ul>
+                            <li>none = No content errors are detected and no report is generated and returned.</li>
+                            <li>message = Content errors are detected and the report is returned as part of the error message</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="format" default="xml" type="tns:ConverterHtmlErrorReportFormatType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        Defines the output format of the error report.
+                        <ul>
+                            <li>xml = XML document.</li>
+                            <li>json = JSON document</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="ConverterHtmlErrorReportModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none"/>
+            <xs:enumeration value="message"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ConverterHtmlErrorReportFormatType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="xml"/>
+            <xs:enumeration value="json"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

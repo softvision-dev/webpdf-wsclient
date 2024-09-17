@@ -1,9 +1,6 @@
 
 package net.webpdf.wsclient.schema.stubs;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * &lt;/complexType&gt;
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
+//@XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings({"unused", "JavadocLinkAsPlainText"})
 @XmlType(name = "FaultInfo", propOrder = {
         "errorCode",
@@ -41,11 +38,8 @@ import org.jetbrains.annotations.Nullable;
         "stackTrace"
 })
 public class ConverterFaultInfo implements FaultInfo {
-    @XmlElement(namespace = "http://schema.webpdf.de/1.0/soap/converter")
     private int errorCode;
-    @XmlElement(namespace = "http://schema.webpdf.de/1.0/soap/converter")
     private @Nullable String errorMessage;
-    @XmlElement(namespace = "http://schema.webpdf.de/1.0/soap/converter")
     private @Nullable String stackTrace;
 
     /**

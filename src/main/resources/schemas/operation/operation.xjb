@@ -118,6 +118,12 @@
         <jaxb:bindings node="//xs:complexType[@name='TemplateDataType']">
             <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
+        <jaxb:bindings node="//xs:complexType[@name='ConverterHeaderType']">
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:complexType[@name='ConverterFooterType']">
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
+        </jaxb:bindings>
         <jaxb:bindings node="//xs:complexType[@name='XslTransformationFileType']">
             <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
@@ -174,6 +180,18 @@
                 <simplify:as-element-property/>
             </simplify:property>
         </jaxb:bindings>
+        <jaxb:bindings
+                node="//xs:complexType[@name='RedactAnnotationType']//xs:complexContent//xs:extension//xs:element[@name='position']//xs:complexType">
+            <simplify:property name="pathElementOrQuadrilateral">
+                <simplify:as-element-property/>
+            </simplify:property>
+        </jaxb:bindings>
+        <jaxb:bindings
+                node="//xs:complexType[@name='MarkupAnnotationType']//xs:complexContent//xs:extension//xs:element[@name='position']//xs:complexType">
+            <simplify:property name="pathElementOrQuadrilateral">
+                <simplify:as-element-property/>
+            </simplify:property>
+        </jaxb:bindings>
     </jaxb:bindings>
 
     <!-- OptionsType -->
@@ -216,6 +234,12 @@
     <jaxb:bindings schemaLocation="operation-urlconverter.xsd" node="/xs:schema">
         <jaxb:bindings node="//xs:complexType[@name='UrlConverterType']">
             <inheritance:implements>net.webpdf.wsclient.schema.ParameterInterface</inheritance:implements>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:complexType[@name='UrlConverterHeaderType']">
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:complexType[@name='UrlConverterFooterType']">
+            <inheritance:implements>net.webpdf.wsclient.schema.FileDataType&lt;byte[]&gt;</inheritance:implements>
         </jaxb:bindings>
     </jaxb:bindings>
 
@@ -268,6 +292,27 @@
             <simplify:property name="fileOrFolder">
                 <simplify:as-element-property/>
             </simplify:property>
+        </jaxb:bindings>
+    </jaxb:bindings>
+
+    <!-- Common HttpOptionsSSLProtocolType -->
+    <jaxb:bindings schemaLocation="operation-common.xsd" node="/xs:schema">
+        <!-- Change names for PDF/A level enums -->
+        <jaxb:bindings
+                node="//xs:simpleType[@name='HttpSettingsSSLProtocolType']/xs:restriction/xs:enumeration[@value='TLSv1']">
+            <jaxb:typesafeEnumMember name="TLS_V1"/>
+        </jaxb:bindings>
+        <jaxb:bindings
+                node="//xs:simpleType[@name='HttpSettingsSSLProtocolType']/xs:restriction/xs:enumeration[@value='TLSv1.1']">
+            <jaxb:typesafeEnumMember name="TLS_V1_1"/>
+        </jaxb:bindings>
+        <jaxb:bindings
+                node="//xs:simpleType[@name='HttpSettingsSSLProtocolType']/xs:restriction/xs:enumeration[@value='TLSv1.2']">
+            <jaxb:typesafeEnumMember name="TLS_V1_2"/>
+        </jaxb:bindings>
+        <jaxb:bindings
+                node="//xs:simpleType[@name='HttpSettingsSSLProtocolType']/xs:restriction/xs:enumeration[@value='TLSv1.3']">
+            <jaxb:typesafeEnumMember name="TLS_V1_3"/>
         </jaxb:bindings>
     </jaxb:bindings>
 

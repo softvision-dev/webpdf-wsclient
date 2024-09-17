@@ -3,7 +3,6 @@ package net.webpdf.wsclient.schema.stubs;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,11 +40,8 @@ import org.jetbrains.annotations.Nullable;
         "stackTrace"
 })
 public class SignatureFaultInfo implements FaultInfo {
-    @XmlElement(namespace = "http://schema.webpdf.de/1.0/soap/signature")
     private int errorCode;
-    @XmlElement(namespace = "http://schema.webpdf.de/1.0/soap/signature")
     private @Nullable String errorMessage;
-    @XmlElement(namespace = "http://schema.webpdf.de/1.0/soap/signature")
     private @Nullable String stackTrace;
 
     /**

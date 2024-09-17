@@ -358,9 +358,7 @@ public class DocumentManagerIntegrationTest {
                 assertNotNull(updatedLockedDocument.getDocumentFile().getError(), "The document error should be set.");
                 assertEquals(-5008, updatedLockedDocument.getDocumentFile().getError().getErrorCode(),
                         "The document password should be wrong.");
-                assertNotNull(updatedLockedDocument.getDocumentFile().getMetadata(), "The metadata should be set.");
-                assertNull(updatedLockedDocument.getDocumentFile().getMetadata().getInformation(),
-                        "The metadata information should not be readable.");
+                assertNull(updatedLockedDocument.getDocumentFile().getMetadata(), "The metadata should not be set.");
 
                 // rotate pages with wrong password
                 assertThrows(ServerResultException.class, () -> rotateWebService.process(updatedLockedDocument));

@@ -63,7 +63,7 @@
                                 <xs:element name="add">
                                     <xs:annotation>
                                         <xs:documentation>
-                                            <p>Adds a background image or a solid colour background layer to the document (the "colorBackground" and "imageBackground" elements are mutually exclusive, i.e., you must select one or the other). A document is not allowed to have more than one background layer.</p>
+                                            <p>Adds a background image or a solid color background layer to the document (the "colorBackground" and "imageBackground" elements are mutually exclusive, i.e., you must select one or the other). A document is not allowed to have more than one background layer.</p>
                                         </xs:documentation>
                                     </xs:annotation>
                                     <xs:complexType>
@@ -76,7 +76,7 @@
                                 <xs:element name="remove">
                                     <xs:annotation>
                                         <xs:documentation>
-                                            <p>Removes a background layer from a document. As of this writing, this operation does not have any additional parameters. The "backgroundSelection" element, which must be included without fail, is meant simply as a placeholder for potential future detailed parameters.</p>
+                                            <p>Removes background layers from all pages of a document. As of this writing, this operation does not have any additional parameters. The "backgroundSelection" element, which must be included without fail, is meant simply as a placeholder for potential future detailed parameters.</p>
                                         </xs:documentation>
                                     </xs:annotation>
                                     <xs:complexType>
@@ -111,7 +111,7 @@
                                 <xs:element name="remove">
                                     <xs:annotation>
                                         <xs:documentation>
-                                            <p>Removes a header and footer definition from a document. As of this writing, this operation does not have any additional parameters. The "headerFooterSelection" element, which must be included without fail, is meant simply as a placeholder for potential future detailed parameters.</p>
+                                            <p>Removes header and footer definitions from all pages of a document. As of this writing, this operation does not have any additional parameters. The "headerFooterSelection" element, which must be included without fail, is meant simply as a placeholder for potential future detailed parameters.</p>
                                         </xs:documentation>
                                     </xs:annotation>
                                     <xs:complexType>
@@ -525,7 +525,7 @@
     <xs:complexType name="SelectionBackgroundType">
         <xs:annotation>
             <xs:documentation>
-                <p>Defines which backgrounds shall be removed. (Currently all backgrounds shall be selected for removal, if this element is present.)</p>
+                <p>Defines which backgrounds shall be removed. (Currently all backgrounds on all pages shall be selected for removal, if this element is present.)</p>
             </xs:documentation>
         </xs:annotation>
     </xs:complexType>
@@ -827,7 +827,7 @@
         <xs:attribute name="replaceExisting" default="false" type="xs:boolean">
             <xs:annotation>
                 <xs:documentation>
-                    <p>If true, an existing header and footer definition will be automatically deleted and replaced with the new one. If false, an existing definition will cause the operation to be aborted.</p>
+                    <p>If true, preexisting header and footer definition will be automatically deleted from all pages of the document and replaced with the new one. If false, preexisting header and footer definitions on any page of the document will cause the operation to be aborted.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -835,7 +835,7 @@
     <xs:complexType name="HeaderFooterPositionsType">
         <xs:annotation>
             <xs:documentation>
-                <p>The header/footer consists of three parts (left margin, centre, right margin). This element can be used to define the text contents that should be shown at these positions. The contents can consist of static and dynamic contents.
+                <p>The header/footer consists of three parts (left margin, center, right margin). This element can be used to define the text contents that should be shown at these positions. The contents can consist of static and dynamic contents.
 
                 </p>
                 <p>

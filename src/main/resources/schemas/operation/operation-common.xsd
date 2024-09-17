@@ -809,11 +809,19 @@
                     </xs:attribute>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="pdfa" type="tns:PdfaSettingsType" minOccurs="0" maxOccurs="1">
+            <xs:element name="pdfa" type="tns:PdfaSettingsType" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>
                         <p>
                             The <code>pdfa</code> element allows to make settings for automatic handling of PDF/A documents. The web service operation checks whether it´s execution is valid for a given PDF/A document according to the settings.
+                        </p>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="http" type="tns:HttpSettingsType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>The <code>http</code> element allows to define the options for all external HTTP requests made by the server during the execution of the web service operation.
                         </p>
                     </xs:documentation>
                 </xs:annotation>
@@ -827,9 +835,8 @@
                     <ul>
                         <li>adobeRestrictions = Only those changes are allowed that are enabled by the included signatures. This follows the specifications given by Adobe.</li>
                         <li>generalEditRestrictions = All changes to signed documents are prohibited, even those that might be allowed according to the included signatures.</li>
-                        <li>noEditRestrictions = Editing of signed documents is not restricted and all changes are allowed (by doing this, you accept the invalidation of included signatures).</li>
+                        <li>noEditRestrictions = Editing of signed documents is not restricted and all changes are allowed (by doing this, you accept that all signatures could potentially be removed from the document when necessary).</li>
                     </ul>
-
                 </p>
             </xs:documentation>
         </xs:annotation>
@@ -1034,5 +1041,116 @@
             <xs:enumeration value="verbose"/>
             <xs:enumeration value="compact"/>
         </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="HttpSettingsType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines the options for all external HTTP requests made by the server during the execution of the web service operation.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all minOccurs="0">
+            <xs:element name="headers" type="tns:HttpSettingsHeaderType" minOccurs="0"/>
+            <xs:element name="ssl" type="tns:HttpSettingsSSLType" minOccurs="0"/>
+            <xs:element name="timeout" type="tns:HttpSettingsTimeoutType" minOccurs="0"/>
+        </xs:all>
+        <xs:attribute name="userAgent" default="" type="xs:string"/>
+        <xs:attribute name="followRedirect" default="true" type="xs:boolean"/>
+    </xs:complexType>
+    <xs:complexType name="HttpSettingsHeaderType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines the HTTP headers that will be sent for all HTTP requests.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="header" type="tns:HttpSettingsHeaderEntryType"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="HttpSettingsHeaderEntryType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines an HTTP header entry consisting of a <code>&lt;name&gt;</code> (header name) and a <code>&lt;value&gt;</code> (header value). All header entries are sent with each HTTP request and override the default headers.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" default="" type="xs:string"/>
+        <xs:attribute name="value" default="" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="HttpSettingsTimeoutType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines the timeout options for all HTTP requests.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="connect" default="10000" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Sets the timeout for the connection establishment of the HTTP requests.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="response" default="60000" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Sets the timeout to wait for the arrival of a response to the HTTP request.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="HttpSettingsSSLType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines the SSL options for all HTTP requests.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all minOccurs="0">
+            <xs:element name="protocols" minOccurs="0">
+                <xs:complexType>
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Defines the allowed TLS protocols for the HTTP requests.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence maxOccurs="unbounded">
+                        <xs:element name="protocol" type="tns:HttpSettingsSSLProtocolType" maxOccurs="unbounded"
+                                    default="TLSv1.2"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ciphers" minOccurs="0">
+                <xs:complexType>
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Defines the list of allowed TLS ciphers for the HTTP requests.</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence maxOccurs="unbounded">
+                        <xs:element name="cipher" type="tns:HttpSettingsSSLCipherType" maxOccurs="unbounded"
+                                    default=""/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+    <xs:simpleType name="HttpSettingsSSLProtocolType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Sets the TLS protocol type for SSL connections.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TLSv1"/>
+            <xs:enumeration value="TLSv1.1"/>
+            <xs:enumeration value="TLSv1.2"/>
+            <xs:enumeration value="TLSv1.3"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="HttpSettingsSSLCipherType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Specifies the encryption algorithm (cipher) for TLS (SSL) connections.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string"/>
     </xs:simpleType>
 </xs:schema>

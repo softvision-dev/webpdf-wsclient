@@ -9,7 +9,7 @@
     <xs:include schemaLocation="operation-urlconverter.xsd" />
     <xs:include schemaLocation="operation-attachment.xsd" />
     <xs:include schemaLocation="operation-annotation.xsd" />
-    <xs:include schemaLocation="operation-split.xsd" />
+    <xs:include schemaLocation="operation-split.xsd"/>
     <xs:include schemaLocation="operation-merge.xsd" />
     <xs:include schemaLocation="operation-security.xsd" />
     <xs:include schemaLocation="operation-image.xsd" />
