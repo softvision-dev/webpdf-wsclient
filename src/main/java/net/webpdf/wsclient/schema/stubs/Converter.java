@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * A class implementing {@link Converter} provides an interface class for the webPDF
  * {@link WebServiceType#CONVERTER} webservice.
- * </p
+ * </p>
  *
  * @see WebServiceType#CONVERTER
  */
