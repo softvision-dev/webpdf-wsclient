@@ -43,12 +43,12 @@ public class Auth0Provider implements OAuth2Provider {
         }
 
         // Request an access token from the Auth0 authorization provider:
-        AuthAPI auth = new AuthAPI(authority, clientId, clientSecret);
-        TokenRequest tokenRequest = auth.requestToken(audience);
+        AuthAPI.Builder builder = AuthAPI.newBuilder(authority, clientId, clientSecret);
+        TokenRequest tokenRequest = builder.build().requestToken(audience);
 
         // Create and return the webPDF wsclient access Token.
         try {
-            token = new OAuth2Token(tokenRequest.execute().getAccessToken());
+            token = new OAuth2Token(tokenRequest.execute().getBody().getAccessToken());
         } catch (Auth0Exception ex) {
             throw new AuthResultException(ex);
         }
