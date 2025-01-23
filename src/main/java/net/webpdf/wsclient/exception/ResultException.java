@@ -52,7 +52,7 @@ public class ResultException extends Exception {
      * <p>
      * Returns the error code of this {@link ResultException}.<br>
      * For {@link ServerResultException}s this is the actual
-     * <a href="https://portal.webpdf.de/webPDF/help/doc/en/appendix/error_codes.html">webPDF server error code</a>,
+     * <a href="https://docs.webpdf.de/docs/appendix/error-codes">webPDF server error code</a>,
      * other {@link ResultException}s shall return the numerical representation of the wsclient {@link Error}.<br>
      * </p>
      *

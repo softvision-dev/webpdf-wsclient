@@ -4,7 +4,7 @@ import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.openapi.DocumentFileExtract;
 import net.webpdf.wsclient.openapi.DocumentInfo;
 import net.webpdf.wsclient.openapi.DocumentInfoType;
-import net.webpdf.wsclient.schema.beans.DocumentFile;
+import net.webpdf.wsclient.openapi.DocumentFile;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.session.documents.Document;

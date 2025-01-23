@@ -1,16 +1,16 @@
 # webPDF wsclient
-This repository contains a simplified and optimized client library for the webPDF server, and serves as an alternative to more complex REST or SOAP APIs.
+This repository contains a simplified and optimized client library for the webPDF server and serves as an alternative to the more complex direct use of the REST or SOAP APIs.
 The library implements the required stubs and session management in ready-to-use interface classes and provides a common object based parameterization for webservice calls in both protocols.
 
 ![webPDF Logo](images/logo.png)
 
 [webPDF](https://www.webpdf.de/) is a commercial multi-platform server solution for creating and processing PDF documents. To use the webPDF wsclient library for webservice calls, a running webPDF installation is required. A demo version as Windows installation, Linux package or container image can be downloaded from the [product page](https://docs.webpdf.de/docs/download/).
 
-> **Note**: Unless otherwise marked, the following is based on webPDF version 9 or newer. If you are using an older version please update to use all parameters for the current release of the library. You will always find the newest version at the product [download page](https://docs.webpdf.de/docs/download/).
+> **Note**: Unless otherwise marked, the following is based on webPDF version 10 or newer. If you are using an older version please update to use all parameters for the current release of the library. You will always find the newest version at the product [download page](https://docs.webpdf.de/docs/download/).
 
 ## Download
 
-> **Note:** The version 9.0.2 requires at least webPDF server version **[9.0.0.3479](https://docs.webpdf.de/changelog/9.0.0.3479)** and JDK 11.
+> **Note:** The version 10.0.0 requires at least webPDF server version **[10.0.0.3646](https://docs.webpdf.de/changelog/)** and JDK 11.
 
 > **Note:** Starting with wsclient 9.x the wsclient´s and webPDF server´s version numbers have been synchronized, to simplify finding the proper wsclient for your webPDF server.
 
@@ -20,7 +20,7 @@ You can use this library, by adding this dependency to your project:
 <dependency>
     <groupId>net.webpdf</groupId>
     <artifactId>webpdf-wsclient</artifactId>
-    <version>9.0.2</version>
+    <version>10.0.0</version>
 </dependency>
 ```
 

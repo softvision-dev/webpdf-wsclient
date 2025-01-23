@@ -94,10 +94,14 @@ public final class TestServer {
                 uri = this.uriBuilderLocalServer.build();
                 uriBuilder = new URIBuilder(uri);
                 if (transferProtocol.equals(TransferProtocol.HTTP)) {
-                    uriBuilder.setPort(TestConfig.getInstance().getServerConfig().getLocalHttpPort());
+                    if (TestConfig.getInstance().getServerConfig().getLocalHttpPort() != 80) {
+                        uriBuilder.setPort(TestConfig.getInstance().getServerConfig().getLocalHttpPort());
+                    }
                     uriBuilder.setScheme("http");
                 } else {
-                    uriBuilder.setPort(TestConfig.getInstance().getServerConfig().getLocalHttpsPort());
+                    if (TestConfig.getInstance().getServerConfig().getLocalHttpsPort() != 443) {
+                        uriBuilder.setPort(TestConfig.getInstance().getServerConfig().getLocalHttpsPort());
+                    }
                     uriBuilder.setScheme("https");
                 }
                 break;
@@ -106,10 +110,14 @@ public final class TestServer {
                 uriBuilder = new URIBuilder(uri);
                 if (transferProtocol.equals(TransferProtocol.HTTP)) {
                     uriBuilder.setScheme("http");
-                    uriBuilder.setPort(TestConfig.getInstance().getServerConfig().getPublicHttpPort());
+                    if (TestConfig.getInstance().getServerConfig().getPublicHttpPort() != 80) {
+                        uriBuilder.setPort(TestConfig.getInstance().getServerConfig().getPublicHttpPort());
+                    }
                 } else {
                     uriBuilder.setScheme("https");
-                    uriBuilder.setPort(TestConfig.getInstance().getServerConfig().getPublicHttpsPort());
+                    if (TestConfig.getInstance().getServerConfig().getPublicHttpsPort() != 443) {
+                        uriBuilder.setPort(TestConfig.getInstance().getServerConfig().getPublicHttpsPort());
+                    }
                 }
                 break;
             default:

@@ -22,6 +22,8 @@ import net.webpdf.wsclient.webservice.rest.ConverterRestWebService;
 import net.webpdf.wsclient.webservice.rest.ToolboxRestWebService;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -223,7 +225,7 @@ public class DocumentManagerIntegrationTest {
                 RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                 assertNotNull(document, "Valid document should have been returned.");
                 assertNotNull(document.getDocumentFile().getError(), "document error should be set.");
-                assertEquals(-5009, document.getDocumentFile().getError().getErrorCode(), "errorcode should be -5009");
+                assertEquals(-5009, document.getDocumentFile().getError().getErrorCode(), "error code should be -5009");
 
                 PdfPasswordType passwordType = new PdfPasswordType();
                 passwordType.setOpen("a");
@@ -231,7 +233,7 @@ public class DocumentManagerIntegrationTest {
                 document = (RestWebServiceDocument) document.updateDocumentSecurity(passwordType);
                 assertNotNull(document, "Valid document should have been returned.");
                 assertNotNull(document.getDocumentFile().getError(), "document error should be set.");
-                assertEquals(0, document.getDocumentFile().getError().getErrorCode(), "errorcode should be 0");
+                assertEquals(0, document.getDocumentFile().getError().getErrorCode(), "error code should be 0");
             }
         });
     }
@@ -249,7 +251,7 @@ public class DocumentManagerIntegrationTest {
                 RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                 assertNotNull(document, "Valid document should have been returned.");
                 assertNotNull(document.getDocumentFile().getError(), "document error should be set.");
-                assertEquals(-5055, document.getDocumentFile().getError().getErrorCode(), "errorcode should be -5055");
+                assertEquals(-5055, document.getDocumentFile().getError().getErrorCode(), "error code should be -5055");
 
                 PdfPasswordType passwordType = new PdfPasswordType();
                 KeyPairType keyPairType = new KeyPairType();
@@ -267,7 +269,7 @@ public class DocumentManagerIntegrationTest {
                 document = (RestWebServiceDocument) document.updateDocumentSecurity(passwordType);
                 assertNotNull(document, "Valid document should have been returned.");
                 assertNotNull(document.getDocumentFile().getError(), "document error should be set.");
-                assertEquals(0, document.getDocumentFile().getError().getErrorCode(), "errorcode should be 0");
+                assertEquals(0, document.getDocumentFile().getError().getErrorCode(), "error code should be 0");
             }
         });
     }
@@ -337,8 +339,9 @@ public class DocumentManagerIntegrationTest {
                 assertEquals(0, encryptedDocument.getDocumentFile().getError().getErrorCode(),
                         "The document password should be set.");
                 assertNotNull(encryptedDocument.getDocumentFile().getMetadata(), "The metadata should be set.");
-                assertNotNull(encryptedDocument.getDocumentFile().getMetadata().getInformation(),
-                        "The metadata information should be readable.");
+                assertInstanceOf(DocumentMetadataPdf.class, encryptedDocument.getDocumentFile().getMetadata());
+                DocumentMetadataPdf documentMetadataPdf = (DocumentMetadataPdf) encryptedDocument.getDocumentFile().getMetadata();
+                assertNotNull(documentMetadataPdf.getInformation(), "The metadata information should be readable.");
 
                 // rotate pages with initially set password
                 OperationToolboxRotateRotate operationToolboxRotate = new OperationToolboxRotateRotate();
@@ -351,7 +354,7 @@ public class DocumentManagerIntegrationTest {
                 rotateWebService.setOperationParameters(parameters);
                 rotateWebService.process(encryptedDocument);
 
-                // set wrong password
+                // set the wrong password
                 PdfPasswordType wrongPasswordType = new PdfPasswordType();
                 wrongPasswordType.setOpen("wrong");
                 final RestDocument updatedLockedDocument = encryptedDocument.updateDocumentSecurity(wrongPasswordType);
@@ -360,22 +363,22 @@ public class DocumentManagerIntegrationTest {
                         "The document password should be wrong.");
                 assertNull(updatedLockedDocument.getDocumentFile().getMetadata(), "The metadata should not be set.");
 
-                // rotate pages with wrong password
+                // rotate pages with the wrong password
                 assertThrows(ServerResultException.class, () -> rotateWebService.process(updatedLockedDocument));
 
-                // rotate pages with correct temporary password
+                // rotate pages with the correct temporary password
                 OperationPdfPassword correctOperationPdfPassword = new OperationPdfPassword();
                 correctOperationPdfPassword.setOpen(openPassword);
                 correctOperationPdfPassword.setPermission(permissionPassword);
                 rotateWebService.setPassword(correctOperationPdfPassword);
 
-                // set correct password
+                // set the correct password
                 PdfPasswordType correctPasswordType = new PdfPasswordType();
                 correctPasswordType.setOpen(openPassword);
                 correctPasswordType.setPermission(permissionPassword);
                 RestDocument updatedOpenedDocument = encryptedDocument.updateDocumentSecurity(correctPasswordType);
 
-                // rotate pages with correct password
+                // rotate pages with the correct password
                 rotateWebService.setPassword(null);
                 rotateWebService.process(updatedOpenedDocument);
             }
@@ -410,6 +413,12 @@ public class DocumentManagerIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)))) {
                 assertNotNull(session, "Valid session should have been created.");
                 RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+                assertNotNull(document.getDocumentFile());
+                DocumentFile documentFile = document.getDocumentFile();
+                assertInstanceOf(DocumentMetadataArchive.class, documentFile.getMetadata(), "The metadata should be set.");
+                DocumentMetadataArchive documentMetadataArchive = (DocumentMetadataArchive) documentFile.getMetadata();
+                assertNotNull(documentMetadataArchive.getFiles());
+                assertEquals(3, documentMetadataArchive.getFiles().size());
                 assertNotNull(document, "Valid document should have been returned.");
                 List<RestWebServiceDocument> unzippedFiles = document.extractDocument(new DocumentFileExtract());
                 assertNotNull(unzippedFiles, "Valid documents should have been returned.");
@@ -429,6 +438,13 @@ public class DocumentManagerIntegrationTest {
                 RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                 assertNotNull(document, "Valid document should have been returned.");
 
+                assertNotNull(document.getDocumentFile());
+                DocumentFile documentFile = document.getDocumentFile();
+                assertInstanceOf(DocumentMetadataArchive.class, documentFile.getMetadata(), "The metadata should be set.");
+                DocumentMetadataArchive documentMetadataArchive = (DocumentMetadataArchive) documentFile.getMetadata();
+                assertNotNull(documentMetadataArchive.getFiles());
+                assertEquals(3, documentMetadataArchive.getFiles().size());
+
                 DocumentFileFilterRule fileFilterRule = new DocumentFileFilterRule();
                 fileFilterRule.setRuleType(DocumentFileFilterType.GLOB);
                 fileFilterRule.setRulePattern("logo.png");
@@ -442,13 +458,29 @@ public class DocumentManagerIntegrationTest {
                 List<RestWebServiceDocument> unzippedFiles = document.extractDocument(fileExtract);
                 assertNotNull(unzippedFiles, "Valid documents should have been returned.");
                 assertEquals(1, unzippedFiles.size(), "There should be 1 result document.");
+
+                RestWebServiceDocument restWebServiceDocument = unzippedFiles.get(0);
+                assertNotNull(restWebServiceDocument.getDocumentFile());
+                documentFile = restWebServiceDocument.getDocumentFile();
+                assertInstanceOf(DocumentMetadataImage.class, documentFile.getMetadata(), "The metadata should be set.");
+                DocumentMetadataImage documentMetadataImage = (DocumentMetadataImage) documentFile.getMetadata();
+                assertNotNull(documentMetadataImage.getImages());
+                assertEquals(1, documentMetadataImage.getImages().size());
+                for (DocumentMetadataImageEntry documentMetadataImageEntry : documentMetadataImage.getImages()) {
+                    assertNotNull(documentMetadataImageEntry);
+                    assertEquals(68, documentMetadataImageEntry.getHeight());
+                }
             }
         });
     }
 
-    @Test
+    @ParameterizedTest
     @IntegrationTest
-    public void testDocumentCompress() {
+    @CsvSource(delimiter = '|', value = {
+            "true",
+            "false"
+    })
+    public void testDocumentCompress(boolean storeDocument) {
         assertDoesNotThrow(() -> {
             File[] sourceFiles = {
                     testResources.getResource("test.pdf"),
@@ -467,15 +499,28 @@ public class DocumentManagerIntegrationTest {
                 }
 
                 DocumentFileCompress fileCompress = new DocumentFileCompress();
+                fileCompress.setStoreArchive(storeDocument);
                 fileCompress.setDocumentIdList(documentIdList);
                 fileCompress.setArchiveFileName("archive");
 
+                if (!storeDocument) {
+                    ServerResultException serverResultException = assertThrows(ServerResultException.class, () -> session.getDocumentManager().compressDocuments(fileCompress));
+                    assertNotNull(serverResultException, "The server result should have been returned.");
+                    assertEquals(-50, serverResultException.getErrorCode());
+                    return;
+                }
                 RestDocument archive = session.getDocumentManager().compressDocuments(fileCompress);
                 assertNotNull(archive, "Valid document should have been returned.");
                 assertEquals(
                         "application/zip", archive.getDocumentFile().getMimeType(),
                         "The result document should be a zip file"
                 );
+
+                DocumentFile documentFile = archive.getDocumentFile();
+                assertInstanceOf(DocumentMetadataArchive.class, documentFile.getMetadata(), "The metadata should be set.");
+                DocumentMetadataArchive documentMetadataArchive = (DocumentMetadataArchive) documentFile.getMetadata();
+                assertNotNull(documentMetadataArchive.getFiles());
+                assertEquals(3, documentMetadataArchive.getFiles().size());
             }
         });
     }

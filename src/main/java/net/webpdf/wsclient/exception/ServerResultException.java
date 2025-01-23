@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * An instance of {@link ServerResultException} indicates, that some fail state occurred webPDF server while executing
  * your request. The numerical error code provided by {@link #getErrorCode()} is identical to the
- * <a href="https://portal.webpdf.de/webPDF/help/doc/en/appendix/error_codes.html">webPDF error codes</a>.
+ * <a href="https://docs.webpdf.de/docs/appendix/error-codes">webPDF error codes</a>.
  * </p>
  */
 public class ServerResultException extends ResultException {
@@ -44,7 +44,7 @@ public class ServerResultException extends ResultException {
     /**
      * Instantiates a new {@link ServerResultException} that wraps a webPDF server fail state.
      *
-     * @param errorCode    The <a href="https://portal.webpdf.de/webPDF/help/doc/en/appendix/error_codes.html">webPDF
+     * @param errorCode    The <a href="https://docs.webpdf.de/docs/appendix/error-codes">webPDF
      *                     server error code</a>
      *                     wrapped by the {@link ServerResultException}.
      * @param errorMessage The message of the webPDF server fail state.

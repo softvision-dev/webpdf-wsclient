@@ -14,7 +14,7 @@ import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
-import net.webpdf.wsclient.schema.beans.DocumentFile;
+import net.webpdf.wsclient.openapi.DocumentFile;
 import net.webpdf.wsclient.tools.SerializeHelper;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;

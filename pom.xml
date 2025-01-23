@@ -138,7 +138,46 @@
         </profile>
 
         <profile>
+            <id>softvision-snapshots</id>
+                <distributionManagement>
+                    <snapshotRepository>
+                        <id>svd-repo-snapshots</id>
+                        <url>https://repository.softvision.de/repository/maven-snapshots/</url>
+                    </snapshotRepository>
+                </distributionManagement>
+            <build>
+
+                <plugins>
+                    <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${nexus.staging.plugin.version}</version>
+                        <configuration>
+                            <serverId>svd-repo-snapshots</serverId>
+                            <nexusUrl>https://repository.softvision.de/repository/maven-snapshots/</nexusUrl>
+                            <skipStaging>true</skipStaging>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
             <id>sonatype-oss-release</id>
+                <distributionManagement>
+                    <snapshotRepository>
+                        <id>sonatype-nexus-snapshots</id>
+                        <name>Sonatype Nexus Snapshots Repository</name>
+                        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                    </snapshotRepository>
+
+                    <repository>
+                        <id>sonatype-nexus-staging</id>
+                        <name>Sonatype Nexus Release Repository</name>
+                        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                    </repository>
+                </distributionManagement>
             <build>
                 <plugins>
                     <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
@@ -192,20 +231,6 @@
         <system>GitHub Issues</system>
         <url>https://github.com/softvision-dev/webpdf-wsclient/issues</url>
     </issueManagement>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots Repository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Sonatype Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-    </distributionManagement>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
@@ -374,7 +399,8 @@
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/openapi/openapi.json</inputSpec>
                             <output>${project.build.directory}/generated-sources/openapi</output>
-                            <templateDirectory>${project.basedir}/src/main/resources/openapi/templates</templateDirectory>
+                            <templateDirectory>${project.basedir}/src/main/resources/openapi/templates
+                            </templateDirectory>
                             <generatorName>java</generatorName>
                             <library>apache-httpclient</library>
                             <skipValidateSpec>false</skipValidateSpec>

@@ -1,7 +1,6 @@
 package net.webpdf.wsclient;
 
 import net.webpdf.wsclient.openapi.*;
-import net.webpdf.wsclient.schema.extraction.info.DocumentType;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
@@ -22,6 +21,8 @@ import net.webpdf.wsclient.webservice.rest.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import javax.imageio.ImageIO;
 import javax.xml.transform.stream.StreamSource;
@@ -41,16 +42,20 @@ public class RestWebserviceIntegrationTest {
     private final TestResources testResources = new TestResources(RestWebserviceIntegrationTest.class);
     public TestServer testServer = TestServer.getInstance();
 
-    @Test
+    @ParameterizedTest
     @IntegrationTest
-    public void testConverter() {
+    @CsvSource(delimiter = '|', value = {
+            "lorem-ipsum.docx|5",
+            "logo.png|1"
+    })
+    public void testConverter(String fileName, int expectedPages) {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST,
                             testServer.getServer(ServerType.LOCAL)))) {
                 ConverterRestWebService<RestDocument> webService =
                         session.createWebServiceInstance(WebServiceType.CONVERTER);
-                File file = testResources.getResource("integration/files/lorem-ipsum.docx");
+                File file = testResources.getResource("integration/files/" + fileName);
                 assertNotNull(file);
                 File sourceFile = testResources.getTempFolder().newFile();
                 FileUtils.copyFile(file, sourceFile);
@@ -66,14 +71,26 @@ public class RestWebserviceIntegrationTest {
                 pdfa.setConvert(convertPdfa);
                 convertPdfa.setLevel(OperationConvertPdfa.LevelEnum._3B);
                 convertPdfa.setErrorReport(OperationConvertPdfa.ErrorReportEnum.MESSAGE);
+
                 RestDocument restDocument = webService.process(session.uploadDocument(sourceFile));
+
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                     restDocument.downloadDocument(fileOutputStream);
                 }
-                assertNotNull(restDocument,
-                        "REST document could not be downloaded.");
-                assertNotNull(restDocument.getDocumentFile(),
-                        "Downloaded REST document is null");
+                assertNotNull(restDocument, "REST document could not be downloaded.");
+                assertNotNull(restDocument.getDocumentFile(), "Downloaded REST document is null");
+
+                DocumentFile documentFile = restDocument.getDocumentFile();
+                assertNotNull(documentFile.getMetadata(), "Document metadata could not be retrieved.");
+                assertNotNull(documentFile.getMetadata().getMetadataType());
+                assertEquals(DocumentMetadataType.PDF, documentFile.getMetadata().getMetadataType());
+                DocumentMetadataPdf documentMetadataPdf = (DocumentMetadataPdf) documentFile.getMetadata();
+                assertNotNull(documentMetadataPdf.getPages());
+                MetadataPagesDocument metadataPagesDocument = documentMetadataPdf.getPages();
+                assertNotNull(metadataPagesDocument);
+                List<MetadataPagePages> metadataPagePages = metadataPagesDocument.getPage();
+                assertNotNull(metadataPagePages);
+                assertEquals(expectedPages, metadataPagePages.size());
                 assertEquals(FilenameUtils.removeExtension(sourceFile.getName()),
                         restDocument.getDocumentFile().getFileName());
                 assertTrue(fileOut.exists());
@@ -134,11 +151,20 @@ public class RestWebserviceIntegrationTest {
                 assertNotNull(restDocument, "REST document could not be downloaded.");
                 assertNotNull(restDocument.getDocumentFile(), "Downloaded REST document is null");
                 assertNotNull(restDocument.getDocumentFile().getMetadata(), "REST Document should have metadata");
-                assertNotNull(restDocument.getDocumentFile().getMetadata().getPages(), "REST Document should have pages");
-
+                assertInstanceOf(DocumentMetadataPdf.class, restDocument.getDocumentFile().getMetadata());
+                DocumentMetadataPdf documentMetadataPdf = (DocumentMetadataPdf) restDocument.getDocumentFile().getMetadata();
+                assertNotNull(documentMetadataPdf.getPages(), "REST Document should have pages");
+                MetadataPagesDocument metadataPagesDocument = documentMetadataPdf.getPages();
+                assertNotNull(metadataPagesDocument.getPage(), "REST Document should have pages");
+                List<MetadataPagePages> metadataPagePages = metadataPagesDocument.getPage();
                 int pageCount = 0;
-                for(DocumentType.Pages.Page page : restDocument.getDocumentFile().getMetadata().getPages().getPage()) {
+                for (MetadataPagePages page : metadataPagePages) {
                     pageCount++;
+
+                    assertNotNull(page.getBoxes());
+                    assertNotNull(page.getBoxes().getMediaBox());
+                    assertNotNull(page.getBoxes().getMediaBox().getHeight());
+                    assertNotNull(page.getBoxes().getMediaBox().getWidth());
 
                     switch (pageCount) {
                         case 1:

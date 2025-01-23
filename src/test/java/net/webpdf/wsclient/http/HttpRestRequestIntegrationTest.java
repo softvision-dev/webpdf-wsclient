@@ -8,7 +8,7 @@ import net.webpdf.wsclient.testsuite.server.ServerType;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.beans.DocumentFile;
+import net.webpdf.wsclient.openapi.DocumentFile;
 import net.webpdf.wsclient.session.rest.RestWebServiceSession;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.testsuite.io.TestResources;

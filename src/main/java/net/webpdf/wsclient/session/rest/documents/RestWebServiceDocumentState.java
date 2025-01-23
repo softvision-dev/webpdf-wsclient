@@ -3,7 +3,7 @@ package net.webpdf.wsclient.session.rest.documents;
 import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.schema.beans.DocumentFile;
+import net.webpdf.wsclient.openapi.DocumentFile;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import org.jetbrains.annotations.NotNull;
 

@@ -100,9 +100,13 @@
     <xs:complexType name="PositionedContentElementType">
         <xs:sequence>
             <xs:element name="rectangle" type="RectangleType" minOccurs="1" maxOccurs="unbounded"/>
-            <xs:choice minOccurs="1" maxOccurs="1">
-                <xs:element name="plain" type="xs:string" default=""/>
-            </xs:choice>
+            <xs:element name="plain" type="xs:string" minOccurs="0" default=""/>
+            <xs:element name="data" type="DataType" minOccurs="0"/>
         </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:base64Binary"/>
+        </xs:simpleContent>
     </xs:complexType>
 </xs:schema>

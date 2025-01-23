@@ -151,7 +151,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:all>
-            <xs:element name="scanArea" type="tns:RectangleType"/>
+            <xs:element name="scanArea" type="tns:RectangleType" minOccurs="0"/>
         </xs:all>
         <xs:attribute name="pages" default="" type="xs:string">
             <xs:annotation>
