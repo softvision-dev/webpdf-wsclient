@@ -21,11 +21,13 @@ import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.ConverterRestWebService;
 import net.webpdf.wsclient.webservice.rest.ToolboxRestWebService;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -429,6 +431,28 @@ public class DocumentManagerIntegrationTest {
 
     @Test
     @IntegrationTest
+    public void testDocumentExtractFile() {
+        assertDoesNotThrow(() -> {
+            File sourceFile = testResources.getResource("files.zip");
+            File compareFile = testResources.getResource("extract.png");
+            File targetFile = testResources.getTempFolder().newFile();
+            try (RestWebServiceSession session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)));
+                 OutputStream outputStream = Files.newOutputStream(targetFile.toPath())
+            ) {
+                assertNotNull(session, "Valid session should have been created.");
+                RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+                assertNotNull(document, "Valid document should have been returned.");
+
+                document.extractArchiveFile("logo.png", outputStream);
+                assertTrue(FileUtils.contentEquals(compareFile, targetFile),
+                        "The content of the test and the extracted document should have been equal.");
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
     public void testDocumentExtractWithFilter() {
         assertDoesNotThrow(() -> {
             File sourceFile = testResources.getResource("files.zip");
@@ -521,6 +545,31 @@ public class DocumentManagerIntegrationTest {
                 DocumentMetadataArchive documentMetadataArchive = (DocumentMetadataArchive) documentFile.getMetadata();
                 assertNotNull(documentMetadataArchive.getFiles());
                 assertEquals(3, documentMetadataArchive.getFiles().size());
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testDocumentUpdate() {
+        assertDoesNotThrow(() -> {
+            File sourceFile = testResources.getResource("lorem-ipsum.txt");
+            File targetFile = testResources.getTempFolder().newFile();
+            String fileContent = "This is test content";
+            try (RestWebServiceSession session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)));
+                 OutputStream outputStream = Files.newOutputStream(targetFile.toPath());
+                 InputStream inputStream = IOUtils.toInputStream(fileContent, StandardCharsets.UTF_8);
+            ) {
+                assertNotNull(session, "Valid session should have been created.");
+                RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+                assertNotNull(document, "Valid document should have been returned.");
+
+                document.updateDocument(inputStream);
+                document.downloadDocument(outputStream);
+                String updatedContent = FileUtils.readFileToString(targetFile, StandardCharsets.UTF_8);
+
+                assertTrue(fileContent.equals(updatedContent), "content should equal \"" + fileContent + "\"");
             }
         });
     }

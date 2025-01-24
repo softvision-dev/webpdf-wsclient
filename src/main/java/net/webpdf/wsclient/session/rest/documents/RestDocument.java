@@ -11,6 +11,7 @@ import net.webpdf.wsclient.session.documents.Document;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -117,4 +118,23 @@ public interface RestDocument extends Document {
      * @throws ResultException Shall be thrown, should the extraction have failed.
      */
     List<? extends RestDocument> extractDocument(@NotNull DocumentFileExtract fileExtract) throws ResultException;
+
+    /**
+     * This is a shortcut for {@link DocumentManager#extractArchiveFile} and extracts and downloads the given archive
+     * path of the {@link RestDocument}.
+     *
+     * @param archivePath  The path of the file to extract in the given archive.
+     * @param target The {@link OutputStream} to write the extracted archive file to.
+     * @throws ResultException Shall be thrown should the download have failed.
+     */
+    void extractArchiveFile(@NotNull String archivePath, @NotNull OutputStream target) throws ResultException;
+
+    /**
+     * This is a shortcut for {@link DocumentManager#updateDocument} and updates the {@link RestDocument}.
+     *
+     * @param data The data {@link InputStream} to update the document with.
+     * @return The updated {@link RestDocument}.
+     * @throws ResultException Shall be thrown should the update have failed.
+     */
+    @NotNull RestDocument updateDocument(@NotNull InputStream data) throws ResultException;
 }

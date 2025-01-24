@@ -293,4 +293,46 @@ public class RestAdministrationIntegrationTest {
             }
         });
     }
+
+    @Test
+    @IntegrationTest
+    public void testClusterConfig() {
+        assertDoesNotThrow(() -> {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
+            )) {
+                ClusterSettings clusterSettings = session.getAdministrationManager().getClusterConfiguration();
+                assertNotNull(clusterSettings, "cluster configuration should exist.");
+                assertNotNull(clusterSettings.getMode(), "mode should exist.");
+
+                clusterSettings.setMode(ClusterMode.CLUSTER);
+                assertEquals(ClusterMode.CLUSTER, clusterSettings.getMode(), "mode should be cluster.");
+
+                session.getAdministrationManager().updateClusterConfiguration(clusterSettings);
+                clusterSettings = session.getAdministrationManager().fetchClusterConfiguration();
+                assertNotNull(clusterSettings, "cluster configuration should exist.");
+                assertEquals(ClusterMode.CLUSTER, clusterSettings.getMode(), "mode should be cluster.");
+
+                // reset cluster mode
+                clusterSettings.setMode(ClusterMode.SINGLE);
+                session.getAdministrationManager().updateClusterConfiguration(clusterSettings);
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testClusterStatus() {
+        assertDoesNotThrow(() -> {
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
+            )) {
+                ClusterStatus clusterStatus = session.getAdministrationManager().fetchClusterStatus();
+                assertNotNull(clusterStatus.getSettings(), "settings should exist.");
+                assertEquals(ClusterMode.SINGLE, clusterStatus.getSettings().getMode(), "mode should be single.");
+            }
+        });
+    }
 }

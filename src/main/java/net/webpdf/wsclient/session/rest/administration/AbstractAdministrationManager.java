@@ -36,6 +36,8 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
     private @Nullable ServerConfigServer serverConfiguration;
     private @Nullable UserConfigUsers userConfiguration;
     private @Nullable AdminLogFileConfiguration logConfiguration;
+    private @Nullable ClusterSettings clusterConfiguration;
+    private @Nullable ProviderSettings providerConfiguration;
     private @Nullable AdminGlobalKeyStore globalKeyStore;
     private @Nullable Map<String, AdminConnectorKeyStore> connectorKeyStore;
     private @Nullable AdminTrustStoreKeyStore trustStoreKeyStore;
@@ -1271,5 +1273,302 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
         } catch (UnsupportedCharsetException ex) {
             throw new ClientResultException(Error.XML_OR_JSON_CONVERSION_FAILURE, ex);
         }
+    }
+
+    /**
+     * Gets the {@link ClusterSettings} configuration from the server updating the cached configuration.
+     *
+     * @return {@link ClusterSettings} the requested configuration.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    @Override
+    public @NotNull ClusterSettings fetchClusterConfiguration() throws ResultException {
+        this.validateUser();
+
+        AdminClusterConfiguration adminClusterConfiguration = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.GET, "admin/configuration/cluster")
+                .executeRequest(AdminClusterConfiguration.class);
+
+        if (adminClusterConfiguration == null) {
+            throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
+        }
+
+        this.clusterConfiguration = adminClusterConfiguration.getConfiguration();
+
+        return this.clusterConfiguration;
+    }
+
+    /**
+     * Gets the cached {@link ClusterSettings} configuration of the server or fetches via
+     * {@link AdministrationManager#fetchClusterConfiguration} if cache is empty
+     *
+     * @return {@link ClusterSettings} the requested configuration.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    @Override
+    public @NotNull ClusterSettings getClusterConfiguration() throws ResultException {
+        this.validateUser();
+
+        return this.clusterConfiguration == null ? this.fetchClusterConfiguration() : this.clusterConfiguration;
+    }
+
+    /**
+     * <p>
+     * Updates the {@link ClusterSettings} configuration if no {@link AdminConfigurationResult#getError()} occured.
+     * </p>
+     * <p>
+     * Optionally also validates the {@link ClusterSettings} configuration with additional {@link AdminApplicationCheck}s.
+     * </p>
+     * <p>
+     * <b>Be Aware:</b> Some of these changes might require a server restart to take effect.
+     * </p>
+     *
+     * @param configuration The {@link ClusterSettings} configuration defines settings for the web services and
+     *                      the portal page.
+     * @param checks        A list of {@link AdminClusterCheck}s to validate the configuration.
+     * @return defines an extended {@link AdminConfigurationResult} for administrative configuration operations
+     * when the {@link ClusterSettings} configuration is updated.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    @Override
+    public @NotNull AdminConfigurationResult updateClusterConfiguration(
+            @NotNull ClusterSettings configuration, @NotNull List<AdminClusterCheck> checks
+    ) throws ResultException {
+        this.validateUser();
+
+        AdminClusterConfiguration clusterConfiguration = new AdminClusterConfiguration();
+        clusterConfiguration.setConfiguration(configuration);
+        clusterConfiguration.setConfigurationChecks(checks);
+        clusterConfiguration.setConfigurationMode(AdminConfigurationMode.WRITE);
+        clusterConfiguration.setConfigurationType(AdminConfigurationType.CLUSTER);
+
+        AdminConfigurationResult configurationResult = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.POST, "admin/configuration/", this.prepareHttpEntity(clusterConfiguration))
+                .executeRequest(AdminConfigurationResult.class);
+
+        if (configurationResult == null) {
+            throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
+        }
+
+        if (configurationResult.getError() != null && configurationResult.getError().getCode() != null &&
+                configurationResult.getError().getCode() == 0) {
+            this.clusterConfiguration = configuration;
+        }
+
+        return configurationResult;
+    }
+
+    /**
+     * <p>
+     * Updates the {@link ClusterSettings} configuration if no {@link AdminConfigurationResult#getError()} occured.
+     * </p>
+     * <p>
+     * <b>Be Aware:</b> Some of these changes might require a server restart to take effect.
+     * </p>
+     *
+     * @param configuration The {@link ClusterSettings} configuration defines settings for the web services and
+     *                      the portal page.
+     * @return defines an extended {@link AdminConfigurationResult} for administrative configuration operations
+     * when the {@link ClusterSettings} configuration is updated.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    public @NotNull AdminConfigurationResult updateClusterConfiguration(
+            @NotNull ClusterSettings configuration
+    ) throws ResultException {
+        return this.updateClusterConfiguration(configuration, new ArrayList<>());
+    }
+
+    /**
+     * <p>
+     * Validates the {@link ClusterSettings} configuration with the given {@link AdminClusterCheck}s.
+     * </p>
+     *
+     * @param configuration The {@link ClusterSettings} configuration defines settings for the web services and
+     *                      the portal page.
+     * @param checks        The list of {@link AdminClusterCheck}s to validate the configuration with.
+     * @return defines an extended {@link AdminConfigurationResult} for administrative configuration operations
+     * when the {@link ClusterSettings} configuration is validated.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    @Override
+    public @NotNull AdminConfigurationResult validateClusterConfiguration(
+            @NotNull ClusterSettings configuration, @NotNull List<AdminClusterCheck> checks
+    ) throws ResultException {
+        this.validateUser();
+
+        AdminClusterConfiguration clusterConfiguration = new AdminClusterConfiguration();
+        clusterConfiguration.setConfiguration(configuration);
+        clusterConfiguration.setConfigurationChecks(checks);
+        clusterConfiguration.setConfigurationMode(AdminConfigurationMode.VALIDATE);
+        clusterConfiguration.setConfigurationType(AdminConfigurationType.CLUSTER);
+
+        AdminConfigurationResult configurationResult = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.POST, "admin/configuration/", this.prepareHttpEntity(clusterConfiguration))
+                .executeRequest(AdminConfigurationResult.class);
+
+        if (configurationResult == null) {
+            throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
+        }
+
+        return configurationResult;
+    }
+
+    /**
+     * Gets the {@link ProviderSettings} configuration from the server updating the cached configuration.
+     *
+     * @return {@link ProviderSettings} the requested configuration.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    @Override
+    public @NotNull ProviderSettings fetchProviderConfiguration() throws ResultException {
+        this.validateUser();
+
+        AdminProviderConfiguration adminProviderConfiguration = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.GET, "admin/configuration/provider")
+                .executeRequest(AdminProviderConfiguration.class);
+
+        if (adminProviderConfiguration == null) {
+            throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
+        }
+
+        this.providerConfiguration = adminProviderConfiguration.getConfiguration();
+
+        return this.providerConfiguration;
+    }
+
+    /**
+     * Gets the cached {@link ProviderSettings} configuration of the server or fetches via
+     * {@link AdministrationManager#fetchProviderConfiguration} if cache is empty
+     *
+     * @return {@link ProviderSettings} the requested configuration.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    @Override
+    public @NotNull ProviderSettings getProviderConfiguration() throws ResultException {
+        this.validateUser();
+
+        return this.providerConfiguration == null ? this.fetchProviderConfiguration() : this.providerConfiguration;
+    }
+
+    /**
+     * <p>
+     * Updates the {@link ProviderSettings} configuration if no {@link AdminConfigurationResult#getError()} occured.
+     * </p>
+     * <p>
+     * Optionally also validates the {@link ProviderSettings} configuration with additional {@link AdminProviderCheck}s.
+     * </p>
+     * <p>
+     * <b>Be Aware:</b> Some of these changes might require a server restart to take effect.
+     * </p>
+     *
+     * @param configuration The {@link ProviderSettings} configuration defines settings for the web services and
+     *                      the portal page.
+     * @param checks        A list of {@link AdminProviderCheck}s to validate the configuration.
+     * @return defines an extended {@link AdminConfigurationResult} for administrative configuration operations
+     * when the {@link ProviderSettings} configuration is updated.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    @Override
+    public @NotNull AdminConfigurationResult updateProviderConfiguration(
+            @NotNull ProviderSettings configuration, @NotNull List<AdminProviderCheck> checks
+    ) throws ResultException {
+        this.validateUser();
+
+        AdminProviderConfiguration providerConfiguration = new AdminProviderConfiguration();
+        providerConfiguration.setConfiguration(configuration);
+        providerConfiguration.setConfigurationChecks(checks);
+        providerConfiguration.setConfigurationMode(AdminConfigurationMode.WRITE);
+        providerConfiguration.setConfigurationType(AdminConfigurationType.PROVIDER);
+
+        AdminConfigurationResult configurationResult = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.POST, "admin/configuration/", this.prepareHttpEntity(providerConfiguration))
+                .executeRequest(AdminConfigurationResult.class);
+
+        if (configurationResult == null) {
+            throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
+        }
+
+        if (configurationResult.getError() != null && configurationResult.getError().getCode() != null &&
+                configurationResult.getError().getCode() == 0) {
+            this.providerConfiguration = configuration;
+        }
+
+        return configurationResult;
+    }
+
+    /**
+     * <p>
+     * Updates the {@link ProviderSettings} configuration if no {@link AdminConfigurationResult#getError()} occured.
+     * </p>
+     * <p>
+     * <b>Be Aware:</b> Some of these changes might require a server restart to take effect.
+     * </p>
+     *
+     * @param configuration The {@link ProviderSettings} configuration defines settings for the web services and
+     *                      the portal page.
+     * @return defines an extended {@link AdminConfigurationResult} for administrative configuration operations
+     * when the {@link ProviderSettings} configuration is updated.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    public @NotNull AdminConfigurationResult updateProviderConfiguration(
+            @NotNull ProviderSettings configuration
+    ) throws ResultException {
+        return this.updateProviderConfiguration(configuration, new ArrayList<>());
+    }
+
+    /**
+     * <p>
+     * Validates the {@link ProviderSettings} configuration with the given {@link AdminProviderCheck}s.
+     * </p>
+     *
+     * @param configuration The {@link ProviderSettings} configuration defines settings for the web services and
+     *                      the portal page.
+     * @param checks        The list of {@link AdminProviderCheck}s to validate the configuration with.
+     * @return defines an extended {@link AdminConfigurationResult} for administrative configuration operations
+     * when the {@link ProviderSettings} configuration is validated.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    @Override
+    public @NotNull AdminConfigurationResult validateProviderConfiguration(
+            @NotNull ProviderSettings configuration, @NotNull List<AdminProviderCheck> checks
+    ) throws ResultException {
+        this.validateUser();
+
+        AdminProviderConfiguration providerConfiguration = new AdminProviderConfiguration();
+        providerConfiguration.setConfiguration(configuration);
+        providerConfiguration.setConfigurationChecks(checks);
+        providerConfiguration.setConfigurationMode(AdminConfigurationMode.VALIDATE);
+        providerConfiguration.setConfigurationType(AdminConfigurationType.PROVIDER);
+
+        AdminConfigurationResult configurationResult = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.POST, "admin/configuration/", this.prepareHttpEntity(providerConfiguration))
+                .executeRequest(AdminConfigurationResult.class);
+
+        if (configurationResult == null) {
+            throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
+        }
+
+        return configurationResult;
+    }
+
+    /**
+     * Returns the cluster status from server.
+     *
+     * @return The requested {@link ClusterStatus}.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    @Override
+    public @NotNull ClusterStatus fetchClusterStatus() throws ResultException {
+        this.validateUser();
+
+        ClusterStatus clusterStatus = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.GET, "admin/cluster/status")
+                .executeRequest(ClusterStatus.class);
+
+        if (clusterStatus == null) {
+            throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
+        }
+
+        return clusterStatus;
     }
 }

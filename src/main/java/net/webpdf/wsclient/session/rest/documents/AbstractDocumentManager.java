@@ -630,6 +630,29 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
     }
 
     /**
+     * Extracts and downloads the given archive path in the {@link RestDocument} with the given document ID and
+     * returns it as {@link OutputStream}.
+     *
+     * @param documentId   The document ID of the {@link RestDocument} to extract and download from.
+     * @param archivePath  The path of the file to extract in the given archive.
+     * @param outputStream The {@link OutputStream} to write the extracted archive file to.
+     * @throws ResultException Shall be thrown, should the download have failed.
+     */
+    @Override
+    public void extractArchiveFile(
+            @NotNull String documentId, @NotNull String archivePath, @NotNull OutputStream outputStream
+    ) throws ResultException {
+        if (!containsDocument(documentId)) {
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
+        }
+
+        HttpRestRequest.createRequest(getSession())
+                .setAcceptHeader(DataFormat.OCTET_STREAM.getMimeType())
+                .buildRequest(HttpMethod.GET, "documents/" + documentId + "/archive/" + archivePath)
+                .executeRequest(outputStream);
+    }
+
+    /**
      * <p>
      * Compresses a list of {@link RestDocument}s selected by documentId or file filter into a new archive document
      * in the document storage.
@@ -672,5 +695,36 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
         }
 
         return this.synchronizeDocument(documentFile);
+    }
+
+    public @NotNull T_REST_DOCUMENT updateDocument(@NotNull String documentId, @NotNull InputStream data)
+            throws ResultException {
+        if (!containsDocument(documentId)) {
+            throw new ClientResultException(Error.INVALID_DOCUMENT);
+        }
+
+        T_REST_DOCUMENT restDocument = getDocument(documentId);
+        DocumentFile documentFile = restDocument.getDocumentFile();
+        String fileName = documentFile.getFileName() + "." + documentFile.getFileExtension();
+
+        try {
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.setMode(HttpMultipartMode.LEGACY);
+            builder.setCharset(StandardCharsets.UTF_8);
+            builder.addBinaryBody("filedata", IOUtils.toByteArray(data), ContentType.DEFAULT_BINARY, fileName);
+            HttpEntity entity = builder.build();
+
+            documentFile = HttpRestRequest.createRequest(getSession())
+                    .buildRequest(HttpMethod.PUT, "documents/" + documentId, entity)
+                    .executeRequest(DocumentFile.class);
+
+            if (documentFile == null) {
+                throw new ClientResultException(Error.INVALID_DOCUMENT);
+            }
+
+            return synchronizeDocument(documentFile);
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.INVALID_SOURCE_DOCUMENT, ex);
+        }
     }
 }

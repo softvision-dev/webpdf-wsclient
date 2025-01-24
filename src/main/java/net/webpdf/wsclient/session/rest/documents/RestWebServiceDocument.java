@@ -12,10 +12,7 @@ import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.session.documents.AbstractDocument;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -178,5 +175,28 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
             @NotNull DocumentFileExtract fileExtract
     ) throws ResultException {
         return accessInternalState().getDocumentManager().extractDocument(this.getDocumentId(), fileExtract);
+    }
+
+    /**
+     * This is a shortcut for {@link DocumentManager#extractArchiveFile} and extracts and downloads the given archive
+     * path of the {@link RestDocument}.
+     *
+     * @param archivePath  The path of the file to extract in the given archive.
+     * @param target The {@link OutputStream} to write the extracted archive file to.
+     * @throws ResultException Shall be thrown should the download have failed.
+     */
+    public void extractArchiveFile(@NotNull String archivePath, @NotNull OutputStream target) throws ResultException {
+        accessInternalState().getDocumentManager().extractArchiveFile(this.getDocumentId(), archivePath, target);
+    }
+
+    /**
+     * This is a shortcut for {@link DocumentManager#updateDocument} and updates the {@link RestDocument}.
+     *
+     * @param data The data {@link InputStream} to update the document with.
+     * @return The updated {@link RestDocument}.
+     * @throws ResultException Shall be thrown should the update have failed.
+     */
+    public @NotNull RestDocument updateDocument(@NotNull InputStream data) throws ResultException {
+        return accessInternalState().getDocumentManager().updateDocument(this.getDocumentId(), data);
     }
 }

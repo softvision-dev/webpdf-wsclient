@@ -244,6 +244,19 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
     ) throws ResultException;
 
     /**
+     * Extracts and downloads the given archive path in the {@link RestDocument} with the given document ID and
+     * returns it as {@link OutputStream}.
+     *
+     * @param documentId   The document ID of the {@link RestDocument} to extract and download from.
+     * @param archivePath  The path of the file to extract in the given archive.
+     * @param outputStream The {@link OutputStream} to write the extracted archive file to.
+     * @throws ResultException Shall be thrown, should the download have failed.
+     */
+    void extractArchiveFile(
+            @NotNull String documentId, @NotNull String archivePath, @NotNull OutputStream outputStream
+    ) throws ResultException;
+
+    /**
      * <p>
      * Compresses a list of {@link RestDocument}s selected by documentId or file filter into a new archive document
      * in the document storage.
@@ -263,4 +276,15 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @throws ResultException Shall be thrown, should the compression have failed.
      */
     @NotNull T_REST_DOCUMENT compressDocuments(@NotNull DocumentFileCompress fileCompress) throws ResultException;
+
+    /**
+     * Updates a {@link RestDocument} selected by documentId with the given {@link InputStream}, updating it in this
+     * {@link DocumentManager} and returns the resulting {@link RestDocument} handle.
+     *
+     * @param documentId The document ID of the {@link RestDocument} to update.
+     * @param data       The data {@link InputStream} to update the document with.
+     * @return The resulting {@link RestDocument} handle.
+     * @throws ResultException Shall be thrown, should the update have failed.
+     */
+    @NotNull T_REST_DOCUMENT updateDocument(@NotNull String documentId, @NotNull InputStream data) throws ResultException;
 }
