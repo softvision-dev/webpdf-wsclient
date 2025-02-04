@@ -10,7 +10,7 @@ The library implements the required stubs and session management in ready-to-use
 
 ## Download
 
-> **Note:** The version 10.0.0 requires at least webPDF server version **[10.0.0.3646](https://docs.webpdf.de/changelog/)** and JDK 11.
+> **Note:** The version 10.0.0 requires at least webPDF server version **[10.0.0.3669](https://docs.webpdf.de/changelog/)** and JDK 11.
 
 > **Note:** Starting with wsclient 9.x the wsclient´s and webPDF server´s version numbers have been synchronized, to simplify finding the proper wsclient for your webPDF server.
 
