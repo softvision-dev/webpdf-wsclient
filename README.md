@@ -45,5 +45,5 @@ Learn even more about our product in our [webPDF Documentation](https://www.webp
 Please, see the [license](LICENSE) file for more information.
 
 ## Changes
-The current version 9.0.2 is for webPDF version 9. When using webPDF 7 or 8 you might prefer earlier versions of this library.
+The current version 10.0.0 is for webPDF version 10. When using webPDF 8 or 9 you might prefer earlier versions of this library.
 You might want to have a look at the [changes](CHANGES.md) file for further information.
