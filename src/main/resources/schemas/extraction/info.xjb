@@ -1,29 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jaxb:bindings version="3.0"
                xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
-               xmlns:xs="http://www.w3.org/2001/XMLSchema"
-               jaxb:extensionBindingPrefixes="annox simplify inheritance">
-
-    <!--
-        Annox: https://github.com/highsource/jaxb2-annotate-plugin
-        Important: Annotation classes must be in XJC's classpath!
-    -->
-
-    <jaxb:bindings>
-        <!--
-        <jaxb:globalBindings generateElementProperty="true"
-                             fixedAttributeAsConstantProperty="true"
-                             choiceContentProperty="true"
-                             localScoping="toplevel"/>
-        -->
-
-        <!--
-        choiceContentProperty="true" = makes single getters (with concrete types) to a 'XOrYOrZ' getter (with type 'object')
-        -->
-        <jaxb:globalBindings generateIsSetMethod="true" choiceContentProperty="false"/>
-
-    </jaxb:bindings>
-
+               xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <jaxb:bindings schemaLocation="info.xsd" node="/xs:schema">
 
         <jaxb:schemaBindings>
