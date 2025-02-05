@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jaxb:bindings version="3.0"
+               xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb">
+    <jaxb:bindings>
+        <jaxb:globalBindings generateIsSetMethod="true" choiceContentProperty="false"/>
+    </jaxb:bindings>
+</jaxb:bindings>

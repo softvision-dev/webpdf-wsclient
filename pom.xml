@@ -86,7 +86,7 @@
         <nexus.staging.plugin.version>1.7.0</nexus.staging.plugin.version> <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
         <!-- OpenAPI generator > 7.4 cannot be used as it changes some ENUM names (use of “_”): https://github.com/OpenAPITools/openapi-generator/issues/19204 -->
         <openapi.generator.maven.plugin.version>7.4.0</openapi.generator.maven.plugin.version> <!-- https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin -->
-        <jaxb.maven.plugin.version>3.1.0-SNAPSHOT</jaxb.maven.plugin.version> <!-- https://mvnrepository.com/artifact/com.evolvedbinary.maven.mojohaus/jaxb-maven-plugin -->
+        <jaxb.maven.plugin.version>4.0.8</jaxb.maven.plugin.version> <!-- https://mvnrepository.com/artifact/com.evolvedbinary.maven.mojohaus/jaxb-maven-plugin -->
         <buildnumber.maven.plugin.version>3.2.1</buildnumber.maven.plugin.version> <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/buildnumber-maven-plugin -->
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
         <maven.source.plugin.version>3.3.1</maven.source.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
@@ -97,11 +97,6 @@
         <maven.surefire.plugin.version>3.5.2</maven.surefire.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
         <maven.gpg.plugin.version>3.2.7</maven.gpg.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
         <maven.resources.plugin>3.3.1</maven.resources.plugin> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
-
-        <!-- PLUGIN-ONLY DEPENDENCY VERSIONS -->
-        <glassfish.jaxb.xjc.version>4.0.5</glassfish.jaxb.xjc.version> <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-xjc -->
-        <jaxb2.basics.version>0.12.1-SNAPSHOT</jaxb2.basics.version> <!-- https://github.com/highsource/jaxb2-basics -->
-        <jaxb2.basics.annotate.version>1.1.0</jaxb2.basics.annotate.version> <!-- https://mvnrepository.com/artifact/org.jvnet.jaxb2_commons/jaxb2-basics-annotate -->
 
         <!-- TEST DEPENDENCY VERSIONS -->
         <junit.jupiter.params.version>5.11.4</junit.jupiter.params.version> <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
@@ -182,6 +177,7 @@
                 <plugins>
                     <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
                     <plugin>
+                        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>${maven.gpg.plugin.version}</version>
@@ -378,12 +374,6 @@
             <version>${log4j.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>24.0.0</version>
-            <scope>compile</scope>
-        </dependency>
 
     </dependencies>
 
@@ -428,157 +418,104 @@
                 </executions>
             </plugin>
 
-            <!-- https://github.com/evolvedbinary/mojohaus-jaxb-maven-plugin/ -->
-            <!-- https://mvnrepository.com/artifact/com.evolvedbinary.maven.mojohaus/jaxb-maven-plugin -->
+            <!-- https://github.com/highsource/jaxb-tools -->
             <plugin>
-                <groupId>com.evolvedbinary.maven.mojohaus</groupId>
+                <!-- https://mvnrepository.com/artifact/org.jvnet.jaxb/jaxb-maven-plugin -->
+               <groupId>org.jvnet.jaxb</groupId>
                 <artifactId>jaxb-maven-plugin</artifactId>
                 <version>${jaxb.maven.plugin.version}</version>
+
                 <dependencies>
-                    <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-xjc -->
+
+                    <!-- https://mvnrepository.com/artifact/org.jvnet.jaxb/jaxb-plugin-annotate -->
                     <dependency>
-                        <groupId>org.glassfish.jaxb</groupId>
-                        <artifactId>jaxb-xjc</artifactId>
-                        <version>${glassfish.jaxb.xjc.version}</version>
+                        <groupId>org.jvnet.jaxb</groupId>
+                        <artifactId>jaxb-plugin-annotate</artifactId>
+                        <version>${jaxb.maven.plugin.version}</version>
                     </dependency>
 
-                    <!-- https://github.com/highsource/jaxb2-basics -->
+                    <!-- https://mvnrepository.com/artifact/org.jvnet.jaxb/jaxb-plugins -->
                     <dependency>
-                        <groupId>org.jvnet.jaxb2_commons</groupId>
-                        <artifactId>jaxb2-basics</artifactId>
-                        <version>${jaxb2.basics.version}</version>
+                        <groupId>org.jvnet.jaxb</groupId>
+                        <artifactId>jaxb-plugins</artifactId>
+                        <version>${jaxb.maven.plugin.version}</version>
                     </dependency>
 
-                    <!-- https://mvnrepository.com/artifact/org.jvnet.jaxb2_commons/jaxb2-basics-annotate -->
+                    <!-- https://mvnrepository.com/artifact/org.jvnet.jaxb/jaxb-plugins-tools -->
                     <dependency>
-                        <groupId>org.jvnet.jaxb2_commons</groupId>
-                        <artifactId>jaxb2-basics-annotate</artifactId>
-                        <version>${jaxb2.basics.annotate.version}</version>
+                        <groupId>org.jvnet.jaxb</groupId>
+                        <artifactId>jaxb-plugins-tools</artifactId>
+                        <version>${jaxb.maven.plugin.version}</version>
                     </dependency>
-
-                    <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations-jakarta -->
-                    <dependency>
-                        <groupId>io.swagger.core.v3</groupId>
-                        <artifactId>swagger-annotations-jakarta</artifactId>
-                        <version>${swagger.core.jakarta.annotations.version}</version>
-                    </dependency>
-
                 </dependencies>
                 <executions>
+
+                    <!-- operation schema -->
                     <execution>
                         <id>operation-schema</id>
                         <phase>validate</phase>
                         <goals>
-                            <goal>xjc</goal>
+                            <goal>generate</goal>
                         </goals>
                         <configuration>
+                            <extension>true</extension>
                             <verbose>false</verbose>
-                            <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
+                            <noFileHeader>true</noFileHeader>
                             <extension>true</extension>
                             <locale>en</locale>
-                            <sources>
-                                <source>src/main/resources/schemas/operation/operation.xsd</source>
-                            </sources>
-                            <xjbSources>
-                                <xjbSource>src/main/resources/schemas/operation/operation.xjb</xjbSource>
-                            </xjbSources>
-                            <arguments>
-                                <argument>-Xannotate</argument>
-                                <argument>-Xinheritance</argument>
-                                <argument>-Xsimplify</argument>
-                            </arguments>
-                            <outputDirectory>${project.build.directory}/generated-sources/xjc-operation
-                            </outputDirectory>
-                            <packageName>net.webpdf.wsclient.schema.operation</packageName>
+                            <args>
+                                <arg>-Xannotate</arg>
+                                <arg>-Xinheritance</arg>
+                                <arg>-Xsimplify</arg>
+                            </args>
+                            <schemaDirectory>src/main/resources/schemas/operation/</schemaDirectory>
+                            <schemaIncludes>
+                                <include>operation.xsd</include>
+                            </schemaIncludes>
+                            <bindingDirectory>src/main/resources/schemas/operation/</bindingDirectory>
+                            <bindingIncludes>
+                                <include>operation.xjb</include>
+                            </bindingIncludes>
+                            <generateDirectory>${project.build.directory}/generated-sources/xjc-operation
+                            </generateDirectory>
                         </configuration>
                     </execution>
 
-                    <!-- extraction schema (info/metadata) -->
+                    <!-- extraction schema -->
                     <execution>
-                        <id>info-schema</id>
+                        <id>extraction-schema</id>
                         <phase>validate</phase>
                         <goals>
-                            <goal>xjc</goal>
+                            <goal>generate</goal>
                         </goals>
                         <configuration>
+                            <extension>true</extension>
                             <verbose>false</verbose>
-                            <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
+                            <noFileHeader>true</noFileHeader>
                             <extension>true</extension>
                             <locale>en</locale>
-                            <sources>
-                                <source>src/main/resources/schemas/extraction/info.xsd</source>
-                            </sources>
-                            <xjbSources>
-                                <xjbSource>src/main/resources/schemas/extraction/info.xjb</xjbSource>
-                            </xjbSources>
-                            <arguments>
-                                <argument>-Xannotate</argument>
-                                <argument>-Xinheritance</argument>
-                                <argument>-Xsimplify</argument>
-                            </arguments>
-                            <outputDirectory>${project.build.directory}/generated-sources/xjc-extraction-info
-                            </outputDirectory>
-                            <packageName>net.webpdf.wsclient.schema.extraction.info</packageName>
+                            <args>
+                                <arg>-Xannotate</arg>
+                                <arg>-Xinheritance</arg>
+                                <arg>-Xsimplify</arg>
+                            </args>
+                            <schemaDirectory>src/main/resources/schemas/extraction/</schemaDirectory>
+                            <schemaIncludes>
+                                <include>barcode.xsd</include>
+                                <include>info.xsd</include>
+                                <include>text.xsd</include>
+                            </schemaIncludes>
+                            <bindingDirectory>src/main/resources/schemas/extraction/</bindingDirectory>
+                            <bindingIncludes>
+                                <include>barcode.xjb</include>
+                                <include>info.xjb</include>
+                                <include>text.xjb</include>
+                            </bindingIncludes>
+                            <generateDirectory>${project.build.directory}/generated-sources/xjc-extraction
+                            </generateDirectory>
                         </configuration>
                     </execution>
 
-                    <!-- extraction schema (barcode) -->
-                    <execution>
-                        <id>barcode-schema</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <configuration>
-                            <verbose>false</verbose>
-                            <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
-                            <extension>true</extension>
-                            <locale>en</locale>
-                            <sources>
-                                <source>src/main/resources/schemas/extraction/barcode.xsd</source>
-                            </sources>
-                            <xjbSources>
-                                <xjbSource>src/main/resources/schemas/extraction/barcode.xjb</xjbSource>
-                            </xjbSources>
-                            <arguments>
-                                <argument>-Xannotate</argument>
-                                <argument>-Xinheritance</argument>
-                                <argument>-Xsimplify</argument>
-                            </arguments>
-                            <outputDirectory>${project.build.directory}/generated-sources/xjc-extraction-barcode
-                            </outputDirectory>
-                            <packageName>net.webpdf.wsclient.schema.extraction.barcode</packageName>
-                        </configuration>
-                    </execution>
-
-                    <!-- extraction schema (text) -->
-                    <execution>
-                        <id>text-schema</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                        <configuration>
-                            <verbose>false</verbose>
-                            <noGeneratedHeaderComments>true</noGeneratedHeaderComments>
-                            <extension>true</extension>
-                            <locale>en</locale>
-                            <sources>
-                                <source>src/main/resources/schemas/extraction/text.xsd</source>
-                            </sources>
-                            <xjbSources>
-                                <xjbSource>src/main/resources/schemas/extraction/text.xjb</xjbSource>
-                            </xjbSources>
-                            <arguments>
-                                <argument>-Xannotate</argument>
-                                <argument>-Xinheritance</argument>
-                                <argument>-Xsimplify</argument>
-                            </arguments>
-                            <outputDirectory>${project.build.directory}/generated-sources/xjc-extraction-text
-                            </outputDirectory>
-                            <packageName>net.webpdf.wsclient.schema.extraction.text</packageName>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
 
