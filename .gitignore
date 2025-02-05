@@ -7,3 +7,4 @@
 /.idea/php.xml
 /support/
 /docker/.env
+/.m2
