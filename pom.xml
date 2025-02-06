@@ -84,8 +84,7 @@
 
         <!-- PLUGIN VERSIONS -->
         <nexus.staging.plugin.version>1.7.0</nexus.staging.plugin.version> <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
-        <!-- OpenAPI generator > 7.4 cannot be used as it changes some ENUM names (use of “_”): https://github.com/OpenAPITools/openapi-generator/issues/19204 -->
-        <openapi.generator.maven.plugin.version>7.4.0</openapi.generator.maven.plugin.version> <!-- https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin -->
+        <openapi.generator.maven.plugin.version>7.11.0</openapi.generator.maven.plugin.version> <!-- https://mvnrepository.com/artifact/org.openapitools/openapi-generator-maven-plugin -->
         <jaxb.maven.plugin.version>4.0.8</jaxb.maven.plugin.version> <!-- https://mvnrepository.com/artifact/com.evolvedbinary.maven.mojohaus/jaxb-maven-plugin -->
         <buildnumber.maven.plugin.version>3.2.1</buildnumber.maven.plugin.version> <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/buildnumber-maven-plugin -->
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version> <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
