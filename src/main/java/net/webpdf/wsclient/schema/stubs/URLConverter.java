@@ -20,7 +20,6 @@ import jakarta.xml.bind.annotation.XmlSeeAlso;
  *
  * @see WebServiceType#URLCONVERTER
  */
-@SuppressWarnings("NonJaxWsWebServices")
 @WebService(name = "URLConverter", targetNamespace = "http://schema.webpdf.de/1.0/soap/urlconverter")
 @XmlSeeAlso({
         ObjectFactory.class

@@ -148,15 +148,13 @@ public class SoapWebserviceIntegrationTest {
                     soapDocument.writeResult(fileOut);
                     assertTrue(fileOut.exists());
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
         });
     }
 
     @Test
     @IntegrationTest
-    public void testPdfa() {
+    public void testPdfA() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.SOAP,
@@ -426,7 +424,7 @@ public class SoapWebserviceIntegrationTest {
 
     @Test
     @IntegrationTest
-    public void testPdfaRemoteWSDL() {
+    public void testPdfARemoteWSDL() {
         assertDoesNotThrow(() -> {
             try (SoapSession<SoapDocument> session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.SOAP,

@@ -37,8 +37,8 @@ public class RestWebserviceLdapTest {
 
                 AuthUserCertificates certificates = session.getCertificates();
                 assertNotNull(certificates, "Certificates should be set.");
-                assertTrue(certificates.getKeyStores().size() > 0, "User should have keystores.");
-                assertTrue(certificates.getCertificates().size() > 0, "User should have certificates.");
+                assertFalse(certificates.getKeyStores().isEmpty(), "User should have keystores.");
+                assertFalse(certificates.getCertificates().isEmpty(), "User should have certificates.");
 
                 String keyStoreName = "";
 
@@ -80,7 +80,7 @@ public class RestWebserviceLdapTest {
                 parameter.setKeyStorePassword("bmi");
                 certificates = session.updateCertificates(keyStoreName, parameter);
                 assertNotNull(certificates, "Certificates should be set.");
-                assertTrue(certificates.getKeyStores().size() > 0, "User should have keystores.");
+                assertFalse(certificates.getKeyStores().isEmpty(), "User should have keystores.");
 
                 for (KeyStoreEntry keystore : certificates.getKeyStores()) {
                     assertNotNull(keystore.getKeyStoreName(), "keystore should have a name.");
