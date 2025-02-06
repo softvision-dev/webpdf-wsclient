@@ -200,7 +200,7 @@ public class RestWebserviceIntegrationTest {
                 baseToolbox.setMerge(mergeType);
                 mergeType.setPage(1);
                 mergeType.setSourceIsZip(false);
-                mergeType.setMode(OperationToolboxMergeMerge.ModeEnum.AFTERPAGE);
+                mergeType.setMode(OperationToolboxMergeMerge.ModeEnum.AFTER_PAGE);
 
                 // set merge file data
                 OperationMergeFileData mergeFileData = new OperationMergeFileData();
@@ -304,7 +304,7 @@ public class RestWebserviceIntegrationTest {
                 File zugferdFile = testResources.getResource("integration/files/zugferd21-xrechnung-cii.xml");
                 OperationZugferd zugferdType = new OperationZugferd();
                 OperationZugferdFileData zugferdFileDataType = new OperationZugferdFileData();
-                zugferdFileDataType.setVersion(OperationZugferdFileData.VersionEnum.V21XRECHNUNG);
+                zugferdFileDataType.setVersion(OperationZugferdFileData.VersionEnum.V21_X_RECHNUNG);
                 zugferdFileDataType.setValue(FileUtils.readFileToByteArray(zugferdFile));
                 zugferdFileDataType.setSource(OperationZugferdFileData.SourceEnum.VALUE);
                 zugferdType.setXmlFile(zugferdFileDataType);

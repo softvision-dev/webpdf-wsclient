@@ -1,6 +1,7 @@
 package net.webpdf.wsclient.ldap;
 
-import net.webpdf.wsclient.exception.ClientResultException;
+import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.exception.ServerResultException;
 import net.webpdf.wsclient.openapi.*;
 import net.webpdf.wsclient.session.SessionFactory;
 import net.webpdf.wsclient.session.auth.UserAuthProvider;
@@ -36,8 +37,8 @@ public class RestWebserviceLdapTest {
 
                 AuthUserCertificates certificates = session.getCertificates();
                 assertNotNull(certificates, "Certificates should be set.");
-                assertTrue(certificates.getKeyStores().size() > 0, "User should have keystores.");
-                assertTrue(certificates.getCertificates().size() > 0, "User should have certificates.");
+                assertFalse(certificates.getKeyStores().isEmpty(), "User should have keystores.");
+                assertFalse(certificates.getCertificates().isEmpty(), "User should have certificates.");
 
                 String keyStoreName = "";
 
@@ -51,14 +52,20 @@ public class RestWebserviceLdapTest {
                     }
                 }
 
-                // check errorneous
+                // invalid keystore name and invalid password combination
                 KeyStorePassword parameter = new KeyStorePassword();
                 parameter.setKeyStorePassword("test");
+                ServerResultException serverResultException = assertThrows(ServerResultException.class,
+                        () -> session.updateCertificates("error", parameter));
+                assertEquals(-35, serverResultException.getErrorCode());
 
-                assertThrows(ClientResultException.class, () -> session.updateCertificates("error", parameter));
+                String finalKeyStoreName = keyStoreName;
+                ResultException resultException = assertThrows(ServerResultException.class,
+                        () -> session.updateCertificates(finalKeyStoreName, parameter));
+                assertEquals(-5057, resultException.getErrorCode());
 
-                certificates = session.updateCertificates(keyStoreName, parameter);
                 assertNotNull(certificates, "Certificates should be set.");
+                assertEquals(2, certificates.getKeyStores().size(), "Two keystores should be available.");
 
                 for (KeyStoreEntry keystore : certificates.getKeyStores()) {
                     assertNotNull(keystore.getKeyStoreName(), "keystore should have a name.");
@@ -73,7 +80,7 @@ public class RestWebserviceLdapTest {
                 parameter.setKeyStorePassword("bmi");
                 certificates = session.updateCertificates(keyStoreName, parameter);
                 assertNotNull(certificates, "Certificates should be set.");
-                assertTrue(certificates.getKeyStores().size() > 0, "User should have keystores.");
+                assertFalse(certificates.getKeyStores().isEmpty(), "User should have keystores.");
 
                 for (KeyStoreEntry keystore : certificates.getKeyStores()) {
                     assertNotNull(keystore.getKeyStoreName(), "keystore should have a name.");
@@ -104,7 +111,7 @@ public class RestWebserviceLdapTest {
                     }
                 }
 
-                // unlock with wrong certificate password
+                // unlock with the wrong certificate password
                 parameter.setKeyStorePassword("bmi");
                 Map<String, String> aliases = new HashMap<>();
                 aliases.put("billymiller", "error");

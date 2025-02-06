@@ -345,7 +345,7 @@ public class DocumentManagerIntegrationTest {
                 DocumentMetadataPdf documentMetadataPdf = (DocumentMetadataPdf) encryptedDocument.getDocumentFile().getMetadata();
                 assertNotNull(documentMetadataPdf.getInformation(), "The metadata information should be readable.");
 
-                // rotate pages with initially set password
+                // rotate pages with an initially set password
                 OperationToolboxRotateRotate operationToolboxRotate = new OperationToolboxRotateRotate();
                 operationToolboxRotate.setDegrees(90);
                 baseToolbox = new OperationBaseToolbox();
@@ -559,8 +559,7 @@ public class DocumentManagerIntegrationTest {
             try (RestWebServiceSession session = SessionFactory.createInstance(
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)));
                  OutputStream outputStream = Files.newOutputStream(targetFile.toPath());
-                 InputStream inputStream = IOUtils.toInputStream(fileContent, StandardCharsets.UTF_8);
-            ) {
+                 InputStream inputStream = IOUtils.toInputStream(fileContent, StandardCharsets.UTF_8)) {
                 assertNotNull(session, "Valid session should have been created.");
                 RestWebServiceDocument document = session.getDocumentManager().uploadDocument(sourceFile);
                 assertNotNull(document, "Valid document should have been returned.");
@@ -569,7 +568,7 @@ public class DocumentManagerIntegrationTest {
                 document.downloadDocument(outputStream);
                 String updatedContent = FileUtils.readFileToString(targetFile, StandardCharsets.UTF_8);
 
-                assertTrue(fileContent.equals(updatedContent), "content should equal \"" + fileContent + "\"");
+                assertEquals(fileContent, updatedContent, "content should equal \"" + fileContent + "\"");
             }
         });
     }

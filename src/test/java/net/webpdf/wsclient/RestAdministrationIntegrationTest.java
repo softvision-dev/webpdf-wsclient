@@ -130,9 +130,9 @@ public class RestAdministrationIntegrationTest {
                 assertNotNull(applicationConfiguration, "Application configuration should exist.");
 
                 List<AdminExecutableName> adminExecutableNames = new ArrayList<>();
-                adminExecutableNames.add(AdminExecutableName.OUTSIDEIN);
+                adminExecutableNames.add(AdminExecutableName.OUTSIDE_IN);
                 adminExecutableNames.add(AdminExecutableName.PDFTOOLS);
-                adminExecutableNames.add(AdminExecutableName.OFFICEBRIDGE);
+                adminExecutableNames.add(AdminExecutableName.OFFICE_BRIDGE);
 
                 AdminConfigurationResult result = session.getAdministrationManager().testExecutables(
                         applicationConfiguration, adminExecutableNames
