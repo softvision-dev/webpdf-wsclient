@@ -2,7 +2,7 @@
 /.idea/workspace.xml
 /files
 /.idea/libraries
-/config/testConfig.json
+/config/*.json
 /.idea/azure/azureSettings.xml
 /.idea/php.xml
 /support/
