@@ -72,7 +72,7 @@
 
         <!-- DEPENDENCY VERSIONS -->
         <jetbrains.annotations.version>26.0.2</jetbrains.annotations.version>  <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
-        <httpcomponents.httpclient.version>5.4.1</httpcomponents.httpclient.version> <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
+        <httpcomponents.httpclient.version>5.4.2</httpcomponents.httpclient.version> <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
         <commons.io.version>2.18.0</commons.io.version> <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <commons.lang.version>3.17.0</commons.lang.version> <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <jackson.core.databind.version>2.18.2</jackson.core.databind.version> <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
