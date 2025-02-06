@@ -8,6 +8,10 @@
       </list>
     </option>
   </component>
+  <component name="PWA">
+    <option name="enabled" value="true" />
+    <option name="wasEnabledAtLeastOnce" value="true" />
+  </component>
   <component name="ProjectResources">
     <resource url="http://schema.webpdf.de/1.0/operation" location="$PROJECT_DIR$/src/main/resources/schemas/operation/operation.xsd" />
   </component>

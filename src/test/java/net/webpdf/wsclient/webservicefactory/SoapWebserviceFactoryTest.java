@@ -215,8 +215,7 @@ public class SoapWebserviceFactoryTest {
             BaseToolboxType element1 = webService.getOperationParameters().get(0);
             assertNotNull(element1,
                     "First element should have been created.");
-            assertTrue(element1 instanceof DeleteType,
-                    "First element should have been instance of delete type.");
+            assertInstanceOf(DeleteType.class, element1, "First element should have been instance of delete type.");
 
             assertEquals("1", ((DeleteType) webService.getOperationParameters().get(0)).getPages(),
                     "Value of pages attribute is unexpected.");
@@ -224,8 +223,7 @@ public class SoapWebserviceFactoryTest {
             BaseToolboxType element2 = webService.getOperationParameters().get(1);
             assertNotNull(element2,
                     "Second element should have been created.");
-            assertTrue(element2 instanceof RotateType,
-                    "Second element should have been instance of rotate type.");
+            assertInstanceOf(RotateType.class, element2, "Second element should have been instance of rotate type.");
 
             assertEquals("*", ((RotateType) webService.getOperationParameters().get(1)).getPages(),
                     "Value of pages attribute is unexpected.");
@@ -240,8 +238,7 @@ public class SoapWebserviceFactoryTest {
             BaseToolboxType element3 = webService.getOperationParameters().get(2);
             assertNotNull(element3,
                     "Third element should have been created.");
-            assertTrue(element3 instanceof WatermarkType,
-                    "Third element should have been instance of watermark type.");
+            assertInstanceOf(WatermarkType.class, element3, "Third element should have been instance of watermark type.");
 
             assertEquals("2", ((WatermarkType) webService.getOperationParameters().get(2)).getPages(),
                     "Value of pages attribute is unexpected.");

@@ -40,7 +40,7 @@ public class SoapFailureIntegrationTest {
                 fallbackFailAndClose(webService.process(
                         session.createDocument(file.toURI())));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-106, exception.getErrorCode());
             }
@@ -66,7 +66,7 @@ public class SoapFailureIntegrationTest {
                 fallbackFailAndClose(webService.process(
                         session.createDocument(file.toURI())));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-311, exception.getErrorCode());
             }
@@ -86,7 +86,7 @@ public class SoapFailureIntegrationTest {
                 fallbackFailAndClose(webService.process(
                         session.createDocument(file.toURI())));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-21, exception.getErrorCode());
             }
@@ -111,7 +111,7 @@ public class SoapFailureIntegrationTest {
                 fallbackFailAndClose(webService.process(
                         session.createDocument(file.toURI())));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-5009, exception.getErrorCode());
             }
@@ -131,7 +131,7 @@ public class SoapFailureIntegrationTest {
                 fallbackFailAndClose(webService.process(
                         session.createDocument(file.toURI())));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-20, exception.getErrorCode());
             }
@@ -151,7 +151,7 @@ public class SoapFailureIntegrationTest {
                 fallbackFailAndClose(webService.process(
                         session.createDocument(file.toURI())));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-5009, exception.getErrorCode());
             }

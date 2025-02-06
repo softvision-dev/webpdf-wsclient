@@ -1,16 +1,16 @@
 package net.webpdf.wsclient;
 
+import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.exception.ServerResultException;
 import net.webpdf.wsclient.openapi.*;
-import net.webpdf.wsclient.session.connection.SessionContext;
-import net.webpdf.wsclient.session.rest.documents.RestDocument;
-import net.webpdf.wsclient.exception.ResultException;
-import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.session.SessionFactory;
-import net.webpdf.wsclient.testsuite.server.ServerType;
-import net.webpdf.wsclient.testsuite.io.TestResources;
-import net.webpdf.wsclient.testsuite.server.TestServer;
+import net.webpdf.wsclient.session.connection.SessionContext;
+import net.webpdf.wsclient.session.rest.RestSession;
+import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.testsuite.integration.annotations.IntegrationTest;
+import net.webpdf.wsclient.testsuite.io.TestResources;
+import net.webpdf.wsclient.testsuite.server.ServerType;
+import net.webpdf.wsclient.testsuite.server.TestServer;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.*;
@@ -37,7 +37,7 @@ public class RestFailureIntegrationTest {
                         session.createWebServiceInstance(WebServiceType.CONVERTER);
                 webService.process(session.getDocumentManager().uploadDocument(file));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-106, exception.getErrorCode());
             }
@@ -63,7 +63,7 @@ public class RestFailureIntegrationTest {
                 webService.getOperationParameters().setAdd(add);
                 webService.process(session.getDocumentManager().uploadDocument(file));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-311, exception.getErrorCode());
             }
@@ -72,7 +72,7 @@ public class RestFailureIntegrationTest {
 
     @Test
     @IntegrationTest
-    public void testPdfaFailure() {
+    public void testPdfAFailure() {
         assertDoesNotThrow(() -> {
             File file = testResources.getResource("integration/files/user-owner-password.pdf");
             try (RestSession<RestDocument> session = SessionFactory.createInstance(
@@ -82,7 +82,7 @@ public class RestFailureIntegrationTest {
                         session.createWebServiceInstance(WebServiceType.PDFA);
                 webService.process(session.getDocumentManager().uploadDocument(file));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-21, exception.getErrorCode());
             }
@@ -108,7 +108,7 @@ public class RestFailureIntegrationTest {
                 extractionType.setText(textType);
                 webService.process(session.getDocumentManager().uploadDocument(file));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-5009, exception.getErrorCode());
             }
@@ -127,7 +127,7 @@ public class RestFailureIntegrationTest {
                         session.createWebServiceInstance(WebServiceType.URLCONVERTER);
                 webService.process(session.getDocumentManager().uploadDocument(file));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-58, exception.getErrorCode());
             }
@@ -146,7 +146,7 @@ public class RestFailureIntegrationTest {
                         session.createWebServiceInstance(WebServiceType.OCR);
                 webService.process(session.getDocumentManager().uploadDocument(file));
             } catch (ResultException ex) {
-                assertTrue(ex instanceof ServerResultException);
+                assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
                 assertEquals(-5009, exception.getErrorCode());
             }
