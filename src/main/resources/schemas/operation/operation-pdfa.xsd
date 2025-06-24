@@ -161,8 +161,9 @@
     <xs:simpleType name="ZugferdVersionType">
         <xs:annotation>
             <xs:documentation>
-                <p>Used to define the version of the ZUGFeRD XML file that should be embedded with "xmlFile". Versions
-                    1.0, 2.0, 2.1.x and 2.2 are supported. Only the "Comfort" profile is available for version 1.0.
+                <p>Used to define the version of the ZUGFeRD XML file that should be embedded with "xmlFile".
+                    Versions from 1.0 to 2.3 are supported.
+                    Only the "Comfort" profile is available for version 1.0.
                     Meanwhile, the "Minimum", "Basic WL", "Basic", "EN16931" (Comfort), and "Extended" profiles are
                     supported for version 2.0.
                 </p>
@@ -177,7 +178,7 @@
                 </p>
                 <p>
                     <b>Note:</b>
-                    Since version 2.1.1 ZUGFeRD and Factur-X are technically identical and both formats use Factur-X as
+                    Since version 2.1.1 ZUGFeRD and Factur-X are technically identical, and both formats use Factur-X as
                     common identification.
                 </p>
                 <p>
@@ -201,6 +202,12 @@
                         <li>v22EN16931</li>
                         <li>v22Extended</li>
                         <li>v22XRechnung</li>
+                        <li>v23Minimum</li>
+                        <li>v23BasicWL</li>
+                        <li>v23Basic</li>
+                        <li>v23EN16931</li>
+                        <li>v23Extended</li>
+                        <li>v23XRechnung</li>
                     </ul>
                 </p>
             </xs:documentation>
@@ -224,6 +231,12 @@
             <xs:enumeration value="v22EN16931"/>
             <xs:enumeration value="v22Extended"/>
             <xs:enumeration value="v22XRechnung"/>
+            <xs:enumeration value="v23Minimum"/>
+            <xs:enumeration value="v23BasicWL"/>
+            <xs:enumeration value="v23Basic"/>
+            <xs:enumeration value="v23EN16931"/>
+            <xs:enumeration value="v23Extended"/>
+            <xs:enumeration value="v23XRechnung"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="ZugferdType">
@@ -248,7 +261,12 @@
                 <xs:attribute name="version" default="v10Comfort" type="tns:ZugferdVersionType">
                     <xs:annotation>
                         <xs:documentation>
-                            <p>Used to define the version of the ZUGFeRD XML file that should be embedded with "xmlFile". Versions 1.0, 2.0 and 2.1.x are supported. Only the "Comfort" profile is available for version 1.0. Meanwhile, the "Minimum", "Basic WL", "Basic", "EN16931" (Comfort), and "Extended" profiles are supported for version 2.0. Version 2.1.x contains the same profiles as version 2.0 and additionally defines the profile "X-Rechnung".
+                            <p>Used to define the version of the ZUGFeRD XML file that should be embedded with "xmlFile".
+                                Versions from 1.0 to 2.3 are supported.
+                                Only the "Comfort" profile is available for version 1.0.
+                                Meanwhile, the "Minimum", "Basic WL", "Basic", "EN16931"
+                                (Comfort), and "Extended" profiles are supported for version 2.0.
+                                Version 2.1.x contains the same profiles as version 2.0 and additionally defines the profile "X-Rechnung".
                                 List of versions with the corresponding profiles:
                                 <ul>
                                     <li>v10Comfort</li>
@@ -263,6 +281,18 @@
                                     <li>v21EN16931</li>
                                     <li>v21Extended</li>
                                     <li>v21XRechnung</li>
+                                    <li>v22Minimum</li>
+                                    <li>v22BasicWL</li>
+                                    <li>v22Basic</li>
+                                    <li>v22EN16931</li>
+                                    <li>v22Extended</li>
+                                    <li>v22XRechnung</li>
+                                    <li>v23Minimum</li>
+                                    <li>v23BasicWL</li>
+                                    <li>v23Basic</li>
+                                    <li>v23EN16931</li>
+                                    <li>v23Extended</li>
+                                    <li>v23XRechnung</li>
                                 </ul>
                             </p>
                         </xs:documentation>

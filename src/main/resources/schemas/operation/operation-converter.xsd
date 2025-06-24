@@ -23,6 +23,7 @@
             <xs:element name="text" type="tns:ConverterTextType" minOccurs="0"/>
             <xs:element name="transform" type="tns:ConverterTransformType" minOccurs="0"/>
             <xs:element name="image" type="tns:ConverterImageType" minOccurs="0"/>
+            <xs:element name="office" type="tns:ConverterOfficeType" minOccurs="0"/>
         </xs:all>
         <xs:attribute name="pages" default="" type="xs:string">
             <xs:annotation>
@@ -122,14 +123,14 @@
     <xs:complexType name="SharePointBridgeType">
         <xs:annotation>
             <xs:documentation>
-                <p>Used to specify whether "SharePoint Bridge" should be used when converting a Word document. If the element is set, the Word document will be converted using the SharePoint service (if SharePoint Bridge is enabled).</p>
+                <p>Used to specify whether "SharePoint Bridge" should be used when converting Word, Excel and PowerPoint documents. If the element is set, the document will be converted using the SharePoint Online service (if SharePoint Bridge is enabled in the server configuration).</p>
             </xs:documentation>
         </xs:annotation>
     </xs:complexType>
     <xs:complexType name="OfficeBridgeType">
         <xs:annotation>
             <xs:documentation>
-                <p>Used to specify whether "Office Bridge" should be used when converting Word, Excel, and PowerPoint documents. If this element is set (and Office Bridge is enabled), the document will be converted using the Office software installed on the server.</p>
+                <p>Used to specify whether "Office Bridge" should be used when converting Word, Excel and PowerPoint documents. If this element is set (and Office Bridge is enabled in the server configuration), the document will be converted using the Office software installed on the server.</p>
             </xs:documentation>
         </xs:annotation>
     </xs:complexType>
@@ -1212,4 +1213,50 @@
             <xs:enumeration value="json"/>
         </xs:restriction>
     </xs:simpleType>
+    <xs:complexType name="ConverterOfficeType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+                    Defines the settings to be used when converting Office documents (e.g., docx documents).
+                    <p>
+                        <b>Important:</b>
+                        Currently only the integrated Word document converter for docx files is supported
+                    </p>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="word" type="tns:ConverterOfficeWordType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ConverterOfficeWordType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+                    Defines the settings to be used when converting Word (docx) documents.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="form" type="tns:ConverterOfficeFormType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="ConverterOfficeFormType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+                    Defines the settings that are used when converting documents that have content that can be converted to an AcroForm.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="enabled" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        <p>If "true," content elements that define forms are converted into an AcroForm. Otherwise, the elements are converted as normal content.</p>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
 </xs:schema>
