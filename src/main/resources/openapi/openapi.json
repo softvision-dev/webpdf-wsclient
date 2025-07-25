@@ -10,7 +10,7 @@
       "url": "https://www.webpdf.de/en/license-agreement.html"
     },
     "title": "webPDF",
-    "version": "webPDF 9.0.0.3479 (2024-07-23T08:38:02Z) "
+    "version": "webPDF 10.0.2 (2025-07-24T10:43:19Z)"
   },
   "servers": [
     {
@@ -68,6 +68,39 @@
     }
   ],
   "paths": {
+    "/admin/cluster/status": {
+      "get": {
+        "description": "Returns the the status information about the cluster and all members in the cluster.",
+        "operationId": "readClusterStatus",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cluster_Status"
+                }
+              }
+            },
+            "description": "Current cluster status information."
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Returns the cluster status information",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
     "/admin/configuration": {
       "post": {
         "description": "Updates andDefines an extended result object for administrative configuration operations when the configuration is updated./or validates the server, application, user or log configuration.The updated configuration is passed in the body of the request.",
@@ -680,7 +713,7 @@
     },
     "/authentication/user/certificates": {
       "get": {
-        "description": "Returns information about the key stores available in the user session and the certificates they contain. Certificates can be provided via user authentication (e.g. LDAP) or from the server's local file system (e.g. user or global keystores). The keystore may be locked and can be unlocked with `PUT /authentication/user/certificates/passwords/...`.",
+        "description": "Returns information about the keystores available in the user session and the certificates they contain. Certificates can be provided via user authentication (e.g. LDAP) or from the server's local file system (e.g. user or global keystores). The keystore may be locked and can be unlocked with `PUT /authentication/user/certificates/passwords/...`.",
         "operationId": "readCertificates",
         "responses": {
           "200": {
@@ -985,6 +1018,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/429TooManyRequests"
           }
         },
         "security": [
@@ -1043,6 +1079,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/429TooManyRequests"
           }
         },
         "security": [
@@ -1101,6 +1140,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/429TooManyRequests"
           }
         },
         "security": [
@@ -1179,8 +1221,21 @@
     },
     "/documents/compress": {
       "post": {
-        "description": "Compresses a list of documents selected by `documentId` or file filter into a new archive document in the **document storage**.\n\n* The list of documents that should be in the archive are selected via the `documentId` or a file filter.\n* The selection specifications can be made individually or together and act additively in the order `documentId` and then file filter.\n* If the id is invalid for documents selected via `documentId` or documents are locked, then the call is aborted with an error.\n* The created archive is stored as a new document with a new `documentId` in the **document storage**.",
+        "description": "Compresses a list of documents from the **document storage** selected by `documentId` or a file filter into a new archive document.\n\n* The list of documents that should be in the archive are selected via the `documentId` or a file filter.\n* The selection specifications can be made individually or together and act additively in the order `documentId` and then file filter.\n* If the id is invalid for documents selected via `documentId` or documents are locked, then the call is aborted with an error.\n* Depending on the `storeArchive` (default `true`) flag in the body of the request, the created archive is stored in the document storage or created as a temporary archive.\n* Depending on the `accept` header, the created archive itself is returned as binary data or the file information about the archive.",
         "operationId": "compressDocument",
+        "parameters": [
+          {
+            "allowEmptyValue": true,
+            "in": "header",
+            "name": "accept",
+            "schema": {
+              "type": "string",
+              "default": "application/json",
+              "description": "Defines how the created archive is to be returned. If `application/octet-stream` is specified, the created archive is returned directly. If `application/json` is used (or nothing is defined), a `303 SEE OTHER` with `location` header is used if possible, otherwise the document information is returned directly as a JSON structure.",
+              "example": "application/json"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1199,9 +1254,21 @@
                 "schema": {
                   "$ref": "#/components/schemas/Document_File"
                 }
+              },
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
               }
             },
-            "description": "The archive document has been created successfully. The response contains the `DocumentFile` with the `documentId` of the created archive document in the **document storage**."
+            "description": "The archive document has been created successfully. Depending on the `accept` header, the response body contains the result as specified in the `content-type` header.",
+            "headers": {
+              "content-type": {
+                "description": "The content type of the response body is selected depending on the `accept` header.",
+                "style": "simple"
+              }
+            }
           },
           "303": {
             "$ref": "#/components/responses/303SeeOther"
@@ -1218,7 +1285,7 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Compresses the selected documents into a new archive document within the document store.",
+        "summary": "Compresses the selected documents from the document storage into a new archive document.",
         "tags": [
           "documents"
         ]
@@ -1266,7 +1333,7 @@
         "operationId": "getDocumentInfoListWithParentId",
         "parameters": [
           {
-            "description": "The unique `documentId` of the document known in the server's **document storage** and whose id is to be used as the parent filter for the list of documents.",
+            "description": "The unique `documentId` of the document known in the server's document storage and whose id is to be used as the parent filter for the list of documents.",
             "in": "path",
             "name": "parentDocumentId",
             "required": true,
@@ -1313,7 +1380,7 @@
         "operationId": "deleteDocument",
         "parameters": [
           {
-            "description": "The unique `documentId` of the document in the server´s **document storage**.",
+            "description": "The unique `documentId` of the document in the server´s document storage.",
             "in": "path",
             "name": "documentId",
             "required": true,
@@ -1348,7 +1415,7 @@
         "operationId": "getDocument",
         "parameters": [
           {
-            "description": "The unique `documentId` of the document it is known by in the server´s **document storage**.",
+            "description": "The unique `documentId` of the document it is known by in the server´s document storage.",
             "in": "path",
             "name": "documentId",
             "required": true,
@@ -1396,6 +1463,123 @@
         "tags": [
           "documents"
         ]
+      },
+      "put": {
+        "description": "Updates the binary data of a document in the document store referenced by the `DocumentID`.\n\nIf history is enabled for the document, then a new entry with the uploaded content is created.\n* The returned document information `DocumentFile` contains the information for the updated document.\n* The document information `DocumentFile` is fetched via `303 See Other` from `GET /documents/{documentId}/info`.",
+        "operationId": "updateContent",
+        "parameters": [
+          {
+            "description": "The unique `documentId` of the document in the server´s document storage.",
+            "in": "path",
+            "name": "documentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "filedata": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The document to upload, as binary data bytes."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document_File"
+                }
+              }
+            },
+            "description": "The file content of the document has been updated successfully. Use the `documentId` contained in the returned `DocumentFile` to reference it."
+          },
+          "303": {
+            "$ref": "#/components/responses/303SeeOther"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Updates the binary data of a document in the document store",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/documents/{documentId}/archive/{archivePath}": {
+      "get": {
+        "description": "Selects an archive document via its `documentId` and returns the binary data stream for a file within the archive.\n\n* To select the archive document use the `documentId` returned, when uploading the document to the server´s **document storage**, or select a `documentId` of one of the documents returned by `GET /documents/list`.\n* The referenced document **must** be an archive in a supported format\n* The `archivePath` **must** refer to a file within the archive. Wildcards are **not** supported.\n* Requires a valid session token `[API token]` (see **Authentication** at the top of document).",
+        "operationId": "getDocumentFromArchive",
+        "parameters": [
+          {
+            "description": "The unique `documentId` of the archive document in the server´s document storage.",
+            "in": "path",
+            "name": "documentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "The file path to the file within the archive document that is to be extracted.",
+            "example": "/folder/file.txt",
+            "in": "path",
+            "name": "archivePath",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": ".+"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            },
+            "description": "The document as binary data bytes"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Returns the binary data of a file in an archive document",
+        "tags": [
+          "documents"
+        ]
       }
     },
     "/documents/{documentId}/extract": {
@@ -1404,7 +1588,7 @@
         "operationId": "extractDocument",
         "parameters": [
           {
-            "description": "The unique `documentId` of the archive document in the server´s **document storage**.",
+            "description": "The unique `documentId` of the archive document in the server´s document storage.",
             "in": "path",
             "name": "documentId",
             "required": true,
@@ -1465,7 +1649,7 @@
         "operationId": "getDocumentHistoryList",
         "parameters": [
           {
-            "description": "The unique `documentId` of the document in the server´s **document storage**.",
+            "description": "The unique `documentId` of the document in the server´s document storage.",
             "in": "path",
             "name": "documentId",
             "required": true,
@@ -1512,7 +1696,7 @@
         "operationId": "getHistoryEntry",
         "parameters": [
           {
-            "description": "The unique `documentId` of the document in the server´s **document storage**.",
+            "description": "The unique `documentId` of the document in the server´s document storage.",
             "in": "path",
             "name": "documentId",
             "required": true,
@@ -1564,7 +1748,7 @@
         "operationId": "updateHistoryEntry",
         "parameters": [
           {
-            "description": "The unique `documentId` of the document in the server´s **document storage**.",
+            "description": "The unique `documentId` of the document in the server´s document storage.",
             "in": "path",
             "name": "documentId",
             "required": true,
@@ -1629,7 +1813,7 @@
         "operationId": "getDocumentInfo",
         "parameters": [
           {
-            "description": "The unique `documentId` of the document in the server´s **document storage**.",
+            "description": "The unique `documentId` of the document in the server´s document storage.",
             "in": "path",
             "name": "documentId",
             "required": true,
@@ -1682,7 +1866,7 @@
         "operationId": "getDocumentInfoDetails",
         "parameters": [
           {
-            "description": "The unique `documentId` of the document in the server´s **document storage**.",
+            "description": "The unique `documentId` of the document in the server´s document storage.",
             "in": "path",
             "name": "documentId",
             "required": true,
@@ -1691,7 +1875,7 @@
             }
           },
           {
-            "description": "Detailed information for the document referenced by the unique `documentId` in the server´s **document storage**.",
+            "description": "Detailed information for the document referenced by the unique `documentId` in the server´s document storage.",
             "in": "path",
             "name": "details",
             "required": true,
@@ -1735,7 +1919,7 @@
         "operationId": "updateDocumentSecurity",
         "parameters": [
           {
-            "description": "The unique `documentId` of the document in the server´s **document storage**.",
+            "description": "The unique `documentId` of the document in the server´s document storage.",
             "in": "path",
             "name": "documentId",
             "required": true,
@@ -1793,7 +1977,7 @@
         "operationId": "renameDocument",
         "parameters": [
           {
-            "description": "The unique `documentId` of the document in the server´s **document storage**.",
+            "description": "The unique `documentId` of the document in the server´s document storage.",
             "in": "path",
             "name": "documentId",
             "required": true,
@@ -1806,7 +1990,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Document_File"
+                "$ref": "#/components/schemas/Document_FileUpdate"
               }
             }
           },
@@ -1890,6 +2074,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/429TooManyRequests"
           }
         },
         "security": [
@@ -1948,6 +2135,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/429TooManyRequests"
           }
         },
         "security": [
@@ -2031,6 +2221,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/429TooManyRequests"
           }
         },
         "security": [
@@ -2098,6 +2291,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/429TooManyRequests"
           }
         },
         "security": [
@@ -2156,6 +2352,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/429TooManyRequests"
           }
         },
         "security": [
@@ -2214,6 +2413,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/429TooManyRequests"
           }
         },
         "security": [
@@ -2250,7 +2452,7 @@
             }
           }
         },
-        "description": "Invalid data: The specified data has incorrect content, structure or invalid value. Check the specified exception for more information."
+        "description": "Invalid data: The specified data has incorrect content, structure or invalid value.Check the specified exception for more information."
       },
       "401Unauthorized": {
         "content": {
@@ -2261,6 +2463,16 @@
           }
         },
         "description": "Unauthorized access: Token not found (wrong header or format) or token is invalid (e.g. expired, wrong format or type)."
+      },
+      "429TooManyRequests": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Webservice_Exception"
+            }
+          }
+        },
+        "description": "Too many requests: The web service request was rejected because the server is overloaded or no server instance is free or no entry is available in the waiting queue."
       }
     },
     "schemas": {
@@ -2354,13 +2566,66 @@
           "fileGroup"
         ]
       },
+      "Admin_ClusterCheck": {
+        "type": "object",
+        "description": "Selects the \"cluster.json\" content, that shall be validated.",
+        "discriminator": {
+          "mapping": {
+            "connect": "#/components/schemas/Admin_ConnectClusterCheck"
+          },
+          "propertyName": "checkType"
+        },
+        "properties": {
+          "checkType": {
+            "$ref": "#/components/schemas/Admin_ClusterCheckMode"
+          }
+        },
+        "required": [
+          "checkType"
+        ]
+      },
+      "Admin_ClusterCheckMode": {
+        "type": "string",
+        "default": "connect",
+        "enum": [
+          "connect"
+        ]
+      },
+      "Admin_ClusterConfiguration": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Admin_Configuration"
+          }
+        ],
+        "description": "Defines the settings for the server's \"cluster.json\" and provides the checks for validating the cluster configuration.",
+        "properties": {
+          "configuration": {
+            "$ref": "#/components/schemas/Cluster_Settings"
+          },
+          "configurationChecks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Admin_ClusterCheck"
+            }
+          }
+        },
+        "required": [
+          "configuration",
+          "configurationChecks",
+          "configurationMode",
+          "configurationType"
+        ]
+      },
       "Admin_Configuration": {
         "type": "object",
         "description": "Defines settings that reflect and can be used to manipulate and validate the state of the different server configuration files and resources. (such as the \"application.xml\", \"server.xml\", \"users.xml\" or \"log4j2.xml\")",
         "discriminator": {
           "mapping": {
             "application": "#/components/schemas/Admin_ApplicationConfiguration",
+            "cluster": "#/components/schemas/Admin_ClusterConfiguration",
             "log": "#/components/schemas/Admin_LogConfiguration",
+            "provider": "#/components/schemas/Admin_ProviderConfiguration",
             "server": "#/components/schemas/Admin_ServerConfiguration",
             "user": "#/components/schemas/Admin_UserConfiguration"
           },
@@ -2377,6 +2642,16 @@
         "required": [
           "configurationMode",
           "configurationType"
+        ]
+      },
+      "Admin_ConfigurationFlag": {
+        "type": "string",
+        "default": "",
+        "description": "Signals different configuration states with these flags",
+        "enum": [
+          "readOnly",
+          "containsVariables",
+          "changed"
         ]
       },
       "Admin_ConfigurationMode": {
@@ -2403,15 +2678,56 @@
           }
         }
       },
+      "Admin_ConfigurationStatus": {
+        "type": "object",
+        "description": "Contains all server configurations of the server with status information",
+        "properties": {
+          "configurations": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Admin_ConfigurationStatusEntry"
+            },
+            "description": "All server configurations"
+          }
+        },
+        "readOnly": true
+      },
+      "Admin_ConfigurationStatusEntry": {
+        "type": "object",
+        "description": "The status information for a server configuration",
+        "properties": {
+          "flags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Admin_ConfigurationFlag"
+            }
+          }
+        },
+        "readOnly": true
+      },
       "Admin_ConfigurationType": {
         "type": "string",
         "default": "application",
-        "description": "Selects the configuration file (from installation folder `conf/`) that shall be processed by the configuration request.\n\n- application = The \"application.xml\"\n\n- server = The \"server.xml\"\n\n- user = The \"users.xml\"\n\n- log = The \"log4j2.xml\"",
+        "description": "Selects the configuration file (from installation folder `conf/`) that shall be processed by the configuration request.\n\n- application = The \"application.xml\"\n\n- server = The \"server.xml\"\n\n- user = The \"users.xml\"\n\n- log = The \"log4j2.xml\"\n\n- cluster = The \"cluster.json\"\n\n- provider = The \"provider.json\"",
         "enum": [
           "application",
           "server",
           "user",
-          "log"
+          "log",
+          "cluster",
+          "provider"
+        ]
+      },
+      "Admin_ConnectClusterCheck": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Admin_ClusterCheck"
+          }
+        ],
+        "description": "Validates the configured cluster configuration.",
+        "required": [
+          "checkType"
         ]
       },
       "Admin_ConnectorKeyStore": {
@@ -2450,6 +2766,18 @@
         "enum": [
           "realtime",
           "persistent"
+        ]
+      },
+      "Admin_DocumentStorageProviderCheck": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Admin_ProviderCheck"
+          }
+        ],
+        "description": "Validates the configured configuration of the document storage provider.",
+        "required": [
+          "checkType"
         ]
       },
       "Admin_ErrorCountServerState": {
@@ -2609,6 +2937,18 @@
           "background"
         ]
       },
+      "Admin_FileStorageProviderCheck": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Admin_ProviderCheck"
+          }
+        ],
+        "description": "Validates the configured configuration of the file storage provider.",
+        "required": [
+          "checkType"
+        ]
+      },
       "Admin_GenericFileDataStore": {
         "type": "object",
         "allOf": [
@@ -2655,9 +2995,6 @@
         "type": "object",
         "description": "Provides information about the used Java virtual machine and it´sexecution context.",
         "properties": {
-          "container": {
-            "$ref": "#/components/schemas/Admin_JavaStatusContainer"
-          },
           "gc": {
             "type": "array",
             "description": "The list of GC used and their execution values.",
@@ -2681,53 +3018,34 @@
             "description": "The java version of the running JVM."
           },
           "memoryAllocated": {
-            "type": "string",
-            "default": "",
-            "description": "The MB size of the memory currently allocated for the running JVM."
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "The byte size of the memory currently allocated for the running JVM."
           },
           "memoryFree": {
-            "type": "string",
-            "default": "",
-            "description": "The MB size of free memory, that currently is available for further object allocations."
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "The byte size of free memory, that currently is available for further object allocations."
           },
           "memoryMax": {
-            "type": "string",
-            "default": "",
-            "description": "The MB size of the maximum memory, that could be allocated by the JVM, if required."
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "The byte size of the maximum memory, that could be allocated by the JVM, if required."
           },
           "memoryTotalFree": {
-            "type": "string",
-            "default": "",
-            "description": "The MB size of the free memory, that would currently be available for further object allocations, if the JVM would allocate the maximum allowed memory size."
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "The byte size of the free memory, that would currently be available for further object allocations, if the JVM would allocate the maximum allowed memory size."
           },
           "memoryUsed": {
-            "type": "string",
-            "default": "",
-            "description": "The MB size of the allocated memory, that is actually used by the JVM at the moment."
-          },
-          "osArchitecture": {
-            "type": "string",
-            "default": "",
-            "description": "The operating system´s architecture."
-          },
-          "osDistro": {
-            "$ref": "#/components/schemas/Admin_JavaStatusOsDistro"
-          },
-          "osName": {
-            "type": "string",
-            "default": "",
-            "description": "The name of the operating system, the server is running on."
-          }
-        },
-        "readOnly": true
-      },
-      "Admin_JavaStatusContainer": {
-        "type": "object",
-        "description": "Information about the container plattform.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "default": ""
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "The byte size of the allocated memory, that is actually used by the JVM at the moment."
           }
         },
         "readOnly": true
@@ -2747,21 +3065,6 @@
             "default": 0
           },
           "name": {
-            "type": "string",
-            "default": ""
-          }
-        },
-        "readOnly": true
-      },
-      "Admin_JavaStatusOsDistro": {
-        "type": "object",
-        "description": "Information about the OS distribution.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "default": ""
-          },
-          "version": {
             "type": "string",
             "default": ""
           }
@@ -2908,6 +3211,90 @@
           "fileGroup"
         ]
       },
+      "Admin_OsStatus": {
+        "type": "object",
+        "description": "Provides information about the operating system on which the server is running",
+        "properties": {
+          "container": {
+            "$ref": "#/components/schemas/Admin_OsStatusContainer"
+          },
+          "cpuLogicalProcessors": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "description": "The number of logical processors available to the application"
+          },
+          "memoryCommittedVirtualSize": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "The amount of virtual memory that is guaranteed to be available to the application in bytes"
+          },
+          "memoryFree": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "The amount of free memory in bytes"
+          },
+          "memoryFreeSwapSize": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "The amount of free swap space in bytes"
+          },
+          "memoryTotal": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "The total amount of memory in bytes"
+          },
+          "memoryTotalSwapSize": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "The total amount of swap space in bytes"
+          },
+          "osArchitecture": {
+            "type": "string",
+            "default": "",
+            "description": "The operating system´s architecture"
+          },
+          "osName": {
+            "type": "string",
+            "default": "",
+            "description": "The name of the operating system, the server is running on"
+          },
+          "osVersion": {
+            "type": "string",
+            "default": "",
+            "description": "The operating system´s version number"
+          },
+          "processCpuLoad": {
+            "type": "number",
+            "format": "double",
+            "default": 0,
+            "description": "The recent CPU usage of the JVM with a value between 0.0 and 1.0 (a value of 1.0 means that threads were actively executed on all CPUs)"
+          },
+          "systemLoadAverage": {
+            "type": "number",
+            "format": "double",
+            "default": 0,
+            "description": "The system load average for the last minute (or a negative value if not available)"
+          }
+        },
+        "readOnly": true
+      },
+      "Admin_OsStatusContainer": {
+        "type": "object",
+        "description": "Information about the container plattform.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "readOnly": true
+      },
       "Admin_PoolEntryServerState": {
         "type": "object",
         "properties": {
@@ -2963,6 +3350,113 @@
             "default": 0
           }
         }
+      },
+      "Admin_ProviderCheck": {
+        "type": "object",
+        "description": "Selects the \"provider.json\" content, that shall be validated.",
+        "discriminator": {
+          "mapping": {
+            "documentStorage": "#/components/schemas/Admin_DocumentStorageProviderCheck",
+            "fileStorage": "#/components/schemas/Admin_FileStorageProviderCheck",
+            "sessionStorage": "#/components/schemas/Admin_SessionStorageProviderCheck"
+          },
+          "propertyName": "checkType"
+        },
+        "properties": {
+          "checkType": {
+            "$ref": "#/components/schemas/Admin_ProviderCheckMode"
+          }
+        },
+        "required": [
+          "checkType"
+        ]
+      },
+      "Admin_ProviderCheckMode": {
+        "type": "string",
+        "default": "documentStorage",
+        "enum": [
+          "documentStorage",
+          "fileStorage",
+          "sessionStorage"
+        ]
+      },
+      "Admin_ProviderConfiguration": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Admin_Configuration"
+          }
+        ],
+        "description": "Defines the settings for the server's \"provider.json\" and provides the checks for validating the provider configuration.",
+        "properties": {
+          "configuration": {
+            "$ref": "#/components/schemas/Provider_Settings"
+          },
+          "configurationChecks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Admin_ProviderCheck"
+            }
+          }
+        },
+        "required": [
+          "configuration",
+          "configurationChecks",
+          "configurationMode",
+          "configurationType"
+        ]
+      },
+      "Admin_ProviderConfigurationFormat": {
+        "type": "string",
+        "default": "json",
+        "enum": [
+          "plain",
+          "json",
+          "yaml",
+          "xml"
+        ],
+        "readOnly": true
+      },
+      "Admin_ProviderEntry": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "default": ""
+          },
+          "format": {
+            "$ref": "#/components/schemas/Admin_ProviderConfigurationFormat"
+          },
+          "name": {
+            "type": "string",
+            "default": ""
+          }
+        }
+      },
+      "Admin_Providers": {
+        "type": "object",
+        "description": "Contains the list of available providers for storing documents, files and sessions in a cluster",
+        "properties": {
+          "documentStorage": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Admin_ProviderEntry"
+            }
+          },
+          "fileStorage": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Admin_ProviderEntry"
+            }
+          },
+          "sessionStorage": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Admin_ProviderEntry"
+            }
+          }
+        },
+        "readOnly": true
       },
       "Admin_ServerCheck": {
         "type": "object",
@@ -3029,6 +3523,16 @@
           "configurationType"
         ]
       },
+      "Admin_ServerOS": {
+        "type": "string",
+        "default": "windows",
+        "description": "Defines the operating system platform on which the server operates.",
+        "enum": [
+          "windows",
+          "linux"
+        ],
+        "readOnly": true
+      },
       "Admin_ServerState": {
         "type": "object",
         "description": "Stores statistic information about a server instance and the executed jobs",
@@ -3055,6 +3559,9 @@
           "java": {
             "$ref": "#/components/schemas/Admin_JavaStatus"
           },
+          "os": {
+            "$ref": "#/components/schemas/Admin_OsStatus"
+          },
           "server": {
             "$ref": "#/components/schemas/Admin_ServerVersionInfo"
           },
@@ -3071,6 +3578,23 @@
         "type": "object",
         "description": "Provides the server´s license and version information",
         "properties": {
+          "configurations": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Admin_ConfigurationStatusEntry"
+            },
+            "description": "All server configurations"
+          },
+          "hasChangedConfiguration": {
+            "type": "boolean",
+            "default": false,
+            "description": "Indicates whether the configuration is currently changed and a restart of the server is necessary to apply the changes."
+          },
+          "licenseIsClusterUsage": {
+            "type": "boolean",
+            "default": false,
+            "description": "Indicates whether the license can be used for a cluster coordinator or member."
+          },
           "licenseText": {
             "type": "string",
             "default": "",
@@ -3088,11 +3612,17 @@
             "default": 0,
             "description": "The numeric minor version of the server."
           },
+          "providers": {
+            "$ref": "#/components/schemas/Admin_Providers"
+          },
+          "serverPlatform": {
+            "$ref": "#/components/schemas/Admin_ServerOS"
+          },
           "serverStart": {
             "type": "integer",
             "format": "int64",
             "default": 0,
-            "description": "The server start data and time (UTC) as Epoch Unix Timestamp"
+            "description": "The server start data and time (UTC) as Epoch Unix Timestamp."
           },
           "serverVersion": {
             "type": "string",
@@ -3101,6 +3631,18 @@
           }
         },
         "readOnly": true
+      },
+      "Admin_SessionStorageProviderCheck": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Admin_ProviderCheck"
+          }
+        ],
+        "description": "Validates the configured configuration of the session storage provider.",
+        "required": [
+          "checkType"
+        ]
       },
       "Admin_SignatureApplicationCheck": {
         "type": "object",
@@ -3402,14 +3944,26 @@
             "type": "integer",
             "format": "int32",
             "default": 180,
-            "description": "Maximum time in seconds allowed for the execution of a web service before the request is aborted. When time is expired the execution is aborted.",
+            "description": "Maximum allowed time in seconds for the execution of a web service request (job) before the request is canceled. If the time has expired, the execution is aborted and an error code is returned.",
             "minimum": 0
+          },
+          "queueMode": {
+            "type": "string",
+            "default": "AUTO",
+            "description": "Defines how the size of the queue is determined.\n\nWith `AUTO`, it is calculated automatically by the server based on the number of configured instances.",
+            "enum": [
+              "AUTO",
+              "MANUAL"
+            ],
+            "x-webpdf-codegen": {
+              "enumName": "ApplicationConfig_QueueMode"
+            }
           },
           "queueSize": {
             "type": "integer",
             "format": "int32",
             "default": 100,
-            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly."
+            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly. This setting only applies if `queueMode` is set to `MANUAL`."
           }
         }
       },
@@ -3563,14 +4117,26 @@
             "type": "integer",
             "format": "int32",
             "default": 180,
-            "description": "Maximum time in seconds allowed for the execution of a web service before the request is aborted. When time is expired the execution is aborted.",
+            "description": "Maximum allowed time in seconds for the execution of a web service request (job) before the request is canceled. If the time has expired, the execution is aborted and an error code is returned.",
             "minimum": 0
+          },
+          "queueMode": {
+            "type": "string",
+            "default": "AUTO",
+            "description": "Defines how the size of the queue is determined.\n\nWith `AUTO`, it is calculated automatically by the server based on the number of configured instances.",
+            "enum": [
+              "AUTO",
+              "MANUAL"
+            ],
+            "x-webpdf-codegen": {
+              "enumName": "ApplicationConfig_QueueMode"
+            }
           },
           "queueSize": {
             "type": "integer",
             "format": "int32",
             "default": 100,
-            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly."
+            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly. This setting only applies if `queueMode` is set to `MANUAL`."
           }
         }
       },
@@ -3582,6 +4148,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ApplicationConfig_KeystoreEntry"
+            }
+          },
+          "filter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationConfig_KeystoreFilter"
             }
           },
           "password": {
@@ -3597,7 +4169,9 @@
               "NONE",
               "JKS",
               "PKCS11",
-              "PKCS12"
+              "PKCS12",
+              "WINDOWS_MACHINE",
+              "WINDOWS_USER"
             ],
             "x-webpdf-codegen": {
               "enumName": "ApplicationConfig_GlobalKeystoreFormat"
@@ -3618,6 +4192,17 @@
             "type": "string",
             "default": "",
             "description": "The password of the keystore entry."
+          }
+        }
+      },
+      "ApplicationConfig_KeystoreFilter": {
+        "type": "object",
+        "description": "Defines filters for the certificates used from the keystore.",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "default": "",
+            "description": "Defines a filter pattern that allows the use of '\\*' and '?' wildcards."
           }
         }
       },
@@ -3687,14 +4272,26 @@
             "type": "integer",
             "format": "int32",
             "default": 180,
-            "description": "Maximum time in seconds allowed for the execution of a web service before the request is aborted. When time is expired the execution is aborted.",
+            "description": "Maximum allowed time in seconds for the execution of a web service request (job) before the request is canceled. If the time has expired, the execution is aborted and an error code is returned.",
             "minimum": 0
+          },
+          "queueMode": {
+            "type": "string",
+            "default": "AUTO",
+            "description": "Defines how the size of the queue is determined.\n\nWith `AUTO`, it is calculated automatically by the server based on the number of configured instances.",
+            "enum": [
+              "AUTO",
+              "MANUAL"
+            ],
+            "x-webpdf-codegen": {
+              "enumName": "ApplicationConfig_QueueMode"
+            }
           },
           "queueSize": {
             "type": "integer",
             "format": "int32",
             "default": 100,
-            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly."
+            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly. This setting only applies if `queueMode` is set to `MANUAL`."
           }
         }
       },
@@ -3803,14 +4400,26 @@
             "type": "integer",
             "format": "int32",
             "default": 180,
-            "description": "Maximum time in seconds allowed for the execution of a web service before the request is aborted. When time is expired the execution is aborted.",
+            "description": "Maximum allowed time in seconds for the execution of a web service request (job) before the request is canceled. If the time has expired, the execution is aborted and an error code is returned.",
             "minimum": 0
+          },
+          "queueMode": {
+            "type": "string",
+            "default": "AUTO",
+            "description": "Defines how the size of the queue is determined.\n\nWith `AUTO`, it is calculated automatically by the server based on the number of configured instances.",
+            "enum": [
+              "AUTO",
+              "MANUAL"
+            ],
+            "x-webpdf-codegen": {
+              "enumName": "ApplicationConfig_QueueMode"
+            }
           },
           "queueSize": {
             "type": "integer",
             "format": "int32",
             "default": 100,
-            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly."
+            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly. This setting only applies if `queueMode` is set to `MANUAL`."
           }
         }
       },
@@ -4178,27 +4787,50 @@
       },
       "ApplicationConfig_SharePointBridge": {
         "type": "object",
-        "description": "Defines the settings for the MS SharePoint Bridge. The SharePoint Bridge can be used as an alternative (to the built-in conversion) for converting Office documents. The SharePoint Bridge requires an external installed and configured SharePoint Server.",
+        "description": "Defines the settings for the SharePoint Bridge. The SharePoint Bridge can be used as an alternative (to the built-in conversion) for converting Office documents. The SharePoint Bridge uses SharePoint Online and therefore requires the corresponding Microsoft 365 service and a registered application on the Microsoft identity platform",
         "properties": {
+          "app": {
+            "$ref": "#/components/schemas/ApplicationConfig_SharePointBridgeApp"
+          },
           "enabled": {
             "type": "boolean",
             "default": false,
-            "description": "When set to true the MS SharePoint bridge shall be enabled."
+            "description": "When set to true the SharePoint Online bridge shall be enabled."
           },
-          "password": {
+          "site": {
+            "$ref": "#/components/schemas/ApplicationConfig_SharePointBridgeSite"
+          }
+        }
+      },
+      "ApplicationConfig_SharePointBridgeApp": {
+        "type": "object",
+        "description": "Defines the settings for the registered application on the Microsoft identity platform for access to the SharePoint Online site",
+        "properties": {
+          "applicationId": {
             "type": "string",
             "default": "",
-            "description": "The password used to authenticate at the MS SharePoint converter."
+            "description": "The ID of the application that was assigned during creation"
           },
-          "url": {
+          "clientSecret": {
             "type": "string",
             "default": "",
-            "description": "Sets the URL where the MS SharePoint converter can be contacted."
+            "description": "The secret that was generated for the application"
           },
-          "username": {
+          "tenantId": {
             "type": "string",
             "default": "",
-            "description": "The username used to authenticate at the MS SharePoint converter."
+            "description": "The id of the tenant to which the application belongs"
+          }
+        }
+      },
+      "ApplicationConfig_SharePointBridgeSite": {
+        "type": "object",
+        "description": "Defines the name of the Sharepoint Online site that is used for document conversion. Access to the site must be configured as a registered application on the Microsoft identity platform",
+        "properties": {
+          "siteName": {
+            "type": "string",
+            "default": "",
+            "description": "The name of the site to be used for converting the documents"
           }
         }
       },
@@ -4240,14 +4872,26 @@
             "type": "integer",
             "format": "int32",
             "default": 180,
-            "description": "Maximum time in seconds allowed for the execution of a web service before the request is aborted. When time is expired the execution is aborted.",
+            "description": "Maximum allowed time in seconds for the execution of a web service request (job) before the request is canceled. If the time has expired, the execution is aborted and an error code is returned.",
             "minimum": 0
+          },
+          "queueMode": {
+            "type": "string",
+            "default": "AUTO",
+            "description": "Defines how the size of the queue is determined.\n\nWith `AUTO`, it is calculated automatically by the server based on the number of configured instances.",
+            "enum": [
+              "AUTO",
+              "MANUAL"
+            ],
+            "x-webpdf-codegen": {
+              "enumName": "ApplicationConfig_QueueMode"
+            }
           },
           "queueSize": {
             "type": "integer",
             "format": "int32",
             "default": 100,
-            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly."
+            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly. This setting only applies if `queueMode` is set to `MANUAL`."
           }
         }
       },
@@ -4271,14 +4915,26 @@
             "type": "integer",
             "format": "int32",
             "default": 180,
-            "description": "Maximum time in seconds allowed for the execution of a web service before the request is aborted. When time is expired the execution is aborted.",
+            "description": "Maximum allowed time in seconds for the execution of a web service request (job) before the request is canceled. If the time has expired, the execution is aborted and an error code is returned.",
             "minimum": 0
+          },
+          "queueMode": {
+            "type": "string",
+            "default": "AUTO",
+            "description": "Defines how the size of the queue is determined.\n\nWith `AUTO`, it is calculated automatically by the server based on the number of configured instances.",
+            "enum": [
+              "AUTO",
+              "MANUAL"
+            ],
+            "x-webpdf-codegen": {
+              "enumName": "ApplicationConfig_QueueMode"
+            }
           },
           "queueSize": {
             "type": "integer",
             "format": "int32",
             "default": 100,
-            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly."
+            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly. This setting only applies if `queueMode` is set to `MANUAL`."
           }
         }
       },
@@ -4339,14 +4995,26 @@
             "type": "integer",
             "format": "int32",
             "default": 180,
-            "description": "Maximum time in seconds allowed for the execution of a web service before the request is aborted. When time is expired the execution is aborted.",
+            "description": "Maximum allowed time in seconds for the execution of a web service request (job) before the request is canceled. If the time has expired, the execution is aborted and an error code is returned.",
             "minimum": 0
+          },
+          "queueMode": {
+            "type": "string",
+            "default": "AUTO",
+            "description": "Defines how the size of the queue is determined.\n\nWith `AUTO`, it is calculated automatically by the server based on the number of configured instances.",
+            "enum": [
+              "AUTO",
+              "MANUAL"
+            ],
+            "x-webpdf-codegen": {
+              "enumName": "ApplicationConfig_QueueMode"
+            }
           },
           "queueSize": {
             "type": "integer",
             "format": "int32",
             "default": 100,
-            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly."
+            "description": "Maximum number of waiting requests, before new requests are rejected. If there are more requests than free instances, they are placed in the queue. If this maximum value is reached, further requests are rejected directly. This setting only applies if `queueMode` is set to `MANUAL`."
           },
           "timeout": {
             "type": "integer",
@@ -4649,6 +5317,141 @@
         },
         "readOnly": true
       },
+      "Cluster_Mode": {
+        "type": "string",
+        "default": "single",
+        "enum": [
+          "single",
+          "cluster"
+        ]
+      },
+      "Cluster_NodeState": {
+        "type": "string",
+        "default": "init",
+        "description": "Defines the state for the cluster node.",
+        "enum": [
+          "unknown",
+          "init",
+          "connect",
+          "wait",
+          "boot",
+          "locked",
+          "up",
+          "down"
+        ]
+      },
+      "Cluster_NodeStatus": {
+        "type": "object",
+        "description": "General status information about a cluster node.",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/Webservice_Result"
+          },
+          "isCoordinator": {
+            "type": "boolean",
+            "default": false
+          },
+          "localAddress": {
+            "type": "string",
+            "default": ""
+          },
+          "name": {
+            "type": "string",
+            "default": ""
+          },
+          "state": {
+            "$ref": "#/components/schemas/Cluster_NodeState"
+          }
+        },
+        "readOnly": true
+      },
+      "Cluster_Role": {
+        "type": "string",
+        "default": "member",
+        "description": "Defines the role of a server node. A coordinator role defines the node that initializes the cluster and passes on the configuration to the other nodes. A node with a member role defines a normal working node that receives the configuration from a coordinator.",
+        "enum": [
+          "coordinator",
+          "member"
+        ]
+      },
+      "Cluster_Settings": {
+        "type": "object",
+        "description": "Settings for the cluster",
+        "properties": {
+          "connectTimeout": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "description": "Defines the number of milliseconds that a server node waits when it joins the cluster (e.g. when waiting for a coordinator server node)"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/Cluster_Mode"
+          },
+          "name": {
+            "type": "string",
+            "default": "",
+            "description": "Defines the name of the cluster. If the server node has a coordinator role, the cluster is created under this name. If the server node has the role of a member, the node attempts to join the cluster with this name."
+          },
+          "nodeName": {
+            "type": "string",
+            "default": "",
+            "description": "Defines the name for the node. If it is empty, the host name of the machine is used."
+          },
+          "role": {
+            "$ref": "#/components/schemas/Cluster_Role"
+          },
+          "secretKey": {
+            "type": "string",
+            "default": "",
+            "description": "The encryption key used for communication in the cluster between the nodes. All nodes must use the same 64-digit hexadecimal encryption key. The encryption key is created when the cluster is initialized."
+          },
+          "stopOnError": {
+            "type": "boolean",
+            "default": false,
+            "description": "If 'true', the server node is also started if an error has occurred (e.g. when joining the cluster)."
+          }
+        }
+      },
+      "Cluster_Status": {
+        "type": "object",
+        "description": "General information about the cluster status and detailed information about each node.",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/Webservice_Result"
+          },
+          "id": {
+            "type": "string",
+            "default": ""
+          },
+          "isDemoMode": {
+            "type": "boolean",
+            "default": false
+          },
+          "localAddress": {
+            "type": "string",
+            "default": ""
+          },
+          "maximumAllowedNodes": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "namespace": {
+            "type": "string",
+            "default": ""
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Cluster_NodeStatus"
+            }
+          },
+          "settings": {
+            "$ref": "#/components/schemas/Cluster_Settings"
+          }
+        },
+        "readOnly": true
+      },
       "Document_File": {
         "type": "object",
         "description": "Contains the file information about a document in the document storage",
@@ -4715,11 +5518,11 @@
           "isFileLocked": {
             "type": "boolean",
             "default": false,
-            "description": "File is locked on the server, because an other operation uses the file",
+            "description": "If set the document is currently locked",
             "readOnly": true
           },
           "metadata": {
-            "$ref": "#/components/schemas/Metadata_Document"
+            "$ref": "#/components/schemas/Document_Metadata"
           },
           "mimeType": {
             "type": "string",
@@ -4737,6 +5540,7 @@
             "$ref": "#/components/schemas/Document_Password"
           }
         },
+        "readOnly": true,
         "required": [
           "documentId"
         ]
@@ -4760,6 +5564,11 @@
           },
           "fileFilter": {
             "$ref": "#/components/schemas/Document_FileFilter"
+          },
+          "storeArchive": {
+            "type": "boolean",
+            "default": false,
+            "description": "Defines whether the archive is saved in the document storage or only created temporarily."
           }
         }
       },
@@ -4815,6 +5624,23 @@
           "regex",
           "glob"
         ]
+      },
+      "Document_FileUpdate": {
+        "type": "object",
+        "description": "Contains the update information for a document in the document storage",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "default": "",
+            "description": "File name for the document (without extension)"
+          },
+          "parentDocumentId": {
+            "type": "string",
+            "default": "",
+            "description": "The id of the parent document",
+            "readOnly": true
+          }
+        }
       },
       "Document_HistoryEntry": {
         "type": "object",
@@ -4962,6 +5788,279 @@
           "form"
         ]
       },
+      "Document_Metadata": {
+        "type": "object",
+        "description": "Defines the metadata for the document depending of the field `metadataType`",
+        "discriminator": {
+          "mapping": {
+            "archive": "#/components/schemas/Document_MetadataArchive",
+            "image": "#/components/schemas/Document_MetadataImage",
+            "pdf": "#/components/schemas/Document_MetadataPdf"
+          },
+          "propertyName": "metadataType"
+        },
+        "properties": {
+          "metadataType": {
+            "$ref": "#/components/schemas/Document_MetadataType"
+          }
+        },
+        "readOnly": true,
+        "required": [
+          "metadataType"
+        ],
+        "x-webpdf-codegen": {
+          "isReadOnly": "true"
+        }
+      },
+      "Document_MetadataArchive": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Document_Metadata"
+          }
+        ],
+        "description": "The metadata that describes the archive document",
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Document_MetadataArchiveEntry"
+            },
+            "readOnly": true
+          }
+        },
+        "readOnly": true,
+        "required": [
+          "metadataType"
+        ]
+      },
+      "Document_MetadataArchiveEntry": {
+        "type": "object",
+        "description": "Defines a file entry in the file list of the metadata for an archive document.",
+        "properties": {
+          "lastModifiedDate": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "Time at which the file was last changed",
+            "readOnly": true
+          },
+          "path": {
+            "type": "string",
+            "default": "",
+            "description": "File name and path within the archive",
+            "readOnly": true
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "File size in bytes",
+            "readOnly": true
+          }
+        },
+        "readOnly": true
+      },
+      "Document_MetadataImage": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Document_Metadata"
+          }
+        ],
+        "description": "The metadata that describes the image document",
+        "properties": {
+          "images": {
+            "type": "array",
+            "description": "A list of metadata directories, where each directory contains a key-value map with the respective entries of the directory.",
+            "items": {
+              "$ref": "#/components/schemas/Document_MetadataImageEntry"
+            },
+            "readOnly": true
+          }
+        },
+        "readOnly": true,
+        "required": [
+          "metadataType"
+        ]
+      },
+      "Document_MetadataImageEntry": {
+        "type": "object",
+        "description": "Defines an image entry in the metadata for an image document.",
+        "properties": {
+          "colorDepth": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "description": "Color depth in bits",
+            "readOnly": true
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "description": "Image height",
+            "readOnly": true
+          },
+          "isAnimated": {
+            "type": "boolean",
+            "default": false,
+            "description": "True if it is an animated image",
+            "readOnly": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "description": "Metadata dictionary of the image file format",
+                "readOnly": true,
+                "x-webpdf-codegen": {
+                  "isReadOnly": "true"
+                }
+              },
+              "description": "Metadata dictionary of the image file format",
+              "readOnly": true,
+              "x-webpdf-codegen": {
+                "isReadOnly": "true"
+              }
+            },
+            "description": "Metadata dictionary of the image file format",
+            "readOnly": true,
+            "x-webpdf-codegen": {
+              "isReadOnly": "true"
+            }
+          },
+          "orientation": {
+            "$ref": "#/components/schemas/Document_MetadataImageOrientation"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/Document_MetadataImageResolutionUnit"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "description": "Image width",
+            "readOnly": true
+          },
+          "xRes": {
+            "type": "number",
+            "format": "float",
+            "default": 0,
+            "description": "Horizontal resolution",
+            "readOnly": true
+          },
+          "yRes": {
+            "type": "number",
+            "format": "float",
+            "default": 0,
+            "description": "Vertical resolution",
+            "readOnly": true
+          }
+        },
+        "readOnly": true
+      },
+      "Document_MetadataImageOrientation": {
+        "type": "string",
+        "default": "topLeft",
+        "description": "Defines the image orientation (EXIF orientation) for an image entry in the metadata of an image document.",
+        "enum": [
+          "topLeft",
+          "topRight",
+          "bottomRight",
+          "bottomLeft",
+          "leftTop",
+          "rightTop",
+          "rightBottom",
+          "leftBottom"
+        ],
+        "readOnly": true,
+        "x-webpdf-codegen": {
+          "isReadOnly": "true"
+        }
+      },
+      "Document_MetadataImageResolutionUnit": {
+        "type": "string",
+        "default": "inch",
+        "description": "Defines the resolution unit for an image entry in the metadata of an image document.",
+        "enum": [
+          "none",
+          "inch",
+          "centimeter"
+        ],
+        "readOnly": true,
+        "x-webpdf-codegen": {
+          "isReadOnly": "true"
+        }
+      },
+      "Document_MetadataPdf": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Document_Metadata"
+          }
+        ],
+        "description": "The metadata that describes the PDF document",
+        "properties": {
+          "annotations": {
+            "$ref": "#/components/schemas/Metadata_AnnotationsDocument"
+          },
+          "attachments": {
+            "$ref": "#/components/schemas/Metadata_AttachmentsDocument"
+          },
+          "backgrounds": {
+            "$ref": "#/components/schemas/Metadata_BackgroundsDocument"
+          },
+          "folders": {
+            "$ref": "#/components/schemas/Metadata_FoldersDocument"
+          },
+          "form": {
+            "$ref": "#/components/schemas/Metadata_FormDocument"
+          },
+          "headersFooters": {
+            "$ref": "#/components/schemas/Metadata_HeadersFootersDocument"
+          },
+          "images": {
+            "$ref": "#/components/schemas/Metadata_ImagesDocument"
+          },
+          "information": {
+            "$ref": "#/components/schemas/Metadata_Information"
+          },
+          "pages": {
+            "$ref": "#/components/schemas/Metadata_PagesDocument"
+          },
+          "security": {
+            "$ref": "#/components/schemas/Metadata_Security"
+          },
+          "signatures": {
+            "$ref": "#/components/schemas/Metadata_SignaturesDocument"
+          },
+          "transitions": {
+            "$ref": "#/components/schemas/Metadata_TransitionsDocument"
+          }
+        },
+        "required": [
+          "information",
+          "metadataType",
+          "security"
+        ]
+      },
+      "Document_MetadataType": {
+        "type": "string",
+        "default": "pdf",
+        "description": "Selects the metadata structure depending on the type of document.\n\n- pdf = a PDF document\n\n- archive = a archive document\n\n- image = a image document\n\n",
+        "enum": [
+          "pdf",
+          "archive",
+          "image"
+        ],
+        "readOnly": true,
+        "x-webpdf-codegen": {
+          "isReadOnly": "true"
+        }
+      },
       "Document_Password": {
         "type": "object",
         "description": "Contains password information if it is a PDF document",
@@ -4993,7 +6092,10 @@
             "readOnly": true
           }
         },
-        "readOnly": true
+        "readOnly": true,
+        "x-webpdf-codegen": {
+          "isReadOnly": "true"
+        }
       },
       "Document_Recipient": {
         "type": "object",
@@ -5095,6 +6197,9 @@
           },
           "drawStyle": {
             "$ref": "#/components/schemas/Metadata_DrawStyle"
+          },
+          "field": {
+            "$ref": "#/components/schemas/Metadata_FieldAnnotation"
           },
           "hidden": {
             "type": "boolean",
@@ -5601,7 +6706,6 @@
             "$ref": "#/components/schemas/Metadata_TransitionsDocument"
           }
         },
-        "readOnly": true,
         "required": [
           "information",
           "security"
@@ -5710,6 +6814,35 @@
             "items": {
               "$ref": "#/components/schemas/Metadata_FormValueStyle"
             }
+          }
+        }
+      },
+      "Metadata_FieldAnnotation": {
+        "type": "object",
+        "description": "Defines a set of attributes for field annotations.",
+        "properties": {
+          "alternateName": {
+            "type": "string",
+            "default": "",
+            "description": "The alternate name of the annotation´s field."
+          },
+          "mappingName": {
+            "type": "string",
+            "default": "",
+            "description": "The mapping name of the annotation´s field."
+          },
+          "name": {
+            "type": "string",
+            "default": "",
+            "description": "The partial name of the annotation´s field."
+          },
+          "signature": {
+            "$ref": "#/components/schemas/Metadata_Signature"
+          },
+          "type": {
+            "type": "string",
+            "default": "",
+            "description": "Indicates the type of the annotation´s field.\n\n*   Btn = Button\n*   Tx = Textfield\n*   Ch = Choicefield\n*   Sig = Signaturefield"
           }
         }
       },
@@ -7862,8 +8995,7 @@
           }
         },
         "required": [
-          "formats",
-          "scanArea"
+          "formats"
         ]
       },
       "Operation_BaseToolbox": {
@@ -8625,6 +9757,9 @@
             "description": "Sets the maximum recursions, that may occur when converting a document's attachments.\n\n**Important:** This parameter is intended for internal use only. Please only use this, if you really are sure you need to do so.",
             "minimum": 1
           },
+          "office": {
+            "$ref": "#/components/schemas/Operation_ConverterOffice"
+          },
           "officeBridge": {
             "$ref": "#/components/schemas/Operation_OfficeBridge"
           },
@@ -8867,6 +10002,35 @@
             "type": "boolean",
             "default": true,
             "description": "If \"true\", then a background defined in the e-mail (in the HTML content) is also output in the PDF document. If \"false\", the background will be hidden."
+          }
+        }
+      },
+      "Operation_ConverterOffice": {
+        "type": "object",
+        "description": "Defines the settings to be used when converting Office documents (e.g., docx documents).\n\n**Important:** Currently only the integrated Word document converter for docx files is supported",
+        "properties": {
+          "word": {
+            "$ref": "#/components/schemas/Operation_ConverterOfficeWord"
+          }
+        }
+      },
+      "Operation_ConverterOfficeForm": {
+        "type": "object",
+        "description": "Defines the settings that are used when converting documents that have content that can be converted to an AcroForm.",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "If \"true,\" content elements that define forms are converted into an AcroForm. Otherwise, the elements are converted as normal content."
+          }
+        }
+      },
+      "Operation_ConverterOfficeWord": {
+        "type": "object",
+        "description": "Defines the settings to be used when converting Word (docx) documents.",
+        "properties": {
+          "form": {
+            "$ref": "#/components/schemas/Operation_ConverterOfficeForm"
           }
         }
       },
@@ -11606,7 +12770,7 @@
       },
       "Operation_OfficeBridge": {
         "type": "object",
-        "description": "Used to specify whether \"Office Bridge\" should be used when converting Word, Excel, and PowerPoint documents. If this element is set (and Office Bridge is enabled), the document will be converted using the Office software installed on the server."
+        "description": "Used to specify whether \"Office Bridge\" should be used when converting Word, Excel and PowerPoint documents. If this element is set (and Office Bridge is enabled in the server configuration), the document will be converted using the Office software installed on the server."
       },
       "Operation_OptionsFont": {
         "type": "object",
@@ -12271,6 +13435,39 @@
             "type": "string",
             "default": "",
             "description": "Filters by path for the selection. \"a/b/\\*\", for example, would result in all a/b subfolders being searched for matching documents. Whether a document will be considered a match will also depend on the \"fileName\" parameter. If the \"fileName\" parameter is not set, this parameter can be used to select the path instead (for extraction / deletion)"
+          }
+        }
+      },
+      "Operation_PortfolioSort": {
+        "type": "object",
+        "description": "Used to define a sorting schema for the portfolio.\n\n**Important:** The order of the sorting criteria does matter and the sorting precedence will follow the given sequence.\n\n**Important:** Should an old sorting schema be found, it will be removed and replaced.",
+        "properties": {
+          "namedCriteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Operation_PortfolioSortPredefinedCriterion"
+            }
+          }
+        }
+      },
+      "Operation_PortfolioSortPredefinedCriterion": {
+        "type": "object",
+        "description": "Selects a predefined sorting criterion to apply to entries of the portfolio, when determining display order.",
+        "properties": {
+          "ascending": {
+            "type": "boolean",
+            "default": true,
+            "description": "Sets whether the schema criterion shall be applied in ascending or descending order."
+          },
+          "displayName": {
+            "type": "string",
+            "default": "",
+            "description": "Selects the display name for the sorting criterion."
+          },
+          "key": {
+            "type": "string",
+            "default": "order",
+            "description": "Selects a predefined sorting criterion."
           }
         }
       },
@@ -13574,7 +14771,7 @@
       },
       "Operation_SharePointBridge": {
         "type": "object",
-        "description": "Used to specify whether \"SharePoint Bridge\" should be used when converting a Word document. If the element is set, the Word document will be converted using the SharePoint service (if SharePoint Bridge is enabled)."
+        "description": "Used to specify whether \"SharePoint Bridge\" should be used when converting Word, Excel and PowerPoint documents. If the element is set, the document will be converted using the SharePoint Online service (if SharePoint Bridge is enabled in the server configuration)."
       },
       "Operation_Signature": {
         "type": "object",
@@ -15236,6 +16433,9 @@
               },
               "remove": {
                 "$ref": "#/components/schemas/Operation_PortfolioRemove"
+              },
+              "sort": {
+                "$ref": "#/components/schemas/Operation_PortfolioSort"
               }
             }
           }
@@ -15852,7 +17052,7 @@
       },
       "Operation_UrlConverter": {
         "type": "object",
-        "description": "The \"URLConverter\" web service van be used to convert URL resources (websites) to a PDF document.\n\n**Important:** Please keep the limitations of HTML conversion in mind (see chapter \"HTML conversion\").",
+        "description": "The \"URLConverter\" web service van be used to convert URL resources (e.g., websites) to a PDF document.\n\n**Important:** Please keep the limitations of HTML conversion in mind (see chapter \"HTML Converter\").",
         "properties": {
           "basicAuth": {
             "$ref": "#/components/schemas/Operation_HttpBasicAuth"
@@ -15866,13 +17066,13 @@
           "url": {
             "type": "string",
             "default": "",
-            "description": "The URL for the resource to be converted."
+            "description": "The URL for the resource to be converted.\n\n**Note:**The \"file\" protocol is not supported; this applies to the resource URL itself and all resources referenced in the content."
           }
         }
       },
       "Operation_UrlConverterFooter": {
         "type": "object",
-        "description": "Defines the content that will be used as a footer. The content is passed in BASE64 encoded and contains HTML and (embedded) CSS code to position and format the footer.\n\nThe footer can contain the variables `${html.pageNumber}` (page number), `${html.totalPages}` (total number of pages) and `${html.title}` (HTML head meta tag `<title>`).\n\n**Important:**The footer is not used for all file format conversions. The footer is not supported for file formats that already contain their own footer definition, such as Office formats. The footer defined here works only for HTML-based formats such as HTML files, emails, or template-based conversions (e.g. text formats).\n\nExample:\n\n```html                    \n<p>\n  <span style=\"font-size: 12px\">Page ${html.pageNumber} of ${html.totalPages} pages</span>\n</p>\n```",
+        "description": "Defines the content that will be used as a footer. The content is passed in BASE64 encoded and contains HTML and (embedded) CSS code to position and format the footer.\n\nThe footer can contain the variables `${html.pageNumber}` (page number), `${html.totalPages}` (total number of pages) and `${html.title}` (HTML head meta tag `<title>`).\n\n**Important:**The footer is not used for all file format conversions. The footer is not supported for file formats that already contain their own footer definition, such as Office formats. The footer defined here works only for HTML-based formats such as HTML files, emails, or template-based conversions (e.g., text formats).\n\nExample:\n\n```html                    \n<p>\n  <span style=\"font-size: 12px\">Page ${html.pageNumber} of ${html.totalPages} pages</span>\n</p>\n```",
         "properties": {
           "source": {
             "type": "string",
@@ -15899,7 +17099,7 @@
       },
       "Operation_UrlConverterHeader": {
         "type": "object",
-        "description": "Defines the content that will be used as a header. The content is passed in BASE64 encoded and contains HTML and (embedded) CSS code to position and format the header.\n\nThe header can contain the variables `${html.pageNumber}` (page number), `${html.totalPages}` (total number of pages) and `${html.title}` (HTML head meta tag `<title>`).\n\n**Important:**The header is not used for all file format conversions. The header is not supported for file formats that already contain their own header definition, such as Office formats. The header defined here works only for HTML-based formats such as HTML files, emails, or template-based conversions (e.g. text formats).\n\nExample:\n\n```html                    \n<p>\n  <span style=\"font-size: 12px\">Page ${html.pageNumber} of ${html.totalPages} pages</span>\n</p>\n```",
+        "description": "Defines the content that will be used as a header. The content is passed in BASE64 encoded and contains HTML and (embedded) CSS code to position and format the header.\n\nThe header can contain the variables `${html.pageNumber}` (page number), `${html.totalPages}` (total number of pages) and `${html.title}` (HTML head meta tag `<title>`).\n\n**Important:**The header is not used for all file format conversions. The header is not supported for file formats that already contain their own header definition, such as Office formats. The header defined here works only for HTML-based formats such as HTML files, emails, or template-based conversions (e.g., text formats).\n\nExample:\n\n```html                    \n<p>\n  <span style=\"font-size: 12px\">Page ${html.pageNumber} of ${html.totalPages} pages</span>\n</p>\n```",
         "properties": {
           "source": {
             "type": "string",
@@ -16653,7 +17853,7 @@
           "version": {
             "type": "string",
             "default": "v10Comfort",
-            "description": "Used to define the version of the ZUGFeRD XML file that should be embedded with \"xmlFile\". Versions 1.0, 2.0, 2.1.x and 2.2 are supported. Only the \"Comfort\" profile is available for version 1.0. Meanwhile, the \"Minimum\", \"Basic WL\", \"Basic\", \"EN16931\" (Comfort), and \"Extended\" profiles are supported for version 2.0.\n\n**Note:** Since version 2.x, the referenced profile \"XRECHNUNG\" is additionally available. This profile has been included specifically to include invoices for Germany, based on and under the sole responsibility of KoSIT, Germany's central coordination agency for IT's e-invoice CIUS \"XRechnung\". It is defined as the Standard for electronic invoices issued to public administrations, and essentially adds specific business rules to EN 16931 in order to comply with national laws and regulations.\n\n**Note:** Since version 2.1.1 ZUGFeRD and Factur-X are technically identical and both formats use Factur-X as common identification.\n\nList of versions with the corresponding profiles:\n\n*   v10Comfort\n*   v20Minimum\n*   v20BasicWL\n*   v20Basic\n*   v20EN16931\n*   v20Extended\n*   v21Minimum\n*   v21BasicWL\n*   v21Basic\n*   v21EN16931\n*   v21Extended\n*   v21XRechnung\n*   v22Minimum\n*   v22BasicWL\n*   v22Basic\n*   v22EN16931\n*   v22Extended\n*   v22XRechnung",
+            "description": "Used to define the version of the ZUGFeRD XML file that should be embedded with \"xmlFile\". Versions from 1.0 to 2.3 are supported. Only the \"Comfort\" profile is available for version 1.0. Meanwhile, the \"Minimum\", \"Basic WL\", \"Basic\", \"EN16931\" (Comfort), and \"Extended\" profiles are supported for version 2.0.\n\n**Note:** Since version 2.x, the referenced profile \"XRECHNUNG\" is additionally available. This profile has been included specifically to include invoices for Germany, based on and under the sole responsibility of KoSIT, Germany's central coordination agency for IT's e-invoice CIUS \"XRechnung\". It is defined as the Standard for electronic invoices issued to public administrations, and essentially adds specific business rules to EN 16931 in order to comply with national laws and regulations.\n\n**Note:** Since version 2.1.1 ZUGFeRD and Factur-X are technically identical, and both formats use Factur-X as common identification.\n\nList of versions with the corresponding profiles:\n\n*   v10Comfort\n*   v20Minimum\n*   v20BasicWL\n*   v20Basic\n*   v20EN16931\n*   v20Extended\n*   v21Minimum\n*   v21BasicWL\n*   v21Basic\n*   v21EN16931\n*   v21Extended\n*   v21XRechnung\n*   v22Minimum\n*   v22BasicWL\n*   v22Basic\n*   v22EN16931\n*   v22Extended\n*   v22XRechnung\n*   v23Minimum\n*   v23BasicWL\n*   v23Basic\n*   v23EN16931\n*   v23Extended\n*   v23XRechnung",
             "enum": [
               "v10Comfort",
               "v20Minimum",
@@ -16672,7 +17872,13 @@
               "v22Basic",
               "v22EN16931",
               "v22Extended",
-              "v22XRechnung"
+              "v22XRechnung",
+              "v23Minimum",
+              "v23BasicWL",
+              "v23Basic",
+              "v23EN16931",
+              "v23Extended",
+              "v23XRechnung"
             ],
             "x-webpdf-codegen": {
               "enumName": "Operation_ZugferdVersion"
@@ -16911,6 +18117,9 @@
               "$ref": "#/components/schemas/Auth_Provider"
             }
           },
+          "serverMode": {
+            "$ref": "#/components/schemas/Cluster_Mode"
+          },
           "serverStart": {
             "type": "integer",
             "format": "int64",
@@ -17034,6 +18243,41 @@
           "azure_ad"
         ]
       },
+      "Provider_ProviderEntry": {
+        "type": "object",
+        "properties": {
+          "configurationContent": {
+            "type": "string",
+            "format": "byte"
+          },
+          "configurationFileName": {
+            "type": "string",
+            "default": "",
+            "readOnly": true
+          },
+          "configurationFileType": {
+            "$ref": "#/components/schemas/Admin_ProviderConfigurationFormat"
+          },
+          "name": {
+            "type": "string",
+            "default": ""
+          }
+        }
+      },
+      "Provider_Settings": {
+        "type": "object",
+        "properties": {
+          "documentStorage": {
+            "$ref": "#/components/schemas/Provider_ProviderEntry"
+          },
+          "fileStorage": {
+            "$ref": "#/components/schemas/Provider_ProviderEntry"
+          },
+          "sessionStorage": {
+            "$ref": "#/components/schemas/Provider_ProviderEntry"
+          }
+        }
+      },
       "ServerConfig_Apr": {
         "type": "object",
         "description": "Configures an [APR Lifecycle Listener](https://tomcat.apache.org/tomcat-10.0-doc/config/listeners.html) for the underlying tomcat server.",
@@ -17076,243 +18320,25 @@
         "properties": {
           "cipher": {
             "type": "array",
-            "description": "Selects a cipher that shall be supported.",
             "items": {
-              "type": "string",
-              "default": "TLS_RSA_WITH_AES_256_CBC_SHA",
-              "description": "Specifies the encryption algorithm (cipher) for TLS (SSL) connections.",
-              "enum": [
-                "SSL_DH_anon_EXPORT_WITH_DES40_CBC_SHA",
-                "SSL_DH_anon_EXPORT_WITH_RC4_40_MD5",
-                "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA",
-                "TLS_DH_anon_WITH_AES_128_CBC_SHA",
-                "TLS_DH_anon_WITH_AES_128_CBC_SHA256",
-                "TLS_DH_anon_WITH_AES_128_GCM_SHA256",
-                "TLS_DH_anon_WITH_AES_256_CBC_SHA",
-                "TLS_DH_anon_WITH_AES_256_CBC_SHA256",
-                "TLS_DH_anon_WITH_AES_256_GCM_SHA384",
-                "TLS_DH_anon_WITH_CAMELLIA_128_CBC_SHA",
-                "TLS_DH_anon_WITH_CAMELLIA_128_CBC_SHA256",
-                "TLS_DH_anon_WITH_CAMELLIA_256_CBC_SHA",
-                "TLS_DH_anon_WITH_CAMELLIA_256_CBC_SHA256",
-                "SSL_DH_anon_WITH_DES_CBC_SHA",
-                "SSL_DH_anon_WITH_RC4_128_MD5",
-                "TLS_DH_anon_WITH_SEED_CBC_SHA",
-                "SSL_DH_DSS_EXPORT_WITH_DES40_CBC_SHA",
-                "SSL_DH_DSS_WITH_3DES_EDE_CBC_SHA",
-                "TLS_DH_DSS_WITH_AES_128_CBC_SHA",
-                "TLS_DH_DSS_WITH_AES_128_CBC_SHA256",
-                "TLS_DH_DSS_WITH_AES_128_GCM_SHA256",
-                "TLS_DH_DSS_WITH_AES_256_CBC_SHA",
-                "TLS_DH_DSS_WITH_AES_256_CBC_SHA256",
-                "TLS_DH_DSS_WITH_AES_256_GCM_SHA384",
-                "TLS_DH_DSS_WITH_CAMELLIA_128_CBC_SHA",
-                "TLS_DH_DSS_WITH_CAMELLIA_128_CBC_SHA256",
-                "TLS_DH_DSS_WITH_CAMELLIA_256_CBC_SHA",
-                "TLS_DH_DSS_WITH_CAMELLIA_256_CBC_SHA256",
-                "SSL_DH_DSS_WITH_DES_CBC_SHA",
-                "TLS_DH_DSS_WITH_SEED_CBC_SHA",
-                "SSL_DH_RSA_EXPORT_WITH_DES40_CBC_SHA",
-                "SSL_DH_RSA_WITH_3DES_EDE_CBC_SHA",
-                "TLS_DH_RSA_WITH_AES_128_CBC_SHA",
-                "TLS_DH_RSA_WITH_AES_128_CBC_SHA256",
-                "TLS_DH_RSA_WITH_AES_128_GCM_SHA256",
-                "TLS_DH_RSA_WITH_AES_256_CBC_SHA",
-                "TLS_DH_RSA_WITH_AES_256_CBC_SHA256",
-                "TLS_DH_RSA_WITH_AES_256_GCM_SHA384",
-                "TLS_DH_RSA_WITH_CAMELLIA_128_CBC_SHA",
-                "TLS_DH_RSA_WITH_CAMELLIA_128_CBC_SHA256",
-                "TLS_DH_RSA_WITH_CAMELLIA_256_CBC_SHA",
-                "TLS_DH_RSA_WITH_CAMELLIA_256_CBC_SHA256",
-                "SSL_DH_RSA_WITH_DES_CBC_SHA",
-                "TLS_DH_RSA_WITH_SEED_CBC_SHA",
-                "SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA",
-                "SSL_DHE_DSS_EXPORT1024_WITH_DES_CBC_SHA",
-                "SSL_DHE_DSS_EXPORT1024_WITH_RC4_56_SHA",
-                "SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA",
-                "TLS_DHE_DSS_WITH_AES_128_CBC_SHA",
-                "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256",
-                "TLS_DHE_DSS_WITH_AES_128_GCM_SHA256",
-                "TLS_DHE_DSS_WITH_AES_256_CBC_SHA",
-                "TLS_DHE_DSS_WITH_AES_256_CBC_SHA256",
-                "TLS_DHE_DSS_WITH_AES_256_GCM_SHA384",
-                "TLS_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA",
-                "TLS_DHE_DSS_WITH_CAMELLIA_128_CBC_SHA256",
-                "TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA",
-                "TLS_DHE_DSS_WITH_CAMELLIA_256_CBC_SHA256",
-                "SSL_DHE_DSS_WITH_DES_CBC_SHA",
-                "SSL_DHE_DSS_WITH_RC4_128_SHA",
-                "TLS_DHE_DSS_WITH_SEED_CBC_SHA",
-                "TLS_DHE_PSK_WITH_3DES_EDE_CBC_SHA",
-                "TLS_DHE_PSK_WITH_AES_128_CBC_SHA",
-                "TLS_DHE_PSK_WITH_AES_128_CBC_SHA256",
-                "TLS_DHE_PSK_WITH_AES_128_GCM_SHA256",
-                "TLS_DHE_PSK_WITH_AES_256_CBC_SHA",
-                "TLS_DHE_PSK_WITH_AES_256_CBC_SHA384",
-                "TLS_DHE_PSK_WITH_AES_256_GCM_SHA384",
-                "TLS_DHE_PSK_WITH_NULL_SHA",
-                "TLS_DHE_PSK_WITH_NULL_SHA256",
-                "TLS_DHE_PSK_WITH_NULL_SHA384",
-                "TLS_DHE_PSK_WITH_RC4_128_SHA",
-                "SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA",
-                "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA",
-                "TLS_DHE_RSA_WITH_AES_128_CBC_SHA",
-                "TLS_DHE_RSA_WITH_AES_128_CBC_SHA256",
-                "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256",
-                "TLS_DHE_RSA_WITH_AES_256_CBC_SHA",
-                "TLS_DHE_RSA_WITH_AES_256_CBC_SHA256",
-                "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384",
-                "TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA",
-                "TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA256",
-                "TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA",
-                "TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA256",
-                "SSL_DHE_RSA_WITH_DES_CBC_SHA",
-                "TLS_DHE_RSA_WITH_SEED_CBC_SHA",
-                "TLS_ECDH_anon_WITH_3DES_EDE_CBC_SHA",
-                "TLS_ECDH_anon_WITH_AES_128_CBC_SHA",
-                "TLS_ECDH_anon_WITH_AES_256_CBC_SHA",
-                "TLS_ECDH_anon_WITH_NULL_SHA",
-                "TLS_ECDH_anon_WITH_RC4_128_SHA",
-                "TLS_ECDH_ECDSA_WITH_3DES_EDE_CBC_SHA",
-                "TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA",
-                "TLS_ECDH_ECDSA_WITH_AES_128_CBC_SHA256",
-                "TLS_ECDH_ECDSA_WITH_AES_128_GCM_SHA256",
-                "TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA",
-                "TLS_ECDH_ECDSA_WITH_AES_256_CBC_SHA384",
-                "TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384",
-                "TLS_ECDH_ECDSA_WITH_NULL_SHA",
-                "TLS_ECDH_ECDSA_WITH_RC4_128_SHA",
-                "TLS_ECDH_RSA_WITH_3DES_EDE_CBC_SHA",
-                "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA",
-                "TLS_ECDH_RSA_WITH_AES_128_CBC_SHA256",
-                "TLS_ECDH_RSA_WITH_AES_128_GCM_SHA256",
-                "TLS_ECDH_RSA_WITH_AES_256_CBC_SHA",
-                "TLS_ECDH_RSA_WITH_AES_256_CBC_SHA384",
-                "TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384",
-                "TLS_ECDH_RSA_WITH_NULL_SHA",
-                "TLS_ECDH_RSA_WITH_RC4_128_SHA",
-                "TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA",
-                "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA",
-                "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256",
-                "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
-                "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA",
-                "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384",
-                "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
-                "TLS_ECDHE_ECDSA_WITH_NULL_SHA",
-                "TLS_ECDHE_ECDSA_WITH_RC4_128_SHA",
-                "TLS_ECDHE_PSK_WITH_3DES_EDE_CBC_SHA",
-                "TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA",
-                "TLS_ECDHE_PSK_WITH_AES_128_CBC_SHA256",
-                "TLS_ECDHE_PSK_WITH_AES_256_CBC_SHA",
-                "TLS_ECDHE_PSK_WITH_AES_256_CBC_SHA384",
-                "TLS_ECDHE_PSK_WITH_NULL_SHA",
-                "TLS_ECDHE_PSK_WITH_NULL_SHA256",
-                "TLS_ECDHE_PSK_WITH_NULL_SHA384",
-                "TLS_ECDHE_PSK_WITH_RC4_128_SHA",
-                "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA",
-                "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
-                "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
-                "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
-                "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
-                "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384",
-                "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
-                "TLS_ECDHE_RSA_WITH_NULL_SHA",
-                "TLS_ECDHE_RSA_WITH_RC4_128_SHA",
-                "TLS_EMPTY_RENEGOTIATION_INFO_SCSV",
-                "SSL_FORTEZZA_DMS_WITH_FORTEZZA_CBC_SHA",
-                "SSL_FORTEZZA_DMS_WITH_NULL_SHA",
-                "TLS_KRB5_EXPORT_WITH_DES_CBC_40_MD5",
-                "TLS_KRB5_EXPORT_WITH_DES_CBC_40_SHA",
-                "TLS_KRB5_EXPORT_WITH_RC2_CBC_40_MD5",
-                "TLS_KRB5_EXPORT_WITH_RC2_CBC_40_SHA",
-                "TLS_KRB5_EXPORT_WITH_RC4_40_MD5",
-                "TLS_KRB5_EXPORT_WITH_RC4_40_SHA",
-                "TLS_KRB5_WITH_3DES_EDE_CBC_MD5",
-                "TLS_KRB5_WITH_3DES_EDE_CBC_SHA",
-                "TLS_KRB5_WITH_DES_CBC_MD5",
-                "TLS_KRB5_WITH_DES_CBC_SHA",
-                "TLS_KRB5_WITH_IDEA_CBC_MD5",
-                "TLS_KRB5_WITH_IDEA_CBC_SHA",
-                "TLS_KRB5_WITH_RC4_128_MD5",
-                "TLS_KRB5_WITH_RC4_128_SHA",
-                "TLS_PSK_WITH_3DES_EDE_CBC_SHA",
-                "TLS_PSK_WITH_AES_128_CBC_SHA",
-                "TLS_PSK_WITH_AES_128_CBC_SHA256",
-                "TLS_PSK_WITH_AES_128_GCM_SHA256",
-                "TLS_PSK_WITH_AES_256_CBC_SHA",
-                "TLS_PSK_WITH_AES_256_CBC_SHA384",
-                "TLS_PSK_WITH_AES_256_GCM_SHA384",
-                "TLS_PSK_WITH_NULL_SHA",
-                "TLS_PSK_WITH_NULL_SHA256",
-                "TLS_PSK_WITH_NULL_SHA384",
-                "TLS_PSK_WITH_RC4_128_SHA",
-                "SSL_RSA_EXPORT_WITH_DES40_CBC_SHA",
-                "SSL_RSA_EXPORT_WITH_RC2_CBC_40_MD5",
-                "SSL_RSA_EXPORT_WITH_RC4_40_MD5",
-                "SSL_RSA_EXPORT1024_WITH_DES_CBC_SHA",
-                "SSL_RSA_EXPORT1024_WITH_RC4_56_SHA",
-                "SSL_RSA_FIPS_WITH_3DES_EDE_CBC_SHA",
-                "SSL_RSA_FIPS_WITH_DES_CBC_SHA",
-                "TLS_RSA_PSK_WITH_3DES_EDE_CBC_SHA",
-                "TLS_RSA_PSK_WITH_AES_128_CBC_SHA",
-                "TLS_RSA_PSK_WITH_AES_128_CBC_SHA256",
-                "TLS_RSA_PSK_WITH_AES_128_GCM_SHA256",
-                "TLS_RSA_PSK_WITH_AES_256_CBC_SHA",
-                "TLS_RSA_PSK_WITH_AES_256_CBC_SHA384",
-                "TLS_RSA_PSK_WITH_AES_256_GCM_SHA384",
-                "TLS_RSA_PSK_WITH_NULL_SHA",
-                "TLS_RSA_PSK_WITH_NULL_SHA256",
-                "TLS_RSA_PSK_WITH_NULL_SHA384",
-                "TLS_RSA_PSK_WITH_RC4_128_SHA",
-                "SSL_RSA_WITH_3DES_EDE_CBC_SHA",
-                "TLS_RSA_WITH_AES_128_CBC_SHA",
-                "TLS_RSA_WITH_AES_128_CBC_SHA256",
-                "TLS_RSA_WITH_AES_128_GCM_SHA256",
-                "TLS_RSA_WITH_AES_256_CBC_SHA",
-                "TLS_RSA_WITH_AES_256_CBC_SHA256",
-                "TLS_RSA_WITH_AES_256_GCM_SHA384",
-                "TLS_RSA_WITH_CAMELLIA_128_CBC_SHA",
-                "TLS_RSA_WITH_CAMELLIA_128_CBC_SHA256",
-                "TLS_RSA_WITH_CAMELLIA_256_CBC_SHA",
-                "TLS_RSA_WITH_CAMELLIA_256_CBC_SHA256",
-                "SSL_RSA_WITH_DES_CBC_SHA",
-                "SSL_RSA_WITH_IDEA_CBC_SHA",
-                "SSL_RSA_WITH_NULL_MD5",
-                "SSL_RSA_WITH_NULL_SHA",
-                "TLS_RSA_WITH_NULL_SHA256",
-                "SSL_RSA_WITH_RC4_128_MD5",
-                "SSL_RSA_WITH_RC4_128_SHA",
-                "TLS_RSA_WITH_SEED_CBC_SHA",
-                "TLS_SRP_SHA_DSS_WITH_3DES_EDE_CBC_SHA",
-                "TLS_SRP_SHA_DSS_WITH_AES_128_CBC_SHA",
-                "TLS_SRP_SHA_DSS_WITH_AES_256_CBC_SHA",
-                "TLS_SRP_SHA_RSA_WITH_3DES_EDE_CBC_SHA",
-                "TLS_SRP_SHA_RSA_WITH_AES_128_CBC_SHA",
-                "TLS_SRP_SHA_RSA_WITH_AES_256_CBC_SHA",
-                "TLS_SRP_SHA_WITH_3DES_EDE_CBC_SHA",
-                "TLS_SRP_SHA_WITH_AES_128_CBC_SHA",
-                "TLS_SRP_SHA_WITH_AES_256_CBC_SHA"
-              ],
-              "x-webpdf-codegen": {
-                "enumName": "ServerConfig_SSLCipher"
-              }
+              "type": "string"
             }
           },
           "forceOrder": {
             "type": "boolean",
             "default": false,
-            "description": "When set to true, this forces the user to honor the TLS connector's cipher preference order."
+            "description": "When set to true, this forces the client to honor the TLS connector's cipher preference order. Otherwise, the client can select any cipher from the list itself."
           }
         }
       },
       "ServerConfig_Connector": {
         "type": "object",
-        "description": "A [connector](https://tomcat.apache.org/tomcat-9.0-doc/config/http.html) defines the properties of a port the server can be accessed by.",
+        "description": "A [connector](https://tomcat.apache.org/tomcat-10.1-doc/config/http.html) defines the properties of a port the server can be accessed by.",
         "properties": {
           "address": {
             "type": "string",
             "default": "",
-            "description": "The IP address to which the port should listen."
+            "description": "The IP address to which the connector should bind. If not defined, all IP addresses are used."
           },
           "compressibleMimeType": {
             "type": "string",
@@ -17336,7 +18362,7 @@
             "type": "integer",
             "format": "int32",
             "default": 2048,
-            "description": "Sets the minimum amount of bytes a message must reach before GZIP compression shall be applied."
+            "description": "Sets the minimum number of bytes a message must reach before GZIP compression shall be applied."
           },
           "configuration": {
             "$ref": "#/components/schemas/ServerConfig_ConnectorConfiguration"
@@ -17356,7 +18382,7 @@
           "protocol": {
             "type": "string",
             "default": "HTTP/1.1",
-            "description": "The protocol to use for a connector.\n\n*   HTTP/1.1 = Non blocking java NIO connector.\n*   HTTP/2.0 = Non blocking java NIO2 connector.\n*   AJP/1.3 = The APR/native connector.",
+            "description": "The protocol to use for the connector.\n\n*   HTTP/1.1 = Non blocking java NIO connector.\n*   HTTP/2.0 = Non blocking java NIO2 connector.\n*   AJP/1.3 = The APR/native connector.",
             "enum": [
               "HTTP/1.1",
               "HTTP/2.0",
@@ -17404,7 +18430,7 @@
       },
       "ServerConfig_ConnectorsServer": {
         "type": "object",
-        "description": "Defines a set of connectors on which the server listens. These can provide encrypted or unencrypted access to the server.",
+        "description": "Defines a series of connectors that the server listens to. These can provide encrypted or unencrypted access to the server.",
         "properties": {
           "connector": {
             "type": "array",
@@ -17421,7 +18447,17 @@
           "contextPath": {
             "type": "string",
             "default": "webPDF",
-            "description": "Sets the context path of the server address for the portal and the web services (e.g. http://localhost/webPDF)."
+            "description": "Sets the context path of the server address for the portal and the web services (e.g., http://localhost/webPDF)."
+          },
+          "csp": {
+            "$ref": "#/components/schemas/ServerConfig_HostCsp"
+          },
+          "filter": {
+            "type": "array",
+            "description": "A `filter` element represents a component to insert into the request processing pipeline of the underlying Tomcat server. (See: https://tomcat.apache.org/tomcat-10.1-doc/config/filter.html for further information.)",
+            "items": {
+              "$ref": "#/components/schemas/ServerConfig_HostFilter"
+            }
           },
           "name": {
             "type": "string",
@@ -17430,9 +18466,96 @@
           },
           "valve": {
             "type": "array",
-            "description": "A component to insert into the request processing pipeline of the underlying tomcat server. (See: https://tomcat.apache.org/tomcat-8.5-doc/config/valve.html for further information.)",
+            "description": "A `valve` element represents a component to insert into the request processing pipeline of the underlying Tomcat server. (See: https://tomcat.apache.org/tomcat-10.1-doc/config/valve.html for further information.)",
             "items": {
-              "$ref": "#/components/schemas/ServerConfig_ValveHost"
+              "$ref": "#/components/schemas/ServerConfig_HostValve"
+            }
+          }
+        }
+      },
+      "ServerConfig_HostCsp": {
+        "type": "object",
+        "description": "The `csp` element allows you to set a content security policy (https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) for the server portal page.",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "When set to true, the CSP is activated. The HTTP header \"Content-Security-Policy\" is added, and a \"nonce\" is added to the required resources."
+          },
+          "headerValue": {
+            "type": "string",
+            "default": "",
+            "description": "Defines the value for the HTTP header `Content-Security-Policy`. Use `${nonce}` to insert a nonce value from the server for the entry `'nonce-...'`."
+          }
+        }
+      },
+      "ServerConfig_HostFilter": {
+        "type": "object",
+        "description": "A `filter` element represents a component to insert into the request processing pipeline of the underlying Tomcat server. (See: https://tomcat.apache.org/tomcat-10.1-doc/config/filter.html for further information.)",
+        "properties": {
+          "className": {
+            "type": "string",
+            "default": "",
+            "description": "The Java class name of the filter implementation to use."
+          },
+          "mapping": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServerConfig_HostFilterMapping"
+            }
+          },
+          "parameter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServerConfig_HostFilterParameter"
+            }
+          }
+        }
+      },
+      "ServerConfig_HostFilterMapping": {
+        "type": "object",
+        "description": "Defines the URL pattern assignment for the filter (e.g. \"/\\*\" for all URLs)",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "required": [
+          "pattern"
+        ]
+      },
+      "ServerConfig_HostFilterParameter": {
+        "type": "object",
+        "description": "Defines a parameter for the filter that consists of a `name` and a `value`",
+        "properties": {
+          "name": {
+            "type": "string",
+            "default": ""
+          },
+          "value": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ]
+      },
+      "ServerConfig_HostValve": {
+        "type": "object",
+        "description": "A `valve` element represents a component to insert into the request processing pipeline of the underlying Tomcat server. (See: https://tomcat.apache.org/tomcat-10.1-doc/config/valve.html for further information.)",
+        "properties": {
+          "className": {
+            "type": "string",
+            "default": "",
+            "description": "The Java class name of the valve implementation to use."
+          },
+          "otherAttributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
             }
           }
         }
@@ -17454,10 +18577,13 @@
           "type": {
             "type": "string",
             "default": "JKS",
-            "description": "The format of the keystore file.\n\n*   JKS = A Java keystore (file based with an extension like \".jks\").\n*   PKCS12 = A PKCS12 keystore (file based with the extensions like \".p12\" or \".pfx\").",
+            "description": "The format of the keystore file containing the certificate (or certificate chain) and private key (optionally encrypted) to be used for SSL encryption.\n\n*   JKS = A Java keystore (file based with an extension like \".jks\").\n*   PKCS12 = A PKCS12 keystore (file based with the extensions like \".p12\" or \".pfx\").\n*   PEM = A PEM-encoded keystore (file based with extensions like \".pem\" or \".cabundle\").\n*   WINDOWS\\_MACHINE = The Windows certificate store of the machine on which the server is running.\n*   WINDOWS\\_USER = The Windows certificate store of the user account under which the server is running.",
             "enum": [
               "JKS",
-              "PKCS12"
+              "PKCS12",
+              "PEM",
+              "WINDOWS_MACHINE",
+              "WINDOWS_USER"
             ],
             "x-webpdf-codegen": {
               "enumName": "ServerConfig_SSLKeystoreFormat"
@@ -17467,12 +18593,12 @@
       },
       "ServerConfig_KeystoreSSL": {
         "type": "object",
-        "description": "Sets the keystore information for the server key and certificate to be used to cipher the connection. This keystore may only contain exactly one certificate or certificate chain with one private key.",
+        "description": "Defines the keystore with the private server key and the certificate used to encrypt the connection. This keystore may only contain exactly one certificate or certificate chain with one private key.",
         "properties": {
           "alias": {
             "type": "string",
             "default": "",
-            "description": "The alias used for the server key and certificate in the keystore."
+            "description": "The alias used for the private server key and certificate in the keystore. Can be empty if the keystore only contains a single certificate."
           },
           "file": {
             "type": "string",
@@ -17487,10 +18613,13 @@
           "type": {
             "type": "string",
             "default": "JKS",
-            "description": "The format of the keystore file.\n\n*   JKS = A Java keystore (file based with an extension like \".jks\").\n*   PKCS12 = A PKCS12 keystore (file based with the extensions like \".p12\" or \".pfx\").",
+            "description": "The format of the keystore file containing the certificate (or certificate chain) and private key (optionally encrypted) to be used for SSL encryption.\n\n*   JKS = A Java keystore (file based with an extension like \".jks\").\n*   PKCS12 = A PKCS12 keystore (file based with the extensions like \".p12\" or \".pfx\").\n*   PEM = A PEM-encoded keystore (file based with extensions like \".pem\" or \".cabundle\").\n*   WINDOWS\\_MACHINE = The Windows certificate store of the machine on which the server is running.\n*   WINDOWS\\_USER = The Windows certificate store of the user account under which the server is running.",
             "enum": [
               "JKS",
-              "PKCS12"
+              "PKCS12",
+              "PEM",
+              "WINDOWS_MACHINE",
+              "WINDOWS_USER"
             ],
             "x-webpdf-codegen": {
               "enumName": "ServerConfig_SSLKeystoreFormat"
@@ -17529,7 +18658,7 @@
           "allowAnonymous": {
             "type": "boolean",
             "default": true,
-            "description": "If enabled, then anonymous logins (without username and password) are allowed."
+            "description": "If enabled, then anonymous logins (without a username and password) are allowed."
           },
           "enabled": {
             "type": "boolean",
@@ -17557,7 +18686,7 @@
           "allowAnonymous": {
             "type": "boolean",
             "default": true,
-            "description": "If enabled, then anonymous logins (without username and password) are allowed."
+            "description": "If enabled, then anonymous logins (without a username and password) are allowed."
           },
           "enabled": {
             "type": "boolean",
@@ -17612,7 +18741,7 @@
           "displayName": {
             "type": "string",
             "default": "",
-            "description": "The displayed name for the provider (e.g. in the portal)."
+            "description": "The displayed name for the provider (e.g., in the portal)."
           },
           "flow": {
             "type": "string",
@@ -17643,7 +18772,7 @@
           "name": {
             "type": "string",
             "default": "generic",
-            "description": "Selects the OAuth2 provider or \"generic\", when not available in the list.",
+            "description": "Selects the OAuth2 provider or \"generic\" when not available in the list.",
             "enum": [
               "generic",
               "azureAd",
@@ -17704,7 +18833,7 @@
         "properties": {
           "protocol": {
             "type": "array",
-            "description": "Selects a TLS protocol for the connector.",
+            "description": "Selects the TLS protocols for the connector.",
             "items": {
               "type": "string",
               "default": "TLSv1.2",
@@ -17749,7 +18878,7 @@
       },
       "ServerConfig_SSL": {
         "type": "object",
-        "description": "Defines settings for an SSL (TLS) connector.",
+        "description": "Defines the settings for a TLS connector.",
         "properties": {
           "ciphers": {
             "$ref": "#/components/schemas/ServerConfig_CiphersSSL"
@@ -17791,7 +18920,7 @@
             "type": "integer",
             "format": "int32",
             "default": 86400,
-            "description": "The time in seconds before a session is encountering it's timeout.",
+            "description": "The time in seconds before a session is encountering its timeout.",
             "minimum": 0
           },
           "truststore": {
@@ -17920,13 +19049,13 @@
           "command": {
             "type": "string",
             "default": "SHUTDOWN",
-            "description": "The command, that shall be listened for."
+            "description": "The command that shall be listened for."
           },
           "port": {
             "type": "integer",
             "format": "int32",
             "default": 8005,
-            "description": "The port, that shall listen for shutdown commands."
+            "description": "The port that shall listen for shutdown commands."
           },
           "restart": {
             "type": "boolean",
@@ -17953,7 +19082,7 @@
       },
       "ServerConfig_UserAzureAd": {
         "type": "object",
-        "description": "Defines an Azure Active Directory as user source.",
+        "description": "Defines an Azure Active Directory as a user source.",
         "properties": {
           "authority": {
             "type": "string",
@@ -17990,7 +19119,7 @@
       },
       "ServerConfig_UserDb": {
         "type": "object",
-        "description": "Defines a relational user database as user source.",
+        "description": "Defines a relational user database as a user source.",
         "properties": {
           "connectionName": {
             "type": "string",
@@ -18035,7 +19164,7 @@
           "userRoleTable": {
             "type": "string",
             "default": "user_roles",
-            "description": "The name of the table, that defines the available user roles."
+            "description": "The name of the table that defines the available user roles."
           },
           "userTable": {
             "type": "string",
@@ -18063,12 +19192,12 @@
       },
       "ServerConfig_UserLdap": {
         "type": "object",
-        "description": "Defines an LDAP dictionary or Active Directory as user source.",
+        "description": "Defines an LDAP dictionary or Active Directory as a user source.",
         "properties": {
           "certificatesTrustMode": {
             "type": "string",
             "default": "validate",
-            "description": "Specifies the mode of handling the certificates presented by the LDAP server during connection establishment.\n\n*   validate = Only certificates that can be verified as publicly valid are classified as trusted. It may be necessary to place the certificate or the issuer's certificate in the server's truststore. Self-signed certificates (e.g. from an own certificate authority) are excluded if they cannot be verified via a configured truststore.\n*   acceptAll = All certificates are classified as trusted, including expired, unverifiable, invalid or self-signed certificates.",
+            "description": "Specifies the mode for handling the certificates presented by the LDAP server when establishing a connection.\n\n*   validate = Only certificates that can be verified as publicly valid are classified as trusted. It may be necessary to place the certificate or the issuer's certificate in the server's truststore. Self-signed certificates (e.g., from an own certificate authority) are excluded if they cannot be verified via a configured truststore.\n*   acceptAll = All certificates are classified as trusted, including expired, unverifiable, invalid or self-signed certificates.",
             "enum": [
               "validate",
               "acceptAll"
@@ -18108,7 +19237,7 @@
           "roleField": {
             "type": "string",
             "default": "",
-            "description": "The field indicating, that a user is part of a group. (e.g. \"cn\".)"
+            "description": "The field that indicates that a user is part of a group. (e.g. \"cn\".)"
           },
           "roleSearch": {
             "type": "string",
@@ -18181,17 +19310,6 @@
         "type": "object",
         "description": "Defines the local XML file \"conf/users.xml\" as the user source. The users are managed locally via the portal administration area."
       },
-      "ServerConfig_ValveHost": {
-        "type": "object",
-        "description": "A component to insert into the request processing pipeline of the underlying tomcat server. (See: https://tomcat.apache.org/tomcat-8.5-doc/config/valve.html for further information.)",
-        "properties": {
-          "className": {
-            "type": "string",
-            "default": "",
-            "description": "The Java class name of the valve implementation to use."
-          }
-        }
-      },
       "Session_State": {
         "type": "string",
         "default": "unknown",
@@ -18229,11 +19347,6 @@
             "format": "int64",
             "default": 0,
             "description": "Total size in bytes required by all sessions together on the hard disk in the base folder."
-          },
-          "sessionFolder": {
-            "type": "string",
-            "default": "",
-            "description": "Base folder for all session data (e.g. files and file history)."
           },
           "sessionId": {
             "type": "string",
@@ -18275,11 +19388,6 @@
             "format": "int64",
             "default": 0,
             "description": "Number of files saved in the session."
-          },
-          "fileFolder": {
-            "type": "string",
-            "default": "",
-            "description": "Unique name of the session storage folder."
           },
           "fileSize": {
             "type": "integer",
@@ -18414,7 +19522,10 @@
         "required": [
           "errorCode",
           "errorMessage"
-        ]
+        ],
+        "x-webpdf-codegen": {
+          "isReadOnly": "true"
+        }
       },
       "Webservice_Result": {
         "type": "object",
@@ -18436,6 +19547,10 @@
             "format": "int32",
             "default": 0,
             "description": "The exit code of an external application, if such an application was used for the operation."
+          },
+          "hideException": {
+            "type": "boolean",
+            "default": false
           },
           "stackTrace": {
             "type": "object",
