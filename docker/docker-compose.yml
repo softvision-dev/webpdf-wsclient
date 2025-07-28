@@ -1,6 +1,9 @@
+name: webpdf-wsclient
+
 services:
 
   LDAP:
+    container_name: ldap
     image: testapp/webpdf-wsclient-ldap:latest
     build:
       context: ./ldap
@@ -15,6 +18,7 @@ services:
       true
 
   Proxy:
+    container_name: proxy
     image: mitmproxy/mitmproxy
     ports:
       - "8888:8888"
@@ -25,6 +29,7 @@ services:
       true
 
   webPDF:
+    container_name: webpdf
     image: testapp/webpdf-wsclient-server:latest
     build:
       context: ./server
