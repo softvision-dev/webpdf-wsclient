@@ -306,6 +306,7 @@ public class RestAdministrationIntegrationTest {
                 assertNotNull(clusterSettings, "cluster configuration should exist.");
                 assertNotNull(clusterSettings.getMode(), "mode should exist.");
 
+                clusterSettings = new ClusterSettings();
                 clusterSettings.setMode(ClusterMode.CLUSTER);
                 assertEquals(ClusterMode.CLUSTER, clusterSettings.getMode(), "mode should be cluster.");
 
@@ -315,6 +316,7 @@ public class RestAdministrationIntegrationTest {
                 assertEquals(ClusterMode.CLUSTER, clusterSettings.getMode(), "mode should be cluster.");
 
                 // reset cluster mode
+                clusterSettings = new ClusterSettings();
                 clusterSettings.setMode(ClusterMode.SINGLE);
                 session.getAdministrationManager().updateClusterConfiguration(clusterSettings);
             }

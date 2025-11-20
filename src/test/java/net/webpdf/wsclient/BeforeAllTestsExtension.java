@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.GLOBAL;
 
-public class BeforeAllTestsExtension implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
+public class BeforeAllTestsExtension implements BeforeAllCallback, AutoCloseable {
 
     private static final AtomicBoolean STARTED = new AtomicBoolean(false);
     private static final Logger LOGGER = LoggerFactory.getLogger(BeforeAllTestsExtension.class);
