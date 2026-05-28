@@ -146,6 +146,15 @@ Redirect high-volume output (logs, intermediate files, analysis dumps) to `.ai-w
 
 ---
 
+## Commits
+
+- Subject line: ≤72 characters, imperative mood, no trailing period.
+- Body: optional — explain *why*, not *what* (the diff shows what). Keep it concise.
+- Do not include `Co-Authored-By` trailers.
+- Do not name specific vulnerabilities or internal bug details in public commit messages; describe the fix category instead (e.g. "harden error handling" rather than "prevent NPE when getFaultInfo() returns null").
+
+---
+
 ## Releases
 
 The library is published to Maven Central. Version numbers are kept in sync with the webPDF server release they target. Do not modify version fields in `pom.xml` manually — version management is part of the release process.
