@@ -10,7 +10,7 @@ The library implements the required stubs and session management in ready-to-use
 
 ## Download
 
-> **Note:** The version 10.0.3 requires at least webPDF server version **[10.0.3](https://docs.webpdf.de/changelog/)** and JDK 11.
+> **Note:** The version 10.0.5 requires at least webPDF server version **[10.0.5](https://docs.webpdf.de/changelog/)** and JDK 11.
 
 > **Note:** Starting with wsclient 9.x the wsclient´s and webPDF server´s version numbers have been synchronized, to simplify finding the proper wsclient for your webPDF server.
 
@@ -20,7 +20,7 @@ You can use this library by adding this dependency to your project:
 <dependency>
     <groupId>net.webpdf</groupId>
     <artifactId>webpdf-wsclient</artifactId>
-    <version>10.0.3</version>
+    <version>10.0.5</version>
 </dependency>
 ```
 
@@ -28,24 +28,21 @@ To download the webPDF server required for this library,
 visit the [webPDF download page](https://docs.webpdf.de/docs/download/).
 Further documentation on the webPDF server can be found in the [Developer Hub](https://docs.webpdf.de/).
 
+## Supported languages
+
+The `wsclient` is available for the following programming languages:
+
+- [Java](https://docs.webpdf.de/docs/development/wsclient/java/java)
+- [TypeScript](https://docs.webpdf.de/docs/development/wsclient/typescript/typescript)
+- C# (coming soon)
+
 ## Usage
-You will find some [usage examples](https://github.com/softvision-dev/webpdf-wsclient/wiki/Usage) in the wiki.
-
-## Migration
-If you are migrating from an earlier version, please note the following:
-
-**Migration to version 10.x**
-Some enum constants, which are defined as “Camel Case”, have been adjusted so that they are now structured with an “_” (underscore) in the name and are therefore easier to read. Therefore, small code corrections may have to be made. 
-
-**Migration to version 9.x**
-With version 9.x this library also has undergone major changes to the logic,
-structure and naming of its packages and classes.
-If you already used prior versions of wsclient, you should expect to have to adapt your imports and code accordingly.
-You will find further information in our [migration guide](https://github.com/softvision-dev/webpdf-wsclient/wiki/Migration).
+You will find documentation, usage patterns and examples in the [Developer Hub](https://docs.webpdf.de/docs/development/wsclient/).
+Further examples can also be found in the project [GitHub wiki](https://github.com/softvision-dev/webpdf-wsclient/wiki/Usage).
 
 ## Documentation
-Have a look at our [wiki](https://github.com/softvision-dev/webpdf-wsclient/wiki) for examples and details.
-For more information about webPDF, please visit the [Developer Hub](https://docs.webpdf.de/).
+For detailed documentation on the webPDF wsclient library, visit the [Developer Hub](https://docs.webpdf.de/docs/development/wsclient/).
+For more information about webPDF, please visit the [webPDF Documentation](https://www.webpdf.de/en/documentation).
 
 ## Development and support
 If you have any questions on how to use webPDF, or this library,
@@ -53,13 +50,5 @@ or have ideas for future development, please get in touch via our [support team]
 
 If you find any issues, please file a [bug](https://github.com/softvision-dev/webpdf-wsclient/issues) after checking for duplicates or create a [pull request](https://github.com/softvision-dev/webpdf-wsclient/pulls).
 
-## More help
-Learn even more about our product in our [webPDF Documentation](https://www.webpdf.de/en/documentation).
-
 ## License
 Please see the [license](LICENSE) file for more information.
-
-## Changes
-The current version 10.0.3 is for webPDF version 10. When using webPDF 8 or 9,
-you might prefer earlier versions of this library.
-You might want to have a look at the [changes](CHANGES.md) file for further information.
