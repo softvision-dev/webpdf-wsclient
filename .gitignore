@@ -8,3 +8,7 @@
 /support/
 /docker/.env
 /.m2
+
+# AI agent workspace — temp output only, skeleton directories are committed
+/.ai-workspace/temp/*
+!/.ai-workspace/temp/.gitkeep
