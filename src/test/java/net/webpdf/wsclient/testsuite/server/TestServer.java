@@ -5,7 +5,7 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.DockerComposeContainer;
+import org.testcontainers.containers.ComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -30,7 +30,7 @@ public final class TestServer {
     private final URIBuilder uriBuilderLocalServer;
     private final URIBuilder uriBuilderPublicServer;
 
-    private DockerComposeContainer<?> environment;
+    private ComposeContainer environment;
 
     private static volatile TestServer testServer;
 
@@ -155,8 +155,7 @@ public final class TestServer {
         boolean isServerRequired = TestConfig.getInstance().getIntegrationTestConfig().useContainer();
         if (isServerRequired) {
             LOGGER.info("Starting docker container '{}'", composeFile);
-            //noinspection resource
-            this.environment = new DockerComposeContainer<>(composeFile)
+            this.environment = new ComposeContainer(composeFile)
                     .withExposedService("LDAP", 10389, Wait.forListeningPort())
                     .withExposedService("webPDF", 8080,
                             Wait.forHttp("/webPDF/rest/portal/info").forPort(8080));

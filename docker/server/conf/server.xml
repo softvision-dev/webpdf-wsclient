@@ -29,7 +29,7 @@
         </connector>
     </connectors>
     <user roleUserGroup="webPDFUser" roleAdminGroup="webPDFAdmin">
-        <ldap connectionURL="ldap://172.17.0.1:10389/"
+        <ldap connectionURL="ldap://ldap:10389/"
               connectionName="uid=admin,ou=users,dc=webpdf,dc=de"
               connectionPassword="secret"
               userBase="ou=users,dc=webpdf,dc=de"

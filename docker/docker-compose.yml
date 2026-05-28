@@ -16,6 +16,13 @@ services:
       true
     stdin_open:
       true
+    healthcheck:
+      test: ["CMD", "ldapsearch", "-H", "ldap://localhost:10389", "-b", "ou=users,dc=webpdf,dc=de",
+             "-x", "(objectclass=*)", "-D", "uid=admin,ou=users,dc=webpdf,dc=de", "-w", "secret"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   Proxy:
     container_name: proxy
@@ -44,7 +51,7 @@ services:
         AUTH0_APPLICATION_ID: $AUTH0_APPLICATION_ID
     depends_on:
       LDAP:
-        condition: service_started
+        condition: service_healthy
     ports:
       - "8080:8080"
       - "8443:8443"

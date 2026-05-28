@@ -3,6 +3,7 @@
 /files
 /.idea/libraries
 /config/*.json
+!/config/testConfig.sample.json
 /.idea/azure/azureSettings.xml
 /.idea/php.xml
 /support/

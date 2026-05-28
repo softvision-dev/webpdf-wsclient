@@ -29,6 +29,10 @@ public class IntegrationTestConfig extends ConfigNodeContainer {
     }
 
     public boolean isIntegrationTestsActive() {
+        String sysProp = System.getProperty("webpdf.test.integration.enabled");
+        if (sysProp != null) {
+            return Boolean.parseBoolean(sysProp);
+        }
         return getBoolean("enabled", false);
     }
 
@@ -60,6 +64,10 @@ public class IntegrationTestConfig extends ConfigNodeContainer {
     }
 
     public boolean useContainer() {
+        String sysProp = System.getProperty("webpdf.test.useContainer");
+        if (sysProp != null) {
+            return Boolean.parseBoolean(sysProp);
+        }
         return getBoolean("useContainer", false);
     }
 }
