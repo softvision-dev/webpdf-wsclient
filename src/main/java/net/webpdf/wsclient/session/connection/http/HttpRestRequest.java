@@ -251,7 +251,7 @@ public class HttpRestRequest {
         String contentType = httpEntity.getContentType();
         if (DataFormat.JSON.matches(contentType)) {
             WebserviceException wsException = SerializeHelper.fromJSON(httpEntity, WebserviceException.class);
-            if (wsException.getErrorCode() != 0) {
+            if (wsException != null && wsException.getErrorCode() != 0) {
                 throw new ServerResultException(wsException);
             }
         } else {
@@ -277,7 +277,15 @@ public class HttpRestRequest {
     public void executeRequest(@NotNull OutputStream outputStream) throws ResultException {
         try {
             this.httpClient.execute(httpUriRequest, response -> {
-                response.getEntity().writeTo(outputStream);
+                try {
+                    checkResponse(response);
+                } catch (ResultException ex) {
+                    throw new IOException(ex);
+                }
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    entity.writeTo(outputStream);
+                }
                 return null;
             });
         } catch (IOException ex) {
@@ -337,6 +345,9 @@ public class HttpRestRequest {
                 }
 
                 HttpEntity httpEntity = response.getEntity();
+                if (httpEntity == null) {
+                    return null;
+                }
 
                 ContentType contentType = ContentType.DEFAULT_TEXT;
                 String responseContentType = httpEntity.getContentType();

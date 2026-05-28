@@ -166,9 +166,10 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
             }
 
             setAuthMaterial(authMaterial);
-            this.updating.set(false);
         } catch (ResultException ex) {
             throw new AuthResultException(ex);
+        } finally {
+            this.updating.set(false);
         }
 
         return this.getAuthMaterial();
@@ -203,9 +204,10 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
             }
 
             setAuthMaterial(authMaterial);
-            this.updating.set(false);
         } catch (ResultException ex) {
             throw new AuthResultException(ex);
+        } finally {
+            this.updating.set(false);
         }
 
         return this.getAuthMaterial();

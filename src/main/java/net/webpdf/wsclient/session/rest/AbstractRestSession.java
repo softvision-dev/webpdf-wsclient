@@ -30,6 +30,8 @@ import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
 import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
 import org.apache.hc.client5.http.socket.LayeredConnectionSocketFactory;
 import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
@@ -98,7 +100,10 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
         }
         if (serverContext.getTlsContext() != null) {
             LayeredConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                    serverContext.getTlsContext().create(), (hostname, session) -> true);
+                    serverContext.getTlsContext().create(),
+                    serverContext.getTlsContext().isAllowSelfSigned()
+                            ? NoopHostnameVerifier.INSTANCE
+                            : new DefaultHostnameVerifier());
             Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
                     .register("http", PlainConnectionSocketFactory.getSocketFactory())
                     .register("https", sslSocketFactory)

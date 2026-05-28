@@ -4,20 +4,18 @@ import net.webpdf.wsclient.exception.ClientResultException;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.Session;
+import org.apache.hc.client5.http.ssl.TrustAllStrategy;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -36,8 +34,6 @@ import java.security.cert.X509Certificate;
  * </p>
  */
 public class TLSContext {
-
-    private static final TrustManager[] TRUST_ALL = new TrustManager[]{new AlwaysTrustManager()};
 
     private final @Nullable File trustStore;
     private final @Nullable String trustStorePassword;
@@ -140,26 +136,23 @@ public class TLSContext {
      * @return The resulting {@link SSLContext}.
      */
     public @NotNull SSLContext create() throws ResultException {
-        SSLContext tlsContext;
         try {
-            if (getTrustStore() != null || isAllowSelfSigned()) {
-                tlsContext = (getTrustStore() != null ?
-                        new SSLContextBuilder().setProtocol(getTlsProtocol().getName())
-                                .loadTrustMaterial(getTrustStore(), getTrustStorePassword() != null ?
-                                        getTrustStorePassword().toCharArray() : null, null)
-                                .build() :
-                        new SSLContextBuilder().setProtocol(getTlsProtocol().getName()).build());
-                if (isAllowSelfSigned()) {
-                    tlsContext.init(new KeyManager[0], TRUST_ALL, new SecureRandom());
-                }
-            } else {
-                tlsContext = SSLContexts.createDefault();
+            if (!isAllowSelfSigned() && getTrustStore() == null) {
+                return SSLContexts.createDefault();
             }
+            SSLContextBuilder builder = new SSLContextBuilder().setProtocol(getTlsProtocol().getName());
+            if (getTrustStore() != null) {
+                builder.loadTrustMaterial(getTrustStore(),
+                        getTrustStorePassword() != null ? getTrustStorePassword().toCharArray() : null,
+                        isAllowSelfSigned() ? TrustAllStrategy.INSTANCE : null);
+            } else {
+                builder.loadTrustMaterial(TrustAllStrategy.INSTANCE);
+            }
+            return builder.build();
         } catch (KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException |
                  IOException ex) {
             throw new ClientResultException(Error.TLS_INITIALIZATION_FAILURE, ex);
         }
-        return tlsContext;
     }
 
 }

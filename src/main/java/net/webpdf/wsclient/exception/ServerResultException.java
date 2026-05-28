@@ -35,9 +35,12 @@ public class ServerResultException extends ResultException {
     public ServerResultException(@Nullable WebServiceException soapStubException) {
         this(
                 Error.SOAP_EXECUTION,
-                soapStubException != null ? soapStubException.getFaultInfo().getErrorMessage() : "",
-                soapStubException != null ? soapStubException.getFaultInfo().getErrorCode() : 0,
-                soapStubException != null ? soapStubException.getFaultInfo().getStackTrace() : null
+                soapStubException != null && soapStubException.getFaultInfo() != null
+                        ? soapStubException.getFaultInfo().getErrorMessage() : "",
+                soapStubException != null && soapStubException.getFaultInfo() != null
+                        ? soapStubException.getFaultInfo().getErrorCode() : 0,
+                soapStubException != null && soapStubException.getFaultInfo() != null
+                        ? soapStubException.getFaultInfo().getStackTrace() : null
         );
     }
 
