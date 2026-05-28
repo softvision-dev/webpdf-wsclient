@@ -156,8 +156,8 @@ public final class TestServer {
         if (isServerRequired) {
             LOGGER.info("Starting docker container '{}'", composeFile);
             this.environment = new ComposeContainer(composeFile)
-                    .withExposedService("LDAP", 10389, Wait.forListeningPort())
-                    .withExposedService("webPDF", 8080,
+                    .withExposedService("ldap", 10389, Wait.forHealthcheck())
+                    .withExposedService("webpdf", 8080,
                             Wait.forHttp("/webPDF/rest/portal/info").forPort(8080));
             this.environment.start();
             LOGGER.info("Docker container started");
@@ -165,7 +165,7 @@ public final class TestServer {
         }
     }
 
-    public void stopContainer() {
+    public synchronized void stopContainer() {
         if (this.environment != null) {
             LOGGER.info("Stopping docker container '{}'", composeFile);
             this.environment.stop();

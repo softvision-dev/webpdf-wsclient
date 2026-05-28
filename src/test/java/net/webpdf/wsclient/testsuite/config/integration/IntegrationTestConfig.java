@@ -29,15 +29,11 @@ public class IntegrationTestConfig extends ConfigNodeContainer {
     }
 
     public boolean isIntegrationTestsActive() {
-        String sysProp = System.getProperty("webpdf.test.integration.enabled");
-        if (sysProp != null) {
-            return Boolean.parseBoolean(sysProp);
-        }
-        return getBoolean("enabled", false);
+        return getBooleanSysProp("webpdf.test.integration.enabled", "enabled", false);
     }
 
     public boolean isProxyTestsActive() {
-        return getBoolean("/proxy/enabled", false);
+        return getBooleanSysProp("webpdf.test.proxy.enabled", "/proxy/enabled", false);
     }
 
     public URL getProxyURL(boolean useSSL) throws MalformedURLException {
@@ -48,11 +44,11 @@ public class IntegrationTestConfig extends ConfigNodeContainer {
     }
 
     public boolean isTlsTestsActive() {
-        return getBoolean("/tls/enabled", false);
+        return getBooleanSysProp("webpdf.test.tls.enabled", "/tls/enabled", false);
     }
 
     public boolean isLdapTestsActive() {
-        return getBoolean("/ldap/enabled", false);
+        return getBooleanSysProp("webpdf.test.ldap.enabled", "/ldap/enabled", false);
     }
 
     public @NotNull Auth0Config getAuth0Config() {
@@ -64,10 +60,18 @@ public class IntegrationTestConfig extends ConfigNodeContainer {
     }
 
     public boolean useContainer() {
-        String sysProp = System.getProperty("webpdf.test.useContainer");
-        if (sysProp != null) {
+        return getBooleanSysProp("webpdf.test.useContainer", "useContainer", false);
+    }
+
+    private boolean getBooleanSysProp(@NotNull String sysPropKey, @NotNull String jsonKey, boolean defaultValue) {
+        String sysProp = System.getProperty(sysPropKey);
+        if (sysProp == null) {
+            return getBoolean(jsonKey, defaultValue);
+        }
+        if ("true".equalsIgnoreCase(sysProp) || "false".equalsIgnoreCase(sysProp)) {
             return Boolean.parseBoolean(sysProp);
         }
-        return getBoolean("useContainer", false);
+        throw new IllegalArgumentException(
+                "System property '" + sysPropKey + "' must be 'true' or 'false', got: '" + sysProp + "'");
     }
 }

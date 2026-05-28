@@ -19,10 +19,6 @@ public class OAuthTestConditionExt extends IntegrationTestConditionExt {
                 findAnnotation(context.getElement(), OAuthTest.class);
         if (optional.isPresent()) {
             OAuthTest annotation = optional.get();
-            if (!TestConfig.getInstance().getIntegrationTestConfig().isIntegrationTestsActive()) {
-                return ConditionEvaluationResult.disabled(
-                        "Integration Tests are disabled via 'config/testConfig.json'.");
-            }
             switch (annotation.provider()) {
                 case AZURE:
                     return TestConfig.getInstance().getIntegrationTestConfig().getAzureConfig().isEnabled() ?
