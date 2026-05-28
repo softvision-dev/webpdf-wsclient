@@ -32,8 +32,8 @@ Further documentation on the webPDF server can be found in the [Developer Hub](h
 
 The `wsclient` is available for the following programming languages:
 
-- [Java](https://docs.webpdf.de/docs/development/wsclient/java/java)
-- [TypeScript](https://docs.webpdf.de/docs/development/wsclient/typescript/typescript)
+- [Java](https://docs.webpdf.de/docs/development/wsclient/java/)
+- [TypeScript](https://docs.webpdf.de/docs/development/wsclient/typescript/)
 - C# (coming soon)
 
 ## Usage
@@ -42,7 +42,7 @@ Further examples can also be found in the project [GitHub wiki](https://github.c
 
 ## Documentation
 For detailed documentation on the webPDF wsclient library, visit the [Developer Hub](https://docs.webpdf.de/docs/development/wsclient/).
-For more information about webPDF, please visit the [webPDF Documentation](https://www.webpdf.de/en/documentation).
+For more information about webPDF, please visit the [webPDF Documentation](https://docs.webpdf.de/docs/).
 
 ## Development and support
 If you have any questions on how to use webPDF, or this library,
