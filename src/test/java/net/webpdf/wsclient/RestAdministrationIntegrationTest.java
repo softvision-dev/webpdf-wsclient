@@ -64,6 +64,30 @@ public class RestAdministrationIntegrationTest {
 
     @Test
     @IntegrationTest
+    public void testFetchMetrics() {
+        assertDoesNotThrow(() -> {
+            // Non-admin users must not access metrics
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
+                    new UserAuthProvider(TestConfig.getInstance().getServerConfig().getLocalUserName(), TestConfig.getInstance().getServerConfig().getLocalUserPassword())
+            )) {
+                assertThrows(ClientResultException.class, () -> session.getAdministrationManager().fetchMetrics());
+            }
+
+            // Admin can access metrics
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
+            )) {
+                String metrics = session.getAdministrationManager().fetchMetrics();
+                assertNotNull(metrics, "Metrics should not be null.");
+                assertFalse(metrics.isEmpty(), "Metrics response should not be empty.");
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
     public void validateApplication() {
         assertDoesNotThrow(() -> {
             try (RestSession<RestDocument> session = SessionFactory.createInstance(

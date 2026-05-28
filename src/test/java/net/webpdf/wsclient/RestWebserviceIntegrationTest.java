@@ -532,6 +532,14 @@ public class RestWebserviceIntegrationTest {
                         "User should not be admin");
                 assertEquals("", restSession.getUser().getUserName(),
                         "Username should be empty.");
+
+                AuthUserCredentials freshInfo = restSession.getUserManager().fetchUserInfo();
+                assertNotNull(freshInfo,
+                        "fetchUserInfo should not return null.");
+                assertEquals(restSession.getUser().getUserName(), freshInfo.getUserName(),
+                        "fetchUserInfo username should match cached getUser.");
+                assertEquals(restSession.getUser().getIsAdmin(), freshInfo.getIsAdmin(),
+                        "fetchUserInfo admin flag should match cached getUser.");
             }
 
             // User
@@ -549,6 +557,14 @@ public class RestWebserviceIntegrationTest {
                         "User should not be admin");
                 assertEquals(TestConfig.getInstance().getServerConfig().getLocalUserName(), restSession.getUser().getUserName(),
                         "Username should be user.");
+
+                AuthUserCredentials freshInfo = restSession.getUserManager().fetchUserInfo();
+                assertNotNull(freshInfo,
+                        "fetchUserInfo should not return null.");
+                assertEquals(restSession.getUser().getUserName(), freshInfo.getUserName(),
+                        "fetchUserInfo username should match cached getUser.");
+                assertFalse(freshInfo.getIsAdmin(),
+                        "fetchUserInfo should confirm user is not admin.");
             }
 
             // Admin
@@ -566,6 +582,14 @@ public class RestWebserviceIntegrationTest {
                         "User should not be admin");
                 assertEquals(TestConfig.getInstance().getServerConfig().getLocalAdminName(), restSession.getUser().getUserName(),
                         "Username should be admin.");
+
+                AuthUserCredentials freshInfo = restSession.getUserManager().fetchUserInfo();
+                assertNotNull(freshInfo,
+                        "fetchUserInfo should not return null.");
+                assertEquals(restSession.getUser().getUserName(), freshInfo.getUserName(),
+                        "fetchUserInfo username should match cached getUser.");
+                assertTrue(freshInfo.getIsAdmin(),
+                        "fetchUserInfo should confirm user is admin.");
             }
         });
     }

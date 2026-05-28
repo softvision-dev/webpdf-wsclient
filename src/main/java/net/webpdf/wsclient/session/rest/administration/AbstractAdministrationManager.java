@@ -17,10 +17,14 @@ import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import org.apache.hc.core5.net.URIBuilder;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
@@ -1570,5 +1574,42 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
         }
 
         return clusterStatus;
+    }
+
+    /**
+     * Fetches the Prometheus metrics from the server in text exposition format.
+     * <p>
+     * The metrics endpoint is served at the application context root (e.g. {@code /webPDF/metrics}),
+     * which lies outside the REST API base path ({@code /webPDF/rest/}). The URI is therefore
+     * constructed directly from the session's server URL rather than via {@code session.getURI()}.
+     * </p>
+     *
+     * @return The Prometheus metrics as a plain-text string.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    @Override
+    public @NotNull String fetchMetrics() throws ResultException {
+        this.validateUser();
+
+        try {
+            String serverUrl = this.session.getSessionContext().getUrl().toString();
+            if (!serverUrl.endsWith("/")) {
+                serverUrl += "/";
+            }
+            URI metricsUri = new URIBuilder(serverUrl + "metrics").build();
+
+            String metrics = HttpRestRequest.createRequest(this.session)
+                    .setAcceptHeader(DataFormat.PLAIN.getMimeType())
+                    .buildRequest(HttpMethod.GET, metricsUri)
+                    .executeRequest(String.class);
+
+            if (metrics == null) {
+                throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
+            }
+
+            return metrics;
+        } catch (URISyntaxException ex) {
+            throw new ClientResultException(Error.INVALID_URL, ex);
+        }
     }
 }

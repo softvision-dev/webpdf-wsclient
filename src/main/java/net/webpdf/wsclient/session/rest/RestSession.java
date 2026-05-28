@@ -8,6 +8,7 @@ import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.rest.administration.AdministrationManager;
 import net.webpdf.wsclient.session.rest.documents.DocumentManager;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
+import net.webpdf.wsclient.session.rest.user.UserManager;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
 import net.webpdf.wsclient.webservice.rest.RestWebService;
@@ -76,28 +77,53 @@ public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Sessi
     @NotNull AdministrationManager<T_REST_DOCUMENT> getAdministrationManager();
 
     /**
-     * Returns the {@link AuthUserCredentials} logged in via this {@link RestSession}.
+     * Returns the active {@link UserManager} of this {@link RestSession}.
      *
-     * @return The {@link AuthUserCredentials} logged in via this {@link RestSession}.
+     * @return The active {@link UserManager} of this {@link RestSession}.
+     */
+    @SuppressWarnings("unused")
+    @NotNull UserManager<T_REST_DOCUMENT> getUserManager();
+
+    /**
+     * Returns the {@link AuthUserCredentials} fetched once at session creation time (cached snapshot).
+     * <p>
+     * This value is not refreshed automatically during the lifetime of the session. To fetch the
+     * current user information live from the server, use {@link UserManager#fetchUserInfo()}.
+     * </p>
+     *
+     * @return The cached {@link AuthUserCredentials} of the user logged in via this {@link RestSession}.
+     * @see UserManager#fetchUserInfo()
      */
     @Nullable AuthUserCredentials getUser();
 
     /**
-     * Returns the {@link AuthUserCertificates} of the currently logged-in user of this {@link RestSession}.
+     * Returns the {@link AuthUserCertificates} fetched at session creation time (cached snapshot).
+     * <p>
+     * This value is refreshed whenever {@link #updateCertificates} is called. To fetch the current
+     * certificate state live from the server without modifying passwords, use
+     * {@link UserManager#readCertificates()}.
+     * </p>
      *
-     * @return The {@link AuthUserCertificates} of the currently logged-in user of this {@link RestSession}.
+     * @return The cached {@link AuthUserCertificates} of the user logged in via this {@link RestSession}.
+     * @see UserManager#readCertificates()
      */
     @Nullable AuthUserCertificates getCertificates();
 
     /**
-     * Updates the {@link KeyStorePassword}s for specific keystore and returns the
-     * {@link AuthUserCertificates} for the currently logged-in user afterward.
+     * Updates the {@link KeyStorePassword}s for a specific keystore and returns the updated
+     * {@link AuthUserCertificates} for the currently logged-in user.
+     * <p>
+     * Also refreshes the certificate value returned by {@link #getCertificates()}.
+     * </p>
      *
      * @param keystoreName     The name of the keystore to be updated.
      * @param keyStorePassword The {@link KeyStorePassword} to unlock the certificates with.
-     * @return The {@link AuthUserCertificates} of the logged-in user in this {@link RestSession}.
+     * @return The updated {@link AuthUserCertificates} of the logged-in user in this {@link RestSession}.
      * @throws ResultException Shall be thrown, if the request failed.
+     * @deprecated Use {@link UserManager#updateCertificatePasswords(String, KeyStorePassword)} instead,
+     * accessible via {@link RestSession#getUserManager()}.
      */
+    @Deprecated
     @Nullable AuthUserCertificates updateCertificates(
             String keystoreName, KeyStorePassword keyStorePassword
     ) throws ResultException;

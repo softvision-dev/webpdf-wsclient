@@ -787,4 +787,12 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
      * @throws ResultException Shall be thrown if the request failed.
      */
     @NotNull ClusterStatus fetchClusterStatus() throws ResultException;
+
+    /**
+     * Fetches the Prometheus metrics from the server in text exposition format.
+     *
+     * @return The Prometheus metrics as a plain-text string.
+     * @throws ResultException Shall be thrown if the request failed.
+     */
+    @NotNull String fetchMetrics() throws ResultException;
 }

@@ -24,6 +24,7 @@ public class RestWebserviceLdapTest {
 
     @Test
     @LdapTest
+    @SuppressWarnings("deprecation")
     public void testHandleRestSessionLdapCertificates() {
         assertDoesNotThrow(() -> {
             try (RestWebServiceSession session = SessionFactory.createInstance(
@@ -39,6 +40,11 @@ public class RestWebserviceLdapTest {
                 assertNotNull(certificates, "Certificates should be set.");
                 assertFalse(certificates.getKeyStores().isEmpty(), "User should have keystores.");
                 assertFalse(certificates.getCertificates().isEmpty(), "User should have certificates.");
+
+                AuthUserCertificates freshCertificates = session.getUserManager().readCertificates();
+                assertNotNull(freshCertificates, "readCertificates should not return null.");
+                assertFalse(freshCertificates.getKeyStores().isEmpty(), "readCertificates should return keystores.");
+                assertFalse(freshCertificates.getCertificates().isEmpty(), "readCertificates should return certificates.");
 
                 String keyStoreName = "";
 
@@ -147,6 +153,12 @@ public class RestWebserviceLdapTest {
                         assertTrue(certificate.getIsPrivateKeyReadable(), "this certificates private key should be readable.");
                     }
                 }
+
+                // verify updateCertificatePasswords mirrors updateCertificates
+                AuthUserCertificates viaUserManager = session.getUserManager().updateCertificatePasswords(keyStoreName, parameter);
+                assertNotNull(viaUserManager, "updateCertificatePasswords should not return null.");
+                assertFalse(viaUserManager.getKeyStores().isEmpty(), "updateCertificatePasswords should return keystores.");
+                assertFalse(viaUserManager.getCertificates().isEmpty(), "updateCertificatePasswords should return certificates.");
             }
         });
     }
