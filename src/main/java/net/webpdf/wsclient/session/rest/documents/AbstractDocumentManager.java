@@ -16,6 +16,10 @@ import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.util.ByteArrayDataSource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
@@ -28,11 +32,14 @@ import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
@@ -569,6 +576,84 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
         }
 
         return shareUrl;
+    }
+
+    /**
+     * <p>
+     * Downloads a document via a pre-signed, login-free share URL and writes the raw file bytes to the given
+     * {@link OutputStream}.
+     * </p>
+     *
+     * @param shareUrl     The pre-signed share URL of the document to download.
+     * @param outputStream The {@link OutputStream} to write the downloaded document to.
+     * @throws ResultException Shall be thrown, should the download have failed.
+     */
+    @Override
+    public void downloadSharedDocument(@NotNull String shareUrl, @NotNull OutputStream outputStream)
+            throws ResultException {
+        downloadSharedDocument(shareUrl, outputStream, false);
+    }
+
+    /**
+     * <p>
+     * Downloads a document via a pre-signed, login-free share URL and writes the binary file data to the given
+     * {@link OutputStream}. When {@code withMetadata} is {@code true}, the {@code multipart/mixed} representation is
+     * parsed and the document metadata is returned as a {@link DocumentFile}.
+     * </p>
+     *
+     * @param shareUrl     The pre-signed share URL of the document to download.
+     * @param outputStream The {@link OutputStream} to write the downloaded document to.
+     * @param withMetadata {@code true} to request the multipart representation and return the document metadata.
+     * @return The {@link DocumentFile} metadata when {@code withMetadata} is {@code true}, otherwise {@code null}.
+     * @throws ResultException Shall be thrown, should the download have failed.
+     */
+    @Override
+    public @Nullable DocumentFile downloadSharedDocument(
+            @NotNull String shareUrl, @NotNull OutputStream outputStream, boolean withMetadata
+    ) throws ResultException {
+        URI shareUri;
+        try {
+            shareUri = new URI(shareUrl);
+        } catch (URISyntaxException ex) {
+            throw new ClientResultException(Error.INVALID_URL, ex);
+        }
+
+        if (!withMetadata) {
+            HttpRestRequest.createRequest(getSession())
+                    .setAcceptHeader(DataFormat.OCTET_STREAM.getMimeType())
+                    .buildRequest(HttpMethod.GET, shareUri)
+                    .executeRequest(outputStream);
+            return null;
+        }
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        HttpRestRequest request = HttpRestRequest.createRequest(getSession())
+                .setAcceptHeader(DataFormat.MULTIPART.getMimeType());
+        request.buildRequest(HttpMethod.GET, shareUri).executeRequest(buffer);
+
+        String contentType = request.getResponseContentType();
+        if (contentType == null) {
+            throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
+        }
+
+        try {
+            MimeMultipart multipart = new MimeMultipart(new ByteArrayDataSource(buffer.toByteArray(), contentType));
+            DocumentFile documentFile = null;
+            for (int i = 0; i < multipart.getCount(); i++) {
+                BodyPart part = multipart.getBodyPart(i);
+                if (part.isMimeType(DataFormat.JSON.getMimeType())) {
+                    documentFile = SerializeHelper.fromJSON(
+                            new StreamSource(part.getInputStream()), DocumentFile.class);
+                } else {
+                    try (InputStream partStream = part.getInputStream()) {
+                        IOUtils.copy(partStream, outputStream);
+                    }
+                }
+            }
+            return documentFile;
+        } catch (MessagingException | IOException ex) {
+            throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
+        }
     }
 
     /**

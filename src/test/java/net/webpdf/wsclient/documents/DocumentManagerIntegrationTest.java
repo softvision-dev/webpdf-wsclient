@@ -95,9 +95,10 @@ public class DocumentManagerIntegrationTest {
                         "Valid document should have been returned.");
                 assertNotNull(document.getDocumentId());
 
+                // Multi-use links so the same share can be downloaded in both representations below.
                 ShareRequestOptions options = new ShareRequestOptions();
                 options.setExpirationTime(300);
-                options.setOneTimeUse(true);
+                options.setOneTimeUse(false);
 
                 String shareUrl = session.getDocumentManager().shareDocument(document.getDocumentId(), options);
                 assertNotNull(shareUrl,
@@ -111,6 +112,29 @@ public class DocumentManagerIntegrationTest {
                         "A share URL should have been returned via the document shortcut.");
                 assertFalse(shortcutUrl.trim().isEmpty(),
                         "The share URL returned via the document shortcut should not be empty.");
+
+                // Raw-byte download (Accept: application/octet-stream) via a login-free anonymous session.
+                try (RestSession<RestDocument> anonymousSession = SessionFactory.createInstance(
+                        new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)))) {
+                    File rawFile = testResources.getTempFolder().newFile();
+                    try (OutputStream rawOut = Files.newOutputStream(rawFile.toPath())) {
+                        anonymousSession.getDocumentManager().downloadSharedDocument(shareUrl, rawOut);
+                    }
+                    assertTrue(FileUtils.contentEquals(sourceFile, rawFile),
+                            "The raw-byte shared download should equal the uploaded document.");
+
+                    // Multipart download (Accept: multipart/mixed) returning the document metadata.
+                    File metaFile = testResources.getTempFolder().newFile();
+                    DocumentFile metadata;
+                    try (OutputStream metaOut = Files.newOutputStream(metaFile.toPath())) {
+                        metadata = anonymousSession.getDocumentManager()
+                                .downloadSharedDocument(shareUrl, metaOut, true);
+                    }
+                    assertNotNull(metadata,
+                            "The multipart shared download should return document metadata.");
+                    assertTrue(FileUtils.contentEquals(sourceFile, metaFile),
+                            "The multipart shared download should equal the uploaded document.");
+                }
             }
         });
     }

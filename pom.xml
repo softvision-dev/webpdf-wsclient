@@ -82,6 +82,7 @@
         <jax-ws-rt.version>4.0.4</jax-ws-rt.version> <!-- central-maven:com.sun.xml.ws|jaxws-rt -->
         <fasterxml-woodstox.version>7.2.0</fasterxml-woodstox.version> <!-- central-maven:com.fasterxml.woodstox|woodstox-core -->
         <swagger.core.jakarta.annotations.version>2.2.50</swagger.core.jakarta.annotations.version> <!-- central-maven:io.swagger.core.v3|swagger-annotations-jakarta -->
+        <jakarta.mail.version>2.1.5</jakarta.mail.version> <!-- central-maven:jakarta.mail|jakarta.mail-api -->
 
         <!-- PLUGIN VERSIONS -->
         <nexus.staging.plugin.version>1.7.0</nexus.staging.plugin.version> <!-- central-maven:org.sonatype.plugins|nexus-staging-maven-plugin -->
@@ -299,6 +300,16 @@
             <artifactId>swagger-annotations-jakarta</artifactId>
             <version>${swagger.core.jakarta.annotations.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api -->
+        <!-- Used to parse multipart/mixed responses of the shared-document download. Already present
+             transitively via the SOAP stack; declared explicitly so the REST path does not rely on a
+             transitive dependency. -->
+        <dependency>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>${jakarta.mail.version}</version>
         </dependency>
 
         <!-- Test dependencies -->

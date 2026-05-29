@@ -307,4 +307,44 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
     @NotNull String shareDocument(
             @NotNull String documentId, @NotNull ShareRequestOptions options
     ) throws ResultException;
+
+    /**
+     * <p>
+     * Downloads a document via a pre-signed, login-free share URL (as returned by
+     * {@link #shareDocument(String, ShareRequestOptions)}) and writes the raw file bytes to the given
+     * {@link OutputStream}.
+     * </p>
+     * <p>
+     * This requests the {@code application/octet-stream} representation. As the share URL is self-contained, the
+     * download does not require an authenticated session.
+     * </p>
+     *
+     * @param shareUrl     The pre-signed share URL of the document to download.
+     * @param outputStream The {@link OutputStream} to write the downloaded document to.
+     * @throws ResultException Shall be thrown, should the download have failed.
+     */
+    void downloadSharedDocument(@NotNull String shareUrl, @NotNull OutputStream outputStream) throws ResultException;
+
+    /**
+     * <p>
+     * Downloads a document via a pre-signed, login-free share URL (as returned by
+     * {@link #shareDocument(String, ShareRequestOptions)}) and writes the binary file data to the given
+     * {@link OutputStream}.
+     * </p>
+     * <p>
+     * When {@code withMetadata} is {@code true}, the {@code multipart/mixed} representation is requested and the
+     * document metadata is parsed from the response and returned as a {@link DocumentFile}; otherwise the raw
+     * {@code application/octet-stream} representation is requested and {@code null} is returned. As the share URL is
+     * self-contained, the download does not require an authenticated session.
+     * </p>
+     *
+     * @param shareUrl     The pre-signed share URL of the document to download.
+     * @param outputStream The {@link OutputStream} to write the downloaded document to.
+     * @param withMetadata {@code true} to request the multipart representation and return the document metadata.
+     * @return The {@link DocumentFile} metadata when {@code withMetadata} is {@code true}, otherwise {@code null}.
+     * @throws ResultException Shall be thrown, should the download have failed.
+     */
+    @Nullable DocumentFile downloadSharedDocument(
+            @NotNull String shareUrl, @NotNull OutputStream outputStream, boolean withMetadata
+    ) throws ResultException;
 }

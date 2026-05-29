@@ -1,1 +1,4 @@
-*.sh        text eol=lf   # linux line-endings
+# Shell scripts must use LF line endings to run on Linux.
+# (Note: inline comments are not allowed on a pattern line — git would parse
+#  the trailing text as additional attributes, e.g. "# is not a valid attribute name".)
+*.sh    text eol=lf

@@ -2205,6 +2205,9 @@
           },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
+          },
+          "404": {
+            "description": "The share feature is not enabled on this server."
           }
         },
         "security": [
@@ -2425,7 +2428,7 @@
     },
     "/share/{shareId}": {
       "get": {
-        "description": "Downloads a document that was previously shared via a pre-signed URL. The share token encoded in the `shareId` path parameter is validated, and if valid, the document is returned as a multipart response containing the document metadata and the binary file data.\n\n* The share token may be configured as a one-time-use token, in which case the share link is invalidated after the first successful download.\n* If the share token has expired or has already been used, the server returns HTTP 410 (Gone).\n",
+        "description": "Downloads a document that was previously shared via a pre-signed URL. The share token encoded in the `shareId` path parameter is validated, and if valid, the document is returned.\n\n* By default (or when requesting `multipart/mixed`) the response is a multipart body containing the document metadata as JSON and the binary file data.\n* Clients that send `Accept: application/octet-stream` receive the raw file bytes directly, together with a `Content-Disposition` header. This makes the share link directly consumable by browsers and command-line tools (e.g. `curl -o result.pdf`) without having to parse a multipart body.\n* The share token may be configured as a one-time-use token, in which case the share link is invalidated after the first successful download.\n* If the share token has expired or has already been used, the server returns HTTP 410 (Gone).\n",
         "operationId": "downloadSharedDocument",
         "parameters": [
           {
@@ -2440,7 +2443,21 @@
         ],
         "responses": {
           "200": {
-            "description": "The document was downloaded successfully. The response is a multipart body containing the document metadata as JSON and the binary file data.\n"
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "multipart/mixed": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            },
+            "description": "The document was downloaded successfully. Depending on the `Accept` header the response is either a multipart body (document metadata as JSON plus the binary file data) or the raw file bytes.\n"
           },
           "400": {
             "$ref": "#/components/responses/400BadRequest"

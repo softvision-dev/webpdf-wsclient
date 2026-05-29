@@ -37,6 +37,7 @@ public class HttpRestRequest {
     private final @NotNull RestSession<?> session;
     private @Nullable String acceptHeader = DataFormat.JSON.getMimeType();
     private @Nullable HttpUriRequest httpUriRequest;
+    private @Nullable String responseContentType;
     private final @NotNull Map<String, String> headers = new HashMap<>();
 
     /**
@@ -268,6 +269,17 @@ public class HttpRestRequest {
     }
 
     /**
+     * Returns the {@code Content-Type} of the most recently executed response, or {@code null} if no response has been
+     * received yet or the response carried no entity. For multipart responses this includes the boundary parameter
+     * required to parse the body.
+     *
+     * @return The {@code Content-Type} of the most recently executed response, or {@code null}.
+     */
+    public @Nullable String getResponseContentType() {
+        return responseContentType;
+    }
+
+    /**
      * Executes this {@link HttpRestRequest} and shall write the contained data transfer object {@link HttpEntity} to
      * the given {@link OutputStream}.
      *
@@ -284,6 +296,7 @@ public class HttpRestRequest {
                 }
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
+                    this.responseContentType = entity.getContentType();
                     entity.writeTo(outputStream);
                 }
                 return null;

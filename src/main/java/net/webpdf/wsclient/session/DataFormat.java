@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * @see #JSON
  * @see #OCTET_STREAM
  * @see #PLAIN
+ * @see #MULTIPART
  * @see #ANY
  */
 public enum DataFormat {
@@ -30,6 +31,10 @@ public enum DataFormat {
      * A plain text.
      */
     PLAIN("text/plain"),
+    /**
+     * A multipart message combining several body parts (e.g. metadata and binary content).
+     */
+    MULTIPART("multipart/mixed"),
     /**
      * unspecified file format.
      */
