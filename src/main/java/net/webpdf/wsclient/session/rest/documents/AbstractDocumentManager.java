@@ -37,7 +37,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -642,8 +644,11 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
             for (int i = 0; i < multipart.getCount(); i++) {
                 BodyPart part = multipart.getBodyPart(i);
                 if (part.isMimeType(DataFormat.JSON.getMimeType())) {
-                    documentFile = SerializeHelper.fromJSON(
-                            new StreamSource(part.getInputStream()), DocumentFile.class);
+                    try (Reader partReader = new InputStreamReader(
+                            part.getInputStream(), StandardCharsets.UTF_8)) {
+                        documentFile = SerializeHelper.fromJSON(
+                                new StreamSource(partReader), DocumentFile.class);
+                    }
                 } else {
                     try (InputStream partStream = part.getInputStream()) {
                         IOUtils.copy(partStream, outputStream);
