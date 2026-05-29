@@ -6,6 +6,7 @@ import net.webpdf.wsclient.openapi.DocumentFileExtract;
 import net.webpdf.wsclient.openapi.DocumentInfo;
 import net.webpdf.wsclient.openapi.DocumentInfoType;
 import net.webpdf.wsclient.openapi.DocumentFile;
+import net.webpdf.wsclient.openapi.ShareRequestOptions;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.session.rest.RestSession;
@@ -287,4 +288,23 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
      * @throws ResultException Shall be thrown, should the update have failed.
      */
     @NotNull T_REST_DOCUMENT updateDocument(@NotNull String documentId, @NotNull InputStream data) throws ResultException;
+
+    /**
+     * <p>
+     * Creates a pre-signed, login-free share URL for the {@link RestDocument} selected by documentId and returns it.
+     * <ul>
+     * <li>Anyone who has the returned URL can access the document until the share token expires.</li>
+     * <li>The validity period and one-time-use behaviour are controlled via the given {@link ShareRequestOptions};
+     * values left unset fall back to the server defaults.</li>
+     * </ul>
+     * </p>
+     *
+     * @param documentId The unique documentId of the document in the server´s document storage.
+     * @param options    The {@link ShareRequestOptions} defining the share link's expiration and one-time-use behaviour.
+     * @return The pre-signed share URL for the selected document.
+     * @throws ResultException Shall be thrown, should creating the share URL have failed.
+     */
+    @NotNull String shareDocument(
+            @NotNull String documentId, @NotNull ShareRequestOptions options
+    ) throws ResultException;
 }

@@ -80,6 +80,43 @@ public class DocumentManagerIntegrationTest {
 
     @Test
     @IntegrationTest
+    public void testDocumentShare() {
+        assertDoesNotThrow(() -> {
+            File sourceFile = testResources.getResource("test.pdf");
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)),
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword()))
+            ) {
+                assertNotNull(session,
+                        "Valid session should have been created.");
+                RestDocument document = session.getDocumentManager().uploadDocument(sourceFile);
+                assertNotNull(document,
+                        "Valid document should have been returned.");
+                assertNotNull(document.getDocumentId());
+
+                ShareRequestOptions options = new ShareRequestOptions();
+                options.setExpirationTime(300);
+                options.setOneTimeUse(true);
+
+                String shareUrl = session.getDocumentManager().shareDocument(document.getDocumentId(), options);
+                assertNotNull(shareUrl,
+                        "A share URL should have been returned.");
+                assertFalse(shareUrl.trim().isEmpty(),
+                        "The returned share URL should not be empty.");
+
+                // The document shortcut must yield an equivalent (non-empty) share URL.
+                String shortcutUrl = document.shareDocument(options);
+                assertNotNull(shortcutUrl,
+                        "A share URL should have been returned via the document shortcut.");
+                assertFalse(shortcutUrl.trim().isEmpty(),
+                        "The share URL returned via the document shortcut should not be empty.");
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
     public void testDocumentRename() {
         assertDoesNotThrow(() -> {
             File sourceFile = testResources.getResource("test.pdf");

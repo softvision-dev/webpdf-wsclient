@@ -5,6 +5,7 @@ import net.webpdf.wsclient.openapi.DocumentFileExtract;
 import net.webpdf.wsclient.openapi.DocumentInfo;
 import net.webpdf.wsclient.openapi.DocumentInfoType;
 import net.webpdf.wsclient.openapi.DocumentFile;
+import net.webpdf.wsclient.openapi.ShareRequestOptions;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.session.documents.Document;
@@ -98,6 +99,16 @@ public interface RestDocument extends Document {
      * @throws ResultException Shall be thrown, should updating the document security have failed.
      */
     RestDocument updateDocumentSecurity(@NotNull PdfPasswordType passwordType) throws ResultException;
+
+    /**
+     * This is a shortcut for {@link DocumentManager#shareDocument} and creates a pre-signed, login-free share URL for
+     * the {@link RestDocument}.
+     *
+     * @param options The {@link ShareRequestOptions} defining the share link's expiration and one-time-use behaviour.
+     * @return The pre-signed share URL for this {@link RestDocument}.
+     * @throws ResultException Shall be thrown, should creating the share URL have failed.
+     */
+    @NotNull String shareDocument(@NotNull ShareRequestOptions options) throws ResultException;
 
     /**
      * This is a shortcut for {@link DocumentManager#renameDocument} and returns {@link DocumentInfo} about the

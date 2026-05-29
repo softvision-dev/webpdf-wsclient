@@ -7,6 +7,7 @@ import net.webpdf.wsclient.openapi.DocumentFileExtract;
 import net.webpdf.wsclient.openapi.DocumentInfo;
 import net.webpdf.wsclient.openapi.DocumentInfoType;
 import net.webpdf.wsclient.openapi.DocumentFile;
+import net.webpdf.wsclient.openapi.ShareRequestOptions;
 import net.webpdf.wsclient.schema.beans.HistoryEntry;
 import net.webpdf.wsclient.schema.operation.PdfPasswordType;
 import net.webpdf.wsclient.session.documents.AbstractDocument;
@@ -148,6 +149,18 @@ public class RestWebServiceDocument extends AbstractDocument implements RestDocu
      */
     public RestDocument updateDocumentSecurity(@NotNull PdfPasswordType passwordType) throws ResultException {
         return accessInternalState().getDocumentManager().updateDocumentSecurity(this.getDocumentId(), passwordType);
+    }
+
+    /**
+     * This is a shortcut for {@link DocumentManager#shareDocument} and creates a pre-signed, login-free share URL for
+     * the {@link RestDocument}.
+     *
+     * @param options The {@link ShareRequestOptions} defining the share link's expiration and one-time-use behaviour.
+     * @return The pre-signed share URL for this {@link RestDocument}.
+     * @throws ResultException Shall be thrown, should creating the share URL have failed.
+     */
+    public @NotNull String shareDocument(@NotNull ShareRequestOptions options) throws ResultException {
+        return accessInternalState().getDocumentManager().shareDocument(this.getDocumentId(), options);
     }
 
     /**

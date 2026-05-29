@@ -10,7 +10,7 @@
       "url": "https://www.webpdf.de/en/license-agreement.html"
     },
     "title": "webPDF",
-    "version": "webPDF 10.0.5 (2026-05-03T11:16:54Z)"
+    "version": "webPDF 11.0.0 (2026-05-29T06:22:12Z)"
   },
   "servers": [
     {
@@ -2165,6 +2165,59 @@
         ]
       }
     },
+    "/documents/{documentId}/share": {
+      "post": {
+        "description": "Creates a shared URL for a document, which is returned in the response body. The URL is pre-signed and is used to share documents without logging in. Anyone who has the URL can access the document. The URL is limited to a maximum validity period and can also be defined as a one-time URL.\n\n* To select the document use the `documentId` returned, when uploading the document to the server´s **document storage**, or select a `documentId` of one of the documents returned by `GET /documents/list`.\n",
+        "operationId": "shareDocument",
+        "parameters": [
+          {
+            "description": "The unique `documentId` of the document in the server´s document storage.",
+            "in": "path",
+            "name": "documentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Share_RequestOptions"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "The document has been shared, and the URL for shared access is in the body of the response.\n"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Creates a shared URL for a selected document",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
     "/documents/{documentId}/update": {
       "post": {
         "description": "Updates the document information of a selected document in the server´s **document storage**, using the given `DocumentFile` as body request parameter and returns the updated document information. You can use this to change the file name of a document.\n\n* Currently only the `fileName` in `DocumentFile` can be updated.\n* To select the document use the `documentId` returned, when uploading the document to the server´s **document storage**, or select a `documentId` of one of the documents returned by `GET /documents/list`.",
@@ -2367,6 +2420,44 @@
         "summary": "Gets the portal information [Internal use only, will change without further notice]",
         "tags": [
           "portal"
+        ]
+      }
+    },
+    "/share/{shareId}": {
+      "get": {
+        "description": "Downloads a document that was previously shared via a pre-signed URL. The share token encoded in the `shareId` path parameter is validated, and if valid, the document is returned as a multipart response containing the document metadata and the binary file data.\n\n* The share token may be configured as a one-time-use token, in which case the share link is invalidated after the first successful download.\n* If the share token has expired or has already been used, the server returns HTTP 410 (Gone).\n",
+        "operationId": "downloadSharedDocument",
+        "parameters": [
+          {
+            "description": "The pre-signed share token identifying the shared document session.",
+            "in": "path",
+            "name": "shareId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The document was downloaded successfully. The response is a multipart body containing the document metadata as JSON and the binary file data.\n"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "404": {
+            "description": "The share feature is not enabled on this server."
+          },
+          "410": {
+            "description": "The share token has expired, has already been used, or the shared document is no longer available."
+          }
+        },
+        "summary": "Downloads a document via its pre-signed share URL",
+        "tags": [
+          "documents"
         ]
       }
     },
@@ -8799,7 +8890,7 @@
           },
           "version": {
             "type": "string",
-            "default": "v10.0",
+            "default": "v11.0",
             "description": "Key schema version",
             "example": "v10.0"
           }
@@ -19372,6 +19463,9 @@
           "rest": {
             "$ref": "#/components/schemas/ServerConfig_LocalAuthRest"
           },
+          "share": {
+            "$ref": "#/components/schemas/ServerConfig_LocalAuthShare"
+          },
           "soap": {
             "$ref": "#/components/schemas/ServerConfig_LocalAuthSoap"
           }
@@ -19412,6 +19506,41 @@
           }
         }
       },
+      "ServerConfig_LocalAuthShare": {
+        "type": "object",
+        "description": "Defines the settings for shared document URL tokens issued by the server.",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "If set to true (default), the share token provider is active and pre-signed document URLs can be issued. If set to false, the provider is disabled and no share tokens can be created or validated."
+          },
+          "expiration": {
+            "type": "integer",
+            "format": "int32",
+            "default": 300,
+            "description": "Default number of seconds before the share token expires when the caller does not specify a custom expiration time. Must be between 30 and maxExpiration.",
+            "minimum": 30
+          },
+          "maxExpiration": {
+            "type": "integer",
+            "format": "int32",
+            "default": 3600,
+            "description": "Maximum number of seconds a caller may request for a share token's lifetime. Requests with an expirationTime exceeding this limit are rejected with HTTP 400. Must be greater than or equal to expiration.",
+            "minimum": 10
+          },
+          "oneTimeUse": {
+            "type": "boolean",
+            "default": true,
+            "description": "Server default for the one-time-use flag when the caller does not specify it. If set to true (default), the share link is invalidated after the first successful download."
+          },
+          "persistentKey": {
+            "type": "boolean",
+            "default": false,
+            "description": "If set to true, the shared signing key is persisted to disk and survives server restarts. If set to false (default), a new ephemeral key is generated on each server start, invalidating all previously issued share tokens."
+          }
+        }
+      },
       "ServerConfig_LocalAuthSoap": {
         "type": "object",
         "description": "Defines the settings for accessing the server's SOAP API (web services).",
@@ -19425,6 +19554,37 @@
             "type": "boolean",
             "default": true,
             "description": "If enabled, then the SOAP API is available."
+          }
+        }
+      },
+      "ServerConfig_Mcp": {
+        "type": "object",
+        "description": "Configures the Model Context Protocol (MCP) server embedded in webPDF.\n\nOverride any attribute via the corresponding environment variable or system property (takes precedence over XML values).",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Controls whether the MCP server is started. Defaults to `true` when the `<mcp>` element is present.\n\nThe MCP server is **disabled by default** when no `<mcp>` element is present in `server.xml` and no environment variable is set. Add `<mcp/>` to `server.xml` or set `WEBPDF_MCP_ENABLED=true` to activate the MCP server.\n\nOverride via environment variable `WEBPDF_MCP_ENABLED` or system property `webpdf.mcp.enabled`."
+          },
+          "password": {
+            "type": "string",
+            "default": "",
+            "description": "Password for authenticating MCP's internal REST API calls against webPDF. Used together with `username`.\n\nOverride via environment variable `WEBPDF_MCP_PASSWORD` or system property `webpdf.mcp.password`."
+          },
+          "token": {
+            "type": "string",
+            "default": "",
+            "description": "Bearer token required by clients calling the MCP endpoint (`/{contextPath}/mcp/message`).\n\nWhen set, every request to the MCP endpoint must carry the HTTP header `Authorization: Bearer <token>`. Requests without a valid token are rejected with HTTP 401.\n\nLeave empty to disable MCP endpoint authentication (suitable for trusted private networks or when access is controlled at network level).\n\nOverride via environment variable `WEBPDF_MCP_TOKEN` or system property `webpdf.mcp.token`."
+          },
+          "url": {
+            "type": "string",
+            "default": "",
+            "description": "Overrides the base URL of the webPDF REST API used by the MCP server for internal tool calls (e.g. `http://localhost:8080/webPDF/`).\n\nIf empty, the URL is derived automatically from the active connector and context path.\n\nIn cluster deployments, set this to the load balancer URL (e.g. `http://haproxy-internal/webPDF/`) so that tool executions are distributed across all cluster nodes.\n\nOverride via environment variable `WEBPDF_MCP_URL` or system property `webpdf.mcp.url`."
+          },
+          "username": {
+            "type": "string",
+            "default": "",
+            "description": "Username for authenticating MCP's internal REST API calls against webPDF.\n\nLeave empty for anonymous access (sufficient when webPDF authentication is disabled or when anonymous access to the REST API is permitted).\n\nIn cluster deployments where `url` points to a load balancer with authentication required, set both `username` and `password`.\n\nOverride via environment variable `WEBPDF_MCP_USERNAME` or system property `webpdf.mcp.username`."
           }
         }
       },
@@ -19683,6 +19843,9 @@
           },
           "localAuth": {
             "$ref": "#/components/schemas/ServerConfig_LocalAuth"
+          },
+          "mcp": {
+            "$ref": "#/components/schemas/ServerConfig_Mcp"
           },
           "oauth": {
             "$ref": "#/components/schemas/ServerConfig_OAuth"
@@ -20174,6 +20337,23 @@
           }
         },
         "readOnly": true
+      },
+      "Share_RequestOptions": {
+        "type": "object",
+        "description": "Options for creating a shared document URL",
+        "properties": {
+          "expirationTime": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "description": "Seconds before the share link expires. Uses server default if omitted."
+          },
+          "oneTimeUse": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, the link is invalidated after first download. Uses server default if omitted."
+          }
+        }
       },
       "UserConfig_User": {
         "type": "object",
