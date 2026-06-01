@@ -141,6 +141,73 @@ public class DocumentManagerIntegrationTest {
 
     @Test
     @IntegrationTest
+    public void testUploadAndShare() {
+        assertDoesNotThrow(() -> {
+            File sourceFile = testResources.getResource("test.pdf");
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST,
+                            testServer.getServer(ServerType.LOCAL)),
+                    new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword()))
+            ) {
+                assertNotNull(session,
+                        "Valid session should have been created.");
+
+                // Multi-use link so the uploaded file can be downloaded in both representations below.
+                ShareRequestOptions options = new ShareRequestOptions();
+                options.setExpirationTime(300);
+                options.setOneTimeUse(false);
+
+                // Upload and share in a single call; the document is not added to the document storage.
+                String shareUrl = session.getDocumentManager().uploadAndShare(sourceFile, options);
+                assertNotNull(shareUrl,
+                        "A share URL should have been returned.");
+                assertFalse(shareUrl.trim().isEmpty(),
+                        "The returned share URL should not be empty.");
+                assertTrue(session.getDocumentManager().getDocuments().isEmpty(),
+                        "The uploaded-and-shared document must not appear in the document storage.");
+
+                // The InputStream variant must yield an equivalent (non-empty) share URL.
+                String streamShareUrl;
+                try (InputStream data = Files.newInputStream(sourceFile.toPath())) {
+                    streamShareUrl = session.getDocumentManager()
+                            .uploadAndShare(data, sourceFile.getName(), options);
+                }
+                assertNotNull(streamShareUrl,
+                        "A share URL should have been returned via the InputStream variant.");
+                assertFalse(streamShareUrl.trim().isEmpty(),
+                        "The share URL returned via the InputStream variant should not be empty.");
+                assertTrue(session.getDocumentManager().getDocuments().isEmpty(),
+                        "The uploaded-and-shared document must not appear in the document storage.");
+
+                // Download both shared URLs login-free via an anonymous session and verify the full round-trip.
+                try (RestSession<RestDocument> anonymousSession = SessionFactory.createInstance(
+                        new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)))) {
+                    // File variant: raw-byte download (Accept: application/octet-stream).
+                    File rawFile = testResources.getTempFolder().newFile();
+                    try (OutputStream rawOut = Files.newOutputStream(rawFile.toPath())) {
+                        anonymousSession.getDocumentManager().downloadSharedDocument(shareUrl, rawOut);
+                    }
+                    assertTrue(FileUtils.contentEquals(sourceFile, rawFile),
+                            "The raw-byte shared download should equal the uploaded document.");
+
+                    // InputStream variant: multipart download (Accept: multipart/mixed) returning the metadata.
+                    File metaFile = testResources.getTempFolder().newFile();
+                    DocumentFile metadata;
+                    try (OutputStream metaOut = Files.newOutputStream(metaFile.toPath())) {
+                        metadata = anonymousSession.getDocumentManager()
+                                .downloadSharedDocument(streamShareUrl, metaOut, true);
+                    }
+                    assertNotNull(metadata,
+                            "The multipart shared download should return document metadata.");
+                    assertTrue(FileUtils.contentEquals(sourceFile, metaFile),
+                            "The multipart shared download should equal the uploaded document.");
+                }
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
     public void testDocumentRename() {
         assertDoesNotThrow(() -> {
             File sourceFile = testResources.getResource("test.pdf");

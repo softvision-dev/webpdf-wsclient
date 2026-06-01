@@ -582,6 +582,79 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
 
     /**
      * <p>
+     * Uploads the given {@link File} to the webPDF server and immediately creates a pre-signed, login-free share URL
+     * for it in a single call, returning that URL. The uploaded document is <b>not</b> added to this
+     * {@link DocumentManager}'s document storage.
+     * </p>
+     *
+     * @param file    The {@link File} to upload and share.
+     * @param options The {@link ShareRequestOptions} defining the share link's expiration and one-time-use behaviour.
+     * @return The pre-signed share URL for the uploaded document.
+     * @throws ResultException Shall be thrown, should the upload or creating the share URL have failed.
+     */
+    @Override
+    public @NotNull String uploadAndShare(@NotNull File file, @NotNull ShareRequestOptions options)
+            throws ResultException {
+        try (InputStream data = FileUtils.openInputStream(file)) {
+            return uploadAndShare(data, file.getName(), options);
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.INVALID_SOURCE_DOCUMENT, ex);
+        }
+    }
+
+    /**
+     * <p>
+     * Uploads the given {@link InputStream} to the webPDF server as a document resource with the given file name and
+     * immediately creates a pre-signed, login-free share URL for it in a single call, returning that URL. The uploaded
+     * document is <b>not</b> added to this {@link DocumentManager}'s document storage.
+     * </p>
+     *
+     * @param data     The document {@link InputStream} to upload and share.
+     * @param fileName The name of the uploaded document.
+     * @param options  The {@link ShareRequestOptions} defining the share link's expiration and one-time-use behaviour.
+     * @return The pre-signed share URL for the uploaded document.
+     * @throws ResultException Shall be thrown, should the upload or creating the share URL have failed.
+     */
+    @Override
+    public @NotNull String uploadAndShare(
+            @NotNull InputStream data, @NotNull String fileName, @NotNull ShareRequestOptions options
+    ) throws ResultException {
+        try {
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.setMode(HttpMultipartMode.LEGACY);
+            builder.setCharset(StandardCharsets.UTF_8);
+            builder.addBinaryBody("filedata", IOUtils.toByteArray(data),
+                    ContentType.DEFAULT_BINARY, fileName);
+            HttpEntity entity = builder.build();
+
+            List<NameValuePair> parameters = new ArrayList<>();
+            if (options.getExpirationTime() != null) {
+                parameters.add(new BasicNameValuePair(
+                        "expirationTime", Integer.toString(options.getExpirationTime())));
+            }
+            if (options.getOneTimeUse() != null) {
+                parameters.add(new BasicNameValuePair(
+                        "oneTimeUse", Boolean.toString(options.getOneTimeUse())));
+            }
+
+            URI uri = getSession().getURI("documents/share", parameters);
+            String shareUrl = HttpRestRequest.createRequest(getSession())
+                    .setAcceptHeader(DataFormat.PLAIN.getMimeType())
+                    .buildRequest(HttpMethod.POST, uri, entity)
+                    .executeRequest(String.class);
+
+            if (shareUrl == null) {
+                throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
+            }
+
+            return shareUrl;
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.INVALID_SOURCE_DOCUMENT, ex);
+        }
+    }
+
+    /**
+     * <p>
      * Downloads a document via a pre-signed, login-free share URL and writes the raw file bytes to the given
      * {@link OutputStream}.
      * </p>

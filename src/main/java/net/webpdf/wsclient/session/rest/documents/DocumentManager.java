@@ -310,6 +310,48 @@ public interface DocumentManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
      * <p>
+     * Uploads the given {@link File} to the webPDF server and immediately creates a pre-signed, login-free share URL
+     * for it in a single call, returning that URL.
+     * <ul>
+     * <li>The uploaded document is <b>not</b> added to this {@link DocumentManager}'s document storage: it is placed
+     * only in a dedicated short-lived share session, is not listed by the regular {@code /documents} API and is removed
+     * automatically once the share link expires.</li>
+     * <li>This is the input-side counterpart to {@link #shareDocument(String, ShareRequestOptions)}, allowing a
+     * (potentially large) file to be referenced by its share URL instead of being inlined.</li>
+     * <li>The validity period and one-time-use behaviour are controlled via the given {@link ShareRequestOptions};
+     * values left unset fall back to the server defaults.</li>
+     * </ul>
+     * </p>
+     *
+     * @param file    The {@link File} to upload and share.
+     * @param options The {@link ShareRequestOptions} defining the share link's expiration and one-time-use behaviour.
+     * @return The pre-signed share URL for the uploaded document.
+     * @throws ResultException Shall be thrown, should the upload or creating the share URL have failed.
+     */
+    @NotNull String uploadAndShare(@NotNull File file, @NotNull ShareRequestOptions options) throws ResultException;
+
+    /**
+     * <p>
+     * Uploads the given {@link InputStream} to the webPDF server as a document resource with the given file name and
+     * immediately creates a pre-signed, login-free share URL for it in a single call, returning that URL.
+     * </p>
+     * <p>
+     * The uploaded document is <b>not</b> added to this {@link DocumentManager}'s document storage. See
+     * {@link #uploadAndShare(File, ShareRequestOptions)} for details.
+     * </p>
+     *
+     * @param data     The document {@link InputStream} to upload and share.
+     * @param fileName The name of the uploaded document.
+     * @param options  The {@link ShareRequestOptions} defining the share link's expiration and one-time-use behaviour.
+     * @return The pre-signed share URL for the uploaded document.
+     * @throws ResultException Shall be thrown, should the upload or creating the share URL have failed.
+     */
+    @NotNull String uploadAndShare(
+            @NotNull InputStream data, @NotNull String fileName, @NotNull ShareRequestOptions options
+    ) throws ResultException;
+
+    /**
+     * <p>
      * Downloads a document via a pre-signed, login-free share URL (as returned by
      * {@link #shareDocument(String, ShareRequestOptions)}) and writes the raw file bytes to the given
      * {@link OutputStream}.

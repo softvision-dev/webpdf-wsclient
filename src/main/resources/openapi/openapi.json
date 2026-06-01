@@ -10,7 +10,7 @@
       "url": "https://www.webpdf.de/en/license-agreement.html"
     },
     "title": "webPDF",
-    "version": "webPDF 11.0.0 (2026-05-29T06:22:12Z)"
+    "version": "webPDF 11.0.0 (2026-06-01T10:37:05Z)"
   },
   "servers": [
     {
@@ -1568,6 +1568,84 @@
         ]
       }
     },
+    "/documents/share": {
+      "post": {
+        "description": "Uploads a document and immediately creates a pre-signed shared URL for it in a single call, without first storing it in the caller's document storage. The URL is returned in the response body and can be used to download the document without logging in.\n\nThis is the input-side counterpart to `POST /documents/{documentId}/share`: it lets a remote client hand a (potentially large) file to the server out-of-band and then reference it by its share URL.\n\n* The uploaded document is **not** added to the caller's document storage: it is placed only in the dedicated short-lived share session, so it does **not** appear in `GET /documents/list` and cannot be accessed via the regular `/documents` API. It is reachable solely through the returned share URL and is removed automatically when the share link expires.\n* The upload is authenticated like a normal document upload and is subject to the same storage limits.\n* `oneTimeUse` defaults to **false** so the uploaded file can be read by more than one subsequent operation within its validity period.\n* The requested `expirationTime` must not exceed the server's configured `maxExpiration`.\n",
+        "operationId": "uploadAndShareDocument",
+        "parameters": [
+          {
+            "description": "Seconds before the share link expires. Uses the server default if omitted.",
+            "in": "query",
+            "name": "expirationTime",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "description": "If true, the link is invalidated after the first download. Uses the server default if omitted.",
+            "in": "query",
+            "name": "oneTimeUse",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "filedata": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The document to upload and share, as binary data bytes."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "The document has been uploaded and shared. The pre-signed share URL is in the response body.\n"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Webservice_Exception"
+                }
+              }
+            },
+            "description": "The request is invalid. For example, the requested `expirationTime` exceeds the server's configured `maxExpiration`, or no file data was provided."
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "404": {
+            "description": "The share feature is not enabled on this server."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Uploads a document and immediately creates a shared URL for it",
+        "tags": [
+          "documents"
+        ]
+      }
+    },
     "/documents/{documentId}": {
       "delete": {
         "description": "Deletes the document selected via it´s `documentId` from the server´s document storage.\n\n* To select the document use the `documentId` returned, when uploading the document to the server´s **document storage**, or select a `documentId` of one of the documents returned by `GET /documents/list`.",
@@ -2201,7 +2279,14 @@
             "description": "The document has been shared, and the URL for shared access is in the body of the response.\n"
           },
           "400": {
-            "$ref": "#/components/responses/400BadRequest"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Webservice_Exception"
+                }
+              }
+            },
+            "description": "The request is invalid. For example, the requested `expirationTime` exceeds the server's configured `maxExpiration`."
           },
           "401": {
             "$ref": "#/components/responses/401Unauthorized"
