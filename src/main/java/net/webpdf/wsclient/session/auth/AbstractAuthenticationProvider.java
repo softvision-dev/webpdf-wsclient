@@ -50,6 +50,7 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
     private final @NotNull AtomicReference<AuthMaterial> authMaterial = new AtomicReference<>();
     private final @NotNull AtomicBoolean updating = new AtomicBoolean(false);
     private final @NotNull AtomicReference<Session> session = new AtomicReference<>();
+    private int sessionTimeout = 0;
 
     /**
      * <p>
@@ -131,6 +132,52 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
     }
 
     /**
+     * <p>
+     * Returns the optional session lifetime (in seconds) requested for the login/refresh of this {@link AuthProvider}.
+     * </p>
+     *
+     * @return The requested session lifetime in seconds. {@code 0} means the server default is used.
+     */
+    @SuppressWarnings("unused")
+    public int getSessionTimeout() {
+        return this.sessionTimeout;
+    }
+
+    /**
+     * <p>
+     * Sets an optional session lifetime (in seconds) for the login/refresh of this {@link AuthProvider}.<br>
+     * If set to a value greater than {@code 0}, the issued access token and the session expire after this many
+     * seconds instead of the server default. The value is capped by the server at its configured default session
+     * lifetime, so it can only shorten a session, never extend it beyond the server policy. Use this for short-lived,
+     * single-purpose logins (e.g. an upload that only shares a document) so a forgotten logout self-expires quickly.
+     * </p>
+     *
+     * @param sessionTimeout The session lifetime in seconds. {@code 0} (or a negative value) uses the server default.
+     */
+    @SuppressWarnings("unused")
+    public void setSessionTimeout(int sessionTimeout) {
+        this.sessionTimeout = Math.max(0, sessionTimeout);
+    }
+
+    /**
+     * Creates the {@link AuthLoginOptions} for a login/refresh request, applying the configured session lifetime.
+     * <p>
+     * The {@code sessionTimeout} is only transmitted when a positive value was requested. Otherwise it is cleared
+     * ({@code null}) so it is omitted from the request body entirely - this keeps the request backwards compatible
+     * with older webPDF servers that do not know the field (the generated model would otherwise serialize its
+     * non-null default of {@code 0}).
+     * </p>
+     *
+     * @return The prepared {@link AuthLoginOptions}.
+     */
+    private @NotNull AuthLoginOptions createLoginOptions() {
+        AuthLoginOptions loginOptions = new AuthLoginOptions();
+        loginOptions.setCreateRefreshToken(true);
+        loginOptions.setSessionTimeout(this.sessionTimeout > 0 ? this.sessionTimeout : null);
+        return loginOptions;
+    }
+
+    /**
      * Refresh authorization {@link SessionToken} for an active {@link Session}.
      *
      * @param session The session to refresh the authorization for.
@@ -154,8 +201,7 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
 
             ((SessionToken) this.getAuthMaterial()).refresh();
 
-            AuthLoginOptions loginOptions = new AuthLoginOptions();
-            loginOptions.setCreateRefreshToken(true);
+            AuthLoginOptions loginOptions = createLoginOptions();
 
             AuthMaterial authMaterial = HttpRestRequest.createRequest(restSession)
                     .buildRequest(HttpMethod.POST, REFRESH_PATH, prepareHttpEntity(loginOptions))
@@ -192,8 +238,7 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
             this.session.set(session);
             RestSession<?> restSession = (RestSession<?>) session;
 
-            AuthLoginOptions loginOptions = new AuthLoginOptions();
-            loginOptions.setCreateRefreshToken(true);
+            AuthLoginOptions loginOptions = createLoginOptions();
 
             AuthMaterial authMaterial = HttpRestRequest.createRequest(restSession)
                     .buildRequest(HttpMethod.POST, LOGIN_PATH, prepareHttpEntity(loginOptions), getInitialAuthMaterial())

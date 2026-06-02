@@ -273,19 +273,18 @@ public class RestAdministrationIntegrationTest {
                     new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
                     new UserAuthProvider(testServer.getLocalAdminName(), testServer.getLocalAdminPassword())
             )) {
-                Date currentDate = new Date();
-                Date yesterday = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
-                List<Webservice> webservices = new ArrayList<>();
-                webservices.add(Webservice.CONVERTER);
+                List<String> services = new ArrayList<>();
+                services.add("converter");
 
-                AdminStatistic statistic = session.getAdministrationManager().fetchServerStatistic(
-                        AdminDataSourceServerState.REALTIME, AdminAggregationServerState.MONTH,
-                        webservices, yesterday, currentDate
+                AdminTimeSeries timeSeries = session.getAdministrationManager().fetchTimeSeries(
+                        services, "24h"
                 );
-                assertNotNull(statistic, "There should be statistics.");
-                Map<String, Map<String, AdminTimeFrameServerState>> data = statistic.getData();
-                assertNotNull(data, "There should be data.");
-                assertNotNull(data.get(Webservice.CONVERTER.getValue()), "There should be converter data.");
+                assertNotNull(timeSeries, "There should be time-series statistics.");
+                assertNotNull(timeSeries.getSeries(), "There should be a time-series series list.");
+
+                AdminFormats formats = session.getAdministrationManager().fetchFormats(services);
+                assertNotNull(formats, "There should be per-format statistics.");
+                assertNotNull(formats.getSeries(), "There should be a per-format series list.");
             }
         });
     }
@@ -313,6 +312,39 @@ public class RestAdministrationIntegrationTest {
                     JWTToken jwtToken = SerializeHelper.fromJSON(streamSource, JWTToken.class);
                     assertNotNull(jwtToken.getSub(), "There should be a token sub.");
                     session.getAdministrationManager().closeSession(jwtToken.getSub());
+                }
+            }
+        });
+    }
+
+    @Test
+    @IntegrationTest
+    public void testSessionTimeout() {
+        assertDoesNotThrow(() -> {
+            int requestedTimeout = 60;
+            UserAuthProvider authProvider = new UserAuthProvider(
+                    testServer.getLocalAdminName(), testServer.getLocalAdminPassword()
+            );
+            authProvider.setSessionTimeout(requestedTimeout);
+            assertEquals(requestedTimeout, authProvider.getSessionTimeout(),
+                    "The requested session timeout should be stored on the provider.");
+
+            try (RestSession<RestDocument> session = SessionFactory.createInstance(
+                    new SessionContext(WebServiceProtocol.REST, testServer.getServer(ServerType.LOCAL)),
+                    authProvider
+            )) {
+                AuthMaterial authMaterial = session.getAuthProvider().provide(session);
+                String[] tokenParts = authMaterial.getToken().split("\\.");
+                String jwtJson = new String(Base64.getDecoder().decode(tokenParts[1]), StandardCharsets.UTF_8);
+
+                try (StringReader reader = new StringReader(jwtJson)) {
+                    StreamSource streamSource = new StreamSource(reader);
+                    JWTToken jwtToken = SerializeHelper.fromJSON(streamSource, JWTToken.class);
+                    int lifetime = jwtToken.getExp() - jwtToken.getIat();
+                    assertTrue(lifetime > 0, "The token lifetime should be positive.");
+                    assertTrue(lifetime <= requestedTimeout + 5,
+                            "The token lifetime (" + lifetime + "s) should be capped to the requested " +
+                                    "session timeout (" + requestedTimeout + "s).");
                 }
             }
         });

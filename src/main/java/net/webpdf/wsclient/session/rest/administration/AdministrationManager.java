@@ -598,26 +598,33 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
      * <p>
-     * <b>(Experimental Web service)</b>
-     * </p>
-     * <p>
-     * Reads statistic information from the server for Web services and file formats.
+     * Reads time-bucketed job statistics per webservice for a fixed rolling window from the server.
      * </p>
      *
-     * @param dataSource  Data source from which the data is read.
-     * @param aggregation Aggregation mode for the retrieved data.
-     * @param webservices List of webservice names from which the data should be retrieved.
-     * @param start       Start {@link Date} for the data, formatted as ISO-8601 extended offset (zoned based) date-time
-     *                    format.
-     * @param end         End {@link Date} for the data, formatted as ISO-8601 extended offset (zoned based) date-time
-     *                    format.
-     * @return The requested {@link AdminStatistic}.
+     * @param services The webservice names (lowercase, e.g. {@code converter}, {@code pdfa}, {@code toolbox},
+     *                 {@code signature}, {@code ocr}, {@code barcode}, {@code urlconverter}) the statistics shall be
+     *                 read for. An empty {@link List} selects all webservices.
+     * @param window   The rolling window to read (one of {@code 1h}, {@code 6h}, {@code 12h}, {@code 24h},
+     *                 {@code 72h}, {@code 168h}, {@code 720h}). {@code null} or empty uses the server default
+     *                 ({@code 24h}).
+     * @return The requested {@link AdminTimeSeries}.
      * @throws ResultException Shall be thrown, if the request failed.
      */
-    @NotNull AdminStatistic fetchServerStatistic(
-            @NotNull AdminDataSourceServerState dataSource, @NotNull AdminAggregationServerState aggregation,
-            @NotNull List<Webservice> webservices, @NotNull Date start, @NotNull Date end
+    @NotNull AdminTimeSeries fetchTimeSeries(
+            @NotNull List<String> services, @Nullable String window
     ) throws ResultException;
+
+    /**
+     * <p>
+     * Reads cumulative job statistics per source file format and webservice from the server.
+     * </p>
+     *
+     * @param services The webservice names (lowercase, e.g. {@code converter}, {@code pdfa}) the statistics shall be
+     *                 read for. An empty {@link List} selects all webservices.
+     * @return The requested {@link AdminFormats}.
+     * @throws ResultException Shall be thrown, if the request failed.
+     */
+    @NotNull AdminFormats fetchFormats(@NotNull List<String> services) throws ResultException;
 
     /**
      * Returns the session table from server with detailed status information about each session.

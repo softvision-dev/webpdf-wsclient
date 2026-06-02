@@ -1174,52 +1174,71 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
 
     /**
      * <p>
-     * <b>(Experimental Web service)</b>
-     * </p>
-     * <p>
-     * Reads statistic information from the server for Web services and file formats.
+     * Reads time-bucketed job statistics per webservice for a fixed rolling window from the server.
      * </p>
      *
-     * @param dataSource  Data source from which the data is read.
-     * @param aggregation Aggregation mode for the retrieved data.
-     * @param webservices List of webservice names from which the data should be retrieved.
-     * @param start       Start {@link Date} for the data, formatted as ISO-8601 extended offset (zoned based) date-time
-     *                    format.
-     * @param end         End {@link Date} for the data, formatted as ISO-8601 extended offset (zoned based) date-time
-     *                    format.
-     * @return The requested {@link AdminStatistic}.
+     * @param services The webservice names (lowercase, e.g. {@code converter}, {@code pdfa}, {@code toolbox},
+     *                 {@code signature}, {@code ocr}, {@code barcode}, {@code urlconverter}) the statistics shall be
+     *                 read for. An empty {@link List} selects all webservices.
+     * @param window   The rolling window to read (one of {@code 1h}, {@code 6h}, {@code 12h}, {@code 24h},
+     *                 {@code 72h}, {@code 168h}, {@code 720h}). {@code null} or empty uses the server default
+     *                 ({@code 24h}).
+     * @return The requested {@link AdminTimeSeries}.
      * @throws ResultException Shall be thrown, if the request failed.
      */
     @Override
-    public @NotNull AdminStatistic fetchServerStatistic(
-            @NotNull AdminDataSourceServerState dataSource, @NotNull AdminAggregationServerState aggregation,
-            @NotNull List<Webservice> webservices, @NotNull Date start, @NotNull Date end
+    public @NotNull AdminTimeSeries fetchTimeSeries(
+            @NotNull List<String> services, @Nullable String window
     ) throws ResultException {
         this.validateUser();
 
         List<NameValuePair> searchParams = new ArrayList<>();
-        searchParams.add(new BasicNameValuePair("start", DateFormatUtils.format(
-                start, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.getPattern()
-        )));
-        searchParams.add(new BasicNameValuePair("end", DateFormatUtils.format(
-                end, DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.getPattern()
-        )));
-
-        for (Webservice webservice : webservices) {
-            searchParams.add(new BasicNameValuePair("webservice", webservice.getValue()));
+        for (String service : services) {
+            searchParams.add(new BasicNameValuePair("services", service));
+        }
+        if (window != null && !window.isEmpty()) {
+            searchParams.add(new BasicNameValuePair("window", window));
         }
 
-        AdminStatistic statistic = HttpRestRequest.createRequest(this.session)
-                .buildRequest(HttpMethod.GET, this.session.getURI(
-                        "admin/statistic/" + dataSource.getValue() + "/" + aggregation.getValue(), searchParams
-                ))
-                .executeRequest(AdminStatistic.class);
+        AdminTimeSeries timeSeries = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.GET, this.session.getURI("admin/timeseries", searchParams))
+                .executeRequest(AdminTimeSeries.class);
 
-        if (statistic == null) {
+        if (timeSeries == null) {
             throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
         }
 
-        return statistic;
+        return timeSeries;
+    }
+
+    /**
+     * <p>
+     * Reads cumulative job statistics per source file format and webservice from the server.
+     * </p>
+     *
+     * @param services The webservice names (lowercase, e.g. {@code converter}, {@code pdfa}) the statistics shall be
+     *                 read for. An empty {@link List} selects all webservices.
+     * @return The requested {@link AdminFormats}.
+     * @throws ResultException Shall be thrown, if the request failed.
+     */
+    @Override
+    public @NotNull AdminFormats fetchFormats(@NotNull List<String> services) throws ResultException {
+        this.validateUser();
+
+        List<NameValuePair> searchParams = new ArrayList<>();
+        for (String service : services) {
+            searchParams.add(new BasicNameValuePair("services", service));
+        }
+
+        AdminFormats formats = HttpRestRequest.createRequest(this.session)
+                .buildRequest(HttpMethod.GET, this.session.getURI("admin/formats", searchParams))
+                .executeRequest(AdminFormats.class);
+
+        if (formats == null) {
+            throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
+        }
+
+        return formats;
     }
 
     /**

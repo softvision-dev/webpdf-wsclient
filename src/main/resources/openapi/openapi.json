@@ -10,7 +10,7 @@
       "url": "https://www.webpdf.de/en/license-agreement.html"
     },
     "title": "webPDF",
-    "version": "webPDF 11.0.0 (2026-06-01T10:37:05Z)"
+    "version": "webPDF 11.0.0 (2026-06-02T13:54:40Z)"
   },
   "servers": [
     {
@@ -61,10 +61,6 @@
     {
       "description": "**Important:** Web services in this area are intended for usage of the portal application only and may change at any time without notice!",
       "name": "portal"
-    },
-    {
-      "description": "**Important:** Web services in this area are currently experimental and may change at any time without notice!",
-      "name": "experimental"
     }
   ],
   "paths": {
@@ -521,6 +517,53 @@
         ]
       }
     },
+    "/admin/formats": {
+      "get": {
+        "description": "Reads cumulative job statistics per source file format and webservice.",
+        "operationId": "readFormats",
+        "parameters": [
+          {
+            "description": "List of webservice names. Repeat the parameter or use a comma-separated list. Empty = all webservices.",
+            "example": "converter",
+            "in": "query",
+            "name": "services",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Admin_Formats"
+                }
+              }
+            },
+            "description": "Per-format statistics"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "summary": "Reads per-format job statistics",
+        "tags": [
+          "administration"
+        ]
+      }
+    },
     "/admin/server/log": {
       "get": {
         "description": "Returns the contents of the current log or a specific log file of the server. If the `date` query parameter is specified, an explicitly selected log will be read.",
@@ -818,58 +861,31 @@
         ]
       }
     },
-    "/admin/statistic/{dataSource}/{aggregation}": {
+    "/admin/timeseries": {
       "get": {
-        "description": "Reads statistic information from the server for Web services and file formats. **(Experimental Web service)**",
-        "operationId": "readServerStatistic",
+        "description": "Reads time-bucketed job statistics per webservice for a fixed rolling window.",
+        "operationId": "readTimeSeries",
         "parameters": [
           {
-            "description": "Data source from which the data is read.",
-            "in": "path",
-            "name": "dataSource",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/Admin_DataSourceServerState"
-            }
-          },
-          {
-            "description": "Aggregation mode for the retrieved data.",
-            "in": "path",
-            "name": "aggregation",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/Admin_AggregationServerState"
-            }
-          },
-          {
-            "description": "List of webservice names from which the data should be retrieved.",
+            "description": "List of webservice names. Repeat the parameter or use a comma-separated list. Empty = all webservices.",
+            "example": "converter,pdfa",
             "in": "query",
-            "name": "webservice",
+            "name": "services",
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/components/schemas/Webservice"
+                "type": "string"
               }
             }
           },
           {
-            "description": "Start date for the data, formatted as ISO-8601 extended offset (zoned based) date-time format.",
-            "example": "2022-01-20T12:30:00,000Z",
+            "description": "Rolling window: 1h, 6h, 12h, 24h, 72h, 168h, 720h.",
+            "example": "24h",
             "in": "query",
-            "name": "start",
+            "name": "window",
             "schema": {
               "type": "string",
-              "default": ""
-            }
-          },
-          {
-            "description": "End date for the data, formatted as ISO-8601 extended offset (zoned based) date-time format.",
-            "example": "2022-01-22T23:59:59,000Z",
-            "in": "query",
-            "name": "end",
-            "schema": {
-              "type": "string",
-              "default": ""
+              "default": "24h"
             }
           }
         ],
@@ -878,11 +894,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Admin_Statistic"
+                  "$ref": "#/components/schemas/Admin_TimeSeries"
                 }
               }
             },
-            "description": "Server statistic"
+            "description": "Time-series statistics"
           },
           "400": {
             "$ref": "#/components/responses/400BadRequest"
@@ -896,9 +912,9 @@
             "BearerAuth": []
           }
         ],
-        "summary": "Reads statistic information (Experimental Web service)",
+        "summary": "Reads historical job statistics",
         "tags": [
-          "experimental"
+          "administration"
         ]
       }
     },
@@ -1570,7 +1586,7 @@
     },
     "/documents/share": {
       "post": {
-        "description": "Uploads a document and immediately creates a pre-signed shared URL for it in a single call, without first storing it in the caller's document storage. The URL is returned in the response body and can be used to download the document without logging in.\n\nThis is the input-side counterpart to `POST /documents/{documentId}/share`: it lets a remote client hand a (potentially large) file to the server out-of-band and then reference it by its share URL.\n\n* The uploaded document is **not** added to the caller's document storage: it is placed only in the dedicated short-lived share session, so it does **not** appear in `GET /documents/list` and cannot be accessed via the regular `/documents` API. It is reachable solely through the returned share URL and is removed automatically when the share link expires.\n* The upload is authenticated like a normal document upload and is subject to the same storage limits.\n* `oneTimeUse` defaults to **false** so the uploaded file can be read by more than one subsequent operation within its validity period.\n* The requested `expirationTime` must not exceed the server's configured `maxExpiration`.\n",
+        "description": "Uploads a document and immediately creates a pre-signed shared URL for it in a single call, without first storing it in the caller's document storage. The URL is returned in the response body and can be used to download the document without logging in.\n\nThis is the input-side counterpart to `POST /documents/{documentId}/share`: it lets a remote client hand a (potentially large) file to the server out-of-band and then reference it by its share URL.\n\n* The uploaded document is **not** added to the caller's document storage: it is placed only in the dedicated short-lived share session, so it does **not** appear in `GET /documents/list` and cannot be accessed via the regular `/documents` API. It is reachable solely through the returned share URL and is removed automatically when the share link expires.\n* The upload is authenticated like a normal document upload and is subject to the same storage limits.\n* When `oneTimeUse` is omitted, it falls back to the server-configured default (`<share oneTimeUse>`), consistent with `POST /documents/{documentId}/share`. Set it explicitly to `false` to allow the uploaded file to be read by more than one subsequent operation.\n* The requested `expirationTime` must not exceed the server's configured `maxExpiration`.\n",
         "operationId": "uploadAndShareDocument",
         "parameters": [
           {
@@ -2863,17 +2879,6 @@
       }
     },
     "schemas": {
-      "Admin_AggregationServerState": {
-        "type": "string",
-        "default": "hour",
-        "enum": [
-          "minute",
-          "hour",
-          "day",
-          "month",
-          "year"
-        ]
-      },
       "Admin_ApplicationCheck": {
         "type": "object",
         "description": "Selects the \"application.xml\" contents and server resources, that shall be validated.\n\n- executable = Select the defined external executables for validation.\n\n- tsa = Select the defined TSA (Timestamp Authority) for validation.\n\n- license = Select the server´s license for validation.\n\n- signature = Select the server´s global certificate keystore for validation.",
@@ -3147,14 +3152,6 @@
           "checkType"
         ]
       },
-      "Admin_DataSourceServerState": {
-        "type": "string",
-        "default": "realtime",
-        "enum": [
-          "realtime",
-          "persistent"
-        ]
-      },
       "Admin_DocumentStorageProviderCheck": {
         "type": "object",
         "allOf": [
@@ -3336,6 +3333,69 @@
           "checkType"
         ]
       },
+      "Admin_FormatBucket": {
+        "type": "object",
+        "description": "Cumulative job statistics for one source file format",
+        "properties": {
+          "avgExecutionMs": {
+            "type": "number",
+            "format": "double",
+            "default": 0,
+            "description": "Average execution time per job in milliseconds"
+          },
+          "executionTimeMs": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "Summed execution time in milliseconds for this format"
+          },
+          "format": {
+            "type": "string",
+            "default": "",
+            "description": "Source file format (lowercase short name)",
+            "example": "docx"
+          },
+          "jobs": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "Total number of jobs for this format"
+          }
+        },
+        "readOnly": true
+      },
+      "Admin_FormatService": {
+        "type": "object",
+        "description": "Cumulative per-format statistics for one webservice",
+        "properties": {
+          "formats": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Admin_FormatBucket"
+            }
+          },
+          "service": {
+            "type": "string",
+            "default": "",
+            "description": "Webservice name (lowercase)",
+            "example": "converter"
+          }
+        },
+        "readOnly": true
+      },
+      "Admin_Formats": {
+        "type": "object",
+        "description": "Cumulative per-source-format job statistics",
+        "properties": {
+          "series": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Admin_FormatService"
+            }
+          }
+        },
+        "readOnly": true
+      },
       "Admin_GenericFileDataStore": {
         "type": "object",
         "allOf": [
@@ -3480,17 +3540,17 @@
           },
           "numberOfErrorJobs": {
             "type": "integer",
-            "format": "int32",
+            "format": "int64",
             "default": 0
           },
           "numberOfJobs": {
             "type": "integer",
-            "format": "int32",
+            "format": "int64",
             "default": 0
           },
           "numberOfSuccessfulJobs": {
             "type": "integer",
-            "format": "int32",
+            "format": "int64",
             "default": 0
           }
         }
@@ -3681,26 +3741,6 @@
           }
         },
         "readOnly": true
-      },
-      "Admin_PoolEntryServerState": {
-        "type": "object",
-        "properties": {
-          "count": {
-            "type": "integer",
-            "format": "int32",
-            "default": 0
-          },
-          "poolSize": {
-            "type": "integer",
-            "format": "int32",
-            "default": 0
-          },
-          "queueSize": {
-            "type": "integer",
-            "format": "int32",
-            "default": 0
-          }
-        }
       },
       "Admin_PoolServerState": {
         "type": "object",
@@ -3936,6 +3976,11 @@
             "default": 0,
             "description": "UTC datetime of last update",
             "readOnly": true
+          },
+          "retentionDays": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
           }
         }
       },
@@ -4043,20 +4088,6 @@
           "checkType"
         ]
       },
-      "Admin_Statistic": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "additionalProperties": {
-                "$ref": "#/components/schemas/Admin_TimeFrameServerState"
-              }
-            }
-          }
-        }
-      },
       "Admin_SupportEntryGroup": {
         "type": "string",
         "default": "logs",
@@ -4085,54 +4116,123 @@
           "fileGroup"
         ]
       },
-      "Admin_TimeEntryServerState": {
+      "Admin_TimeSeries": {
         "type": "object",
+        "description": "Historical job statistics aggregated into time buckets",
         "properties": {
-          "executionTimeMs": {
-            "type": "integer",
-            "format": "int64",
-            "default": 0
+          "from": {
+            "type": "string",
+            "default": "",
+            "description": "ISO-8601 UTC start of the window",
+            "example": "2025-01-20T00:00:00Z"
           },
-          "numberOfErrors": {
+          "granularitySeconds": {
             "type": "integer",
-            "format": "int64",
-            "default": 0
+            "format": "int32",
+            "default": 0,
+            "description": "Size of one display bucket in seconds",
+            "example": 3600
           },
-          "numberOfJobs": {
+          "retentionDays": {
             "type": "integer",
-            "format": "int64",
-            "default": 0
-          }
-        }
-      },
-      "Admin_TimeFrameServerState": {
-        "type": "object",
-        "properties": {
-          "executionTimeMs": {
-            "type": "integer",
-            "format": "int64",
-            "default": 0
+            "format": "int32",
+            "default": 0,
+            "description": "Configured retention period of the coarse time-series tier in days"
           },
-          "formats": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/Admin_TimeEntryServerState"
+          "series": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Admin_TimeSeriesService"
             }
           },
-          "instances": {
-            "$ref": "#/components/schemas/Admin_PoolEntryServerState"
+          "to": {
+            "type": "string",
+            "default": "",
+            "description": "ISO-8601 UTC end of the window (now)",
+            "example": "2025-01-20T06:00:00Z"
           },
-          "numberOfErrors": {
-            "type": "integer",
-            "format": "int64",
-            "default": 0
-          },
-          "numberOfJobs": {
-            "type": "integer",
-            "format": "int64",
-            "default": 0
+          "window": {
+            "type": "string",
+            "default": "",
+            "description": "Requested rolling window",
+            "example": "6h"
           }
-        }
+        },
+        "readOnly": true
+      },
+      "Admin_TimeSeriesBucket": {
+        "type": "object",
+        "description": "Aggregated job statistics for one time bucket",
+        "properties": {
+          "avgExecutionMs": {
+            "type": "number",
+            "format": "double",
+            "default": 0,
+            "description": "Average execution time per job in milliseconds"
+          },
+          "avgPoolSize": {
+            "type": "number",
+            "format": "double",
+            "default": 0,
+            "description": "Average number of active pool threads"
+          },
+          "avgQueueSize": {
+            "type": "number",
+            "format": "double",
+            "default": 0,
+            "description": "Average queue depth"
+          },
+          "errors": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "Number of failed jobs"
+          },
+          "executionTimeMs": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "Summed execution time in milliseconds"
+          },
+          "jobs": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "Total number of jobs"
+          },
+          "successful": {
+            "type": "integer",
+            "format": "int64",
+            "default": 0,
+            "description": "Number of successful jobs (jobs - errors)"
+          },
+          "timestamp": {
+            "type": "string",
+            "default": "",
+            "description": "ISO-8601 UTC start of the bucket",
+            "example": "2025-01-20T08:00:00Z"
+          }
+        },
+        "readOnly": true
+      },
+      "Admin_TimeSeriesService": {
+        "type": "object",
+        "description": "Time-series statistics for one webservice",
+        "properties": {
+          "buckets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Admin_TimeSeriesBucket"
+            }
+          },
+          "service": {
+            "type": "string",
+            "default": "",
+            "description": "Webservice name (lowercase)",
+            "example": "converter"
+          }
+        },
+        "readOnly": true
       },
       "Admin_TrustStoreKeyStore": {
         "type": "object",
@@ -5757,6 +5857,13 @@
             "type": "boolean",
             "default": false,
             "description": "If enabled (true), a refresh token is also created."
+          },
+          "sessionTimeout": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0,
+            "description": "Optional session lifetime in seconds. If set (greater than 0), the issued access token and the session expire after this many seconds instead of the server default. The value is capped at the configured default session lifetime, so it can only shorten a session, never extend it beyond the server policy. Use this for short-lived, single-purpose logins (e.g. an upload that only shares a document) so that a forgotten logout self-expires quickly. 0 (or omitted) uses the server default.",
+            "example": 60
           }
         }
       },
@@ -20494,20 +20601,6 @@
             }
           }
         }
-      },
-      "Webservice": {
-        "type": "string",
-        "default": "converter",
-        "description": "Defines the available web services",
-        "enum": [
-          "signature",
-          "pdfa",
-          "toolbox",
-          "converter",
-          "urlconverter",
-          "ocr",
-          "barcode"
-        ]
       },
       "Webservice_Exception": {
         "type": "object",
