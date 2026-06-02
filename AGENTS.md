@@ -1,5 +1,7 @@
 # webpdf-wsclient — Agent Instructions
 
+These instructions apply to **any AI coding agent** working in this repository (Claude Code, Codex, Copilot, Cursor, Gemini, ...). They are intentionally tool-neutral: follow them regardless of which assistant is invoked.
+
 webpdf-wsclient is a Java client library (Apache 2.0) that provides a simplified, object-oriented interface to the webPDF server REST and SOAP APIs. It is published to Maven Central as `net.webpdf:webpdf-wsclient`. The library version tracks the webPDF server version it targets (e.g., 10.0.5 → webPDF Server 10.0.5).
 
 - **Repository**: https://github.com/softvision-dev/webpdf-wsclient
@@ -53,6 +55,8 @@ mvnw.cmd test
 ```
 
 Integration tests require a running webPDF server instance. They are conditionally enabled per test method via `@IntegrationTest`, `@OAuthTest`, `@TLSTest`, `@ProxyTest`, and `@LdapTest` — each reads its enabled state from `config/testConfig.json`.
+
+When running a single test or a subset with `-Dtest=...`, add `-Dsurefire.failIfNoSpecifiedTests=false` so a build does not fail when a named test is skipped by its condition.
 
 To run integration tests using the bundled Docker containers (requires Docker Desktop or Docker Engine), build the images once and then run the tests:
 ```
@@ -110,6 +114,7 @@ The library shares a common abstraction layer across two protocol implementation
 - All public types, constructors, methods, and non-obvious fields carry Javadoc.
 - Comments explain **why** — the intent, constraint, or invariant that would not be obvious from reading the code. Do not restate what the code does.
 - Keep documentation aligned with implementation. Update Javadoc when behavior changes.
+- Mark intentionally temporary, partial, or follow-up behavior explicitly in the code or an adjacent comment, with enough context for a later change to identify the intended scope.
 
 ---
 
@@ -129,6 +134,15 @@ The library shares a common abstraction layer across two protocol implementation
 
 ---
 
+## Code Review and Analysis
+
+- Read the relevant files, tests, and configuration before making claims about behavior or quality. Do not present assumptions as facts.
+- Base findings on verifiable evidence — file paths, line references, command results, or failing tests. If something could not be verified, say so and name the missing step.
+- Prefer specific, actionable findings over broad speculation. Keep recommendations aligned with the existing structure and conventions.
+- End a substantial review with a clear readiness judgment (ready / needs fixes / not ready) based on what was actually inspected.
+
+---
+
 ## Generated Code
 
 The following directories contain generated sources and are rebuilt automatically during the Maven build. Do not edit them manually — changes will be overwritten.
@@ -142,7 +156,16 @@ To regenerate: `mvnw.cmd generate-sources` (or `./mvnw generate-sources`).
 
 ## Agent Workspace
 
-Redirect high-volume output (logs, intermediate files, analysis dumps) to `.ai-workspace/temp/` rather than the repository root or source directories. Use collision-safe filenames that include a timestamp or run identifier. This directory is gitignored.
+The `.ai-workspace/` directory holds agent-local working files. Its subdirectories serve distinct purposes:
+
+| Directory | Purpose | Version-controlled |
+|---|---|---|
+| `.ai-workspace/temp/` | Transient logs and high-volume command output | No (only `.gitkeep`) |
+| `.ai-workspace/scripts/` | Repeatable local workflows (analysis, diagnostics, test runs) | Skeleton only |
+| `.ai-workspace/commands/` | Reusable request files and local agent inputs | Skeleton only |
+| `.ai-workspace/tracking/` | Optional tracking and working artifacts | Skeleton only |
+
+Redirect high-volume output (logs, intermediate files, analysis dumps) to `.ai-workspace/temp/` rather than the repository root or source directories. Use collision-safe filenames that include a timestamp or run identifier. Prefer reusing an existing script in `.ai-workspace/scripts/` over ad-hoc one-off command chains.
 
 ---
 
