@@ -34,7 +34,8 @@ public class TestConfig {
                 configNode = mapper.readTree(
                         FileUtils.readFileToString(confFile, StandardCharsets.UTF_8));
             } catch (IOException e) {
-                // IGNORE
+                // A present but unreadable configuration must not silently disable all integration tests.
+                throw new IllegalStateException("Unable to read the test configuration '" + confFile + "'.", e);
             }
         }
 

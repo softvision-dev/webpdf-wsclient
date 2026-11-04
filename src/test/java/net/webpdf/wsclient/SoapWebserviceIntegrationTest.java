@@ -52,7 +52,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -103,7 +103,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -146,7 +146,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -177,7 +177,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -208,7 +208,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -264,7 +264,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -293,7 +293,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process()) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -322,7 +322,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -373,7 +373,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -416,7 +416,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -447,7 +447,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -478,7 +478,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -535,7 +535,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -566,7 +566,7 @@ public class SoapWebserviceIntegrationTest {
                 File fileOut = testResources.getTempFolder().newFile();
                 try (SoapDocument soapDocument = webService.process()) {
                     soapDocument.writeResult(fileOut);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });

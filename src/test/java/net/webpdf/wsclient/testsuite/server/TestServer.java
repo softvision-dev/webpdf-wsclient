@@ -155,7 +155,12 @@ public final class TestServer {
         boolean isServerRequired = TestConfig.getInstance().getIntegrationTestConfig().useContainer();
         if (isServerRequired) {
             LOGGER.info("Starting docker container '{}'", composeFile);
+            // The service names match docker/docker-compose.yml (lower case, no container_name). The local
+            // "docker compose" is used because the containerised default cannot reach the build contexts of the
+            // compose file on every platform; "up" builds the test images and pulls missing images on demand.
             this.environment = new ComposeContainer(composeFile)
+                    .withLocalCompose(true)
+                    .withPull(false)
                     .withExposedService("ldap", 10389, Wait.forHealthcheck())
                     .withExposedService("webpdf", 8080,
                             Wait.forHttp("/webPDF/rest/portal/info").forPort(8080));

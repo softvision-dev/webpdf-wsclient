@@ -1,6 +1,6 @@
 FROM eclipse-temurin:21.0.7_6-jdk
 
-RUN set -x && apt-get update && DEBIAN_FRONTEND=nointeractive apt-get install -y --no-install-recommends \
+RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
   openssl dumb-init procps wget htop joe ldap-utils
 
 ENV PORT=10389

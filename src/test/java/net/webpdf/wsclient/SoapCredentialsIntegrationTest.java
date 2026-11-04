@@ -52,7 +52,7 @@ public class SoapCredentialsIntegrationTest {
                 try (SoapDocument resultDocument = webService.process(
                         session.createDocument(fileInputStream))) {
                     resultDocument.writeResult(fileOutputStream);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });
@@ -93,7 +93,7 @@ public class SoapCredentialsIntegrationTest {
                         session.createDocument(file.toURI()));
                      OutputStream outputStream = new FileOutputStream(fileOut)) {
                     soapDocument.writeResult(outputStream);
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                 }
             }
         });

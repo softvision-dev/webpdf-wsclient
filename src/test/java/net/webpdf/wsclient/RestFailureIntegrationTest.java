@@ -36,6 +36,7 @@ public class RestFailureIntegrationTest {
                 ConverterRestWebService<RestDocument> webService =
                         session.createWebServiceInstance(WebServiceType.CONVERTER);
                 webService.process(session.getDocumentManager().uploadDocument(file));
+                fail("The webservice call was expected to fail with a server error.");
             } catch (ResultException ex) {
                 assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
@@ -62,6 +63,7 @@ public class RestFailureIntegrationTest {
                         "Operation should have been initialized");
                 webService.getOperationParameters().setAdd(add);
                 webService.process(session.getDocumentManager().uploadDocument(file));
+                fail("The webservice call was expected to fail with a server error.");
             } catch (ResultException ex) {
                 assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
@@ -81,6 +83,7 @@ public class RestFailureIntegrationTest {
                 PdfaRestWebService<RestDocument> webService =
                         session.createWebServiceInstance(WebServiceType.PDFA);
                 webService.process(session.getDocumentManager().uploadDocument(file));
+                fail("The webservice call was expected to fail with a server error.");
             } catch (ResultException ex) {
                 assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
@@ -107,6 +110,7 @@ public class RestFailureIntegrationTest {
                 textType.setPages("2000");
                 extractionType.setText(textType);
                 webService.process(session.getDocumentManager().uploadDocument(file));
+                fail("The webservice call was expected to fail with a server error.");
             } catch (ResultException ex) {
                 assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
@@ -126,6 +130,7 @@ public class RestFailureIntegrationTest {
                 UrlConverterRestWebService<RestDocument> webService =
                         session.createWebServiceInstance(WebServiceType.URLCONVERTER);
                 webService.process(session.getDocumentManager().uploadDocument(file));
+                fail("The webservice call was expected to fail with a server error.");
             } catch (ResultException ex) {
                 assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;
@@ -145,6 +150,7 @@ public class RestFailureIntegrationTest {
                 OcrRestWebService<RestDocument> webService =
                         session.createWebServiceInstance(WebServiceType.OCR);
                 webService.process(session.getDocumentManager().uploadDocument(file));
+                fail("The webservice call was expected to fail with a server error.");
             } catch (ResultException ex) {
                 assertInstanceOf(ServerResultException.class, ex);
                 ServerResultException exception = (ServerResultException) ex;

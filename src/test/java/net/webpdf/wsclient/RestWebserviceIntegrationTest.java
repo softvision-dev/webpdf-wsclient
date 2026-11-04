@@ -93,7 +93,7 @@ public class RestWebserviceIntegrationTest {
                 assertEquals(expectedPages, metadataPagePages.size());
                 assertEquals(FilenameUtils.removeExtension(sourceFile.getName()),
                         restDocument.getDocumentFile().getFileName());
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }
@@ -181,7 +181,7 @@ public class RestWebserviceIntegrationTest {
                 assertEquals(2, pageCount);
                 assertEquals(FilenameUtils.removeExtension(sourceFile.getName()),
                         restDocument.getDocumentFile().getFileName());
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }
@@ -240,7 +240,7 @@ public class RestWebserviceIntegrationTest {
                     webService.process(session.uploadDocument(file))
                             .downloadDocument(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }
@@ -279,7 +279,7 @@ public class RestWebserviceIntegrationTest {
                     webService.process(session.uploadDocument(file))
                             .downloadDocument(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }
@@ -316,7 +316,7 @@ public class RestWebserviceIntegrationTest {
                     webService.process(session.uploadDocument(file))
                             .downloadDocument(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }
@@ -349,7 +349,7 @@ public class RestWebserviceIntegrationTest {
                     webService.process(session.uploadDocument(file))
                             .downloadDocument(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }
@@ -410,7 +410,7 @@ public class RestWebserviceIntegrationTest {
                     webService.process(session.uploadDocument(file))
                             .downloadDocument(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }
@@ -443,7 +443,7 @@ public class RestWebserviceIntegrationTest {
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                     webService.process().downloadDocument(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }
@@ -467,7 +467,7 @@ public class RestWebserviceIntegrationTest {
                     webService.process(session.uploadDocument(file))
                             .downloadDocument(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }
@@ -500,7 +500,7 @@ public class RestWebserviceIntegrationTest {
                     webService.process(session.uploadDocument(file))
                             .downloadDocument(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
 
                 assertEquals(
                         0.0d,

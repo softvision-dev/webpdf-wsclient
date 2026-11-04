@@ -10,6 +10,10 @@ public class ServerConfig extends ConfigNodeContainer {
     public static final @NotNull String SERVER_CONFIG_NODE = "/server";
     private final Boolean useLdap;
 
+    /**
+     * The defaults match {@code config/testConfig.sample.json} and the bundled test containers
+     * ({@code docker/docker-compose.yml}), so the container based run also works without a configuration file.
+     */
     public ServerConfig(@Nullable JsonNode node, @NotNull Boolean useLdap) {
         super(node);
 
@@ -17,7 +21,7 @@ public class ServerConfig extends ConfigNodeContainer {
     }
 
     public @NotNull String getLocalURL() {
-        return getString("/local/url", "");
+        return getString("/local/url", "http://localhost");
     }
 
     public @NotNull String getLocalAdminName() {
@@ -25,7 +29,7 @@ public class ServerConfig extends ConfigNodeContainer {
             return getString("/local/ldapAdminName", "");
         }
 
-        return getString("/local/adminName", "");
+        return getString("/local/adminName", "admin");
     }
 
     public @NotNull String getLocalAdminPassword() {
@@ -33,7 +37,7 @@ public class ServerConfig extends ConfigNodeContainer {
             return getString("/local/ldapAdminPassword", "");
         }
 
-        return getString("/local/adminPassword", "");
+        return getString("/local/adminPassword", "admin");
     }
 
     public @NotNull String getLocalUserName() {
@@ -41,7 +45,7 @@ public class ServerConfig extends ConfigNodeContainer {
             return getString("/local/ldapUserName", "");
         }
 
-        return getString("/local/userName", "");
+        return getString("/local/userName", "user");
     }
 
     public @NotNull String getLocalUserPassword() {
@@ -49,23 +53,23 @@ public class ServerConfig extends ConfigNodeContainer {
             return getString("/local/ldapUserPassword", "");
         }
 
-        return getString("/local/userPassword", "");
+        return getString("/local/userPassword", "user");
     }
 
     public int getLocalHttpPort() {
-        return getInteger("/local/httpPort", -1);
+        return getInteger("/local/httpPort", 8080);
     }
 
     public int getLocalHttpsPort() {
-        return getInteger("/local/httpsPort", -1);
+        return getInteger("/local/httpsPort", 8443);
     }
 
     public @NotNull String getLocalPath() {
-        return getString("/local/path", "");
+        return getString("/local/path", "/webPDF");
     }
 
     public @NotNull String getPublicURL() {
-        return getString("/public/url", "");
+        return getString("/public/url", "https://portal.webpdf.de");
     }
 
 
@@ -78,7 +82,7 @@ public class ServerConfig extends ConfigNodeContainer {
     }
 
     public @NotNull String getPublicPath() {
-        return getString("/public/path", "");
+        return getString("/public/path", "/webPDF");
     }
 
 }

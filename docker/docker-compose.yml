@@ -2,8 +2,9 @@ name: webpdf-wsclient
 
 services:
 
-  LDAP:
-    container_name: ldap
+  # Service names are lower case and no container_name is set: Testcontainers (TestServer) addresses
+  # the services by their compose service name and rejects fixed container names.
+  ldap:
     image: testapp/webpdf-wsclient-ldap:latest
     build:
       context: ./ldap
@@ -24,9 +25,8 @@ services:
       retries: 10
       start_period: 30s
 
-  Proxy:
-    container_name: proxy
-    image: mitmproxy/mitmproxy
+  proxy:
+    image: mitmproxy/mitmproxy:12.2.3
     ports:
       - "8888:8888"
     entrypoint: '/bin/sh -c "stty rows 24 cols 80 && mitmdump -p8888 --ssl-insecure"'
@@ -35,8 +35,7 @@ services:
     stdin_open:
       true
 
-  webPDF:
-    container_name: webpdf
+  webpdf:
     image: testapp/webpdf-wsclient-server:latest
     build:
       context: ./server
@@ -53,7 +52,7 @@ services:
       - WEBPDF_METRICS_ENABLED=true
       - WEBPDF_METRICS_AUTH_ENABLED=false
     depends_on:
-      LDAP:
+      ldap:
         condition: service_healthy
     ports:
       - "8080:8080"

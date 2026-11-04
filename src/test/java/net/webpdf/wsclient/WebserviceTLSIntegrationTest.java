@@ -53,7 +53,7 @@ public class WebserviceTLSIntegrationTest {
             try (SoapDocument soapDocument = webService.process(session.createDocument(file))) {
                 assertNotNull(soapDocument);
                 soapDocument.writeResult(fileOut);
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         }
     }
@@ -118,7 +118,7 @@ public class WebserviceTLSIntegrationTest {
                 webService.process(session.uploadDocument(file))
                         .downloadDocument(fileOutputStream);
             }
-            assertTrue(fileOut.exists());
+            assertTrue(fileOut.length() > 0, "The result file is empty.");
         }
     }
 

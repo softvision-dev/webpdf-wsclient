@@ -19,6 +19,9 @@ import net.webpdf.wsclient.tools.SerializeHelper;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
@@ -29,6 +32,9 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated("Changes server state (cluster mode, sessions) that other test classes rely on.")
+@Execution(value = ExecutionMode.SAME_THREAD,
+        reason = "testClusterConfig switches the cluster mode that testClusterStatus asserts.")
 public class RestAdministrationIntegrationTest {
     public TestServer testServer = TestServer.getInstance();
     private final TestResources testResources = new TestResources(RestAdministrationIntegrationTest.class);
@@ -215,7 +221,7 @@ public class RestAdministrationIntegrationTest {
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                     session.getAdministrationManager().buildSupportPackage(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }
@@ -335,14 +341,16 @@ public class RestAdministrationIntegrationTest {
                 assertEquals(ClusterMode.CLUSTER, clusterSettings.getMode(), "mode should be cluster.");
 
                 session.getAdministrationManager().updateClusterConfiguration(clusterSettings);
-                clusterSettings = session.getAdministrationManager().fetchClusterConfiguration();
-                assertNotNull(clusterSettings, "cluster configuration should exist.");
-                assertEquals(ClusterMode.CLUSTER, clusterSettings.getMode(), "mode should be cluster.");
-
-                // reset cluster mode
-                clusterSettings = new ClusterSettings();
-                clusterSettings.setMode(ClusterMode.SINGLE);
-                session.getAdministrationManager().updateClusterConfiguration(clusterSettings);
+                try {
+                    clusterSettings = session.getAdministrationManager().fetchClusterConfiguration();
+                    assertNotNull(clusterSettings, "cluster configuration should exist.");
+                    assertEquals(ClusterMode.CLUSTER, clusterSettings.getMode(), "mode should be cluster.");
+                } finally {
+                    // reset cluster mode, also after a failed assertion, so later tests find a single server
+                    ClusterSettings resetSettings = new ClusterSettings();
+                    resetSettings.setMode(ClusterMode.SINGLE);
+                    session.getAdministrationManager().updateClusterConfiguration(resetSettings);
+                }
             }
         });
     }

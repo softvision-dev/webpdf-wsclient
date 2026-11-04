@@ -14,35 +14,33 @@ public class JsonConfigNode implements ConfigNode {
 
     @Override
     public @NotNull String getString(@NotNull String key, @NotNull String defaultValue) {
-        if (this.node == null) {
-            return defaultValue;
-        }
         JsonNode valueNode = getNode(key);
         return valueNode != null ? valueNode.asText() : defaultValue;
     }
 
     @Override
     public boolean getBoolean(@NotNull String key, boolean defaultValue) {
-        if (this.node == null) {
-            return defaultValue;
-        }
         JsonNode valueNode = getNode(key);
         return valueNode != null ? valueNode.asBoolean() : defaultValue;
     }
 
     @Override
     public int getInteger(@NotNull String key, int defaultValue) {
-        if (this.node == null) {
-            return defaultValue;
-        }
         JsonNode valueNode = getNode(key);
         return valueNode == null || valueNode.asText().isEmpty() ? defaultValue : valueNode.asInt();
     }
 
+    /**
+     * Returns the value node for the given key, or {@code null} when the key is not configured.
+     * {@link JsonNode#at(String)} never returns {@code null} but a "missing" node, which must count as absent -
+     * otherwise the caller's default value would never apply.
+     */
     private @Nullable JsonNode getNode(@NotNull String key) {
-        return this.node != null ?
-                this.node.at(key.startsWith("/") ? key : "/" + key) :
-                null;
+        if (this.node == null) {
+            return null;
+        }
+        JsonNode valueNode = this.node.at(key.startsWith("/") ? key : "/" + key);
+        return valueNode.isMissingNode() || valueNode.isNull() ? null : valueNode;
     }
 
 }

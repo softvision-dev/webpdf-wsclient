@@ -185,7 +185,7 @@ public class Oauth2TokenIntegrationTest {
                 webService.process(session.uploadDocument(file))
                         .downloadDocument(fileOutputStream);
             }
-            assertTrue(fileOut.exists());
+            assertTrue(fileOut.length() > 0, "The result file is empty.");
         });
     }
 
@@ -209,7 +209,7 @@ public class Oauth2TokenIntegrationTest {
                     session.createDocument(file.toURI()));
                  OutputStream out = new FileOutputStream(fileOut)) {
                 soapDocument.writeResult(out);
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }

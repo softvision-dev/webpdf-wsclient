@@ -71,7 +71,7 @@ public class ThreadSynchronizationIntegrationTest {
                             "Downloaded REST document is null");
                     assertEquals(FilenameUtils.removeExtension(sourceFile.getName()),
                             restDocument.getDocumentFile().getFileName());
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                     result.add(fileOut);
                 }));
                 executor.execute(() -> assertDoesNotThrow(() -> {
@@ -106,7 +106,7 @@ public class ThreadSynchronizationIntegrationTest {
                             "Downloaded REST document is null");
                     assertEquals(FilenameUtils.removeExtension(sourceFile.getName()),
                             restDocument.getDocumentFile().getFileName());
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                     result.add(fileOut);
                 }));
                 executor.execute(() -> assertDoesNotThrow(() -> {
@@ -141,7 +141,7 @@ public class ThreadSynchronizationIntegrationTest {
                             "Downloaded REST document is null");
                     assertEquals(FilenameUtils.removeExtension(sourceFile.getName()),
                             restDocument.getDocumentFile().getFileName());
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                     result.add(fileOut);
                 }));
                 executor.execute(() -> assertDoesNotThrow(() -> {
@@ -176,7 +176,7 @@ public class ThreadSynchronizationIntegrationTest {
                             "Downloaded REST document is null");
                     assertEquals(FilenameUtils.removeExtension(sourceFile.getName()),
                             restDocument.getDocumentFile().getFileName());
-                    assertTrue(fileOut.exists());
+                    assertTrue(fileOut.length() > 0, "The result file is empty.");
                     result.add(fileOut);
                 }));
                 executor.shutdown();

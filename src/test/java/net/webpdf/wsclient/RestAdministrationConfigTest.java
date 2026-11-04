@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.File;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated("Changes the server and application configuration (host name, keystores, users) that other test classes rely on.")
 @Execution(value = ExecutionMode.SAME_THREAD,
         reason = "Tests that change the configuration cannot be executed in parallel, as otherwise the test results cannot be predicted.")
 public class RestAdministrationConfigTest {

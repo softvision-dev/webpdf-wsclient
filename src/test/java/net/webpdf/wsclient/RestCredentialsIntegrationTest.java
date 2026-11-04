@@ -50,7 +50,7 @@ public class RestCredentialsIntegrationTest {
                 webService.process(session.uploadDocument(file))
                         .downloadDocument(fileOutputStream);
             }
-            assertTrue(fileOut.exists());
+            assertTrue(fileOut.length() > 0, "The result file is empty.");
         });
     }
 
@@ -86,7 +86,7 @@ public class RestCredentialsIntegrationTest {
                     webService.process(session.getDocumentManager().uploadDocument(file))
                             .downloadDocument(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }

@@ -64,7 +64,7 @@ public class WebserviceProxyTest {
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                     webService.process().downloadDocument(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }
@@ -100,7 +100,7 @@ public class WebserviceProxyTest {
                             session.createDocument(fileInputStream))) {
                         assertNotNull(resultDocument);
                         resultDocument.writeResult(fileOutputStream);
-                        assertTrue(fileOut.exists());
+                        assertTrue(fileOut.length() > 0, "The result file is empty.");
                     }
                 }
             }
@@ -141,7 +141,7 @@ public class WebserviceProxyTest {
                             session.createDocument(fileInputStream))) {
                         assertNotNull(resultDocument);
                         resultDocument.writeResult(fileOutputStream);
-                        assertTrue(fileOut.exists());
+                        assertTrue(fileOut.length() > 0, "The result file is empty.");
                     }
                 }
             }
@@ -179,7 +179,7 @@ public class WebserviceProxyTest {
                 try (FileOutputStream fileOutputStream = new FileOutputStream(fileOut)) {
                     webService.process().downloadDocument(fileOutputStream);
                 }
-                assertTrue(fileOut.exists());
+                assertTrue(fileOut.length() > 0, "The result file is empty.");
             }
         });
     }

@@ -37,9 +37,11 @@ public class IntegrationTestConfig extends ConfigNodeContainer {
     }
 
     public URL getProxyURL(boolean useSSL) throws MalformedURLException {
+        // The proxy container resolves the server by its compose service name; a Docker bridge address
+        // depends on the local Docker address pool and is not reachable everywhere.
         String url = useSSL
-                ? getString("/proxy/urlSSL", "https://172.17.0.1:8443/webPDF")
-                : getString("/proxy/url", "http://172.17.0.1:8080/webPDF");
+                ? getString("/proxy/urlSSL", "https://webpdf:8443/webPDF")
+                : getString("/proxy/url", "http://webpdf:8080/webPDF");
         return new URL(url);
     }
 

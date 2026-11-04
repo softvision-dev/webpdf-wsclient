@@ -1,14 +1,29 @@
 package net.webpdf.wsclient.testsuite.io;
 
+import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Paths;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestResources {
+
+    /**
+     * The temporary folders are created outside of a JUnit extension lifecycle, so their {@code afterEach} cleanup
+     * never runs. They are collected here and removed once, when the test JVM ends.
+     */
+    private static final @NotNull Queue<File> TEMPORARY_FOLDERS = new ConcurrentLinkedQueue<>();
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(
+                () -> TEMPORARY_FOLDERS.forEach(FileUtils::deleteQuietly), "test-resources-cleanup"));
+    }
 
     private final @NotNull String resourcePath;
     private final @NotNull TemporaryFolderExtension temporaryFolderExtension = new TemporaryFolderExtension();
@@ -16,14 +31,14 @@ public class TestResources {
     public TestResources(@NotNull Class<?> testClass) {
         this.resourcePath = testClass.getPackage().getName().replaceAll("\\.", "/");
         temporaryFolderExtension.create();
+        TEMPORARY_FOLDERS.add(temporaryFolderExtension.getRoot());
     }
 
     public @NotNull File getResource(String fileName) {
         URL resUrl = this.getClass().getClassLoader().getResource(resourcePath + "/" + fileName);
-        assert resUrl != null;
-        File resource = new File(resUrl.getFile());
-        assertNotNull(resource);
-        return resource;
+        assertNotNull(resUrl, "Test resource not found: " + resourcePath + "/" + fileName);
+        // Resolve through the URI: URL#getFile() keeps percent-encoding (spaces, umlauts) in the path.
+        return assertDoesNotThrow(() -> Paths.get(resUrl.toURI()).toFile());
     }
 
     public @NotNull TemporaryFolderExtension getTempFolder() {

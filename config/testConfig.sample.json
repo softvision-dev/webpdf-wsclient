@@ -42,8 +42,8 @@
     },
     "proxy": {
       "enabled": false,
-      "url": "http://localhost:8080/webPDF",
-      "urlSSL": "https://localhost:8443/webPDF"
+      "url": "http://webpdf:8080/webPDF",
+      "urlSSL": "https://webpdf:8443/webPDF"
     },
     "tls": {
       "enabled": false
