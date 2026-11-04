@@ -58,13 +58,20 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
      *
      * @param session        The {@link SoapSession} the webservice interface shall be created for.
      * @param webServiceType The {@link WebServiceType} interface, that shall be created.
+     * @throws ResultException Shall be thrown, should the WSDL not be accessible or the webservice port not be
+     *                         creatable.
      */
     public SoapWebService(@NotNull SoapSession<T_SOAP_DOCUMENT> session, @NotNull WebServiceType webServiceType)
             throws ResultException {
         super(webServiceType, session);
         this.qname = new QName(webServiceType.getSoapNamespaceURI(), webServiceType.getSoapLocalPart());
         this.webserviceURL = getSession().getURI(webServiceType.getSoapEndpoint());
-        this.port = provideWebServicePort();
+        try {
+            this.port = provideWebServicePort();
+        } catch (jakarta.xml.ws.WebServiceException ex) {
+            // JAX-WS reports an unreachable or invalid WSDL (connection failure, HTTP error, TLS failure) unchecked.
+            throw new ClientResultException(Error.WSDL_INVALID_FILE, ex);
+        }
     }
 
     /**
@@ -116,6 +123,10 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
         } catch (WebServiceException ex) {
             throw new ServerResultException(ex);
         }
+        // keep the type and error code of failures the wsclient already classified (e.g. authentication or TLS).
+        catch (ResultException ex) {
+            throw ex;
+        }
         // catch unhandled exceptions.
         catch (Exception ex) {
             throw new ClientResultException(Error.SOAP_EXECUTION, ex);
@@ -123,12 +134,13 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
     }
 
     /**
-     * Returns the {@link PdfPasswordType} of the current webservice.
+     * Returns the {@link PdfPasswordType} of the current webservice. (May return {@code null}, after
+     * {@link #setPassword(PdfPasswordType)} has been called with {@code null}.)
      *
      * @return the {@link PdfPasswordType} of the current webservice.
      */
     @Override
-    public @NotNull PdfPasswordType getPassword() {
+    public @Nullable PdfPasswordType getPassword() {
         return getOperationData().getPassword();
     }
 
@@ -143,12 +155,13 @@ public abstract class SoapWebService<T_WEBPDF_PORT, T_OPERATION_PARAMETER, T_SOA
     }
 
     /**
-     * Returns the {@link BillingType} of the current webservice.
+     * Returns the {@link BillingType} of the current webservice. (May return {@code null}, after
+     * {@link #setBilling(BillingType)} has been called with {@code null}.)
      *
      * @return the {@link BillingType} of the current webservice.
      */
     @Override
-    public @NotNull BillingType getBilling() {
+    public @Nullable BillingType getBilling() {
         return getOperationData().getBilling();
     }
 

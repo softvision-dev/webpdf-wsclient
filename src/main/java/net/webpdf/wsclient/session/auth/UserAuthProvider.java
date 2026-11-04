@@ -5,6 +5,7 @@ import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.auth.material.AuthMaterial;
+import net.webpdf.wsclient.session.auth.material.token.SessionToken;
 import net.webpdf.wsclient.session.auth.material.AuthenticationMaterial;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.jetbrains.annotations.NotNull;
@@ -15,11 +16,10 @@ import org.jetbrains.annotations.NotNull;
  * webPDF user.
  * </p>
  * <p>
- * <b>Be aware:</b> Currently an {@link UserAuthProvider} shall only serve one {@link Session} at a
- * time. An {@link UserAuthProvider} being called by another {@link Session} than it´s current master,
- * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
- * (new master).<br>
- * For that reason an {@link UserAuthProvider}s shall be reusable by subsequent {@link Session}s.
+ * <b>Be aware:</b> An {@link UserAuthProvider} serves one {@link Session}. After the login it keeps the
+ * {@link SessionToken} of that server session and provides it to every {@link Session} it is used for;
+ * closing a {@link Session} ends that server session. A provider is therefore not reusable for a
+ * subsequent {@link Session}: create a new {@link AuthProvider} for each {@link Session}.
  * </p>
  * <p>
  * <b>Be aware:</b> However - An implementation of {@link AuthProvider} is not required to serve multiple
@@ -36,11 +36,10 @@ public class UserAuthProvider extends AbstractAuthenticationProvider {
      * {@link Session}s.
      * </p>
      * <p>
-     * <b>Be aware:</b> Currently an {@link UserAuthProvider} shall only serve one {@link Session} at a
-     * time. An {@link UserAuthProvider} being called by another {@link Session} than it´s current master,
-     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
-     * (new master).<br>
-     * For that reason an {@link UserAuthProvider}s shall be reusable by subsequent {@link Session}s.
+     * <b>Be aware:</b> An {@link UserAuthProvider} serves one {@link Session}. After the login it keeps the
+     * {@link SessionToken} of that server session and provides it to every {@link Session} it is used for;
+     * closing a {@link Session} ends that server session. A provider is therefore not reusable for a
+     * subsequent {@link Session}: create a new {@link AuthProvider} for each {@link Session}.
      * </p>
      *
      * @param userName The name of the user to authenticate.
@@ -55,11 +54,10 @@ public class UserAuthProvider extends AbstractAuthenticationProvider {
      * Resumes an existing authentication provider, that shall resume a {@link Session} with the {@link AuthMaterial} provided.
      * </p>
      * <p>
-     * <b>Be aware:</b> Currently an {@link UserAuthProvider} shall only serve one {@link Session} at a
-     * time. An {@link UserAuthProvider} being called by another {@link Session} than it´s current master,
-     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
-     * (new master).<br>
-     * For that reason an {@link UserAuthProvider}s shall be reusable by subsequent {@link Session}s.
+     * <b>Be aware:</b> An {@link UserAuthProvider} serves one {@link Session}. After the login it keeps the
+     * {@link SessionToken} of that server session and provides it to every {@link Session} it is used for;
+     * closing a {@link Session} ends that server session. A provider is therefore not reusable for a
+     * subsequent {@link Session}: create a new {@link AuthProvider} for each {@link Session}.
      * </p>
      *
      * @param userName The name of the user to authenticate.
@@ -78,11 +76,10 @@ public class UserAuthProvider extends AbstractAuthenticationProvider {
      * {@link Session}s.
      * </p>
      * <p>
-     * <b>Be aware:</b> Currently an {@link UserAuthProvider} shall only serve one {@link Session} at a
-     * time. An {@link UserAuthProvider} being called by another {@link Session} than it´s current master,
-     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
-     * (new master).<br>
-     * For that reason an {@link UserAuthProvider}s shall be reusable by subsequent {@link Session}s.
+     * <b>Be aware:</b> An {@link UserAuthProvider} serves one {@link Session}. After the login it keeps the
+     * {@link SessionToken} of that server session and provides it to every {@link Session} it is used for;
+     * closing a {@link Session} ends that server session. A provider is therefore not reusable for a
+     * subsequent {@link Session}: create a new {@link AuthProvider} for each {@link Session}.
      * </p>
      *
      * @param userName The name of the user to authenticate.
@@ -100,11 +97,10 @@ public class UserAuthProvider extends AbstractAuthenticationProvider {
      * Resumes an existing authentication provider, that shall resume a {@link Session} with the {@link AuthMaterial} provided.
      * </p>
      * <p>
-     * <b>Be aware:</b> Currently an {@link UserAuthProvider} shall only serve one {@link Session} at a
-     * time. An {@link UserAuthProvider} being called by another {@link Session} than it´s current master,
-     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
-     * (new master).<br>
-     * For that reason an {@link UserAuthProvider}s shall be reusable by subsequent {@link Session}s.
+     * <b>Be aware:</b> An {@link UserAuthProvider} serves one {@link Session}. After the login it keeps the
+     * {@link SessionToken} of that server session and provides it to every {@link Session} it is used for;
+     * closing a {@link Session} ends that server session. A provider is therefore not reusable for a
+     * subsequent {@link Session}: create a new {@link AuthProvider} for each {@link Session}.
      * </p>
      *
      * @param userName The name of the user to authenticate.

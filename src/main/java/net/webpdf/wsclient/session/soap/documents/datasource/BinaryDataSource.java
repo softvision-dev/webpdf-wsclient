@@ -22,11 +22,23 @@ public class BinaryDataSource implements DataSource, AutoCloseable {
      * Prepares the given {@link InputStream} for further processing.
      *
      * @param inputStream an {@link InputStream} containing the resource.
+     * @throws IOException Shall be thrown, should the temp {@link File} not be creatable or writable.
      */
     public BinaryDataSource(@NotNull InputStream inputStream) throws IOException {
-        this.tempFile = File.createTempFile("SOAPClient", null);
-        this.tempFile.deleteOnExit();
-        FileUtils.copyInputStreamToFile(inputStream, tempFile);
+        // Files.createTempFile restricts the file to its owner where the file system supports POSIX permissions,
+        // the document content must not be readable by other local users.
+        File createdFile = Files.createTempFile("SOAPClient", null).toFile();
+        createdFile.deleteOnExit();
+        try {
+            FileUtils.copyInputStreamToFile(inputStream, createdFile);
+        } catch (IOException | RuntimeException ex) {
+            // No instance exists that could be closed later, the partially written file must be removed here.
+            if (!createdFile.delete()) {
+                ex.addSuppressed(new IOException("Failed to delete temp file " + createdFile));
+            }
+            throw ex;
+        }
+        this.tempFile = createdFile;
     }
 
     /**
@@ -72,14 +84,17 @@ public class BinaryDataSource implements DataSource, AutoCloseable {
     }
 
     /**
-     * Deletes the underlying temp {@link File}.
+     * Deletes the underlying temp {@link File}. Closing an already closed {@link BinaryDataSource} has no effect.
      *
      * @throws ResultException Shall be thrown, when deleting the temp file failed.
      */
     @Override
     public void close() throws ResultException {
-        if (!this.tempFile.delete()) {
-            throw new ClientResultException(Error.FAILED_TO_CLOSE_DATA_SOURCE);
+        // deleteIfExists keeps a repeated close (e.g. an explicit close inside try-with-resources) free of errors.
+        try {
+            Files.deleteIfExists(this.tempFile.toPath());
+        } catch (IOException ex) {
+            throw new ClientResultException(Error.FAILED_TO_CLOSE_DATA_SOURCE, ex);
         }
     }
 

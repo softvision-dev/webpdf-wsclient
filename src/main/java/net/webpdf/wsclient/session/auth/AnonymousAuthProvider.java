@@ -2,6 +2,7 @@ package net.webpdf.wsclient.session.auth;
 
 import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.auth.material.AnonymousMaterial;
+import net.webpdf.wsclient.session.auth.material.token.SessionToken;
 
 /**
  * <p>
@@ -10,11 +11,10 @@ import net.webpdf.wsclient.session.auth.material.AnonymousMaterial;
  * not use the {@link AnonymousAuthProvider}.
  * </p>
  * <p>
- * <b>Be aware:</b> Currently an {@link AnonymousAuthProvider} shall only serve one {@link Session} at a
- * time. An {@link AnonymousAuthProvider} being called by another {@link Session} than it´s current master,
- * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
- * (new master).<br>
- * For that reason an {@link AnonymousAuthProvider}s shall be reusable by subsequent {@link Session}s.
+ * <b>Be aware:</b> An {@link AnonymousAuthProvider} serves one {@link Session}. After the login it keeps the
+ * {@link SessionToken} of that server session and provides it to every {@link Session} it is used for;
+ * closing a {@link Session} ends that server session. A provider is therefore not reusable for a
+ * subsequent {@link Session}: create a new {@link AuthProvider} for each {@link Session}.
  * </p>
  * <p>
  * <b>Be aware:</b> However - An implementation of {@link AuthProvider} is not required to serve multiple
@@ -31,11 +31,10 @@ public class AnonymousAuthProvider extends AbstractAuthenticationProvider {
      * can not use the {@link AnonymousAuthProvider}.
      * </p>
      * <p>
-     * <b>Be aware:</b> Currently an {@link AnonymousAuthProvider} shall only serve one {@link Session} at a
-     * time. An {@link AnonymousAuthProvider} being called by another {@link Session} than it´s current master,
-     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
-     * (new master).<br>
-     * For that reason an {@link AnonymousAuthProvider}s shall be reusable by subsequent {@link Session}s.
+     * <b>Be aware:</b> An {@link AnonymousAuthProvider} serves one {@link Session}. After the login it keeps the
+     * {@link SessionToken} of that server session and provides it to every {@link Session} it is used for;
+     * closing a {@link Session} ends that server session. A provider is therefore not reusable for a
+     * subsequent {@link Session}: create a new {@link AuthProvider} for each {@link Session}.
      * </p>
      */
     public AnonymousAuthProvider() {

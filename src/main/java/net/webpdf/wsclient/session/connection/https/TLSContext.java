@@ -51,8 +51,11 @@ public class TLSContext {
      *
      * @param trustStore         Selects the {@link X509Certificate} truststore file
      * @param trustStorePassword Selects a possibly necessary password for the truststore file.
-     * @param allowSelfSigned    Set to {@code true} to allow the usage of self-signed {@link X509Certificate}s.
-     * @param tlsProtocol        The {@link TLSProtocol}, that shall be used.
+     * @param allowSelfSigned    Set to {@code true} to trust every {@link X509Certificate} chain the server presents
+     *                           (not only self-signed ones). For REST sessions this also disables the verification
+     *                           of the server´s host name. Use this for test environments only.
+     * @param tlsProtocol        The {@link TLSProtocol}, that shall be used. (Only applied, if a truststore is set or
+     *                           {@code allowSelfSigned} is {@code true}, see {@link #create()}.)
      */
     public TLSContext(@NotNull TLSProtocol tlsProtocol, boolean allowSelfSigned,
             @NotNull File trustStore, @Nullable String trustStorePassword) {
@@ -65,8 +68,11 @@ public class TLSContext {
     /**
      * Prepares a fresh the {@link TLSContext} for an HTTPS connection.
      *
-     * @param tlsProtocol     The {@link TLSProtocol}, that shall be used.
-     * @param allowSelfSigned Set to {@code true} to allow the usage of self-signed {@link X509Certificate}s.
+     * @param tlsProtocol     The {@link TLSProtocol}, that shall be used. (Only applied, if {@code allowSelfSigned}
+     *                        is {@code true}, see {@link #create()}.)
+     * @param allowSelfSigned Set to {@code true} to trust every {@link X509Certificate} chain the server presents (not
+     *                        only self-signed ones). For REST sessions this also disables the verification of the
+     *                        server´s host name. Use this for test environments only.
      */
     public TLSContext(@NotNull TLSProtocol tlsProtocol, boolean allowSelfSigned) {
         this.trustStore = null;
@@ -86,9 +92,10 @@ public class TLSContext {
     }
 
     /**
-     * Returns {@code true}, if self-signed {@link X509Certificate}s shall be accepted.
+     * Returns {@code true}, if every {@link X509Certificate} chain the server presents shall be trusted (not only
+     * self-signed ones). For REST sessions this also disables the verification of the server´s host name.
      *
-     * @return {@code true}, if self-signed {@link X509Certificate}s shall be accepted.
+     * @return {@code true}, if every {@link X509Certificate} chain shall be trusted.
      */
     @SuppressWarnings("unused")
     public boolean isAllowSelfSigned() {
@@ -96,7 +103,8 @@ public class TLSContext {
     }
 
     /**
-     * Returns the selected {@link TLSProtocol}.
+     * Returns the selected {@link TLSProtocol}. (It is only applied, if a truststore is set or self-signed
+     * certificates are allowed, see {@link #create()}.)
      *
      * @return The selected {@link TLSProtocol}.
      */
@@ -132,8 +140,16 @@ public class TLSContext {
      * TLS is the follow up protocol of the (better known) SSL (Secure Socket Layer) protocol - SSL is no longer
      * supported by the webPDF wsclient, as it is obsolete and insecure.
      * </p>
+     * <p>
+     * <b>Be aware:</b> Without a truststore and with self-signed certificates disallowed, this returns a new
+     * {@link SSLContext} initialized with the JVM´s default trust material and without client key material (a client
+     * certificate configured via {@code javax.net.ssl.keyStore} is not used). The selected {@link TLSProtocol} is not
+     * applied then, the protocol versions are negotiated as configured for the JVM. With {@link #isAllowSelfSigned()}
+     * every certificate chain is trusted.
+     * </p>
      *
      * @return The resulting {@link SSLContext}.
+     * @throws ResultException Shall be thrown, should initializing the {@link SSLContext} fail.
      */
     public @NotNull SSLContext create() throws ResultException {
         try {

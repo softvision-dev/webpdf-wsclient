@@ -6,7 +6,6 @@ import net.webpdf.wsclient.exception.ResultException;
 import net.webpdf.wsclient.session.auth.AuthProvider;
 import net.webpdf.wsclient.session.connection.SessionContext;
 import net.webpdf.wsclient.session.connection.SessionContextSettings;
-import net.webpdf.wsclient.session.rest.AbstractRestSession;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
@@ -32,7 +31,7 @@ public abstract class AbstractSession implements Session {
 
     /**
      * <p>
-     * Creates a new {@link AbstractRestSession} instance providing connection information and authorization objects
+     * Creates a new {@link AbstractSession} instance providing connection information and authorization objects
      * for a webPDF server-client {@link Session}.
      * </p>
      * <p>

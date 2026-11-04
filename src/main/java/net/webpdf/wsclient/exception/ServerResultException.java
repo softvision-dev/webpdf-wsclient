@@ -30,7 +30,7 @@ public class ServerResultException extends ResultException {
     /**
      * Instantiates a new {@link ServerResultException} that wraps a webPDF server fail state.
      *
-     * @param soapStubException The SOAP {@link WebserviceException} describing the webPDF server fail state.
+     * @param soapStubException The SOAP {@link WebServiceException} describing the webPDF server fail state.
      */
     public ServerResultException(@Nullable WebServiceException soapStubException) {
         this(

@@ -40,7 +40,7 @@ public class AbstractUserManager<T_REST_DOCUMENT extends RestDocument>
      *
      * @param session The {@link RestSession} a {@link UserManager} shall be created for.
      */
-    AbstractUserManager(@NotNull RestSession<T_REST_DOCUMENT> session) {
+    public AbstractUserManager(@NotNull RestSession<T_REST_DOCUMENT> session) {
         this.session = session;
     }
 
@@ -107,16 +107,23 @@ public class AbstractUserManager<T_REST_DOCUMENT extends RestDocument>
      * returned by {@link RestSession#getCertificates()}.
      * </p>
      *
-     * @param keystoreName     The name of the keystore whose passwords shall be updated.
+     * @param keystoreName     The name of the keystore whose passwords shall be updated. It must not contain
+     *                         {@code /} and must not be {@code .} or {@code ..}.
      * @param keyStorePassword The {@link KeyStorePassword} containing the new passwords.
      * @return The updated {@link AuthUserCertificates} of the currently logged-in user.
-     * @throws ResultException Shall be thrown, if the request failed.
+     * @throws ResultException Shall be thrown, if the request failed or the keystore name is not a single path
+     *                         segment.
      * @see RestSession#updateCertificates(String, KeyStorePassword)
      */
     @Override
     public @NotNull AuthUserCertificates updateCertificatePasswords(
             @NotNull String keystoreName, @NotNull KeyStorePassword keyStorePassword
     ) throws ResultException {
+        // The keystore name is appended to the request path: a "/" would add segments, "." and ".." would leave the
+        // intended endpoint.
+        if (keystoreName.contains("/") || ".".equals(keystoreName) || "..".equals(keystoreName)) {
+            throw new ClientResultException(Error.INVALID_URL);
+        }
         AuthUserCertificates certificates = HttpRestRequest.createRequest(this.session)
                 .buildRequest(HttpMethod.PUT, CERTIFICATE_PASSWORDS_PATH + keystoreName,
                         prepareHttpEntity(keyStorePassword))

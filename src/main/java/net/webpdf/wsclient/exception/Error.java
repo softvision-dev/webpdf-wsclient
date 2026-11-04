@@ -104,7 +104,7 @@ public enum Error {
     /**
      * The data handlers of a {@link SoapDocument} failed to close.
      */
-    FAILED_TO_CLOSE_DATA_SOURCE(-13, "The data handlers of a {@link SoapDocument} failed to close."),
+    FAILED_TO_CLOSE_DATA_SOURCE(-13, "The data handlers of a SoapDocument failed to close."),
 
     /**
      * <p>
@@ -179,11 +179,13 @@ public enum Error {
      */
     WSDL_INVALID_URL(-51, "Invalid WSDL URL"),
     /**
-     * A client side SOAP execution error occurred.
+     * Executing a SOAP web service call failed. This is used for client side failures, as well as by
+     * {@link ServerResultException}s for errors reported by the webPDF server.
      */
     SOAP_EXECUTION(-52, "SOAP web service execution error"),
     /**
-     * A client side REST execution error occurred.
+     * Executing a REST web service call failed. This is used for client side failures, as well as by
+     * {@link ServerResultException}s for errors reported by the webPDF server.
      */
     REST_EXECUTION(-53, "REST web service execution error"),
     /**

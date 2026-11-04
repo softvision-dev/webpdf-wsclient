@@ -8,12 +8,15 @@ import net.webpdf.wsclient.schema.operation.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.FileEntity;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -269,6 +272,55 @@ public class SerializeHelperTest {
     public void toXMLInvalidType() {
         assertThrows(ResultException.class,
                 () -> SerializeHelper.toXML(new ConverterType(), String.class));
+    }
+
+    @Test
+    public void testFromJSONInputStreamSource() throws Exception {
+        try (InputStream inputStream = new FileInputStream(testResources.getResource("convert.json"))) {
+            OperationData operationData = SerializeHelper.fromJSON(new StreamSource(inputStream),
+                    OperationData.class);
+            assertNotNull(operationData.getConverter(), "Converter parameters should have been initialized.");
+            assertEquals("1-5", operationData.getConverter().getPages(), "Pages attribute should have been 1-5");
+        }
+    }
+
+    @Test
+    public void testFromJSONFileSource() throws Exception {
+        // A File based StreamSource only carries a system ID.
+        OperationData operationData = SerializeHelper.fromJSON(
+                new StreamSource(testResources.getResource("convert.json")), OperationData.class);
+        assertNotNull(operationData.getConverter(), "Converter parameters should have been initialized.");
+        assertEquals("1-5", operationData.getConverter().getPages(), "Pages attribute should have been 1-5");
+    }
+
+    @Test
+    public void testFromJSONSourceWithoutContent() {
+        ClientResultException exception = assertThrows(ClientResultException.class,
+                () -> SerializeHelper.fromJSON(new StreamSource(), OperationData.class));
+        assertEquals(Error.INVALID_HTTP_MESSAGE_CONTENT, exception.getClientError(), "Unexpected error code.");
+    }
+
+    // Note: this test can only detect a regression on a JVM whose default charset is not UTF-8 (e.g. Java 11-17
+    // on Windows); with a UTF-8 default (Linux locales, Java 18+) the platform encoding gives the same bytes.
+    @Test
+    public void testFromJSONHttpEntityWithoutCharsetIsReadAsUtf8() throws Exception {
+        // "Ω" and "ł" are not part of windows-1252 or ISO-8859-1.
+        String message = "Ärger mit Ω und ł";
+        HttpEntity httpEntity = new ByteArrayEntity(
+                ("{\"errorMessage\":\"" + message + "\"}").getBytes(StandardCharsets.UTF_8),
+                ContentType.create("application/json"));
+        Map<?, ?> result = SerializeHelper.fromJSON(httpEntity, Map.class);
+        assertEquals(message, result.get("errorMessage"), "The content should have been decoded as UTF-8.");
+    }
+
+    @Test
+    public void testFromJSONHttpEntityUsesDeclaredCharset() throws Exception {
+        String message = "Ärger mit Ω und ł";
+        HttpEntity httpEntity = new ByteArrayEntity(
+                ("{\"errorMessage\":\"" + message + "\"}").getBytes(StandardCharsets.UTF_16),
+                ContentType.create("application/json", StandardCharsets.UTF_16));
+        Map<?, ?> result = SerializeHelper.fromJSON(httpEntity, Map.class);
+        assertEquals(message, result.get("errorMessage"), "The content should have been decoded as UTF-16.");
     }
 
 }

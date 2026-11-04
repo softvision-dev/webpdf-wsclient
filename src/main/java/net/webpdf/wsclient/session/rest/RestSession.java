@@ -8,6 +8,7 @@ import net.webpdf.wsclient.session.Session;
 import net.webpdf.wsclient.session.rest.administration.AdministrationManager;
 import net.webpdf.wsclient.session.rest.documents.DocumentManager;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
+import net.webpdf.wsclient.session.rest.user.AbstractUserManager;
 import net.webpdf.wsclient.session.rest.user.UserManager;
 import net.webpdf.wsclient.webservice.WebServiceProtocol;
 import net.webpdf.wsclient.webservice.WebServiceType;
@@ -78,11 +79,17 @@ public interface RestSession<T_REST_DOCUMENT extends RestDocument> extends Sessi
 
     /**
      * Returns the active {@link UserManager} of this {@link RestSession}.
+     * <p>
+     * The default implementation returns a new {@link AbstractUserManager} for this {@link RestSession}; it exists so
+     * that implementations written against an earlier 10.x version keep compiling.
+     * </p>
      *
      * @return The active {@link UserManager} of this {@link RestSession}.
      */
     @SuppressWarnings("unused")
-    @NotNull UserManager<T_REST_DOCUMENT> getUserManager();
+    default @NotNull UserManager<T_REST_DOCUMENT> getUserManager() {
+        return new AbstractUserManager<>(this);
+    }
 
     /**
      * Returns the {@link AuthUserCredentials} fetched once at session creation time (cached snapshot).

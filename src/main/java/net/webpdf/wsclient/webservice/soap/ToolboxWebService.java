@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -77,8 +78,11 @@ public class ToolboxWebService<T_SOAP_DOCUMENT extends SoapDocument>
     @Override
     public void setOperationParameters(@Nullable List<BaseToolboxType> operationData) {
         if (operationData != null && !operationData.isEmpty()) {
+            // Copy first: the argument may be the list returned by getOperationParameters(), clearing that would
+            // also empty the argument.
+            List<BaseToolboxType> operations = new ArrayList<>(operationData);
             getOperationData().getToolbox().clear();
-            getOperationData().getToolbox().addAll(operationData);
+            getOperationData().getToolbox().addAll(operations);
         }
     }
 

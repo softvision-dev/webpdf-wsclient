@@ -55,12 +55,15 @@ public class ToolboxRestWebService<T_REST_DOCUMENT extends RestDocument>
     @Override
     public void setOperationParameters(@Nullable List<OperationBaseToolbox> operation) {
         if (operation != null && !operation.isEmpty()) {
+            // Copy first: the argument may be the list returned by getOperationParameters(), clearing that would
+            // also empty the argument.
+            List<OperationBaseToolbox> operations = new ArrayList<>(operation);
             List<OperationBaseToolbox> toolbox = getOperationData().getToolbox();
             if (toolbox == null) {
                 getOperationData().setToolbox(new ArrayList<>());
             }
             getOperationData().getToolbox().clear();
-            getOperationData().getToolbox().addAll(operation);
+            getOperationData().getToolbox().addAll(operations);
         }
     }
 

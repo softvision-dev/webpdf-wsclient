@@ -8,6 +8,8 @@ import org.apache.hc.core5.http.Header;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * <p>
  * An instance of {@link AuthenticationMaterial} serves to establish a user based {@link Session} with the webPDF
@@ -60,8 +62,10 @@ public class AuthenticationMaterial implements AuthMaterial {
      * @return The raw String token, that shall be passed to the authorization {@link Header}.
      */
     public @NotNull String getToken() {
+        // The webPDF server decodes Basic credentials as UTF-8, the platform charset would garble non-ASCII
+        // user names and passwords.
         return DatatypeConverter.printBase64Binary(
-                (userName + ":" + new String(password)).getBytes()
+                (userName + ":" + new String(password)).getBytes(StandardCharsets.UTF_8)
         );
     }
 

@@ -13,9 +13,11 @@ import net.webpdf.wsclient.session.connection.http.HttpAuthorizationHandler;
 import net.webpdf.wsclient.session.rest.administration.AdministrationManager;
 import net.webpdf.wsclient.session.rest.documents.RestDocument;
 import net.webpdf.wsclient.session.rest.documents.DocumentManager;
+import net.webpdf.wsclient.session.rest.user.AbstractUserManager;
 import net.webpdf.wsclient.session.rest.user.UserManager;
 import net.webpdf.wsclient.exception.Error;
 import net.webpdf.wsclient.exception.ResultException;
+import net.webpdf.wsclient.exception.ServerResultException;
 import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.session.AbstractSession;
@@ -45,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * <p>
@@ -64,12 +67,17 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     private static final @NotNull String INFO_PATH = "authentication/user/info/";
     private static final @NotNull String LOGOUT_PATH = "authentication/user/logout/";
     private static final @NotNull String CERTIFICATES_PATH = "authentication/user/certificates/";
+    /**
+     * The webPDF server error code "session for provided token not found" (-60).
+     */
+    private static final int SERVER_ERROR_SESSION_NOT_FOUND = -60;
     private final @Nullable AuthUserCredentials user;
     private final @NotNull CloseableHttpClient httpClient;
     private final @NotNull DocumentManager<T_REST_DOCUMENT> documentManager = createDocumentManager();
     private final @NotNull AdministrationManager<T_REST_DOCUMENT> administrationManager = createAdministrationManager();
     private final @NotNull UserManager<T_REST_DOCUMENT> userManager = createUserManager();
     private @Nullable AuthUserCertificates certificates;
+    private final @NotNull AtomicBoolean closed = new AtomicBoolean(false);
 
     /**
      * <p>
@@ -113,12 +121,25 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
             httpClientBuilder.setConnectionManager(new PoolingHttpClientConnectionManager(registry));
         }
         this.httpClient = httpClientBuilder.build();
-        this.user = HttpRestRequest.createRequest(this)
-                .buildRequest(HttpMethod.GET, INFO_PATH)
-                .executeRequest(AuthUserCredentials.class);
-        this.certificates = HttpRestRequest.createRequest(this)
-                .buildRequest(HttpMethod.GET, CERTIFICATES_PATH)
-                .executeRequest(AuthUserCertificates.class);
+        try {
+            this.user = HttpRestRequest.createRequest(this)
+                    .buildRequest(HttpMethod.GET, INFO_PATH)
+                    .executeRequest(AuthUserCredentials.class);
+            this.certificates = HttpRestRequest.createRequest(this)
+                    .buildRequest(HttpMethod.GET, CERTIFICATES_PATH)
+                    .executeRequest(AuthUserCertificates.class);
+        } catch (ResultException | RuntimeException ex) {
+            // The caller never receives this session and can not close it, so its connections are released here.
+            // The server session is deliberately not logged out: it may be a resumed session (created with a session
+            // token of the AuthProvider) that this constructor did not create, and its documents must survive a failed
+            // attempt, so that a retry can resume it again.
+            try {
+                this.httpClient.close();
+            } catch (IOException closeException) {
+                ex.addSuppressed(closeException);
+            }
+            throw ex;
+        }
     }
 
     /**
@@ -199,10 +220,12 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
      * Also refreshes the certificate value returned by {@link #getCertificates()}.
      * </p>
      *
-     * @param keystoreName     The name of the keystore to be updated.
+     * @param keystoreName     The name of the keystore to be updated. It must not contain {@code /} and must not be
+     *                         {@code .} or {@code ..}.
      * @param keyStorePassword The {@link KeyStorePassword} to unlock the certificates with.
      * @return The updated {@link AuthUserCertificates} of the logged-in user in this {@link RestSession}.
-     * @throws ResultException Shall be thrown, if the request failed.
+     * @throws ResultException Shall be thrown, if the request failed or the keystore name is not a single path
+     *                         segment.
      * @deprecated Use {@link UserManager#updateCertificatePasswords(String, KeyStorePassword)} instead,
      * accessible via {@link RestSession#getUserManager()}.
      */
@@ -211,6 +234,12 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     public @Nullable AuthUserCertificates updateCertificates(
             String keystoreName, KeyStorePassword keyStorePassword
     ) throws ResultException {
+        // The keystore name is appended to the request path: a "/" would add segments, "." and ".." would leave the
+        // intended endpoint.
+        if (keystoreName != null
+                && (keystoreName.contains("/") || ".".equals(keystoreName) || "..".equals(keystoreName))) {
+            throw new ClientResultException(Error.INVALID_URL);
+        }
         this.certificates = HttpRestRequest.createRequest(this)
                 .buildRequest(HttpMethod.PUT, "authentication/user/certificates/passwords/" + keystoreName,
                         prepareHttpEntity(keyStorePassword))
@@ -220,17 +249,30 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
     }
 
     /**
-     * Close the {@link RestSession}.
+     * Close the {@link RestSession}. Closing an already closed {@link RestSession} has no effect.
      *
      * @throws ResultException Shall be thrown, if closing the {@link RestSession} failed.
      */
     @Override
     public void close() throws ResultException {
+        // The HTTP client can not execute requests once it has been shut down, a repeated close (e.g. an explicit
+        // close inside try-with-resources) would fail with an unchecked exception from the closed connection pool.
+        if (!this.closed.compareAndSet(false, true)) {
+            return;
+        }
         ResultException resultException = null;
         try {
             HttpRestRequest.createRequest(this)
                     .buildRequest(HttpMethod.GET, LOGOUT_PATH)
                     .executeRequest(Object.class);
+        } catch (ServerResultException ex) {
+            // The server answers the logout of a session it has already ended (e.g. closed by an administrator)
+            // with "session not found". The goal of close() is reached in that case, so it must not fail. A session
+            // token that has already expired on the client is refreshed before the logout; a failing refresh is
+            // still reported.
+            if (ex.getErrorCode() != SERVER_ERROR_SESSION_NOT_FOUND) {
+                throw ex;
+            }
         } finally {
             try {
                 this.httpClient.close();
@@ -276,9 +318,16 @@ public abstract class AbstractRestSession<T_REST_DOCUMENT extends RestDocument>
 
     /**
      * Creates a new {@link UserManager} matching this {@link RestSession}.
+     * <p>
+     * The method is not abstract, so that subclasses written against an earlier 10.x version keep working: the
+     * default returns an {@link AbstractUserManager} for this {@link RestSession}. Override it to provide a specific
+     * {@link UserManager}.
+     * </p>
      *
      * @return The created {@link UserManager}.
      */
-    protected abstract @NotNull UserManager<T_REST_DOCUMENT> createUserManager();
+    protected @NotNull UserManager<T_REST_DOCUMENT> createUserManager() {
+        return new AbstractUserManager<>(this);
+    }
 
 }

@@ -24,7 +24,9 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 /**
  * The {@link SerializeHelper} provides a set of tools, to translate the server´s responses and data transfer objects,
@@ -48,23 +50,18 @@ public class SerializeHelper {
      * @throws ResultException Shall be thrown, when extracting the response content failed.
      */
     private static @NotNull String getResponseContent(@NotNull HttpEntity httpEntity) throws ResultException {
-        try (InputStreamReader inputStreamReader = new InputStreamReader(httpEntity.getContent());
-             BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
-
-            String tempToken;
-            StringBuilder response = new StringBuilder();
-
-            while ((tempToken = bufferedReader.readLine()) != null) {
-                response.append(tempToken);
-            }
-            return response.toString();
-        } catch (IOException ex) {
+        // Decode with the charset declared by the entity and fall back to UTF-8, the encoding of the webPDF server´s
+        // JSON responses - the platform default charset would garble non-ASCII error messages.
+        try {
+            return EntityUtils.toString(httpEntity, StandardCharsets.UTF_8);
+        } catch (IOException | ParseException ex) {
             throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT, ex);
         }
     }
 
     /**
      * Deserialize the data transfer object to the given type from the given {@link DataFormat#XML} {@link HttpEntity}.
+     * Like {@link #fromXML(StreamSource, Class)}, this validates the XML against the webPDF operation schema.
      *
      * @param <T>        The expected type of the deserialized data transfer object.
      * @param httpEntity The deserializable {@link DataFormat#XML} {@link HttpEntity}
@@ -90,8 +87,15 @@ public class SerializeHelper {
     }
 
     /**
+     * <p>
      * Deserialize the data transfer object to the given type from the given {@link DataFormat#XML}
      * {@link StreamSource}.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> The XML is always validated against the webPDF operation schema ({@code operation.xsd}),
+     * whatever the given type is. This method is therefore only suitable for operation data (e.g.
+     * {@link net.webpdf.wsclient.schema.operation.OperationData}); other XML documents fail the validation.
+     * </p>
      *
      * @param <T>          The expected type of the deserialized data transfer object.
      * @param streamSource The deserializable {@link DataFormat#XML} {@link StreamSource}
@@ -152,14 +156,22 @@ public class SerializeHelper {
     }
 
     /**
+     * <p>
      * Deserialize the data transfer object to the given type from the given {@link DataFormat#JSON}
      * {@link StreamSource}.
+     * </p>
+     * <p>
+     * The content is read from the {@link StreamSource}´s {@link Reader}, or - if none is set - from its
+     * {@link InputStream} (decoded as UTF-8), or - if neither is set - from the resource its system ID points to
+     * (decoded as UTF-8). The {@link Reader} or {@link InputStream} is closed after reading.
+     * </p>
      *
      * @param <T>          The expected type of the deserialized data transfer object.
      * @param streamSource The deserializable {@link DataFormat#JSON} {@link StreamSource}
      * @param type         The expected type of the deserialized data transfer object.
      * @return The deserialized {@link DataFormat#JSON} data transfer object.
-     * @throws ResultException Shall be thrown upon a deserialization failure.
+     * @throws ResultException Shall be thrown upon a deserialization failure, or should the {@link StreamSource}
+     *                         provide no readable content.
      */
     public static <T> @NotNull T fromJSON(@Nullable StreamSource streamSource, @NotNull Class<T> type)
             throws ResultException {
@@ -168,13 +180,40 @@ public class SerializeHelper {
         }
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JakartaXmlBindAnnotationModule());
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        try (Reader reader = streamSource.getReader()) {
+        try (Reader reader = openReader(streamSource)) {
             return objectMapper.readValue(reader, type);
         } catch (IOException ex) {
             throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT, ex);
         }
+    }
+
+    /**
+     * Opens a {@link Reader} for the content of the given {@link StreamSource}. A {@link StreamSource} may carry its
+     * content as a {@link Reader}, an {@link InputStream} or a system ID ({@link File} based sources only set the
+     * latter), so all three are supported in that order.
+     *
+     * @param streamSource The {@link StreamSource} to read.
+     * @return A {@link Reader} for the content of the given {@link StreamSource}.
+     * @throws IOException     Shall be thrown, should the resource the system ID points to not be readable.
+     * @throws ResultException Shall be thrown, should the {@link StreamSource} provide no readable content.
+     */
+    private static @NotNull Reader openReader(@NotNull StreamSource streamSource) throws IOException, ResultException {
+        if (streamSource.getReader() != null) {
+            return streamSource.getReader();
+        }
+        if (streamSource.getInputStream() != null) {
+            return new InputStreamReader(streamSource.getInputStream(), StandardCharsets.UTF_8);
+        }
+        if (streamSource.getSystemId() != null) {
+            try {
+                return new InputStreamReader(new URL(streamSource.getSystemId()).openStream(), StandardCharsets.UTF_8);
+            } catch (MalformedURLException ex) {
+                throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT, ex);
+            }
+        }
+        throw new ClientResultException(Error.INVALID_HTTP_MESSAGE_CONTENT);
     }
 
     /**
@@ -188,7 +227,7 @@ public class SerializeHelper {
     public static String toJSON(@Nullable Object object) throws ResultException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JakartaXmlBindAnnotationModule());
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException ex) {

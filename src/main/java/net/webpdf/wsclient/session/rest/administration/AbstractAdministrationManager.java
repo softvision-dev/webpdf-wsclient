@@ -17,14 +17,11 @@ import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import org.apache.hc.core5.net.URIBuilder;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
@@ -84,7 +81,8 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      *
      * @param date A specific {@link Date} to extract from the server log.
      * @return number the length of the requested log
-     * @throws ResultException Shall be thrown, if the request failed.
+     * @throws ResultException Shall be thrown, if the request failed or the length of the log does not fit an
+     *                         {@link Integer} (2 GiB or more).
      */
     @Override
     public @NotNull Integer fetchLogLength(@Nullable Date date) throws ResultException {
@@ -110,6 +108,9 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
             return contentLength;
         } catch (IOException | ProtocolException ex) {
             throw new ClientResultException(Error.HTTP_IO_ERROR, ex);
+        } catch (NumberFormatException ex) {
+            // A log of 2 GiB or more does not fit the Integer result (as does a malformed header value).
+            throw new ClientResultException(Error.HTTP_CUSTOM_ERROR, ex);
         }
     }
 
@@ -1247,11 +1248,17 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
      * Closes the session with the specified ID, by activating the session expiration. After the call, any access
      * to the session results in an error.
      *
-     * @param sessionId ID of the session to be closed.
-     * @throws ResultException Shall be thrown, if the request failed.
+     * @param sessionId ID of the session to be closed. It must not contain {@code /} and must not be {@code .} or
+     *                  {@code ..}.
+     * @throws ResultException Shall be thrown, if the request failed or the session ID is not a single path segment.
      */
     @Override
     public void closeSession(@NotNull String sessionId) throws ResultException {
+        // The session ID is appended to the request path: a "/" would add segments, "." and ".." would leave the
+        // intended endpoint.
+        if (sessionId.contains("/") || ".".equals(sessionId) || "..".equals(sessionId)) {
+            throw new ClientResultException(Error.INVALID_URL);
+        }
         this.validateUser();
 
         try (ClassicHttpResponse ignored = HttpRestRequest.createRequest(this.session)
@@ -1590,26 +1597,6 @@ public class AbstractAdministrationManager<T_REST_DOCUMENT extends RestDocument>
     @Override
     public @NotNull String fetchMetrics() throws ResultException {
         this.validateUser();
-
-        try {
-            String serverUrl = this.session.getSessionContext().getUrl().toString();
-            if (!serverUrl.endsWith("/")) {
-                serverUrl += "/";
-            }
-            URI metricsUri = new URIBuilder(serverUrl + "metrics").build();
-
-            String metrics = HttpRestRequest.createRequest(this.session)
-                    .setAcceptHeader(DataFormat.PLAIN.getMimeType())
-                    .buildRequest(HttpMethod.GET, metricsUri)
-                    .executeRequest(String.class);
-
-            if (metrics == null) {
-                throw new ClientResultException(Error.HTTP_EMPTY_ENTITY);
-            }
-
-            return metrics;
-        } catch (URISyntaxException ex) {
-            throw new ClientResultException(Error.INVALID_URL, ex);
-        }
+        return MetricsRequest.fetch(this.session);
     }
 }

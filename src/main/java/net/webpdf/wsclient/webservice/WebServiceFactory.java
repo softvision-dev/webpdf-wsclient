@@ -285,31 +285,31 @@ public final class WebServiceFactory {
             case CONVERTER:
                 ConverterWebService<T_DOCUMENT> converterWebService = new ConverterWebService<>(session);
                 converterWebService.setOperationParameters(operationData.getConverter());
-                return (T_WEBSERVICE) converterWebService;
+                return (T_WEBSERVICE) applySoapCommonParameters(converterWebService, operationData);
             case SIGNATURE:
                 SignatureWebService<T_DOCUMENT> signatureWebService = new SignatureWebService<>(session);
                 signatureWebService.setOperationParameters(operationData.getSignature());
-                return (T_WEBSERVICE) signatureWebService;
+                return (T_WEBSERVICE) applySoapCommonParameters(signatureWebService, operationData);
             case PDFA:
                 PdfaWebService<T_DOCUMENT> pdfaWebService = new PdfaWebService<>(session);
                 pdfaWebService.setOperationParameters(operationData.getPdfa());
-                return (T_WEBSERVICE) pdfaWebService;
+                return (T_WEBSERVICE) applySoapCommonParameters(pdfaWebService, operationData);
             case OCR:
                 OcrWebService<T_DOCUMENT> ocrWebService = new OcrWebService<>(session);
                 ocrWebService.setOperationParameters(operationData.getOcr());
-                return (T_WEBSERVICE) ocrWebService;
+                return (T_WEBSERVICE) applySoapCommonParameters(ocrWebService, operationData);
             case TOOLBOX:
                 ToolboxWebService<T_DOCUMENT> toolboxWebService = new ToolboxWebService<>(session);
                 toolboxWebService.setOperationParameters(operationData.getToolbox());
-                return (T_WEBSERVICE) toolboxWebService;
+                return (T_WEBSERVICE) applySoapCommonParameters(toolboxWebService, operationData);
             case URLCONVERTER:
                 UrlConverterWebService<T_DOCUMENT> urlConverterWebService = new UrlConverterWebService<>(session);
                 urlConverterWebService.setOperationParameters(operationData.getUrlconverter());
-                return (T_WEBSERVICE) urlConverterWebService;
+                return (T_WEBSERVICE) applySoapCommonParameters(urlConverterWebService, operationData);
             case BARCODE:
                 BarcodeWebService<T_DOCUMENT> barcodeWebService = new BarcodeWebService<>(session);
                 barcodeWebService.setOperationParameters(operationData.getBarcode());
-                return (T_WEBSERVICE) barcodeWebService;
+                return (T_WEBSERVICE) applySoapCommonParameters(barcodeWebService, operationData);
             default:
                 throw new ClientResultException(Error.UNKNOWN_WEBSERVICE_TYPE);
         }
@@ -337,34 +337,82 @@ public final class WebServiceFactory {
             case CONVERTER:
                 ConverterRestWebService<T_DOCUMENT> converterWebService = new ConverterRestWebService<>(session);
                 converterWebService.setOperationParameters(operationData.getConverter());
-                return (T_WEBSERVICE) converterWebService;
+                return (T_WEBSERVICE) applyRestCommonParameters(converterWebService, operationData);
             case SIGNATURE:
                 SignatureRestWebService<T_DOCUMENT> signatureWebService = new SignatureRestWebService<>(session);
                 signatureWebService.setOperationParameters(operationData.getSignature());
-                return (T_WEBSERVICE) signatureWebService;
+                return (T_WEBSERVICE) applyRestCommonParameters(signatureWebService, operationData);
             case PDFA:
                 PdfaRestWebService<T_DOCUMENT> pdfaWebService = new PdfaRestWebService<>(session);
                 pdfaWebService.setOperationParameters(operationData.getPdfa());
-                return (T_WEBSERVICE) pdfaWebService;
+                return (T_WEBSERVICE) applyRestCommonParameters(pdfaWebService, operationData);
             case OCR:
                 OcrRestWebService<T_DOCUMENT> ocrWebService = new OcrRestWebService<>(session);
                 ocrWebService.setOperationParameters(operationData.getOcr());
-                return (T_WEBSERVICE) ocrWebService;
+                return (T_WEBSERVICE) applyRestCommonParameters(ocrWebService, operationData);
             case TOOLBOX:
                 ToolboxRestWebService<T_DOCUMENT> toolboxWebService = new ToolboxRestWebService<>(session);
                 toolboxWebService.setOperationParameters(operationData.getToolbox());
-                return (T_WEBSERVICE) toolboxWebService;
+                return (T_WEBSERVICE) applyRestCommonParameters(toolboxWebService, operationData);
             case URLCONVERTER:
                 UrlConverterRestWebService<T_DOCUMENT> urlConverterWebService = new UrlConverterRestWebService<>(session);
                 urlConverterWebService.setOperationParameters(operationData.getUrlconverter());
-                return (T_WEBSERVICE) urlConverterWebService;
+                return (T_WEBSERVICE) applyRestCommonParameters(urlConverterWebService, operationData);
             case BARCODE:
                 BarcodeRestWebService<T_DOCUMENT> barcodeWebService = new BarcodeRestWebService<>(session);
                 barcodeWebService.setOperationParameters(operationData.getBarcode());
-                return (T_WEBSERVICE) barcodeWebService;
+                return (T_WEBSERVICE) applyRestCommonParameters(barcodeWebService, operationData);
             default:
                 throw new ClientResultException(Error.UNKNOWN_WEBSERVICE_TYPE);
         }
+    }
+
+    /**
+     * Applies the webservice independent parts of the given {@link OperationData} (password, billing and settings) to
+     * the given {@link WebService}. Parts that are not set keep the defaults of the {@link WebService}, so that an
+     * operation file only needs to contain the parameters it actually wants to change.
+     *
+     * @param webService    The {@link WebService} to apply the parameters to.
+     * @param operationData The {@link OperationData} read from an operation file.
+     * @param <T>           The type of the {@link WebService}.
+     * @return The given {@link WebService}.
+     */
+    private static <T extends WebService<?, ?, ?, BillingType, PdfPasswordType, SettingsType>> @NotNull T
+    applySoapCommonParameters(@NotNull T webService, @NotNull OperationData operationData) {
+        if (operationData.isSetPassword()) {
+            webService.setPassword(operationData.getPassword());
+        }
+        if (operationData.isSetBilling()) {
+            webService.setBilling(operationData.getBilling());
+        }
+        if (operationData.isSetSettings()) {
+            webService.setSettings(operationData.getSettings());
+        }
+        return webService;
+    }
+
+    /**
+     * Applies the webservice independent parts of the given {@link RestOperationData} (password, billing and
+     * settings) to the given {@link WebService}. Parts that are not set keep the defaults of the {@link WebService},
+     * so that an operation file only needs to contain the parameters it actually wants to change.
+     *
+     * @param webService    The {@link WebService} to apply the parameters to.
+     * @param operationData The {@link RestOperationData} read from an operation file.
+     * @param <T>           The type of the {@link WebService}.
+     * @return The given {@link WebService}.
+     */
+    private static <T extends WebService<?, ?, ?, OperationBilling, OperationPdfPassword, OperationSettings>>
+    @NotNull T applyRestCommonParameters(@NotNull T webService, @NotNull RestOperationData operationData) {
+        if (operationData.isSetPassword()) {
+            webService.setPassword(operationData.getPassword());
+        }
+        if (operationData.isSetBilling()) {
+            webService.setBilling(operationData.getBilling());
+        }
+        if (operationData.isSetSettings()) {
+            webService.setSettings(operationData.getSettings());
+        }
+        return webService;
     }
 
 }

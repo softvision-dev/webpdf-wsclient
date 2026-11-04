@@ -27,10 +27,12 @@ import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
@@ -320,7 +322,11 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
         }
 
         T_REST_DOCUMENT restDocument = getDocument(documentId);
-        DocumentFile documentFile = restDocument.getDocumentFile();
+        // Send a copy: the cached DocumentFile must keep its name, should the server reject the rename.
+        DocumentFile documentFile;
+        try (StringReader stringReader = new StringReader(SerializeHelper.toJSON(restDocument.getDocumentFile()))) {
+            documentFile = SerializeHelper.fromJSON(new StreamSource(stringReader), DocumentFile.class);
+        }
         documentFile.setFileName(fileName);
 
         documentFile = HttpRestRequest.createRequest(getSession())
@@ -634,14 +640,23 @@ public abstract class AbstractDocumentManager<T_REST_DOCUMENT extends RestDocume
      * returns it as {@link OutputStream}.
      *
      * @param documentId   The document ID of the {@link RestDocument} to extract and download from.
-     * @param archivePath  The path of the file to extract in the given archive.
+     * @param archivePath  The path of the file to extract in the given archive. It must not contain {@code .} or
+     *                     {@code ..} path segments.
      * @param outputStream The {@link OutputStream} to write the extracted archive file to.
-     * @throws ResultException Shall be thrown, should the download have failed.
+     * @throws ResultException Shall be thrown, should the download have failed or should the archive path contain
+     *                         {@code .} or {@code ..} path segments.
      */
     @Override
     public void extractArchiveFile(
             @NotNull String documentId, @NotNull String archivePath, @NotNull OutputStream outputStream
     ) throws ResultException {
+        // The archive path is appended to the request path: dot segments would leave the archive endpoint and
+        // address a different resource of the server.
+        for (String segment : archivePath.split("/", -1)) {
+            if (".".equals(segment) || "..".equals(segment)) {
+                throw new ClientResultException(Error.INVALID_URL);
+            }
+        }
         if (!containsDocument(documentId)) {
             throw new ClientResultException(Error.INVALID_DOCUMENT);
         }

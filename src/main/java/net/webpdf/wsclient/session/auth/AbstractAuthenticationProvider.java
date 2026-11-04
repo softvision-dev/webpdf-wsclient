@@ -13,6 +13,8 @@ import net.webpdf.wsclient.session.connection.http.HttpMethod;
 import net.webpdf.wsclient.session.connection.http.HttpRestRequest;
 import net.webpdf.wsclient.session.rest.RestSession;
 import net.webpdf.wsclient.tools.SerializeHelper;
+import org.apache.commons.lang3.SerializationException;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -31,10 +33,10 @@ import java.util.concurrent.atomic.AtomicReference;
  * by the login endpoint and shall update it´s used {@link AuthMaterial} accordingly.
  * </p>
  * <p>
- * <b>Be aware:</b> Currently an {@link AbstractAuthenticationProvider} shall only serve one {@link Session} at a time.
- * An {@link AbstractAuthenticationProvider} being called by another {@link Session} than it´s current master, shall
- * assume it´s current master to have expired and shall, try to reauthorize that new {@link Session} (new master).<br>
- * For that reason an {@link AbstractAuthenticationProvider}s shall be reusable by subsequent {@link Session}s.
+ * <b>Be aware:</b> An {@link AbstractAuthenticationProvider} serves one {@link Session}. After the login it keeps the
+ * {@link SessionToken} of that server session and provides it to every {@link Session} it is used for;
+ * closing a {@link Session} ends that server session. A provider is therefore not reusable for a
+ * subsequent {@link Session}: create a new {@link AuthProvider} for each {@link Session}.
  * </p>
  * <p>
  * <b>Be aware:</b> However - An implementation of {@link AuthProvider} is not required to serve multiple
@@ -59,11 +61,10 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
      * with a {@link SessionToken}.
      * </p>
      * <p>
-     * <b>Be aware:</b> Currently an {@link AbstractAuthenticationProvider} shall only serve one {@link Session} at a
-     * time. An {@link AbstractAuthenticationProvider} being called by another {@link Session} than it´s current master,
-     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
-     * (new master).<br>
-     * For that reason an {@link AbstractAuthenticationProvider}s shall be reusable by subsequent {@link Session}s.
+     * <b>Be aware:</b> An {@link AbstractAuthenticationProvider} serves one {@link Session}. After the login it keeps the
+     * {@link SessionToken} of that server session and provides it to every {@link Session} it is used for;
+     * closing a {@link Session} ends that server session. A provider is therefore not reusable for a
+     * subsequent {@link Session}: create a new {@link AuthProvider} for each {@link Session}.
      * </p>
      *
      * @param authMaterial The {@link AuthMaterial} to initialize the {@link Session} with.
@@ -79,11 +80,10 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
      * provided.
      * </p>
      * <p>
-     * <b>Be aware:</b> Currently an {@link AbstractAuthenticationProvider} shall only serve one {@link Session} at a
-     * time. An {@link AbstractAuthenticationProvider} being called by another {@link Session} than it´s current master,
-     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
-     * (new master).<br>
-     * For that reason an {@link AbstractAuthenticationProvider}s shall be reusable by subsequent {@link Session}s.
+     * <b>Be aware:</b> An {@link AbstractAuthenticationProvider} serves one {@link Session}. After the login it keeps the
+     * {@link SessionToken} of that server session and provides it to every {@link Session} it is used for;
+     * closing a {@link Session} ends that server session. A provider is therefore not reusable for a
+     * subsequent {@link Session}: create a new {@link AuthProvider} for each {@link Session}.
      * </p>
      *
      * @param authMaterial The {@link AuthMaterial} to initialize the {@link Session} with.
@@ -138,7 +138,7 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
      * @throws AuthResultException Shall be thrown, should the authentication/authorization fail for some reason.
      */
     @Override
-    public @NotNull AuthMaterial refresh(Session session) throws AuthResultException {
+    public synchronized @NotNull AuthMaterial refresh(Session session) throws AuthResultException {
         if (updating.get() || !(session instanceof RestSession)) {
             return this.getAuthMaterial();
         }
@@ -152,13 +152,12 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
             this.session.set(session);
             RestSession<?> restSession = (RestSession<?>) session;
 
-            ((SessionToken) this.getAuthMaterial()).refresh();
-
             AuthLoginOptions loginOptions = new AuthLoginOptions();
             loginOptions.setCreateRefreshToken(true);
 
             AuthMaterial authMaterial = HttpRestRequest.createRequest(restSession)
-                    .buildRequest(HttpMethod.POST, REFRESH_PATH, prepareHttpEntity(loginOptions))
+                    .buildRequest(HttpMethod.POST, REFRESH_PATH, prepareHttpEntity(loginOptions),
+                            createRefreshMaterial((SessionToken) this.getAuthMaterial()))
                     .executeRequest(SessionToken.class);
 
             if (authMaterial == null) {
@@ -176,13 +175,40 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
     }
 
     /**
+     * <p>
+     * Returns {@link AuthMaterial} authorizing the refresh request with the refresh token of the given
+     * {@link SessionToken}.
+     * </p>
+     * <p>
+     * The given {@link SessionToken} may already have been handed out to concurrent requests, that read its access
+     * token later on. {@link SessionToken#refresh()} replaces the access token in place, so it is applied to a copy,
+     * those requests must never send the refresh token. Should the {@link SessionToken} not be copyable, the
+     * {@link SessionToken} itself is used as before.
+     * </p>
+     *
+     * @param sessionToken The {@link SessionToken} to refresh.
+     * @return The {@link AuthMaterial} for the refresh request.
+     */
+    private static @NotNull SessionToken createRefreshMaterial(@NotNull SessionToken sessionToken) {
+        SessionToken refreshMaterial;
+        try {
+            // The 10.x API offers no accessor for the refresh token, the serializable token is copied instead.
+            refreshMaterial = SerializationUtils.clone(sessionToken);
+        } catch (SerializationException ex) {
+            refreshMaterial = sessionToken;
+        }
+        refreshMaterial.refresh();
+        return refreshMaterial;
+    }
+
+    /**
      * Login and provide authorization {@link SessionToken} for a {@link Session}.
      *
      * @param session The session to provide the authorization for.
      * @return The {@link AuthMaterial} provided by this {@link AuthProvider}.
      * @throws AuthResultException Shall be thrown, should the authentication/authorization fail for some reason.
      */
-    protected @NotNull AuthMaterial login(@NotNull Session session) throws AuthResultException {
+    protected synchronized @NotNull AuthMaterial login(@NotNull Session session) throws AuthResultException {
         if (updating.get() || !(session instanceof RestSession) || getAuthMaterial() instanceof SessionToken) {
             return this.getAuthMaterial();
         }
@@ -221,11 +247,10 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
      * Will also refresh expired {@link SessionToken}s.
      * </p>
      * <p>
-     * <b>Be aware:</b> Currently an {@link AbstractAuthenticationProvider} shall only serve one {@link Session} at a
-     * time. An {@link AbstractAuthenticationProvider} being called by another {@link Session} than it´s current master,
-     * shall assume it´s current master to have expired and shall, try to reauthorize that new {@link Session}
-     * (new master).<br>
-     * For that reason an {@link AbstractAuthenticationProvider}s shall be reusable by subsequent {@link Session}s.
+     * <b>Be aware:</b> An {@link AbstractAuthenticationProvider} serves one {@link Session}. After the login it keeps the
+     * {@link SessionToken} of that server session and provides it to every {@link Session} it is used for;
+     * closing a {@link Session} ends that server session. A provider is therefore not reusable for a
+     * subsequent {@link Session}: create a new {@link AuthProvider} for each {@link Session}.
      * </p>
      *
      * @param session The session to provide authorization for.
@@ -233,7 +258,9 @@ public abstract class AbstractAuthenticationProvider implements AuthProvider {
      * @throws AuthResultException Shall be thrown, should the authentication/authorization fail for some reason.
      */
     @Override
-    public @NotNull AuthMaterial provide(@NotNull Session session) throws AuthResultException {
+    public synchronized @NotNull AuthMaterial provide(@NotNull Session session) throws AuthResultException {
+        // provide, login and refresh share the instance lock: concurrent callers wait for a running login or refresh
+        // and then receive its result, instead of a half updated state.
         if (updating.get() || !(session instanceof RestSession)) {
             return getAuthMaterial();
         }

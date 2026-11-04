@@ -460,7 +460,7 @@ public class RestOperationData {
      * </ul>
      * </p>
      *
-     * @return The {@link OperationSignature} list set for this {@link RestOperationData}.
+     * @return The {@link OperationBaseToolbox} list set for this {@link RestOperationData}.
      */
     public @NotNull List<OperationBaseToolbox> getToolbox() {
         if (toolbox == null) {

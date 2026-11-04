@@ -790,9 +790,17 @@ public interface AdministrationManager<T_REST_DOCUMENT extends RestDocument> {
 
     /**
      * Fetches the Prometheus metrics from the server in text exposition format.
+     * <p>
+     * The default implementation requests the metrics through {@link #getSession()}; it exists so that
+     * implementations written against an earlier 10.x version keep compiling.
+     * Unlike {@code AbstractAdministrationManager#fetchMetrics()} it does not check client-side that the user is
+     * an administrator; access is decided by the server's metrics configuration.
+     * </p>
      *
      * @return The Prometheus metrics as a plain-text string.
      * @throws ResultException Shall be thrown if the request failed.
      */
-    @NotNull String fetchMetrics() throws ResultException;
+    default @NotNull String fetchMetrics() throws ResultException {
+        return MetricsRequest.fetch(getSession());
+    }
 }

@@ -203,15 +203,19 @@ public class SoapWebServiceDocument extends AbstractDocument implements SoapDocu
      */
     @Override
     public void close() throws ResultException {
+        // Test for AutoCloseable, not Closeable: the BinaryDataSource holding the temp file of a stream source only
+        // implements AutoCloseable, and testing for Closeable left that temp file in place until the JVM exited.
         try {
-            if (source instanceof Closeable) {
-                ((Closeable) source).close();
+            if (source instanceof AutoCloseable) {
+                ((AutoCloseable) source).close();
             }
-            if (result instanceof Closeable) {
-                ((Closeable) result).close();
+            if (result instanceof AutoCloseable) {
+                ((AutoCloseable) result).close();
                 this.result = null;
             }
-        } catch (IOException ex) {
+        } catch (ResultException ex) {
+            throw ex;
+        } catch (Exception ex) {
             throw new ClientResultException(Error.FAILED_TO_CLOSE_DATA_SOURCE, ex);
         }
     }

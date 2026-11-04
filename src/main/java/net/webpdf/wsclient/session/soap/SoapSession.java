@@ -60,8 +60,9 @@ public interface SoapSession<T_SOAP_DOCUMENT extends SoapDocument> extends Sessi
     /**
      * <p>
      * Creates a {@link SoapDocument} originating from the given {@link InputStream}.<br>
-     * <b>Be aware:</b> This copies all remaining bytes from the given {@link InputStream} to an array, to create a
-     * reusable {@link BinaryDataSource}.<br>
+     * <b>Be aware:</b> This copies all remaining bytes from the given {@link InputStream} to a temporary file, to
+     * create a reusable {@link BinaryDataSource}. The temporary file is deleted, when the {@link SoapDocument} is
+     * closed.<br>
      * Especially for large files using this is ill advised, using the alternative constructors
      * {@link #createDocument(URI)} or {@link #createDocument(File)} is always recommended.
      * </p>

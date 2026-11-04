@@ -347,4 +347,65 @@ public class SoapWebserviceFactoryTest {
         });
     }
 
+    @Test
+    public void testFactoryCommonParametersFromStream() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                + "<operation xmlns=\"http://schema.webpdf.de/1.0/operation\">"
+                + "<billing customerCode=\"customer\" userName=\"billingUser\" applicationName=\"app\"/>"
+                + "<password open=\"openPwd\" permission=\"permissionPwd\"/>"
+                + "<settings><compress compressProfile=\"always\"/></settings>"
+                + "<converter pages=\"1\"/>"
+                + "</operation>";
+        ConverterWebService<SoapDocument> webService;
+        try (Session session = SessionFactory.createInstance(
+                new SessionContext(WebServiceProtocol.SOAP, testServer.getServer(ServerType.LOCAL)));
+             StringReader stringReader = new StringReader(xml)) {
+            webService = WebServiceFactory.createInstance(session, new StreamSource(stringReader));
+        }
+
+        assertEquals("1", webService.getOperationParameters().getPages(),
+                "The converter parameters should have been read.");
+        assertNotNull(webService.getBilling(), "The billing element should have been applied.");
+        assertEquals("customer", webService.getBilling().getCustomerCode(),
+                "Value of customerCode attribute is unexpected.");
+        assertEquals("billingUser", webService.getBilling().getUserName(),
+                "Value of userName attribute is unexpected.");
+        assertNotNull(webService.getPassword(), "The password element should have been applied.");
+        assertEquals("openPwd", webService.getPassword().getOpen(),
+                "Value of open attribute is unexpected.");
+        assertEquals("permissionPwd", webService.getPassword().getPermission(),
+                "Value of permission attribute is unexpected.");
+        assertNotNull(webService.getSettings(), "The settings element should have been applied.");
+        assertNotNull(webService.getSettings().getCompress(), "The compress element should have been applied.");
+        assertEquals(CompressProfileType.ALWAYS, webService.getSettings().getCompress().getCompressProfile(),
+                "Value of compressProfile attribute is unexpected.");
+    }
+
+    @Test
+    public void testFactoryKeepsDefaultsWithoutCommonParameters() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                + "<operation xmlns=\"http://schema.webpdf.de/1.0/operation\"><converter pages=\"1\"/></operation>";
+        ConverterWebService<SoapDocument> webService;
+        try (Session session = SessionFactory.createInstance(
+                new SessionContext(WebServiceProtocol.SOAP, testServer.getServer(ServerType.LOCAL)));
+             StringReader stringReader = new StringReader(xml)) {
+            webService = WebServiceFactory.createInstance(session, new StreamSource(stringReader));
+        }
+
+        assertNotNull(webService.getBilling(), "The default billing element should have been kept.");
+        assertNotNull(webService.getPassword(), "The default password element should have been kept.");
+        assertNotNull(webService.getSettings(), "The default settings element should have been kept.");
+    }
+
+    @Test
+    public void testToolboxAcceptsItsOwnOperationList() throws Exception {
+        ToolboxWebService<SoapDocument> webService = getWebService(WebServiceType.TOOLBOX);
+        webService.getOperationParameters().add(new RotateType());
+
+        webService.setOperationParameters(webService.getOperationParameters());
+
+        assertEquals(1, webService.getOperationParameters().size(),
+                "Passing the current operation list should keep its operations.");
+    }
+
 }

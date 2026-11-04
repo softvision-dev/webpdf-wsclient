@@ -25,6 +25,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -248,7 +249,16 @@ public class HttpRestRequest {
         String exceptionMessage = "";
 
         // is this a webPDF server response or a general server error?
+        // Compare the MIME type only: a Content-Type with parameters (e.g. "application/json; charset=UTF-8") still
+        // carries a webPDF error description.
         String contentType = httpEntity.getContentType();
+        if (contentType != null) {
+            int parameterIndex = contentType.indexOf(';');
+            if (parameterIndex != -1) {
+                contentType = contentType.substring(0, parameterIndex);
+            }
+            contentType = contentType.trim().toLowerCase(Locale.ROOT);
+        }
         if (DataFormat.JSON.matches(contentType)) {
             WebserviceException wsException = SerializeHelper.fromJSON(httpEntity, WebserviceException.class);
             if (wsException != null && wsException.getErrorCode() != 0) {
@@ -297,10 +307,18 @@ public class HttpRestRequest {
     }
 
     /**
+     * <p>
      * Executes this {@link HttpRestRequest}.
+     * </p>
+     * <p>
+     * <b>Be aware:</b> The returned {@link ClassicHttpResponse} has already been closed, when this method returns:
+     * its status line and headers can be read, its entity can not. Use {@link #executeRequest(OutputStream)} or
+     * {@link #executeRequest(Class)} to read the response content.
+     * </p>
      *
-     * @return The resulting {@link ClassicHttpResponse}.
-     * @throws ResultException Shall be thrown, if writing to the {@link OutputStream} failed.
+     * @return The resulting, already closed {@link ClassicHttpResponse}.
+     * @throws ResultException Shall be thrown, if executing the request failed or the response represents a failure
+     *                         state.
      */
     public ClassicHttpResponse executeRequest() throws ResultException {
         try {

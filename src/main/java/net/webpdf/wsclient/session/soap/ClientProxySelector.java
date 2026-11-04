@@ -7,6 +7,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * An instance of {@link ClientProxySelector} initializes a custom proxy selector, that prepares proxy settings for
@@ -18,9 +21,12 @@ import java.util.*;
 public class ClientProxySelector extends ProxySelector implements AutoCloseable {
 
     private static final @NotNull String[] SUPPORTED_SCHEMES = new String[]{"http", "https"};
-    private final @NotNull Map<SocketAddress, Proxy> proxies = new HashMap<>();
+    // The selector is installed as the JVM wide default and is therefore read by arbitrary threads, while proxies and
+    // routed resources may still be added.
+    private final @NotNull Map<SocketAddress, Proxy> proxies = new ConcurrentHashMap<>();
     private final @NotNull List<URI> routedResources;
     private final @Nullable ProxySelector defaultProxySelector;
+    private final @NotNull AtomicBoolean closed = new AtomicBoolean(false);
 
     /**
      * Initializes a custom proxy selector, that prepares proxy settings for webPDF calls. It shall fall back to the
@@ -33,12 +39,16 @@ public class ClientProxySelector extends ProxySelector implements AutoCloseable 
      *                        is requested for, shall start with one of the hereby given {@link URI}s.
      */
     public ClientProxySelector(@NotNull URI[] routedResources, @NotNull HttpHost... proxies) {
-        this.routedResources = Arrays.asList(routedResources);
-        this.defaultProxySelector = ProxySelector.getDefault();
-        ProxySelector.setDefault(this);
+        this.routedResources = new CopyOnWriteArrayList<>(routedResources);
 
         for (HttpHost proxy : proxies) {
             addProxy(proxy);
+        }
+        // Install the selector only once it is fully initialized, other threads may use it immediately. Reading the
+        // previous default and installing this selector is atomic with respect to close().
+        synchronized (ClientProxySelector.class) {
+            this.defaultProxySelector = ProxySelector.getDefault();
+            ProxySelector.setDefault(this);
         }
     }
 
@@ -93,7 +103,7 @@ public class ClientProxySelector extends ProxySelector implements AutoCloseable 
             throw new IllegalArgumentException("URI can't be null.");
         }
 
-        if (isRoutedURI(uri)) {
+        if (!this.closed.get() && isRoutedURI(uri)) {
             return new ArrayList<>(proxies.values());
         } else if (defaultProxySelector != null) {
             return defaultProxySelector.select(uri);
@@ -118,17 +128,37 @@ public class ClientProxySelector extends ProxySelector implements AutoCloseable 
             throw new IllegalArgumentException("Arguments can't be null.");
         }
 
-        if (proxies.get(socketAddress) == null && defaultProxySelector != null) {
+        if ((this.closed.get() || proxies.get(socketAddress) == null) && defaultProxySelector != null) {
             defaultProxySelector.connectFailed(uri, socketAddress, exception);
         }
     }
 
     /**
-     * Restores the previously found proxy selector as the VM's default.
+     * <p>
+     * Restores the previously found proxy selector as the VM's default, if this selector still is the VM's default.
+     * </p>
+     * <p>
+     * Should another selector have been installed in the meantime (e.g. by another proxied {@link SoapSession}), that
+     * selector stays the VM's default, and this selector only stops routing and delegates all requests to the
+     * previously found proxy selector from now on. Closing an already closed selector has no effect.
+     * </p>
      */
     @Override
     public void close() {
-        ProxySelector.setDefault(this.defaultProxySelector);
+        if (!this.closed.compareAndSet(false, true)) {
+            return;
+        }
+        // Restoring unconditionally would remove a selector installed later on and break its session. Closed
+        // selectors are skipped, so that the VM's default does not keep a chain of inactive delegates.
+        synchronized (ClientProxySelector.class) {
+            if (ProxySelector.getDefault() == this) {
+                ProxySelector restore = this.defaultProxySelector;
+                while (restore instanceof ClientProxySelector && ((ClientProxySelector) restore).closed.get()) {
+                    restore = ((ClientProxySelector) restore).defaultProxySelector;
+                }
+                ProxySelector.setDefault(restore);
+            }
+        }
     }
 
     /**
