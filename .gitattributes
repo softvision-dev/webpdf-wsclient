@@ -1,1 +1,7 @@
-*.sh        text eol=lf   # linux line-endings
+# Shell scripts run inside Linux containers and need LF line endings on every platform.
+# Git accepts comments only on their own line; a trailing comment invalidates the whole rule.
+*.sh        text eol=lf
+mvnw        text eol=lf
+
+# Windows batch scripts need CRLF line endings.
+*.cmd       text eol=crlf

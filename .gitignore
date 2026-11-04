@@ -1,15 +1,20 @@
 /build
+
 /.idea/workspace.xml
-/files
+/.idea/*.iml
 /.idea/libraries
-/config/*.json
-!/config/testConfig.sample.json
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/go.imports.xml
 /.idea/azure/azureSettings.xml
 /.idea/php.xml
+/files
+/config/*.json
+!/config/testConfig.sample.json
 /support/
 /docker/.env
 /.m2
 
-# AI agent workspace — temp output only, skeleton directories are committed
-/.ai-workspace/temp/*
-!/.ai-workspace/temp/.gitkeep
+# AI agent workspace — local working files only, just the skeleton directories (.gitkeep) are committed
+/.ai-workspace/**
+!/.ai-workspace/*/
+!/.ai-workspace/*/.gitkeep

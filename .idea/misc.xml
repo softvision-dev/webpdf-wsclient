@@ -18,24 +18,5 @@
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="openjdk11.0.6 (x64)" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build" />
   </component>
-  <component name="SvnBranchConfigurationManager">
-    <option name="myConfigurationMap">
-      <map>
-        <entry key="$PROJECT_DIR$">
-          <value>
-            <SvnBranchConfiguration>
-              <option name="branchUrls">
-                <list>
-                  <option value="https://scm.softvision.de/svn/webpdf-wsclient/branches" />
-                  <option value="https://scm.softvision.de/svn/webpdf-wsclient/tags" />
-                </list>
-              </option>
-              <option name="trunkUrl" value="https://scm.softvision.de/svn/webpdf-wsclient/trunk" />
-            </SvnBranchConfiguration>
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
 </project>
