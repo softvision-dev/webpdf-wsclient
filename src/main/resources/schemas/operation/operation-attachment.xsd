@@ -48,7 +48,8 @@
                             <xs:attribute name="folderNameTemplate" default="page[%d]" type="xs:string">
                                 <xs:annotation>
                                     <xs:documentation>
-                                        <p>Used to set the template for the page folders in the returned ZIP file. "page[%d]", for example, would result in a folder called "page1" for page 1, etc.</p>
+                                        <p>Used to set the template for the page folders in the returned ZIP file. "page[%d]", for example, would result in a folder called "page[1]" for page 1, etc.</p>
+                                        <p>Numbers are written with ASCII digits. A template that is longer than 1024 characters, contains a width or precision greater than 64 or cannot be formatted with a number is not used; the default template applies instead.</p>
                                     </xs:documentation>
                                 </xs:annotation>
                             </xs:attribute>
@@ -131,6 +132,7 @@
             <xs:annotation>
                 <xs:documentation>
                     <p>Used to define the name under which the attachment in the document will be created.</p>
+                    <p>The name must not be empty or consist only of whitespace. Otherwise the operation fails with error code -22 and none of the attachments of this operation is added.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

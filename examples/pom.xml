@@ -6,7 +6,7 @@
 
     <groupId>net.webpdf</groupId>
     <artifactId>webpdf-wsclient-examples</artifactId>
-    <version>9.0.0</version>
+    <version>10.0.7</version>
     <name>webPDF - Web service client usage examples</name>
     <description>A collection of usage examples for the webPDF client library.</description>
     <url>https://www.webpdf.de</url>
@@ -55,8 +55,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- DEPENDENCY VERSIONS -->
-        <net.webpdf.wsclient.version>9.0.0-SNAPSHOT
-        </net.webpdf.wsclient.version> <!-- https://mvnrepository.com/artifact/net.webpdf/webpdf-wsclient -->
+        <net.webpdf.wsclient.version>10.0.7</net.webpdf.wsclient.version> <!-- https://mvnrepository.com/artifact/net.webpdf/webpdf-wsclient -->
         <commons.io.version>2.11.0
         </commons.io.version> <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <commons.lang.version>3.12.0

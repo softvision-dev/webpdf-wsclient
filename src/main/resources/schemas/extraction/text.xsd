@@ -40,6 +40,7 @@
             <xs:extension base="ContentType">
                 <xs:sequence>
                     <xs:element name="rectangle" type="RectangleType" maxOccurs="unbounded"/>
+                    <xs:element name="font" type="FontType" minOccurs="0"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -79,4 +80,9 @@
             <xs:enumeration value="text"/>
         </xs:restriction>
     </xs:simpleType>
+    <xs:complexType name="FontType">
+        <xs:attribute name="name" default="" type="xs:string"/>
+        <xs:attribute name="size" default="0" type="xs:int"/>
+        <xs:attribute name="family" default="" type="xs:string"/>
+    </xs:complexType>
 </xs:schema>

@@ -82,6 +82,102 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="subsetFonts" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        If "true," only the characters used in the document are embedded for each font (font subset). If
+                        "false," the complete font program is embedded; this can enlarge the document considerably.
+                    </p>
+                    <p>
+                        This option only takes effect if "embedFonts" is "true". A font whose license does not permit subsetting
+                        is always embedded completely. A face of a font collection that cannot be embedded completely is
+                        embedded as a subset instead, and a warning is written to the server log.
+                    </p>
+                    <p>
+                        <b>Important:</b> This option is currently only evaluated by the integrated converter for Word (docx)
+                        documents.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="locale" default="" type="tns:LocaleType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        Sets the locale of the conversion as a language tag, for example "de-DE" or "en-US". A language or format
+                        stated in the document itself always takes precedence; the locale applies to what the document leaves
+                        open:
+                    </p>
+                    <ul>
+                        <li>Integrated converter for Word (docx): the formatting of dates (Word's DATE and TIME fields), the
+                            language of text without a language of its own, and the document language of a document that states
+                            none.</li>
+                        <li>Templates for e-mails (eml, msg, winmail.dat), calendars (ics), contacts (vcf), text and SVG documents,
+                            and the templates of headers and footers: the language and format of dates and numbers and, if
+                            "language" of the "template" element is not set, the selection of the localized template.</li>
+                        <li>Conversions with Chromium (HTML, e-mail bodies, text, SVG and the XRechnung visualization): the
+                            locale of JavaScript in the page (for example "Intl" and "toLocaleString") and the "Accept-Language"
+                            header of the requests of the page; "navigator.language" keeps the language of Chromium's process
+                            environment.</li>
+                        <li>XRechnung visualization: English if the language of the locale is English, otherwise German.</li>
+                        <li>Visual signature of the conversion ("signature"): the signature time when it is displayed in the
+                            "localized" form ("dateFormat" of "identifierElements"), unless "identifierElements" sets a locale of its
+                            own.</li>
+                    </ul>
+                    <p>
+                        If no value is set, the default locale of the "Converter" web service is used, then the default locale of
+                        the server ("locale" of "webservices"). If neither is configured, the integrated converter and the
+                        templates use the locale of the Java runtime of the server, Chromium uses the settings of its process
+                        environment, and the XRechnung visualization is German.
+                    </p>
+                    <p>
+                        <b>Important:</b> The locale has no effect on conversions with Outside In Technology (which converts,
+                        among others, Excel and PowerPoint documents unless a bridge is requested), with the "Office Bridge" or
+                        with the "SharePoint Bridge". JavaScript in frames that are loaded from another website does not see the
+                        locale, and the date of a header or footer that uses the class "date" is formatted in the language of
+                        Chromium's process environment.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="timeZone" default="" type="tns:TimeZoneType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        Sets the time zone of the conversion, as an identifier such as "Europe/Berlin" or an offset such as
+                        "+01:00":
+                    </p>
+                    <ul>
+                        <li>Integrated converter for Word (docx): the current date and time read by Word's DATE and TIME
+                            fields.</li>
+                        <li>Templates for e-mails, calendars and contacts and the templates of headers and footers: the time zone
+                            in which times are shown, for example the sent date of an e-mail or the start of an event. An event
+                            with a time zone of its own is shown in that time zone as well; all-day events and times without a time
+                            zone are shown as stated in the document.</li>
+                        <li>Conversions with Chromium: the time zone seen by JavaScript in the page and the date of a header or
+                            footer that uses the class "date".</li>
+                        <li>Outside In Technology: the time zone in which dates, such as the sent date of an e-mail, are shown.
+                            Outside In applies no daylight saving time: all dates are shown with the standard offset of the time
+                            zone, rounded to a quarter of an hour.</li>
+                        <li>Visual signature of the conversion ("signature"): the time zone in which the signature time is displayed,
+                            unless "identifierElements" sets a time zone of its own.</li>
+                    </ul>
+                    <p>
+                        If no value is set, the default time zone of the "Converter" web service is used, then the default time
+                        zone of the server ("timeZone" of "webservices"). If neither is configured, the integrated converter and
+                        the templates use the time zone of the Java runtime of the server, and Chromium and Outside In use the
+                        time zone of the operating system (or the environment variable TZ of the server process).
+                    </p>
+                    <p>
+                        <b>Important:</b> Dates stored in the document are not changed, and neither are the time stamps written
+                        to the PDF (creation and modification date, metadata, signature time). The "Office Bridge" and the
+                        "SharePoint Bridge" do not evaluate the time zone. JavaScript in frames that are loaded from another
+                        website does not see the time zone.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="accessPassword" default="" type="xs:string">
             <xs:annotation>
                 <xs:documentation>
@@ -150,7 +246,7 @@
         <xs:attribute name="adjustFonts" default="false" type="xs:boolean">
             <xs:annotation>
                 <xs:documentation>
-                    <p>If "true", then the font specifications "Arial", "Helvetica" and "Sans-Serif" in HTML documents and e-mails (which are based on HTML) are automatically replaced by the "Arial Unicode MS" font. The improves the appearance of the typeface in the PDF result.</p>
+                    <p><b>Deprecated.</b> This option has no effect: the server ignores its value, and the fonts named in HTML documents and e-mails are passed to the integrated browser unchanged. The integrated browser resolves fonts itself; replacing fonts such as "Arial" or "Helvetica" before rendering changed line breaks and font weights without displaying any additional character. If a font of a document is not installed, install it or a metric-compatible substitute as a system font of the server, or end the font list with a generic family such as <code>sans-serif</code>. The attribute is still accepted so that existing requests remain valid, and it may be removed in a future main version.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -262,7 +358,7 @@
         <xs:attribute name="adjustFonts" default="false" type="xs:boolean">
             <xs:annotation>
                 <xs:documentation>
-                    <p>If "true", then the font specifications "Arial", "Helvetica" and "Sans-Serif" in HTML documents and e-mails (which are based on HTML) are automatically replaced by the "Arial Unicode MS" font. The improves the appearance of the typeface in the PDF result.</p>
+                    <p><b>Deprecated.</b> This option has no effect: the server ignores its value, and the fonts named in HTML documents and e-mails are passed to the integrated browser unchanged. The integrated browser resolves fonts itself; replacing fonts such as "Arial" or "Helvetica" before rendering changed line breaks and font weights without displaying any additional character. If a font of a document is not installed, install it or a metric-compatible substitute as a system font of the server, or end the font list with a generic family such as <code>sans-serif</code>. The attribute is still accepted so that existing requests remain valid, and it may be removed in a future main version.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -342,14 +438,14 @@
         <xs:attribute name="fontAliasUsage" default="false" type="xs:boolean">
             <xs:annotation>
                 <xs:documentation>
-                    <p>If "true", then an error (ERR_CONVERTER_FONT_ALIAS_USED) is triggered if a font was not found during conversion and in its place a substitute (alias) font was used.</p>
+                    <p>If "true", then an error (ERR_CONVERTER_FONT_ALIAS_USED) is triggered if a font was not found during conversion and in its place a substitute (alias) font was used. With the integrated Word converter, the substitute can also be the metric-compatible replacement font configured for the missing font (<code>webservices/fontSubstitution</code> in <code>application.xml</code>) or a font that draws the characters of the text; both count as alias usage.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="fontIsMissing" default="false" type="xs:boolean">
             <xs:annotation>
                 <xs:documentation>
-                    <p>If "true", then an error (ERR_CONVERTER_FONT_IS_MISSING) is triggered if a font was not found during conversion.</p>
+                    <p>If "true", then an error (ERR_CONVERTER_FONT_IS_MISSING) is triggered if a font was not found during conversion. With the integrated Word converter, this also counts characters of the text that the font they are drawn with - the requested font or its substitute - has no glyph for; these characters are drawn as the font's .notdef glyph (usually an empty box) where it has one, otherwise left out, and are named in the report.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -799,7 +895,7 @@
         <xs:attribute name="language" type="tns:LanguageType">
             <xs:annotation>
                 <xs:documentation>
-                    <p>An ISO 639-1-compliant language code consisting of 2 letters. If there is one, a localized template will be selected using the language selected here. If not defined, the language in which webPDF is run will be used.</p>
+                    <p>An ISO 639-1-compliant language code consisting of 2 letters, or "system". It selects the localized template and the language in which the template formats dates and numbers. If not defined, or set to "system", the locale of the conversion is used, region included ("locale" of the operation, otherwise the default of the web service or of the server); without any of these, the locale in which webPDF is run is used.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -1240,6 +1336,20 @@
         <xs:all>
             <xs:element name="form" type="tns:ConverterOfficeFormType" minOccurs="0"/>
         </xs:all>
+        <xs:attribute name="enabled" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        If "true," Word documents (docx) are converted with the integrated Word converter. If "false," the
+                        integrated converter is skipped and the document is converted as without it, which by default means
+                        with Outside In. The other settings of this element only apply to the integrated converter.
+                    </p>
+                    <p>
+                        <b>Important:</b> A requested Office bridge or SharePoint bridge takes precedence over this option.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ConverterOfficeFormType">
         <xs:annotation>

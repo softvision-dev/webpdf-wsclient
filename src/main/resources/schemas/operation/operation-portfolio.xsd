@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
-           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd"/>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="PortfolioType">
         <xs:annotation>
             <xs:documentation>
@@ -22,9 +21,10 @@
         <xs:complexContent>
             <xs:extension base="tns:BaseToolboxType">
                 <xs:choice>
-                    <xs:element name="add" type="tns:PortfolioAddType"/>
-                    <xs:element name="remove" type="tns:PortfolioRemoveType"/>
-                    <xs:element name="extract" type="tns:PortfolioExtractType"/>
+                    <xs:element name="add" type="tns:PortfolioAddType" />
+                    <xs:element name="remove" type="tns:PortfolioRemoveType" />
+                    <xs:element name="extract" type="tns:PortfolioExtractType" />
+                    <xs:element name="sort" type="tns:PortfolioSortType" />
                 </xs:choice>
             </xs:extension>
         </xs:complexContent>
@@ -36,7 +36,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:all>
-            <xs:element name="data" type="tns:PortfolioFileDataType"/>
+            <xs:element name="data" type="tns:PortfolioFileDataType" />
         </xs:all>
         <xs:attribute name="path" default="" type="xs:string">
             <xs:annotation>
@@ -100,7 +100,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:choice maxOccurs="unbounded">
-            <xs:element name="selection" type="tns:PortfolioSelectionType"/>
+            <xs:element name="selection" type="tns:PortfolioSelectionType" />
         </xs:choice>
         <xs:attribute name="initialDocumentPath" default="" type="xs:string">
             <xs:annotation>
@@ -136,7 +136,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:choice maxOccurs="unbounded">
-            <xs:element name="selection" type="tns:PortfolioSelectionType"/>
+            <xs:element name="selection" type="tns:PortfolioSelectionType" />
         </xs:choice>
         <xs:attribute name="singleFileAsZip" default="true" type="xs:boolean">
             <xs:annotation>
@@ -153,8 +153,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:choice maxOccurs="unbounded">
-            <xs:element name="file" type="tns:PortfolioFileType"/>
-            <xs:element name="folder" type="tns:PortfolioFolderType"/>
+            <xs:element name="file" type="tns:PortfolioFileType" />
+            <xs:element name="folder" type="tns:PortfolioFolderType" />
         </xs:choice>
         <xs:attribute name="initialDocumentPath" default="" type="xs:string">
             <xs:annotation>
@@ -191,7 +191,7 @@
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
-                <xs:attributeGroup ref="tns:FileDataGroup"/>
+                <xs:attributeGroup ref="tns:FileDataGroup" />
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -221,4 +221,86 @@
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
+    <xs:complexType name="PortfolioSortType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Used to define a sorting schema for the portfolio.
+
+</p>
+                <p>
+                    <b>Important:</b> The order of the sorting criteria does matter and the sorting precedence will follow the given sequence.
+				
+</p>
+                <p>
+                    <b>Important:</b> Should an old sorting schema be found, it will be removed and replaced.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="namedCriteria" type="tns:PortfolioSortPredefinedCriterionType" />
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="PortfolioSortPredefinedCriterionType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Selects a predefined sorting criterion to apply to entries of the portfolio, when determining display order.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="key" default="fileName" type="tns:PortfolioSortPredefinedCriterionKeyType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+	Selects a predefined sorting criterion. The following values are available:
+	<ul><li>fileName = The name of the portfolio entry.</li>
+                            <li>description = The description of the portfolio entry.</li>
+                            <li>size = The actual size of the file.</li>
+                            <li>creationDate = The creation date of the portfolio entry.</li>
+                            <li>modificationDate = The date of the last modification of the portfolio entry.</li>
+                            <li>compressedSize = The compressed size of the portfolio entry.</li>
+                            <li>order = The order of addition of the portfolio entry.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ascending" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Sets whether the schema criterion shall be applied in ascending or descending order.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="displayName" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Selects the display name for the sorting criterion.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="PortfolioSortPredefinedCriterionKeyType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>
+	Selects a predefined sorting criterion. The following values are available:
+	<ul><li>fileName = The name of the portfolio entry.</li>
+                        <li>description = The description of the portfolio entry.</li>
+                        <li>size = The actual size of the file.</li>
+                        <li>creationDate = The creation date of the portfolio entry.</li>
+                        <li>modificationDate = The date of the last modification of the portfolio entry.</li>
+                        <li>compressedSize = The compressed size of the portfolio entry.</li>
+                        <li>order = The order of addition of the portfolio entry.</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="fileName" />
+            <xs:enumeration value="description" />
+            <xs:enumeration value="size" />
+            <xs:enumeration value="creationDate" />
+            <xs:enumeration value="modificationDate" />
+            <xs:enumeration value="compressedSize" />
+            <xs:enumeration value="order" />
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

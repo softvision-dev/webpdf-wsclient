@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified"
-           targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:include schemaLocation="operation-common.xsd"/>
+<xs:schema xmlns:tns="http://schema.webpdf.de/1.0/operation" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/operation" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="operation-common.xsd" />
     <xs:complexType name="AnnotationType">
         <xs:annotation>
             <xs:documentation>
@@ -19,14 +18,14 @@
                         </xs:annotation>
                         <xs:complexType id="annotationChoiceId">
                             <xs:choice maxOccurs="unbounded">
-                                <xs:element name="text" type="tns:TextAnnotationType"/>
-                                <xs:element name="markup" type="tns:MarkupAnnotationType"/>
-                                <xs:element name="redact" type="tns:RedactAnnotationType"/>
-                                <xs:element name="freetext" type="tns:FreeTextAnnotationType"/>
-                                <xs:element name="rubberstamp" type="tns:RubberStampAnnotationType"/>
-                                <xs:element name="circle" type="tns:CircleAnnotationType"/>
-                                <xs:element name="square" type="tns:SquareAnnotationType"/>
-                                <xs:element name="line" type="tns:LineAnnotationType"/>
+                                <xs:element name="text" type="tns:TextAnnotationType" />
+                                <xs:element name="markup" type="tns:MarkupAnnotationType" />
+                                <xs:element name="redact" type="tns:RedactAnnotationType" />
+                                <xs:element name="freetext" type="tns:FreeTextAnnotationType" />
+                                <xs:element name="rubberstamp" type="tns:RubberStampAnnotationType" />
+                                <xs:element name="circle" type="tns:CircleAnnotationType" />
+                                <xs:element name="square" type="tns:SquareAnnotationType" />
+                                <xs:element name="line" type="tns:LineAnnotationType" />
                             </xs:choice>
                         </xs:complexType>
                     </xs:element>
@@ -46,11 +45,22 @@
                                     </xs:annotation>
                                     <xs:complexType>
                                         <xs:choice minOccurs="0" maxOccurs="unbounded">
-                                            <xs:element name="select" type="tns:SelectionAnnotationType"/>
+                                            <xs:element name="select" type="tns:SelectionAnnotationType" />
                                         </xs:choice>
                                     </xs:complexType>
                                 </xs:element>
                             </xs:all>
+                            <xs:attribute name="flatten" default="false" type="xs:boolean">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        <p>Set to true to flatten the selected annotations.</p>
+                                        <p>
+                                            <b>Important:</b>
+                                            flattening means, the interactive annotation objects will be removed and only their visual representation will remain in the page content of the resulting document.
+                                        </p>
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
                         </xs:complexType>
                     </xs:element>
                     <xs:element id="annotationEditID" name="edit" minOccurs="0">
@@ -69,18 +79,18 @@
                                     </xs:annotation>
                                     <xs:complexType>
                                         <xs:choice minOccurs="0" maxOccurs="unbounded">
-                                            <xs:element name="select" type="tns:SelectionAnnotationType"/>
+                                            <xs:element name="select" type="tns:SelectionAnnotationType" />
                                         </xs:choice>
                                     </xs:complexType>
                                 </xs:element>
-                                <xs:element name="text" type="tns:TextAnnotationType" minOccurs="0"/>
-                                <xs:element name="markup" type="tns:MarkupAnnotationType" minOccurs="0"/>
-                                <xs:element name="redact" type="tns:RedactAnnotationType" minOccurs="0"/>
-                                <xs:element name="freetext" type="tns:FreeTextAnnotationType" minOccurs="0"/>
-                                <xs:element name="rubberstamp" type="tns:RubberStampAnnotationType" minOccurs="0"/>
-                                <xs:element name="circle" type="tns:CircleAnnotationType" minOccurs="0"/>
-                                <xs:element name="square" type="tns:SquareAnnotationType" minOccurs="0"/>
-                                <xs:element name="line" type="tns:LineAnnotationType" minOccurs="0"/>
+                                <xs:element name="text" type="tns:TextAnnotationType" minOccurs="0" />
+                                <xs:element name="markup" type="tns:MarkupAnnotationType" minOccurs="0" />
+                                <xs:element name="redact" type="tns:RedactAnnotationType" minOccurs="0" />
+                                <xs:element name="freetext" type="tns:FreeTextAnnotationType" minOccurs="0" />
+                                <xs:element name="rubberstamp" type="tns:RubberStampAnnotationType" minOccurs="0" />
+                                <xs:element name="circle" type="tns:CircleAnnotationType" minOccurs="0" />
+                                <xs:element name="square" type="tns:SquareAnnotationType" minOccurs="0" />
+                                <xs:element name="line" type="tns:LineAnnotationType" minOccurs="0" />
                             </xs:all>
                         </xs:complexType>
                     </xs:element>
@@ -138,10 +148,9 @@
                                     </xs:annotation>
                                     <xs:complexType>
                                         <xs:choice maxOccurs="unbounded">
-                                            <xs:element name="replyTo" type="tns:ReplyToAnnotationType"/>
-                                            <xs:element name="changeAnnotationState"
-                                                        type="tns:ReplyStateAnnotationType"/>
-                                            <xs:element name="markAnnotation" type="tns:MarkedStateAnnotationType"/>
+                                            <xs:element name="replyTo" type="tns:ReplyToAnnotationType" />
+                                            <xs:element name="changeAnnotationState" type="tns:ReplyStateAnnotationType" />
+                                            <xs:element name="markAnnotation" type="tns:MarkedStateAnnotationType" />
                                         </xs:choice>
                                     </xs:complexType>
                                 </xs:element>
@@ -159,7 +168,7 @@
                                     </xs:annotation>
                                     <xs:complexType>
                                         <xs:choice maxOccurs="unbounded">
-                                            <xs:element name="replyTo" type="tns:ReplyToAnnotationEditType"/>
+                                            <xs:element name="replyTo" type="tns:ReplyToAnnotationEditType" />
                                         </xs:choice>
                                     </xs:complexType>
                                 </xs:element>
@@ -256,24 +265,24 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="check"/>
-            <xs:enumeration value="checkmark"/>
-            <xs:enumeration value="circle"/>
-            <xs:enumeration value="comment"/>
-            <xs:enumeration value="cross"/>
-            <xs:enumeration value="crossHair"/>
-            <xs:enumeration value="insert"/>
-            <xs:enumeration value="key"/>
-            <xs:enumeration value="note"/>
-            <xs:enumeration value="help"/>
-            <xs:enumeration value="newParagraph"/>
-            <xs:enumeration value="paragraph"/>
-            <xs:enumeration value="rightArrow"/>
-            <xs:enumeration value="rightPointer"/>
-            <xs:enumeration value="star"/>
-            <xs:enumeration value="upArrow"/>
-            <xs:enumeration value="upLeftArrow"/>
-            <xs:enumeration value="unnamed"/>
+            <xs:enumeration value="check" />
+            <xs:enumeration value="checkmark" />
+            <xs:enumeration value="circle" />
+            <xs:enumeration value="comment" />
+            <xs:enumeration value="cross" />
+            <xs:enumeration value="crossHair" />
+            <xs:enumeration value="insert" />
+            <xs:enumeration value="key" />
+            <xs:enumeration value="note" />
+            <xs:enumeration value="help" />
+            <xs:enumeration value="newParagraph" />
+            <xs:enumeration value="paragraph" />
+            <xs:enumeration value="rightArrow" />
+            <xs:enumeration value="rightPointer" />
+            <xs:enumeration value="star" />
+            <xs:enumeration value="upArrow" />
+            <xs:enumeration value="upLeftArrow" />
+            <xs:enumeration value="unnamed" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="MarkupsAnnotationType">
@@ -290,10 +299,10 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="highlight"/>
-            <xs:enumeration value="underline"/>
-            <xs:enumeration value="strikeOut"/>
-            <xs:enumeration value="squiggly"/>
+            <xs:enumeration value="highlight" />
+            <xs:enumeration value="underline" />
+            <xs:enumeration value="strikeOut" />
+            <xs:enumeration value="squiggly" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="BaseAnnotationType">
@@ -351,11 +360,11 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1"/>
+                    <xs:minInclusive value="1" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attributeGroup ref="tns:FlagsAnnotationGroup"/>
+        <xs:attributeGroup ref="tns:FlagsAnnotationGroup" />
         <xs:attribute name="color" default="#4800FF" type="tns:RgbColorType">
             <xs:annotation>
                 <xs:documentation>
@@ -382,7 +391,9 @@
                 <xs:all>
                     <xs:element name="position" type="tns:RectangleType" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation><p>Used to select the bounds within which the shape shall be positioned.</p></xs:documentation>
+                            <xs:documentation>
+                                <p>Used to select the bounds within which the shape shall be positioned.</p>
+                            </xs:documentation>
                         </xs:annotation>
                     </xs:element>
                     <xs:element name="normalAppearance" type="tns:AppearanceSourceType" minOccurs="0">
@@ -476,18 +487,24 @@
                 <xs:all>
                     <xs:element name="position" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation><p>Used to define the pathelements in which the annotation shall be positioned.</p></xs:documentation>
+                            <xs:documentation>
+                                <p>Used to define the pathelements in which the annotation shall be positioned.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
                             <xs:choice minOccurs="0" maxOccurs="unbounded">
                                 <xs:element name="pathElement" type="tns:RectangleType">
                                     <xs:annotation>
-                                        <xs:documentation><p>Used to specify the position of the text being marked as a sequence of rectangles that are defined with "pathElement". This element can be used multiple times, with each rectangle marking, for example, a row of text.</p></xs:documentation>
+                                        <xs:documentation>
+                                            <p>Used to specify the position of the text being marked as a sequence of rectangles that are defined with "pathElement". This element can be used multiple times, with each rectangle marking, for example, a row of text.</p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
                                 <xs:element name="quadrilateral" type="tns:QuadrilateralType">
                                     <xs:annotation>
-                                        <xs:documentation><p>Used to specify the position of the text being marked as a sequence of quadrilaterals that are defined with "quadrilateral". This element can be used multiple times, with each quad marking, for example, a row of text.</p></xs:documentation>
+                                        <xs:documentation>
+                                            <p>Used to specify the position of the text being marked as a sequence of quadrilaterals that are defined with "quadrilateral". This element can be used multiple times, with each quad marking, for example, a row of text.</p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
                             </xs:choice>
@@ -522,18 +539,24 @@
                 <xs:all>
                     <xs:element name="position" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation><p>Used to define the pathelements in which the annotation shall be positioned.</p></xs:documentation>
+                            <xs:documentation>
+                                <p>Used to define the pathelements in which the annotation shall be positioned.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
                             <xs:choice minOccurs="0" maxOccurs="unbounded">
                                 <xs:element name="pathElement" type="tns:RectangleType">
                                     <xs:annotation>
-                                        <xs:documentation><p>Used to specify the position of the text being marked as a sequence of rectangles that are defined with "pathElement". This element can be used multiple times, with each rectangle marking, for example, a row of text.</p></xs:documentation>
+                                        <xs:documentation>
+                                            <p>Used to specify the position of the text being marked as a sequence of rectangles that are defined with "pathElement". This element can be used multiple times, with each rectangle marking, for example, a row of text.</p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
                                 <xs:element name="quadrilateral" type="tns:QuadrilateralType">
                                     <xs:annotation>
-                                        <xs:documentation><p>Used to specify the position of the text being marked as a sequence of quadrilaterals that are defined with "quadrilateral". This element can be used multiple times, with each quad marking, for example, a row of text.</p></xs:documentation>
+                                        <xs:documentation>
+                                            <p>Used to specify the position of the text being marked as a sequence of quadrilaterals that are defined with "quadrilateral". This element can be used multiple times, with each quad marking, for example, a row of text.</p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
                             </xs:choice>
@@ -559,16 +582,20 @@
         <xs:complexContent>
             <xs:extension base="tns:BaseAnnotationType">
                 <xs:all>
-                    <xs:element name="font" type="tns:FreeTextFontType" minOccurs="0"/>
+                    <xs:element name="font" type="tns:FreeTextFontType" minOccurs="0" />
                     <xs:element name="position" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation><p>Used to select the bounds within which the shape shall be positioned.</p></xs:documentation>
+                            <xs:documentation>
+                                <p>Used to select the bounds within which the shape shall be positioned.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
                             <xs:choice minOccurs="0">
                                 <xs:element name="rectangle" type="tns:RectangleType">
                                     <xs:annotation>
-                                        <xs:documentation><p>Select an unrotated rectangular position.</p></xs:documentation>
+                                        <xs:documentation>
+                                            <p>Select an unrotated rectangular position.</p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
                             </xs:choice>
@@ -602,13 +629,17 @@
                 <xs:all>
                     <xs:element name="position" minOccurs="0">
                         <xs:annotation>
-                            <xs:documentation><p>Used to select the bounds within which the shape shall be positioned.</p></xs:documentation>
+                            <xs:documentation>
+                                <p>Used to select the bounds within which the shape shall be positioned.</p>
+                            </xs:documentation>
                         </xs:annotation>
                         <xs:complexType>
                             <xs:choice minOccurs="0">
                                 <xs:element name="rectangle" type="tns:RectangleType">
                                     <xs:annotation>
-                                        <xs:documentation><p>Select an unrotated rectangular position.</p></xs:documentation>
+                                        <xs:documentation>
+                                            <p>Select an unrotated rectangular position.</p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
                             </xs:choice>
@@ -693,7 +724,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:SimpleShapeAnnotationType"/>
+            <xs:extension base="tns:SimpleShapeAnnotationType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SquareAnnotationType">
@@ -703,7 +734,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="tns:SimpleShapeAnnotationType"/>
+            <xs:extension base="tns:SimpleShapeAnnotationType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="SimpleShapeAnnotationType">
@@ -725,7 +756,9 @@
                             <xs:choice minOccurs="0">
                                 <xs:element name="rectangle" type="tns:RectangleType">
                                     <xs:annotation>
-                                        <xs:documentation><p>Select an unrotated rectangular position.</p></xs:documentation>
+                                        <xs:documentation>
+                                            <p>Select an unrotated rectangular position.</p>
+                                        </xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
                             </xs:choice>
@@ -806,6 +839,32 @@
             <xs:annotation>
                 <xs:documentation>
                     <p>Used to specify the name of the font that should be used for the text output.</p>
+                    <p>If no font is specified, then the default font of the "Toolbox" web service is used. It is the font configured as <code>webservices/toolbox/@defaultFont</code> if that font is installed; otherwise the server determines it from the font directories configured for that web service (<code>webservices/toolbox/@fontPath</code>, by default the font directories of the operating system) by looking for "Go Noto Current", then "DejaVu Sans" and then "Arial Unicode MS" (an optional font whose license the operator clarifies); under Windows "Arial" is used as a last resort. How the selected font is embedded in the document is controlled by <code>subsetFont</code>.</p>
+                    <p>
+                        <b>Note:</b>
+                        The requested style is only applied if the determined font family provides it. A family without an italic or a bold cut is used in its regular cut instead - exactly as it is when the font is specified by name. No style is simulated.
+                    </p>
+                    <p>
+                        <b>Note:</b>
+                        Only if no default font can be determined at all, the standard font "Helvetica" is used, which is not embedded in the document.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="subsetFont" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Used to select how the font is embedded in the document.</p>
+                    <p>If "true," only a subset of the font is embedded, holding the glyphs that the text of the annotations actually draws. The document stays small and remains self-contained, but a later editor can only re-set the text in characters that have already been drawn.</p>
+                    <p>If "false," the complete font program is embedded, so the text can later be re-set in every character the font provides. An editor reaches that program through the annotation's rich text (<code>/RC</code> and <code>/DS</code>) and the font of the same name in the document's default resources (<code>/DR</code>). The annotation's default appearance (<code>/DA</code>) names the standard font "Helvetica", so an editor that regenerates the appearance from that alone does not use the embedded program. For a font with a large character set, embedding it completely can increase the size of the document considerably.</p>
+                    <p>
+                        <b>Note:</b>
+                        A value set here always takes precedence - including over the subsetting that is otherwise applied to the default font of the "Toolbox" web service.
+                    </p>
+                    <p>
+                        <b>Note:</b>
+                        A font that cannot be embedded in full is embedded as a subset instead, and a warning is written to the server log. The appearance of the annotation is not affected by this.
+                    </p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -831,8 +890,8 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1"/>
-                    <xs:maxInclusive value="1296"/>
+                    <xs:minInclusive value="1" />
+                    <xs:maxInclusive value="1296" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -869,21 +928,21 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="approved"/>
-            <xs:enumeration value="experimental"/>
-            <xs:enumeration value="notApproved"/>
-            <xs:enumeration value="asIs"/>
-            <xs:enumeration value="expired"/>
-            <xs:enumeration value="notForPublicRelease"/>
-            <xs:enumeration value="confidential"/>
-            <xs:enumeration value="final"/>
-            <xs:enumeration value="sold"/>
-            <xs:enumeration value="departmental"/>
-            <xs:enumeration value="forComment"/>
-            <xs:enumeration value="topSecret"/>
-            <xs:enumeration value="draft"/>
-            <xs:enumeration value="forPublicRelease"/>
-            <xs:enumeration value="unnamed"/>
+            <xs:enumeration value="approved" />
+            <xs:enumeration value="experimental" />
+            <xs:enumeration value="notApproved" />
+            <xs:enumeration value="asIs" />
+            <xs:enumeration value="expired" />
+            <xs:enumeration value="notForPublicRelease" />
+            <xs:enumeration value="confidential" />
+            <xs:enumeration value="final" />
+            <xs:enumeration value="sold" />
+            <xs:enumeration value="departmental" />
+            <xs:enumeration value="forComment" />
+            <xs:enumeration value="topSecret" />
+            <xs:enumeration value="draft" />
+            <xs:enumeration value="forPublicRelease" />
+            <xs:enumeration value="unnamed" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="AppearanceFileDataType">
@@ -894,7 +953,7 @@
         </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:base64Binary">
-                <xs:attributeGroup ref="tns:FileDataGroup"/>
+                <xs:attributeGroup ref="tns:FileDataGroup" />
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -914,7 +973,7 @@
         <xs:complexContent>
             <xs:extension base="tns:AppearanceType">
                 <xs:all>
-                    <xs:element name="data" type="tns:AppearanceFileDataType"/>
+                    <xs:element name="data" type="tns:AppearanceFileDataType" />
                 </xs:all>
                 <xs:attribute name="preserveAspectRatio" default="false" type="xs:boolean">
                     <xs:annotation>
@@ -935,7 +994,7 @@
         <xs:complexContent>
             <xs:extension base="tns:AppearanceType">
                 <xs:all>
-                    <xs:element name="data" type="tns:AppearanceFileDataType"/>
+                    <xs:element name="data" type="tns:AppearanceFileDataType" />
                 </xs:all>
                 <xs:attribute name="page" default="1">
                     <xs:annotation>
@@ -945,7 +1004,7 @@
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1"/>
+                            <xs:minInclusive value="1" />
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
@@ -968,7 +1027,7 @@
         <xs:complexContent>
             <xs:extension base="tns:AppearanceType">
                 <xs:all>
-                    <xs:element name="data" type="tns:AppearanceFileDataType"/>
+                    <xs:element name="data" type="tns:AppearanceFileDataType" />
                 </xs:all>
                 <xs:attribute name="preserveAspectRatio" default="false" type="xs:boolean">
                     <xs:annotation>
@@ -1000,9 +1059,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:choice>
-            <xs:element name="pdf" type="tns:AppearancePdfType"/>
-            <xs:element name="image" type="tns:AppearanceImageType"/>
-            <xs:element name="svg" type="tns:AppearanceSvgType"/>
+            <xs:element name="pdf" type="tns:AppearancePdfType" />
+            <xs:element name="image" type="tns:AppearanceImageType" />
+            <xs:element name="svg" type="tns:AppearanceSvgType" />
         </xs:choice>
     </xs:complexType>
     <xs:complexType name="BorderType">
@@ -1019,7 +1078,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -1043,7 +1102,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1"/>
+                    <xs:minInclusive value="1" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -1055,7 +1114,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1"/>
+                    <xs:minInclusive value="1" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -1072,8 +1131,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="solid"/>
-            <xs:enumeration value="dashed"/>
+            <xs:enumeration value="solid" />
+            <xs:enumeration value="dashed" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="DrawModeType">
@@ -1089,9 +1148,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="fill"/>
-            <xs:enumeration value="stroke"/>
-            <xs:enumeration value="fillAndStroke"/>
+            <xs:enumeration value="fill" />
+            <xs:enumeration value="stroke" />
+            <xs:enumeration value="fillAndStroke" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="ReplyState">
@@ -1109,11 +1168,11 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="accepted"/>
-            <xs:enumeration value="rejected"/>
-            <xs:enumeration value="cancelled"/>
-            <xs:enumeration value="completed"/>
-            <xs:enumeration value="none"/>
+            <xs:enumeration value="accepted" />
+            <xs:enumeration value="rejected" />
+            <xs:enumeration value="cancelled" />
+            <xs:enumeration value="completed" />
+            <xs:enumeration value="none" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="SelectionAnnotationType">
@@ -1160,7 +1219,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1"/>
+                    <xs:minInclusive value="1" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -1218,7 +1277,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1"/>
+                    <xs:minInclusive value="1" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -1308,14 +1367,14 @@
                     </xs:annotation>
                     <xs:simpleType>
                         <xs:restriction base="xs:int">
-                            <xs:minInclusive value="1"/>
+                            <xs:minInclusive value="1" />
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:attribute>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    <xs:complexType name="BaseReplyEditType"/>
+    <xs:complexType name="BaseReplyEditType" />
     <xs:complexType name="ReplyStateAnnotationType">
         <xs:annotation>
             <xs:documentation>
@@ -1378,9 +1437,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="Always"/>
-            <xs:enumeration value="Never"/>
-            <xs:enumeration value="nonStandard"/>
+            <xs:enumeration value="Always" />
+            <xs:enumeration value="Never" />
+            <xs:enumeration value="nonStandard" />
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

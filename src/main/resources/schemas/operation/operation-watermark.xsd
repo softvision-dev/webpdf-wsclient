@@ -46,7 +46,16 @@
         <xs:attribute name="name" default="" type="xs:string">
             <xs:annotation>
                 <xs:documentation>
-                    <p>Used to specify the name of the font that should be used for the text output. If a font is not specified, "Helvetica" will be used.</p>
+                    <p>Used to specify the name of the font that should be used for the text output.</p>
+                    <p>If no font is specified, then the default font of the "Toolbox" web service is used. It is the font configured as <code>webservices/toolbox/@defaultFont</code> if that font is installed; otherwise the server determines it from the font directories configured for that web service (<code>webservices/toolbox/@fontPath</code>, by default the font directories of the operating system) by looking for "Go Noto Current", then "DejaVu Sans" and then "Arial Unicode MS" (an optional font whose license the operator clarifies); under Windows "Arial" is used as a last resort. A subset of the selected font is embedded in the document.</p>
+                    <p>
+                        <b>Note:</b>
+                        The requested style is only applied if the determined font family provides it. A family without an italic or a bold cut is used in its regular cut instead - exactly as it is when the font is specified by name. No style is simulated.
+                    </p>
+                    <p>
+                        <b>Note:</b>
+                        Only if no default font can be determined at all, the standard font "Helvetica" is used, which is not embedded in the document.
+                    </p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

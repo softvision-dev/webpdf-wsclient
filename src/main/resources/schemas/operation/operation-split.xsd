@@ -56,6 +56,7 @@
                     <xs:annotation>
                         <xs:documentation>
                             <p>If the "split" operation generates a ZIP document (please refer to "mode"), this template can be used to define the file name of the PDF document in the ZIP document. The "%d" placeholder must be used in the template in order to define the PDF document page.</p>
+                            <p>Numbers are written with ASCII digits. A template that is longer than 1024 characters, contains a width or precision greater than 64 or cannot be formatted with a number is not used; the default template applies instead.</p>
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>

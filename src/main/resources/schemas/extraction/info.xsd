@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns="http://schema.webpdf.de/1.0/extraction/info" elementFormDefault="qualified"
-           targetNamespace="http://schema.webpdf.de/1.0/extraction/info" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns="http://schema.webpdf.de/1.0/extraction/info" elementFormDefault="qualified" targetNamespace="http://schema.webpdf.de/1.0/extraction/info" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="document">
         <xs:annotation>
             <xs:documentation>
@@ -9,8 +8,8 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="information" type="InformationType"/>
-                <xs:element name="security" type="SecurityType"/>
+                <xs:element name="information" type="InformationType" />
+                <xs:element name="security" type="SecurityType" />
                 <xs:element name="attachments" minOccurs="0">
                     <xs:annotation>
                         <xs:documentation>
@@ -19,7 +18,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="attachment" type="AttachmentType" minOccurs="0" maxOccurs="unbounded"/>
+                            <xs:element name="attachment" type="AttachmentType" minOccurs="0" maxOccurs="unbounded" />
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
@@ -36,7 +35,7 @@
                                     <xs:complexContent>
                                         <xs:extension base="PageType">
                                             <xs:sequence>
-                                                <xs:element name="boxes" type="BoxesType"/>
+                                                <xs:element name="boxes" type="BoxesType" />
                                             </xs:sequence>
                                         </xs:extension>
                                     </xs:complexContent>
@@ -53,7 +52,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="field" type="FieldType" minOccurs="0" maxOccurs="unbounded"/>
+                            <xs:element name="field" type="FieldType" minOccurs="0" maxOccurs="unbounded" />
                         </xs:sequence>
                         <xs:attribute name="objectKey" default="" type="xs:string">
                             <xs:annotation>
@@ -104,7 +103,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
-                            <xs:element name="annotation" type="AnnotationType"/>
+                            <xs:element name="annotation" type="AnnotationType" />
                         </xs:choice>
                     </xs:complexType>
                 </xs:element>
@@ -116,7 +115,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
-                            <xs:element name="signature" type="SignatureType"/>
+                            <xs:element name="signature" type="SignatureType" />
                         </xs:choice>
                     </xs:complexType>
                 </xs:element>
@@ -128,7 +127,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
-                            <xs:element name="background" type="BackgroundContentType"/>
+                            <xs:element name="background" type="BackgroundContentType" />
                         </xs:choice>
                     </xs:complexType>
                 </xs:element>
@@ -140,7 +139,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
-                            <xs:element name="headerFooter" type="HeaderFooterType"/>
+                            <xs:element name="headerFooter" type="HeaderFooterType" />
                         </xs:choice>
                     </xs:complexType>
                 </xs:element>
@@ -152,7 +151,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
-                            <xs:element name="transition" type="TransitionType"/>
+                            <xs:element name="transition" type="TransitionType" />
                         </xs:choice>
                     </xs:complexType>
                 </xs:element>
@@ -164,7 +163,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:choice minOccurs="0" maxOccurs="unbounded">
-                            <xs:element name="image" type="ImageType"/>
+                            <xs:element name="image" type="ImageType" />
                         </xs:choice>
                     </xs:complexType>
                 </xs:element>
@@ -176,7 +175,7 @@
                     </xs:annotation>
                     <xs:complexType>
                         <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                            <xs:element name="folder" type="FolderType"/>
+                            <xs:element name="folder" type="FolderType" />
                         </xs:sequence>
                         <xs:attribute name="initialFile" default="" type="xs:string">
                             <xs:annotation>
@@ -191,6 +190,41 @@
                         </xs:attribute>
                     </xs:complexType>
                 </xs:element>
+                <xs:element name="portfolio" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>Describes the properties of a PDF collection (portfolio). (Should the document be a PDF collection.)</p>
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="schema" minOccurs="0">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        <p>Lists sort schemas for a PDF collection (portfolio).</p>
+                                    </xs:documentation>
+                                </xs:annotation>
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="entry" type="SchemaEntryType" minOccurs="0" maxOccurs="unbounded" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="sort" minOccurs="0">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        <p>Lists sort types for a PDF collection (portfolio).</p>
+                                    </xs:documentation>
+                                </xs:annotation>
+                                <xs:complexType>
+                                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                                        <xs:element name="entry" type="SchemaSortEntryType" minOccurs="0" maxOccurs="unbounded" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -201,9 +235,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="description" type="DescriptionType"/>
-            <xs:element name="pdfa" type="PdfaType"/>
-            <xs:element name="viewerPreferences" type="ViewerPreferencesType"/>
+            <xs:element name="description" type="DescriptionType" />
+            <xs:element name="pdfa" type="PdfaType" />
+            <xs:element name="viewerPreferences" type="ViewerPreferencesType" />
         </xs:sequence>
         <xs:attribute name="objectKey" default="" type="xs:string">
             <xs:annotation>
@@ -231,7 +265,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:long">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -298,7 +332,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -339,7 +373,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -351,7 +385,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -399,9 +433,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="author" type="AuthorType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="keywords" type="KeywordType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="custom" type="CustomDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="author" type="AuthorType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="keywords" type="KeywordType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="custom" type="CustomDescriptionType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="title" default="" type="xs:string">
             <xs:annotation>
@@ -460,9 +494,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:choice>
-            <xs:element name="password" type="PasswordType" minOccurs="0"/>
+            <xs:element name="password" type="PasswordType" minOccurs="0" />
         </xs:choice>
-        <xs:attributeGroup ref="securityFlags"/>
+        <xs:attributeGroup ref="securityFlags" />
     </xs:complexType>
     <xs:complexType name="AttachmentType">
         <xs:annotation>
@@ -473,7 +507,19 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element ref="document" minOccurs="0"/>
+            <xs:element ref="document" minOccurs="0" />
+            <xs:element name="sort" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>Lists the collection items of this attachment.</p>
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="entry" type="AttachmentSortEntryType" minOccurs="0" maxOccurs="unbounded" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
         <xs:attribute name="objectKey" default="" type="xs:string">
             <xs:annotation>
@@ -494,7 +540,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1"/>
+                    <xs:minInclusive value="1" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -506,7 +552,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -525,7 +571,19 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:double">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="compressedSize" default="0">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The compressed byte size of the attachment.</p>
+                </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:double">
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -578,7 +636,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -597,7 +655,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -609,7 +667,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -621,7 +679,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -693,14 +751,22 @@
         <xs:attribute name="part" default="" type="xs:string">
             <xs:annotation>
                 <xs:documentation>
-                    <p>The ISO-19005 part number.</p>
+                    <p>The ISO-19005 part number claimed by the document, for example "1", "2", "3" or "4".</p>
+                    <p>This attribute decides whether the document claims PDF/A conformance at all: it is empty
+                        when the document declares no part number, or one that can not be read as a positive
+                        number. An empty value therefore means "this is not a PDF/A document".</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="conformance" default="" type="xs:string">
             <xs:annotation>
                 <xs:documentation>
-                    <p>The PDF/A conformance level.</p>
+                    <p>The PDF/A conformance level claimed by the document, in lower case, for example "a", "b"
+                        or "u".</p>
+                    <p>The conformance level is optional and this attribute may be empty even for a valid PDF/A
+                        document: PDF/A-4 (ISO 19005-4) declares none at all, and only its variants PDF/A-4e and
+                        PDF/A-4f add "e" respectively "f". Do not use this attribute to decide whether a document
+                        is a PDF/A document - use <code>part</code> for that.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -719,10 +785,10 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="none"/>
-            <xs:enumeration value="acroForm"/>
-            <xs:enumeration value="staticXFA"/>
-            <xs:enumeration value="dynamicXFA"/>
+            <xs:enumeration value="none" />
+            <xs:enumeration value="acroForm" />
+            <xs:enumeration value="staticXFA" />
+            <xs:enumeration value="dynamicXFA" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="FieldType">
@@ -746,7 +812,15 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="value" type="FormValueStyle" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="value" type="FormValueStyle" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="widget" type="FieldWidgetType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p>Check boxes and radio button groups only: one entry per widget annotation of the field, in the order of the "annotation" elements, with the widget's export value, its "on" state, whether it is selected and the value that selects it in a form data import. Duplicate export values are kept.</p>
+                        <p>The entries describe the document as it was extracted. An import can change them, also for widgets other than the selected ones; read them again after an import.</p>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
         <xs:attribute name="objectKey" default="" type="xs:string">
             <xs:annotation>
@@ -1004,7 +1078,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -1038,12 +1112,12 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="singlePage"/>
-            <xs:enumeration value="oneColumn"/>
-            <xs:enumeration value="twoColumnLeft"/>
-            <xs:enumeration value="twoColumnRight"/>
-            <xs:enumeration value="twoPageLeft"/>
-            <xs:enumeration value="twoPageRight"/>
+            <xs:enumeration value="singlePage" />
+            <xs:enumeration value="oneColumn" />
+            <xs:enumeration value="twoColumnLeft" />
+            <xs:enumeration value="twoColumnRight" />
+            <xs:enumeration value="twoPageLeft" />
+            <xs:enumeration value="twoPageRight" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="MagnificationType">
@@ -1063,13 +1137,13 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="none"/>
-            <xs:enumeration value="fitWidth"/>
-            <xs:enumeration value="fitVisible"/>
-            <xs:enumeration value="fitHeight"/>
-            <xs:enumeration value="fitPage"/>
-            <xs:enumeration value="fitActual"/>
-            <xs:enumeration value="zoom"/>
+            <xs:enumeration value="none" />
+            <xs:enumeration value="fitWidth" />
+            <xs:enumeration value="fitVisible" />
+            <xs:enumeration value="fitHeight" />
+            <xs:enumeration value="fitPage" />
+            <xs:enumeration value="fitActual" />
+            <xs:enumeration value="zoom" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="InitialViewType">
@@ -1086,12 +1160,12 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="none"/>
-            <xs:enumeration value="outlines"/>
-            <xs:enumeration value="thumbnails"/>
-            <xs:enumeration value="fullscreen"/>
-            <xs:enumeration value="layers"/>
-            <xs:enumeration value="attachments"/>
+            <xs:enumeration value="none" />
+            <xs:enumeration value="outlines" />
+            <xs:enumeration value="thumbnails" />
+            <xs:enumeration value="fullscreen" />
+            <xs:enumeration value="layers" />
+            <xs:enumeration value="attachments" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="KeyAlgorithmType">
@@ -1107,9 +1181,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="none"/>
-            <xs:enumeration value="aes"/>
-            <xs:enumeration value="rc4"/>
+            <xs:enumeration value="none" />
+            <xs:enumeration value="aes" />
+            <xs:enumeration value="rc4" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="RgbColorType">
@@ -1119,7 +1193,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:token">
-            <xs:pattern value="#[0-9a-fA-F]{6}"/>
+            <xs:pattern value="#[0-9a-fA-F]{6}" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="OpacityType">
@@ -1129,8 +1203,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:int">
-            <xs:minInclusive value="0"/>
-            <xs:maxInclusive value="100"/>
+            <xs:minInclusive value="0" />
+            <xs:maxInclusive value="100" />
         </xs:restriction>
     </xs:simpleType>
     <xs:attributeGroup name="FlagsAnnotationGroup">
@@ -1199,16 +1273,16 @@
         </xs:annotation>
         <xs:sequence minOccurs="0">
             <xs:choice id="positions" minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="rectangle" type="AnnotationRectangleType"/>
-                <xs:element name="point" type="AnnotationPointType"/>
+                <xs:element name="rectangle" type="AnnotationRectangleType" />
+                <xs:element name="point" type="AnnotationPointType" />
             </xs:choice>
-            <xs:element name="markup" type="MarkupType" minOccurs="0"/>
-            <xs:element name="popup" type="PopupType" minOccurs="0"/>
-            <xs:element name="appearance" type="AppearanceType" minOccurs="0"/>
-            <xs:element name="line" type="LineType" minOccurs="0"/>
-            <xs:element name="border" type="BorderStyle" minOccurs="0"/>
-            <xs:element name="drawStyle" type="DrawStyleType" minOccurs="0"/>
-            <xs:element name="field" type="FieldAnnotationType" minOccurs="0"/>
+            <xs:element name="markup" type="MarkupType" minOccurs="0" />
+            <xs:element name="popup" type="PopupType" minOccurs="0" />
+            <xs:element name="appearance" type="AppearanceType" minOccurs="0" />
+            <xs:element name="line" type="LineType" minOccurs="0" />
+            <xs:element name="border" type="BorderStyle" minOccurs="0" />
+            <xs:element name="drawStyle" type="DrawStyleType" minOccurs="0" />
+            <xs:element name="field" type="FieldAnnotationType" minOccurs="0" />
         </xs:sequence>
         <xs:attribute name="objectKey" default="" type="xs:string">
             <xs:annotation>
@@ -1254,11 +1328,11 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attributeGroup ref="FlagsAnnotationGroup"/>
+        <xs:attributeGroup ref="FlagsAnnotationGroup" />
         <xs:attribute name="color" default="#4800FF" type="RgbColorType">
             <xs:annotation>
                 <xs:documentation>
@@ -1303,10 +1377,10 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:choice>
-                        <xs:element name="group" type="GroupRelationType"/>
-                        <xs:element name="mark" type="MarkRelationType"/>
-                        <xs:element name="state" type="ReplyStateRelationType"/>
-                        <xs:element name="comment" type="CommentRelationType"/>
+                        <xs:element name="group" type="GroupRelationType" />
+                        <xs:element name="mark" type="MarkRelationType" />
+                        <xs:element name="state" type="ReplyStateRelationType" />
+                        <xs:element name="comment" type="CommentRelationType" />
                     </xs:choice>
                 </xs:complexType>
             </xs:element>
@@ -1385,7 +1459,7 @@
                         </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:float"/>
+                        <xs:restriction base="xs:float" />
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="height" default="0">
@@ -1395,7 +1469,7 @@
                         </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:float"/>
+                        <xs:restriction base="xs:float" />
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="x" default="0">
@@ -1405,7 +1479,7 @@
                         </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:float"/>
+                        <xs:restriction base="xs:float" />
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="y" default="0">
@@ -1415,7 +1489,7 @@
                         </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:float"/>
+                        <xs:restriction base="xs:float" />
                     </xs:simpleType>
                 </xs:attribute>
             </xs:extension>
@@ -1435,10 +1509,10 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="none"/>
-            <xs:enumeration value="noChangesAllowed"/>
-            <xs:enumeration value="formFillingSignatures"/>
-            <xs:enumeration value="formFillingSignaturesAnnotations"/>
+            <xs:enumeration value="none" />
+            <xs:enumeration value="noChangesAllowed" />
+            <xs:enumeration value="formFillingSignatures" />
+            <xs:enumeration value="formFillingSignaturesAnnotations" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="PointType">
@@ -1456,7 +1530,7 @@
                         </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:float"/>
+                        <xs:restriction base="xs:float" />
                     </xs:simpleType>
                 </xs:attribute>
                 <xs:attribute name="y" default="0">
@@ -1466,7 +1540,7 @@
                         </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
-                        <xs:restriction base="xs:float"/>
+                        <xs:restriction base="xs:float" />
                     </xs:simpleType>
                 </xs:attribute>
             </xs:extension>
@@ -1589,7 +1663,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -1663,7 +1737,7 @@
                         </xs:annotation>
                         <xs:simpleType>
                             <xs:restriction base="xs:float">
-                                <xs:minInclusive value="0"/>
+                                <xs:minInclusive value="0" />
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
@@ -1674,7 +1748,7 @@
                             </xs:documentation>
                         </xs:annotation>
                         <xs:simpleType>
-                            <xs:restriction base="xs:int">
+                            <xs:restriction base="xs:float">
                                 <xs:minInclusive value="0"/>
                                 <xs:maxInclusive value="360"/>
                             </xs:restriction>
@@ -1688,8 +1762,8 @@
                         </xs:annotation>
                         <xs:simpleType>
                             <xs:restriction base="xs:float">
-                                <xs:minInclusive value="0"/>
-                                <xs:maxInclusive value="1"/>
+                                <xs:minInclusive value="0" />
+                                <xs:maxInclusive value="1" />
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>
@@ -1770,7 +1844,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -1781,7 +1855,7 @@
                 </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
-                <xs:restriction base="xs:boolean"/>
+                <xs:restriction base="xs:boolean" />
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="onscreen" default="true">
@@ -1791,7 +1865,7 @@
                 </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
-                <xs:restriction base="xs:boolean"/>
+                <xs:restriction base="xs:boolean" />
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="isImage" default="false" type="xs:boolean">
@@ -1806,24 +1880,24 @@
         <xs:attribute name="r" default="0">
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0"/>
-                    <xs:maxInclusive value="1"/>
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="1" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="b" default="0">
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0"/>
-                    <xs:maxInclusive value="1"/>
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="1" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="g" default="0">
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0"/>
-                    <xs:maxInclusive value="1"/>
+                    <xs:minInclusive value="0" />
+                    <xs:maxInclusive value="1" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -1848,15 +1922,15 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="top_left"/>
-            <xs:enumeration value="top_center"/>
-            <xs:enumeration value="top_right"/>
-            <xs:enumeration value="center_left"/>
-            <xs:enumeration value="center_center"/>
-            <xs:enumeration value="center_right"/>
-            <xs:enumeration value="bottom_left"/>
-            <xs:enumeration value="bottom_center"/>
-            <xs:enumeration value="bottom_right"/>
+            <xs:enumeration value="top_left" />
+            <xs:enumeration value="top_center" />
+            <xs:enumeration value="top_right" />
+            <xs:enumeration value="center_left" />
+            <xs:enumeration value="center_center" />
+            <xs:enumeration value="center_right" />
+            <xs:enumeration value="bottom_left" />
+            <xs:enumeration value="bottom_center" />
+            <xs:enumeration value="bottom_right" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="BoxesType">
@@ -1910,8 +1984,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="font" type="FontType"/>
-            <xs:element name="margin" type="MarginType"/>
+            <xs:element name="font" type="FontType" />
+            <xs:element name="margin" type="MarginType" />
             <xs:element name="header" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation>
@@ -1992,7 +2066,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -2089,18 +2163,18 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="blinds"/>
-            <xs:enumeration value="box"/>
-            <xs:enumeration value="cover"/>
-            <xs:enumeration value="dissolve"/>
-            <xs:enumeration value="fade"/>
-            <xs:enumeration value="fly"/>
-            <xs:enumeration value="glitter"/>
-            <xs:enumeration value="push"/>
-            <xs:enumeration value="split"/>
-            <xs:enumeration value="uncover"/>
-            <xs:enumeration value="wipe"/>
-            <xs:enumeration value="none"/>
+            <xs:enumeration value="blinds" />
+            <xs:enumeration value="box" />
+            <xs:enumeration value="cover" />
+            <xs:enumeration value="dissolve" />
+            <xs:enumeration value="fade" />
+            <xs:enumeration value="fly" />
+            <xs:enumeration value="glitter" />
+            <xs:enumeration value="push" />
+            <xs:enumeration value="split" />
+            <xs:enumeration value="uncover" />
+            <xs:enumeration value="wipe" />
+            <xs:enumeration value="none" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="TransitionDirection">
@@ -2119,12 +2193,12 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="leftToRight"/>
-            <xs:enumeration value="bottomToTop"/>
-            <xs:enumeration value="rightToLeft"/>
-            <xs:enumeration value="topToBottom"/>
-            <xs:enumeration value="topLeftToBottomRight"/>
-            <xs:enumeration value="none"/>
+            <xs:enumeration value="leftToRight" />
+            <xs:enumeration value="bottomToTop" />
+            <xs:enumeration value="rightToLeft" />
+            <xs:enumeration value="topToBottom" />
+            <xs:enumeration value="topLeftToBottomRight" />
+            <xs:enumeration value="none" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="DrawStyleType">
@@ -2172,7 +2246,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -2205,7 +2279,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:float">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -2294,7 +2368,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -2306,7 +2380,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="0"/>
+                    <xs:minInclusive value="0" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -2338,6 +2412,13 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="selected" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Choice fields (list and combo boxes) only: true if this option is selected, that is, its export value is one of the field's values. Use this attribute rather than splitting "content" at commas, since an option may itself contain a comma. A combo box value that is no option selects none; it is found in "content" only. Not set for other field types.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="FolderType">
         <xs:annotation>
@@ -2345,6 +2426,20 @@
                 <p>Defines a folder for a PDF collection (portfolio).</p>
             </xs:documentation>
         </xs:annotation>
+        <xs:sequence>
+            <xs:element name="sort" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        <p xmlns="http://schema.webpdf.de/1.0/extraction/info">Lists the collection items of this folder.</p>
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="entry" type="AttachmentSortEntryType" minOccurs="0" maxOccurs="unbounded" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
         <xs:attribute name="id" default="0" type="xs:int">
             <xs:annotation>
                 <xs:documentation>
@@ -2388,7 +2483,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="RectangleType"/>
+            <xs:extension base="RectangleType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="AnnotationPointType">
@@ -2398,7 +2493,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="PointType"/>
+            <xs:extension base="PointType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="ViewerPreferencesType">
@@ -2591,7 +2686,7 @@
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:int">
-                    <xs:minInclusive value="1"/>
+                    <xs:minInclusive value="1" />
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
@@ -2610,10 +2705,10 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="none"/>
-            <xs:enumeration value="outlines"/>
-            <xs:enumeration value="thumbnails"/>
-            <xs:enumeration value="optionalContents"/>
+            <xs:enumeration value="none" />
+            <xs:enumeration value="outlines" />
+            <xs:enumeration value="thumbnails" />
+            <xs:enumeration value="optionalContents" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="TextDirectionType">
@@ -2628,8 +2723,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="leftToRight"/>
-            <xs:enumeration value="rightToLeft"/>
+            <xs:enumeration value="leftToRight" />
+            <xs:enumeration value="rightToLeft" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="DuplexType">
@@ -2646,10 +2741,10 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="none"/>
-            <xs:enumeration value="simplex"/>
-            <xs:enumeration value="duplexFlipShortEdge"/>
-            <xs:enumeration value="duplexFlipLongEdge"/>
+            <xs:enumeration value="none" />
+            <xs:enumeration value="simplex" />
+            <xs:enumeration value="duplexFlipShortEdge" />
+            <xs:enumeration value="duplexFlipLongEdge" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="PrintTraySelectionType">
@@ -2664,8 +2759,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="readerDefault"/>
-            <xs:enumeration value="byPDFSize"/>
+            <xs:enumeration value="readerDefault" />
+            <xs:enumeration value="byPDFSize" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="PrintScaleType">
@@ -2680,8 +2775,8 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="readerDefault"/>
-            <xs:enumeration value="noPrintScaling"/>
+            <xs:enumeration value="readerDefault" />
+            <xs:enumeration value="noPrintScaling" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="BoxSelectionType">
@@ -2699,11 +2794,11 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="mediaBox"/>
-            <xs:enumeration value="cropBox"/>
-            <xs:enumeration value="bleedBox"/>
-            <xs:enumeration value="trimBox"/>
-            <xs:enumeration value="artBox"/>
+            <xs:enumeration value="mediaBox" />
+            <xs:enumeration value="cropBox" />
+            <xs:enumeration value="bleedBox" />
+            <xs:enumeration value="trimBox" />
+            <xs:enumeration value="artBox" />
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="DrawModeType">
@@ -2719,9 +2814,9 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="fill"/>
-            <xs:enumeration value="stroke"/>
-            <xs:enumeration value="fillAndStroke"/>
+            <xs:enumeration value="fill" />
+            <xs:enumeration value="stroke" />
+            <xs:enumeration value="fillAndStroke" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="BaseRelationType">
@@ -2749,7 +2844,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="BaseRelationType"/>
+            <xs:extension base="BaseRelationType" />
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType name="MarkRelationType">
@@ -2829,11 +2924,11 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:enumeration value="accepted"/>
-            <xs:enumeration value="rejected"/>
-            <xs:enumeration value="cancelled"/>
-            <xs:enumeration value="completed"/>
-            <xs:enumeration value="none"/>
+            <xs:enumeration value="accepted" />
+            <xs:enumeration value="rejected" />
+            <xs:enumeration value="cancelled" />
+            <xs:enumeration value="completed" />
+            <xs:enumeration value="none" />
         </xs:restriction>
     </xs:simpleType>
     <xs:complexType name="FieldAnnotationType">
@@ -2878,6 +2973,166 @@
                             <li>Ch = Choicefield</li>
                             <li>Sig = Signaturefield</li>
                         </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="FieldWidgetType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Describes one widget annotation of a check box or radio button group.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="objectKey" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The object ID of the widget annotation, the same as the objectKey of the "annotation" element at the same position. Empty for a widget that is no indirect object; the position identifies it then.
+
+                        <b>Info:</b>
+                        A PDF object ID consists of two numbers, where the first number selects the object's number and the second the "generation" of the object. The object ID shall always be unique within the context of the document and can be used to select a specific object.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="export" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The export value of the widget: the entry of the field's option list (Opt) at the widget's position, otherwise the name of its on state; for a check box without option list none of whose widgets has an appearance or names its on state, the on value of the field (its value unless that is Off, else Yes). Empty if unknown or if the option text is empty.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="state" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The name of the widget's on appearance state, as found in the document - or, for a form whose missing appearances the server builds when it reads the document (NeedAppearances), the name the server gives them. For a widget without appearance it is known only while the widget is on. Empty if unknown.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="selected" default="false" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>True if the widget is shown in its on state (its appearance state is present and not Off).</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="selectValue" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The value to import as the field's value with the xml or XFDF form data import so that this widget - together with every other widget of the same selectValue - is selected. Valid for the document as extracted.</p>
+                    <p>Without an option list (Opt), a widget with more than one on state besides Off reports only one of them, here and in "state"; the import selects every widget that has the imported name as one of its on states.</p>
+                    <p>Empty: the widget cannot be selected through this attribute; an empty selectValue is never sent. To keep the current state of a field, leave the field out of the imported data: a partial import leaves fields without data unchanged, whereas an empty value or Off may deselect the field or select another widget.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="SchemaValueType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>The type of the sort schemas value.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="string" />
+            <xs:enumeration value="date" />
+            <xs:enumeration value="number" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="SchemaEntryType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines a sort schema for a PDF collection (portfolio).</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="key" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The key of the sort schema.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="name" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The name of the sort schema.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="type" default="string" type="SchemaValueType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p xmlns="">
+                        Used to specify the value contained in the value.
+                        <ul>
+                            <li>string = The value contains a string content.</li>
+                            <li>date = The value contains a date content in the ASN.1 (Abstract Syntax Notation One) format: D:YYYYMMDDHHmmSSOHH'mm</li>
+                            <li>number = The text contains a number.</li>
+                        </ul>
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="order" default="0" type="xs:int">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The order number of the sort schema.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="visible" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>If this sort schema shall be visible in views.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="SchemaSortEntryType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Defines a sort entry for a PDF collection (portfolio).</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="key" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The key of the sort entry.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ascending" default="true" type="xs:boolean">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Whether sorting should be in ascending or descending order.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="AttachmentSortEntryType">
+        <xs:annotation>
+            <xs:documentation>
+                <p xmlns="http://schema.webpdf.de/1.0/extraction/info">Defines a collection item for an attachment or folder.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="key" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The key of the collection item.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="value" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>The value of the collection item.</p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="prefix" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p xmlns="">
+                        An optional prefix that (if not empty) shall precede the value in a viewer. This however shall not influence the order of this entry during sorting and otherwise behaves neutral.
                     </p>
                 </xs:documentation>
             </xs:annotation>

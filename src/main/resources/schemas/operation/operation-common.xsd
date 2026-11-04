@@ -341,13 +341,50 @@
     <xs:simpleType name="LanguageType">
         <xs:annotation>
             <xs:documentation>
-                <p>An ISO 639-1-compliant language code consisting of 2 letters. If there is one, a localized template will be
-                    selected using the language selected here. If not defined, the language in which the server is running is used.
+                <p>An ISO 639-1-compliant language code consisting of 2 letters, or "system". It selects the localized template and the
+                    language in which the template formats dates and numbers. If not defined, or set to "system", the locale of the
+                    conversion is used, region included ("locale" of the operation, otherwise the default of the web service or of the
+                    server); without any of these, the locale in which the server is running is used.
                 </p>
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:token">
             <xs:pattern value="system|[a-z]{2}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="LocaleType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>A locale as a language tag (BCP 47): a language of two or three letters (ISO 639), optionally followed by
+                    a script of four letters (ISO 15924) and a region of two letters (ISO 3166-1) or three digits (UN M.49),
+                    separated by hyphens, for example "de", "de-DE", "de-CH", "en-US", "es-419" or "sr-Latn-RS". Upper and lower
+                    case are not distinguished. An empty value means that no locale is set.
+                </p>
+                <p>Unless stated otherwise at the attribute, only locales for which the Java runtime of the server provides formatting
+                    data are accepted; any other value is rejected with an error.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:pattern value="([A-Za-z]{2,3}(-[A-Za-z]{4})?(-([A-Za-z]{2}|[0-9]{3}))?)?"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TimeZoneType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>A time zone: an identifier of the IANA time zone database, for example "Europe/Berlin", "America/New_York"
+                    or "UTC", or a fixed offset from UTC in the form "+hh:mm" or "-hh:mm", for example "+01:00". Identifiers are
+                    case-sensitive. Abbreviations such as "EST" or "PST" are not supported. An empty value means that no time
+                    zone is set.
+                </p>
+                <p>Only identifiers known to the Java runtime of the server and offsets from "-18:00" to "+18:00" are accepted;
+                    any other value is rejected with an error.
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:maxLength value="64"/>
+            <xs:pattern value="([A-Za-z][A-Za-z0-9_+\-]*(/[A-Za-z0-9_+\-]+){0,2}|[+\-][0-9]{2}:[0-9]{2})?"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="RgbColorType">
@@ -410,6 +447,8 @@
             <xs:annotation>
                 <xs:documentation>
                     <p>The uri the data shall be located at. (This shall only have effect, if the "source" is "uri".)</p>
+                    <p>Only an "http" or "https" address with a host is loaded; an address that starts with "//" and names a host is loaded via "http". Any other address - without a host, or with another scheme such as "ftp" - fails with error code -12 before a connection is made. A "file" address is only read if the server allows the file protocol, otherwise it fails with error code -29.</p>
+                    <p>Credentials in the address ("https://user:password@host/file.pdf") are used for this request only and are not repeated in error messages.</p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

@@ -30,6 +30,7 @@
                     <xs:annotation>
                         <xs:documentation>
                             <p>When exporting multiple pages, this parameter is used to define the file name that will be used for the generated image files in the ZIP file. The file name must include the string "%d". This string will be replaced with a consecutive number in the file name.</p>
+                            <p>Numbers are written with ASCII digits. A template that is longer than 1024 characters, contains a width or precision greater than 64 or cannot be formatted with a number is not used; the default template applies instead.</p>
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>

@@ -29,6 +29,7 @@
                                     <xs:element name="image" type="tns:SignatureImageType" minOccurs="0"/>
                                     <xs:element name="identifierElements" type="tns:SignatureIdentifierType"
                                                 minOccurs="0"/>
+                                    <xs:element name="font" type="tns:SignatureFontType" minOccurs="0"/>
                                 </xs:all>
                                 <xs:attribute name="name" default="" type="xs:string">
                                     <xs:annotation>
@@ -102,6 +103,9 @@
                         <xs:annotation>
                             <xs:documentation>
                                 <p>Defines the name of the field (in the document) in which the signature will be saved. If a field name that is not unique is declared, then a unique name will be automatically created.</p>
+                                <p>
+                                    <b>Be aware:</b>
+                                    The field name is matched <b>case-insensitively</b>, and so is the check for a naming collision. Addressing a field the document already provides therefore selects that field even when the casing differs - <code>signature2</code> signs an existing field named <code>Signature2</code>, and no second field is created. For the same reason a requested <code>text1</code> is created as <code>text1_1</code> next to an existing field named <code>Text1</code>. Field names are case-sensitive in the PDF specification; webPDF relaxes that intentionally, so that a field a document already provides is not missed over a difference in spelling.</p>
                             </xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
@@ -363,6 +367,92 @@
             <xs:annotation>
                 <xs:documentation>
                     <p>Text that is displayed when the <code>showSignedBy</code> option is enabled. If not set, then the text <code>Digitally signed by</code> is used as default.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="textDate" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Label that is displayed in front of the signature time when the <code>showDate</code> option is enabled. If not set, then the label <code>Date:</code> is used as default. A label set here is always used as given, independently of <code>locale</code>.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="dateFormat" default="iso" type="tns:SignatureDateFormatType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Selects how the signature time is displayed when the <code>showDate</code> option is enabled:
+                        <ul>
+                            <li>iso = Date and time in the form <code>yyyy-MM-dd HH:mm:ss</code>, followed by the offset from UTC, for example <code>2026-10-06 14:30:00 +02:00</code> (<code>Z</code> for UTC).</li>
+                            <li>localized = Date and time in the medium format of the locale (<code>locale</code>), followed by the offset from UTC, for example <code>06.10.2026, 14:30:00 +02:00</code> for "de-DE".</li>
+                        </ul>
+                    </p>
+                    <p>
+                        <b>Note:</b>
+                        "localized" takes effect only when the signature text is drawn with an embedded font (see <code>&lt;font&gt;</code>). With the PDF standard font "Helvetica", for a locale whose date format uses a script that is written right to left or needs contextual shaping (for example Arabic, Hebrew, Hindi or Thai), and if the fonts of the signature cannot display a character of the localized form, the signature time is displayed in the "iso" form. The medium format of a locale is provided by the Java runtime of the server and can differ slightly between its versions.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="timeZone" default="" type="tns:TimeZoneType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Sets the time zone in which the signature time is displayed when the <code>showDate</code> option is enabled, as an identifier such as "Europe/Berlin" or an offset such as "+01:00".
+                    </p>
+                    <p>
+                        If no value is set, the time zone of the request is used: for a signature that is part of a conversion "timeZone" of the "converter" operation, then the default time zone of the "Converter" web service; otherwise the default time zone of the "Signature" web service ("timeZone" of "webservices/signature"). After that the default time zone of the server ("timeZone" of "webservices") is used, and if none is configured, the time zone of the Java runtime of the server.
+                    </p>
+                    <p>
+                        <b>Important:</b>
+                        The signing time stored in the signature is not changed; PDF viewers show it in their own local time.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="locale" default="" type="tns:LocaleType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Sets the locale of the signature time as a language tag, for example "de-DE" or "en-US". It takes effect only with the <code>dateFormat</code> "localized".
+                    </p>
+                    <p>
+                        If no value is set, the locale of the request is used: for a signature that is part of a conversion "locale" of the "converter" operation, then the default locale of the "Converter" web service; otherwise the default locale of the "Signature" web service ("locale" of "webservices/signature"). After that the default locale of the server ("locale" of "webservices") is used, and if none is configured, the locale of the Java runtime of the server.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="SignatureDateFormatType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Form of the signature time in the visual signature:
+                    <ul>
+                        <li>iso = Date and time in the form <code>yyyy-MM-dd HH:mm:ss</code>, followed by the offset from UTC</li>
+                        <li>localized = Date and time in the medium format of the locale, followed by the offset from UTC - only with an embedded font; with the PDF standard font "Helvetica", for scripts that need shaping or are written right to left, and where the fonts cannot display it, the iso form is written (see <code>dateFormat</code>)</li>
+                    </ul>
+                </p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="iso"/>
+            <xs:enumeration value="localized"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="SignatureFontType">
+        <xs:annotation>
+            <xs:documentation>
+                <p>Selects the font of the text in the visual signature.</p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" default="" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>Name of the font that is used for the text of the visual signature. The font is searched in the font directories of the "Signature" web service (<code>webservices/signature/@fontPath</code>), embedded in the document as a subset that holds only the characters drawn, and the text is fitted into the signature field.</p>
+                    <p>If no value is specified, the default font of the "Signature" web service applies (<code>webservices/signature/@defaultFont</code>): if it is empty, the font chain of the server is used; a font name configured there is tried first, and a character that it cannot display is drawn with the next font of the font chain that provides it. The value <code>Helvetica</code> there selects the standard font as described below.</p>
+                    <p>The value <code>Helvetica</code> selects the PDF standard font "Helvetica": it is not embedded, displays only characters of the Windows Latin character set, and the text is laid out as in earlier versions. A PDF/A document whose conformance is kept when signing (<code>pdfaEditProfile</code> "noEditRestrictions") then no longer conforms to PDF/A. The value always selects this standard font, also if a font family named "Helvetica" is installed.</p>
+                    <p>
+                        <b>Important:</b>
+                        Unless the PDF standard font "Helvetica" is selected (here or as the default font), the following applies. A font named here is binding: if it is not found or cannot be embedded, or if it cannot display a character, the signature ends with an error. If the font named here is not installed, the replacement font configured for it (<code>webservices/fontSubstitution</code> in <code>application.xml</code>) is used instead, if it is installed; it is binding in the same way. Without a font named here, a character that no font of the server can display ends the signature with an error. A text that does not fit into the signature field even at the smallest font size ends it with an error as well. Characters of scripts that are written right to left or need contextual shaping (for example Arabic, Hebrew, Hindi or Thai) are drawn one by one, without shaping and in the order in which they are given.
                     </p>
                 </xs:documentation>
             </xs:annotation>

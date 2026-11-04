@@ -5,12 +5,10 @@
     <xs:complexType name="UrlConverterType">
         <xs:annotation>
             <xs:documentation>
-                <p>The "URLConverter" web service van be used to convert URL resources (websites) to a PDF document.
-
-                </p>
+                <p>The "URLConverter" web service van be used to convert URL resources (e.g., websites) to a PDF document.</p>
                 <p>
                     <b>Important:</b>
-                    Please keep the limitations of HTML conversion in mind (see chapter "HTML conversion").
+                    Please keep the limitations of HTML conversion in mind (see chapter "HTML Converter").
                 </p>
             </xs:documentation>
         </xs:annotation>
@@ -23,6 +21,55 @@
             <xs:annotation>
                 <xs:documentation>
                     <p>The URL for the resource to be converted.</p>
+                    <p>
+                        <b>Note:</b>The "file" protocol is not supported; this applies to the resource URL itself and all resources referenced in the content.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="locale" default="" type="tns:LocaleType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        Sets the locale of the conversion as a language tag, for example "de-DE" or "en-US": the "Accept-Language"
+                        header with which the page and its resources are requested (the website may answer in that language), the
+                        locale of JavaScript in the page (for example "Intl" and "toLocaleString"), and the language and format of
+                        dates and numbers in the templates of the header and footer.
+                    </p>
+                    <p>
+                        An "Accept-Language" header that the request sets itself in "settings/http" takes precedence for the
+                        request of the page itself; the resources of the page are requested with this locale.
+                    </p>
+                    <p>
+                        If no value is set, the default locale of the "URL Converter" web service is used, then the default locale
+                        of the server ("locale" of "webservices"). If neither is configured, the page itself is requested without an
+                        "Accept-Language" header, Chromium uses the settings of its process environment for the resources and for
+                        JavaScript, and the templates use the locale of the Java runtime of the server.
+                    </p>
+                    <p>
+                        <b>Important:</b> JavaScript in frames that are loaded from another website does not see the locale,
+                        "navigator.language" keeps the language of Chromium's process environment, and the date of a header or
+                        footer that uses the class "date" is formatted in that language.
+                    </p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="timeZone" default="" type="tns:TimeZoneType">
+            <xs:annotation>
+                <xs:documentation>
+                    <p>
+                        Sets the time zone of the conversion, as an identifier such as "Europe/Berlin" or an offset such as
+                        "+01:00": the time zone seen by JavaScript in the page, the date of a header or footer that uses the class
+                        "date", and the time zone in which the templates of the header and footer show times.
+                    </p>
+                    <p>
+                        If no value is set, the default time zone of the "URL Converter" web service is used, then the default
+                        time zone of the server ("timeZone" of "webservices"). If neither is configured, Chromium uses the time zone
+                        of the operating system and the templates use the time zone of the Java runtime of the server.
+                    </p>
+                    <p>
+                        <b>Important:</b> JavaScript in frames that are loaded from another website does not see the time zone.
+                    </p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -120,7 +167,7 @@
                 <p>
                     <b>Important:</b>The header is not used for all file format conversions. The header is not supported for file formats that
                     already contain their own header definition, such as Office formats. The header defined here works only for HTML-based
-                    formats such as HTML files, emails, or template-based conversions (e.g. text formats).
+                    formats such as HTML files, emails, or template-based conversions (e.g., text formats).
                 </p>
                 <p>Example:</p>
                 <pre class="language-html">
@@ -150,7 +197,7 @@
                 <p>
                     <b>Important:</b>The footer is not used for all file format conversions. The footer is not supported for file formats that
                     already contain their own footer definition, such as Office formats. The footer defined here works only for HTML-based
-                    formats such as HTML files, emails, or template-based conversions (e.g. text formats).
+                    formats such as HTML files, emails, or template-based conversions (e.g., text formats).
                 </p>
                 <p>Example:</p>
                 <pre class="language-html">

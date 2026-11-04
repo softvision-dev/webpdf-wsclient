@@ -51,6 +51,7 @@
                                     <li>missingContent = Documents for which not all content could be converted correctly will also be considered as failures.</li>
                                     <li>error = Only if a conversion of the document did not lead to any meaningful result document, this is evaluated as failure, even if contents should be missing.</li>
                                 </ul>
+                                Independently of this level, the conversion fails if content was refused or could not be drawn completely: a content stream exceeding a limit of the PDF engine, or - with the appearance profile acrobat - an annotation without appearance that cannot be drawn completely.
                             </p>
                         </xs:documentation>
                     </xs:annotation>
@@ -140,6 +141,7 @@
                         <li>missingContent = Documents for which not all content could be converted correctly will also be considered as failures.</li>
                         <li>error = Only if a conversion of the document did not lead to any meaningful result document, this is evaluated as failure, even if contents should be missing.</li>
                     </ul>
+                    Independently of this level, the conversion fails if content was refused or could not be drawn completely: a content stream exceeding a limit of the PDF engine, or - with the appearance profile acrobat - an annotation without appearance that cannot be drawn completely.
                 </p>
             </xs:documentation>
         </xs:annotation>

@@ -202,6 +202,7 @@
                     <xs:annotation>
                         <xs:documentation>
                             <p>Used to set the template for the image files in the returned ZIP file. "file[%d]", for example, would result in a "file[1].png" entry for a PNG image.</p>
+                            <p>Numbers are written with ASCII digits. A template that is longer than 1024 characters, contains a width or precision greater than 64 or cannot be formatted with a number is not used; the default template applies instead.</p>
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
@@ -209,6 +210,7 @@
                     <xs:annotation>
                         <xs:documentation>
                             <p>Used to set the template for the page folders in the returned ZIP file. "page[%d]", for example, would result in a folder called "page[1]" for page 1, etc.</p>
+                            <p>Numbers are written with ASCII digits. A template that is longer than 1024 characters, contains a width or precision greater than 64 or cannot be formatted with a number is not used; the default template applies instead.</p>
                         </xs:documentation>
                     </xs:annotation>
                 </xs:attribute>

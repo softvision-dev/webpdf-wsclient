@@ -272,7 +272,7 @@
             <xs:documentation>
                 <p>Can be used to force a specific shape for generated Data Matrix codes.
                     <ul>
-                        <li>default = Select an appropriate shape.</li>
+                        <li>default = The appropriate shape is selected automatically based on the content, character set, and other parameters.</li>
                         <li>rectangle = Force a rectangular shape.</li>
                         <li>square = Force a square shape.</li>
                     </ul>
@@ -480,6 +480,7 @@
                     <xs:annotation>
                         <xs:documentation>
                             <p>Used to specify the minimum number of codewords allowed in a single PDF417 barcode row.</p>
+                            <p>Takes effect only together with "dataCodewordsMax", "symbolsPerCodewordMin" and "symbolsPerCodewordMax": set all four or none of them. If "dataCodewordsMax" is missing while "dataCodewordsMin" and "symbolsPerCodewordMax" are set, the request fails with error code -22; other incomplete combinations are ignored and the dimensions are chosen automatically.</p>
                         </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
@@ -492,6 +493,7 @@
                     <xs:annotation>
                         <xs:documentation>
                             <p>Used to specify the maximum number of codewords allowed in a single PDF417 barcode row.</p>
+                            <p>Takes effect only together with "dataCodewordsMin", "symbolsPerCodewordMin" and "symbolsPerCodewordMax": set all four or none of them. If "dataCodewordsMax" is missing while "dataCodewordsMin" and "symbolsPerCodewordMax" are set, the request fails with error code -22; other incomplete combinations are ignored and the dimensions are chosen automatically.</p>
                         </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
@@ -504,6 +506,7 @@
                     <xs:annotation>
                         <xs:documentation>
                             <p>Used to specify the minimum number of code symbols that are allowed to be in a single codeword in the PDF417 barcode.</p>
+                            <p>Takes effect only together with "dataCodewordsMin", "dataCodewordsMax" and "symbolsPerCodewordMax": set all four or none of them. If "dataCodewordsMax" is missing while "dataCodewordsMin" and "symbolsPerCodewordMax" are set, the request fails with error code -22; other incomplete combinations are ignored and the dimensions are chosen automatically.</p>
                         </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
@@ -516,6 +519,7 @@
                     <xs:annotation>
                         <xs:documentation>
                             <p>Used to specify the maximum number of code symbols that are allowed to be in a single codeword in the PDF417 barcode.</p>
+                            <p>Takes effect only together with "dataCodewordsMin", "dataCodewordsMax" and "symbolsPerCodewordMin": set all four or none of them. If "dataCodewordsMax" is missing while "dataCodewordsMin" and "symbolsPerCodewordMax" are set, the request fails with error code -22; other incomplete combinations are ignored and the dimensions are chosen automatically.</p>
                         </xs:documentation>
                     </xs:annotation>
                     <xs:simpleType>
@@ -570,6 +574,38 @@
                                     <li>rectangle = Force a rectangular shape.</li>
                                     <li>square = Force a square shape.</li>
                                 </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="compact" default="false" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>
+                                Specifies whether to use compact mode for Data Matrix.
+                                The compact encoding mode also supports the encoding of characters that are not in the
+                                ISO-8859-1 character set via Extended Channel Interpretation (ECIs).
+                                <ul>
+                                    <li>Character encoding is chosen for characters in the input that are not in the ISO-8859-1 character set.</li>
+                                    <li>The encoding used can be enforced using the parameter <code>charset</code>, e.g. to UTF-8.
+                                    </li>
+                                    <li>Compact encoding also provides GS1-FNC1 support (when <code>GS1</code> enabled).
+                                    </li>
+                                </ul>
+                            </p>
+                        </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="gs1" default="false" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <p>
+                                Specifies whether the data should be encoded to the
+                                <a href="https://www.gs1.org/standards/gs1-datamatrix-guideline/25#1-Introduction-to-GS1-DataMatrix">GS1</a>
+                                standard.
+                            </p>
+                            <p>
+                                In this case group-separator character (ASCII 29 decimal) can be used to encode the positions of FNC1 codewords.
                             </p>
                         </xs:documentation>
                     </xs:annotation>
