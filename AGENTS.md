@@ -14,18 +14,19 @@ webpdf-wsclient is a Java client library (Apache 2.0) that provides a simplified
 | Path | Purpose |
 |---|---|
 | `src/main/java/net/webpdf/wsclient/` | Hand-written library source |
-| `src/main/java/.../schema/stubs/` | **Generated** — JAXB from WSDL/XSD — do not edit |
-| `src/main/java/.../openapi/` | **Generated** — OpenAPI generator — do not edit |
+| `src/main/java/.../schema/stubs/` | Hand-maintained JAX-WS service interfaces and fault types of the SOAP services — update them by hand when a WSDL changes |
+| `src/main/java/.../openapi/RestOperationData.java` | Hand-written REST operation container; the REST models of the same package are generated |
 | `src/main/resources/openapi/` | OpenAPI spec and code-generation templates |
 | `src/main/resources/wsdl/` | WSDL definitions for SOAP services |
 | `src/main/resources/schemas/` | XML Schema definitions |
 | `src/test/java/net/webpdf/wsclient/` | Unit and integration tests |
 | `examples/` | Usage examples |
 | `build/` | Maven build output — do not edit |
+| `build/generated-sources/` | **Generated** during the build — REST models from the OpenAPI spec and JAXB classes from the XML schemas; never edit |
 | `config/testConfig.sample.json` | Sample test configuration — committed, all values disabled by default |
 | `config/testConfig.json` | Active test configuration — **gitignored**, never committed |
 | `docker/` | Docker Compose setup for integration test infrastructure |
-| `.ai-workspace/` | Agent workspace — gitignored, temporary use only |
+| `.ai-workspace/` | Agent workspace — gitignored except the `.gitkeep` files of its skeleton directories, temporary use only |
 
 ---
 
@@ -41,7 +42,7 @@ mvnw.cmd clean install
 ./mvnw clean install
 ```
 
-Integration tests are controlled exclusively by `config/testConfig.json` (gitignored, not in this repository). If that file does not exist or has `integrationTests.enabled` set to `false`, all integration tests are skipped automatically — no server is required and the build passes cleanly.
+Integration tests are controlled by `config/testConfig.json` (gitignored, not in this repository) and by the system properties described below, which take precedence. If neither enables them, all integration tests are skipped automatically — no server is required and the build passes cleanly. A configuration file that exists but cannot be read fails the test run instead of silently skipping the integration tests.
 
 Run the full test suite (unit tests only when no config file is present or integration is disabled):
 ```
@@ -52,12 +53,12 @@ mvnw.cmd test
 ./mvnw test
 ```
 
-Integration tests require a running webPDF server instance. They are conditionally enabled per test method via `@IntegrationTest`, `@OAuthTest`, `@TLSTest`, `@ProxyTest`, and `@LdapTest` — each reads its enabled state from `config/testConfig.json`.
+Integration tests require a running webPDF server instance. They are conditionally enabled per test method via `@IntegrationTest`, `@OAuthTest`, `@TLSTest`, `@ProxyTest`, and `@LdapTest` — each reads its enabled state from `config/testConfig.json` or the matching system property.
 
-To run integration tests using the bundled Docker containers (requires Docker Desktop or Docker Engine), build the images once and then run the tests:
+To run integration tests using the bundled Docker containers (requires Docker Desktop or Docker Engine with the `docker compose` plugin), run the tests below. Missing images are built on the first run; rebuild them after changes to `docker/` or to pick up a newer webPDF base image:
 ```
-# Build Docker images (only required once, or after changes to docker/)
-docker compose -f docker/docker-compose.yml build
+# Rebuild the Docker images (pulls the current base images)
+docker compose -f docker/docker-compose.yml build --pull
 
 # Windows
 mvnw.cmd test -Dwebpdf.test.integration.enabled=true -Dwebpdf.test.useContainer=true
@@ -66,7 +67,7 @@ mvnw.cmd test -Dwebpdf.test.integration.enabled=true -Dwebpdf.test.useContainer=
 ./mvnw test -Dwebpdf.test.integration.enabled=true -Dwebpdf.test.useContainer=true
 ```
 
-The Docker setup starts three containers: **webPDF** (ports 8080/8443), **LDAP** (port 10389), and **Proxy** (port 8888). TestContainers manages the full lifecycle — no manual `docker compose up` needed when using the Maven command above.
+The Docker setup starts three compose services: `webpdf` (ports 8080/8443), `ldap` (port 10389), and `proxy` (port 8888). TestContainers manages the full lifecycle through the local `docker compose` — no manual `docker compose up` needed when using the Maven command above. TestContainers addresses the services by their compose service names, so the compose file must not set `container_name`. Without `config/testConfig.json`, the local server settings of `config/testConfig.sample.json` apply (`http://localhost:8080/webPDF`, `admin`/`admin`, `user`/`user`).
 
 The system properties `-Dwebpdf.test.integration.enabled` and `-Dwebpdf.test.useContainer` take precedence over `config/testConfig.json`. A sample config documenting all available options is provided at `config/testConfig.sample.json`.
 
@@ -131,10 +132,12 @@ The library shares a common abstraction layer across two protocol implementation
 
 ## Generated Code
 
-The following directories contain generated sources and are rebuilt automatically during the Maven build. Do not edit them manually — changes will be overwritten.
+Generated sources are written to `build/generated-sources/` during every Maven build and are not committed. Change their inputs instead:
 
-- `src/main/java/net/webpdf/wsclient/schema/stubs/` — JAXB classes from WSDL/XSD
-- `src/main/java/net/webpdf/wsclient/openapi/` — REST client from OpenAPI spec
+- `build/generated-sources/openapi/` — REST models (package `net.webpdf.wsclient.openapi`) from `src/main/resources/openapi/openapi.json`, shaped by the templates in `src/main/resources/openapi/templates/` and the generator configuration in `pom.xml`
+- `build/generated-sources/xjc-operation/` and `xjc-extraction/` — JAXB classes from `src/main/resources/schemas/` and their `*.xjb` bindings
+
+`openapi.json` and the XML schemas are copies of the webPDF server release the library targets; replace them as a whole, never edit them. The SOAP stubs in `src/main/java/net/webpdf/wsclient/schema/stubs/` are not generated and are maintained by hand.
 
 To regenerate: `mvnw.cmd generate-sources` (or `./mvnw generate-sources`).
 
