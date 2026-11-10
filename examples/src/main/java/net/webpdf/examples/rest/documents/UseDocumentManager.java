@@ -93,7 +93,7 @@ public class UseDocumentManager {
             /** get the {@link List<HistoryEntry>} */
             List<HistoryEntry> historyEntries = documentManager.getDocumentHistory(specificDocument.getDocumentId());
             /** you can also get the document history directly */
-            List<HistoryEntry> historyEntries = specificDocument.getHistory();
+            historyEntries = specificDocument.getHistory();
 
             /** change the active history entry */
             historyEntries.get(0).setActive(true);

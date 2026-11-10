@@ -77,7 +77,7 @@ public class AddSignaturesToPdf {
             add.setReason("webPDF wsclient sample");
             add.setLocation("Main Street, Anytown, USA");
             add.setContact("Any Company");
-            add.setCertificationLevel(OperationAddSignature.CertificationLevelEnum.NOCHANGES);
+            add.setCertificationLevel(OperationAddSignature.CertificationLevelEnum.NO_CHANGES);
             add.setKeyName("Generic self-signed certificate");
 
             /** Next we shall position our signature on page 1 of the document: */

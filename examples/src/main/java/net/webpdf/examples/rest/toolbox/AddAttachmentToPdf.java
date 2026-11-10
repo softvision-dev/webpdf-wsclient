@@ -93,7 +93,7 @@ public class AddAttachmentToPdf {
             annotation.setPage(1);
             annotation.setColor("#FFFFFF");
             annotation.setOpacity(60);
-            annotation.setIcon(OperationFileAnnotation.IconEnum.PUSHPIN);
+            annotation.setIcon(OperationFileAnnotation.IconEnum.PUSH_PIN);
             annotation.setLockedPosition(false);
             annotation.setPopupText("The attachment´s description");
 

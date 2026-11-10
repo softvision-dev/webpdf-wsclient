@@ -94,7 +94,7 @@ public class AddAnnotationsToPdf {
             MarkupAnnotationType.Position position = new MarkupAnnotationType.Position();
             markup.setPosition(position);
             RectangleType rectangle = new RectangleType();
-            position.getPathElementOrQuadrilateral().add(rectangle);
+            position.getPathElement().add(rectangle);
             rectangle.setX(15);
             rectangle.setY(20);
             rectangle.setWidth(80);

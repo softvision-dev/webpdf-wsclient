@@ -17,8 +17,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.net.URL;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
 /**
  * Here you will find a usage example for the webPDF {@link AdministrationManager} demonstrating how you can
  * update a file in the datastore of the server using the REST API.
