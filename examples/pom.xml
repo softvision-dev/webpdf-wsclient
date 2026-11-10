@@ -56,10 +56,8 @@
 
         <!-- DEPENDENCY VERSIONS -->
         <net.webpdf.wsclient.version>10.0.7</net.webpdf.wsclient.version> <!-- https://mvnrepository.com/artifact/net.webpdf/webpdf-wsclient -->
-        <commons.io.version>2.11.0
-        </commons.io.version> <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
-        <commons.lang.version>3.12.0
-        </commons.lang.version> <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <commons.io.version>2.22.0</commons.io.version> <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <commons.lang.version>3.21.0</commons.lang.version> <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
     </properties>
 
     <dependencies>
