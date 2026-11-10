@@ -155,6 +155,7 @@ Redirect high-volume output (logs, intermediate files, analysis dumps) to `.ai-w
 - Body: optional — explain *why*, not *what* (the diff shows what). Keep it concise.
 - Do not include `Co-Authored-By` trailers.
 - Do not name specific vulnerabilities or internal bug details in public commit messages; describe the fix category instead (e.g. "harden error handling" rather than "prevent NPE when getFaultInfo() returns null").
+- This repository is public: never reference identifiers or links of an internal issue tracker, neither in commit messages nor in branch and tag names, release notes, pull requests, issues and their comments, code comments or documentation. Describe the change itself.
 
 ---
 
